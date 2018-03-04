@@ -1,0 +1,10 @@
+{
+    "database": {
+        "username": "",
+        "password": "",
+        "host": ""
+    },
+    "httpServer": {
+        "port": 5000
+    }
+}
