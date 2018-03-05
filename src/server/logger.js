@@ -4,7 +4,7 @@ const config = require('./config.json')
 const logsFilePath = `./logs/${config.logFile}`
 
 const consoleOutput = winston.transports.Console
-const fileOutput = winston.transports.Console
+const fileOutput = winston.transports.File
 
 module.exports = new Logger({
 	transports: [
