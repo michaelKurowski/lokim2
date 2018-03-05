@@ -10,8 +10,8 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
 	logger.log(req.body)
 	UserModel(req.body)
-		.then(()=> res.send('User has been created'))
-		.catch((err) => {
+		.then(() => res.send('User has been created'))
+		.catch(err => {
 			logger.error(err)
 			res.send(err)
 		})

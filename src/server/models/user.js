@@ -24,7 +24,7 @@ const UserModel = dbConnection.model('users', userSchema)
 
 function saveUserToDB(userData) {
 	return UserModel.init()
-		.then(()=> UserModel.create(userData, (err) => {
+		.then(() => UserModel.create(userData, (err) => {
 			logger.error('User has not been created')
 		}))
 } 

@@ -2,12 +2,28 @@ version: 2
 jobs:
   build:
     docker:
-      - image: debian:stretch
+      - image: circleci/node:7.10
     steps:
       - checkout
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "src/server/package.json" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
+      - run: 
+          name: Deployment
+          command: cd src/server && npm install
+
+      - save_cache:
+          paths:
+            - src/server/node_modules
+          key: v1-dependencies-{{ checksum "src/server/package.json" }}
+
       - run:
-          name: Greeting
-          command: echo Hello, world.
+          name: Static Analysis (EsLint)
+          command: node ./src/server/node_modules/eslint/bin/eslint.js -c ./src/server/.eslintrc.json --ignore-path ./src/server/.eslintignore ./src/server
+
       - run:
           name: Print the Current Time
           command: date
