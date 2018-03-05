@@ -1,11 +1,9 @@
 const mongoose = require('mongoose')
 const config = require('./config.json')
+const logger = require('./logger.js')
 
 const db = mongoose.createConnection(`mongodb://${config.database.username}:${config.database.password}@${config.database.host}`)
-db.on('error', (err) => {
-    console.log(err)
-    throw 'Failed to connect to database'
-})
-db.once('open', ()=>console.log('Connected to DB'))
+db.on('error', err => logger.error(`Failed to connect to database: ${err}`))
+db.once('open', () => logger.info(`Connected to database: ${config.database.host}`))
 
 module.exports = db
