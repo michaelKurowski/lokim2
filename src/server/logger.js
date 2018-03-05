@@ -1,9 +1,14 @@
 const winston = require('winston')
+const Logger = winston.Logger
 const config = require('./config.json')
+const logsFilePath = `./logs/${config.logFile}`
 
-module.exports = new (winston.Logger)({
+const consoleOutput = winston.transports.Console
+const fileOutput = winston.transports.Console
+
+module.exports = new Logger({
 	transports: [
-		new (winston.transports.Console)(),
-		new (winston.transports.File)({ filename: `./logs/${config.logFile}` })
+		new consoleOutput(),
+		new fileOutput({filename: logsFilePath})
 	]
 })
