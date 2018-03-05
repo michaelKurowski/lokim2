@@ -23,6 +23,8 @@
 			"error",
 			"never"
 		],
-		"comma-spacing": 2
+		"comma-spacing": 2,
+		"space-before-blocks": "error",
+		"arrow-spacing": "error"
 	}
 }
