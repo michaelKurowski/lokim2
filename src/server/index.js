@@ -9,8 +9,8 @@ app.use(bodyParser.json())
 
 app.use('/register', register)
 
-app.listen(config.httpServer.port, (err)=> {
-	if (err){
+app.listen(config.httpServer.port, (err) => {
+	if (err) {
 		logger.error(`Error during attempting to listen for port ${config.httpServer.port}`)
 		return
 	}
