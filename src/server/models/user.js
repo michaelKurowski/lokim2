@@ -1,7 +1,6 @@
 const dbConnection = require('../dbConnection')
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
-const logger = require('./logger.js')
 
 const userSchema = new Schema({
 	username:{ 
@@ -24,9 +23,7 @@ const UserModel = dbConnection.model('users', userSchema)
 
 function saveUserToDB(userData) {
 	return UserModel.init()
-		.then(() => UserModel.create(userData, (err) => {
-			logger.error('User has not been created')
-		}))
+		.then(() => UserModel.create(userData, null))
 } 
 
 module.exports = saveUserToDB
