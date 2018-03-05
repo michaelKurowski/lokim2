@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const UserModel = require('../models/user')
-const logger = require('./logger.js')
+const logger = require('../logger.js')
 
 router.get('/', (req, res) => {
 	res.send('This will be regi page')
