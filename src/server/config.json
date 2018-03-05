@@ -1,10 +1,11 @@
 {
-    "database": {
-        "username": "",
-        "password": "",
-        "host": ""
-    },
-    "httpServer": {
-        "port": 5000
-    }
+	"database": {
+		"username": "",
+		"password": "",
+		"host": ""
+	},
+	"httpServer": {
+		"port": 5000
+	},
+	"logFile" : "logs.log"
 }
