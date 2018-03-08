@@ -3,24 +3,23 @@ const mongoose = require('mongoose')
 const uniqueValidator = require('mongoose-unique-validator')
 const Schema = mongoose.Schema
 
-const REQUIRED_PARAM_DESC = 'This param is required'
 const DUPLICATE_KEY_ERROR_DESC = 'There was a duplicate key'
 
 
 const userSchema = new Schema({
 	username:{ 
 		type: String,
-		required: REQUIRED_PARAM_DESC,
+		required: true,
 		unique: true
 	},
 	email:{ 
 		type: String,
-		required: REQUIRED_PARAM_DESC,
+		required: true,
 		unique: true
 	},
 	password:{ 
 		type: String,
-		required: REQUIRED_PARAM_DESC,
+		required: true,
 	}, 
 	salt:{
 		type: String

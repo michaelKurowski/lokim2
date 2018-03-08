@@ -2,18 +2,24 @@ const crypto = require('crypto')
 
 class Utilities {
 
-	generateSalt (size) {
+	static generateSalt (size) {
 		return crypto.randomBytes(size).toString('base64')
 	}
 
-	createSaltedHash(salt, password) {
-		if(password == null || salt == null)
+	static createSaltedHash(salt, passpharse) {
+		if(passpharse == null || salt == null)
 			return null
 		
 		const hash = crypto.createHash('sha256')
-		return  hash.update(password + salt).digest('hex')	
+		return  hash.update(passpharse + salt).digest('hex')	
+	}
+
+	static createError(textMessage) {
+		return {
+			desc: textMessage
+		}
 	}
 }
 
-module.exports = new Utilities()
+module.exports = Utilities
 
