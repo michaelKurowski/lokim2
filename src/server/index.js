@@ -1,5 +1,5 @@
 const express = require('express')
-const register = require('./routes/register')
+const router = require('./routes/router')
 const bodyParser = require('body-parser')
 const config = require('./config.json')
 const app = express()
@@ -7,7 +7,7 @@ const logger = require('./logger.js')
 
 app.use(bodyParser.json())
 
-app.use('/register', register)
+app.use(router)
 
 app.listen(config.httpServer.port, (err) => {
 	if (err) {

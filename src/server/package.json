@@ -4,7 +4,7 @@
   "description": "Ultra secure communicator server",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha ./.tests/**/*.js"
+    "test": "./node_modules/mocha/bin/mocha ./.tests/**/*.spec.js"
   },
   "repository": {
     "type": "git",
@@ -33,6 +33,7 @@
     "eslint": "^4.18.2",
     "eslint-config-google": "^0.9.1",
     "mocha": "^5.0.4",
+    "sinon": "^4.4.2",
     "supertest": "^3.0.0"
   }
 }
