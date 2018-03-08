@@ -19,7 +19,9 @@ class MocksUtils {
 	}
 
 	static createMongooseModel(schema) {
-		
+		return {
+			
+		}
 	}
 }
 
