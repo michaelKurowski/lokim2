@@ -11,22 +11,23 @@ const SALT_SIZE = 70
 router.post('/', (req, res) => {
 	
 	const salt = Utilities.generateSalt(SALT_SIZE)
-	const hash = Utilities.createSaltedHash(salt, req.body.password)
+	const password = Utilities.createSaltedHash(salt, req.body.password)
 
 	const userData = {
 		username: req.body.username,
 		email: req.body.email,
-		password: hash,
-		salt: salt
+		password,
+		salt
 	}
 
 	const userInstance = new UserModel(userData)
 
 	userInstance.save()
 		.then( () => res.status(statusCodes.OK).send('Created new user'))
-		.catch( (err) => {
+		.catch( err => {
 			logger.error(err)
-			return res.status(statusCodes.BAD_REQUEST).send(Utilities.createError(errorMessages.INTERNAL_DATABASE_ERROR))
+			return res.status(statusCodes.BAD_REQUEST)
+				.send(Utilities.createError(errorMessages.INTERNAL_DATABASE_ERROR))
 		})
 })
 
