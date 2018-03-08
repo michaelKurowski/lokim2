@@ -7,5 +7,9 @@
 	"httpServer": {
 		"port": 5000
 	},
-	"logFile" : "logs.log"
+	"logFile" : "logs.log",
+    "gitIntegration": {
+        "branch": "master",
+        "listeningPort": 5001
+    }
 }
