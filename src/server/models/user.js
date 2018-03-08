@@ -3,41 +3,31 @@ const mongoose = require('mongoose')
 const uniqueValidator = require('mongoose-unique-validator')
 const Schema = mongoose.Schema
 
-const requiredParamDesc = 'This param is required'
-const duplicateKeyErrorDesc = 'There was a duplicate key'
+const REQUIRED_PARAM_DESC = 'This param is required'
+const DUPLICATE_KEY_ERROR_DESC = 'There was a duplicate key'
 
 
 const userSchema = new Schema({
 	username:{ 
 		type: String,
-		required: requiredParamDesc,
+		required: REQUIRED_PARAM_DESC,
 		unique: true
 	},
 	email:{ 
 		type: String,
-		required: requiredParamDesc,
+		required: REQUIRED_PARAM_DESC,
 		unique: true
 	},
 	password:{ 
 		type: String,
-		required: requiredParamDesc,
+		required: REQUIRED_PARAM_DESC,
 	}, 
 	salt:{
 		type: String
 	}
 })
 
-/*
-userSchema.post('save', (error, doc, next) => {
-	if (error.name === 'BulkWriteError' && error.code === 11000) {
-		next(new Error(duplicateKeyErrorDesc))
-	} else {
-		next(error)
-	}
-})
-*/
-
-userSchema.plugin(uniqueValidator, { message: duplicateKeyErrorDesc })
+userSchema.plugin(uniqueValidator, { message: DUPLICATE_KEY_ERROR_DESC })
 const UserModel = dbConnection.model('users', userSchema)
 
 module.exports = UserModel

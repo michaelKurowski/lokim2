@@ -6,8 +6,8 @@ class Utilities {
 		return crypto.randomBytes(size).toString('base64')
 	}
 
-	hashPassword(salt, password) {
-		if(password == null)
+	createSaltedHash(salt, password) {
+		if(password == null || salt == null)
 			return null
 		
 		const hash = crypto.createHash('sha256')
