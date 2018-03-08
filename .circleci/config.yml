@@ -25,6 +25,10 @@ jobs:
           command: node ./src/server/node_modules/eslint/bin/eslint.js -c ./src/server/.eslintrc.json --ignore-path ./src/server/.eslintignore ./src/server
 
       - run:
+          name: Mocha tests
+          command: cd src/server/ && npm test
+
+      - run:
           name: Print the Current Time
           command: date
 
