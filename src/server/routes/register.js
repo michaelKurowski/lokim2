@@ -4,22 +4,36 @@ const UserModel = require('../models/user')
 const logger = require('../logger.js')
 const Utilities = require('../utilities')
 
-const saltSize = 70
+const SALT_SIZE = 70
 
 router.post('/', (req, res) => {
-
-	UserModel.on('index', err => logger.error(`Not created indexes: ${err}`))
 	
-	const userInstance = new UserModel(req.body)
+	const userData = {
+		username: req.body.username,
+		email: req.body.email,
+		password: req.body.password,
+		salt: ''
+	}
 
-	userInstance.salt = Utilities.generateSalt(saltSize)
-	userInstance.password = Utilities.hashPassword(userInstance.salt, userInstance.password)
-	userInstance.save()
-		.then( () => {return res.status(200).send('Created new user')})
-		.catch( (err) => {
+	const userInstance = new UserModel(userData)
+	
+	userInstance.validate(err => {
+		if(err) {
 			logger.error(err)
 			return res.status(500).send(err.message)
-		})
+		}
+
+		userInstance.salt = Utilities.generateSalt(SALT_SIZE)
+		userInstance.password = Utilities.createSaltedHash(userInstance.salt, userInstance.password)
+		
+		userInstance.save()
+			.then( () => res.status(200).send('Created new user'))
+			.catch( (err) => {
+				logger.error(err)
+				return res.status(500).send(err.message)
+			})
+	})
+	
 
 })
 
