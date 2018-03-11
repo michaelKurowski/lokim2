@@ -19,9 +19,7 @@ describe('register controller', () => {
 
 	describe('POST', () => {
 		beforeEach(() => {
-
 			suite.METHOD = 'POST'
-
 			suite.DUMMY_USERNAME = 'Rick'
 			suite.DUMMY_PASSWORD = 'ImPickleRick'
 			suite.DUMMY_EMAIL = 'morty@ricks-confederation.com'
@@ -74,7 +72,6 @@ describe('register controller', () => {
 				suite.registerPostSuccessfulController(requestMock, suite.responseMock)
 
 				//then
-
 				suite.responseMock.on('send', () => {
 					const responseBody = suite.responseMock._getData()
 					const expectedResponseBody = JSON.stringify({

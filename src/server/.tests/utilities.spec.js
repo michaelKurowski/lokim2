@@ -12,11 +12,11 @@ describe('utilities.js', () => {
 	describe('#createSaltedHash()', () => {
 		beforeEach(() => {
 			suite = {}
-			suite.DUMMY_PASSWORD = 'imADummyPassword321'
+			suite.DUMMY_PASSPHRASE = 'imADummyPassphrase321'
 			suite.DUMMY_SALT = 'imADummySalt321'
 		})
 
-		it('should return null when no arguments are password', () => {
+		it('should return null when no arguments are passed', () => {
 			//given
 			
 			//when
@@ -26,9 +26,8 @@ describe('utilities.js', () => {
 			assert.isNull(generatedHash)
 		})
 
-		it('should return null when no password is passed', () => {
+		it('should return null when no passphrase is passed', () => {
 			//given
-
 			const salt = suite.DUMMY_SALT
 			
 			//when
@@ -38,14 +37,13 @@ describe('utilities.js', () => {
 			assert.isNull(generatedHash)
 		})
 
-		it('should return string when correct password and salt are passed', () => {
+		it('should return string when correct passphrase and salt are passed', () => {
 			//given
-
 			const salt = suite.DUMMY_SALT
-			const password = suite.DUMMY_PASSWORD
+			const passphrase = suite.DUMMY_PASSPHRASE
 			
 			//when
-			const generatedHash = Utilities.createSaltedHash(salt, password)
+			const generatedHash = Utilities.createSaltedHash(salt, passphrase)
 
 			//then
 			assert.isString(generatedHash)
@@ -86,6 +84,7 @@ describe('utilities.js', () => {
 			//when
 			const generatedSalt1 = Utilities.generateSalt(saltSize)
 			const generatedSalt2 = Utilities.generateSalt(saltSize)
+
 			//then
 			assert.notStrictEqual(generatedSalt1, generatedSalt2)
 		})
