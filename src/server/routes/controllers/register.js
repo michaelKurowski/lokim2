@@ -1,4 +1,4 @@
-const errorMessages = require('./utilities/errorMessages')
+const responseMessages = require('./utilities/responseMessages')
 const statusCodes = require('./utilities/statusCodes')
 const Utilities = require('../../utilities')
 const logger = require('../../logger.js')
@@ -6,14 +6,6 @@ const SALT_SIZE = 70
 
 function createPostRegisterController(UserModel = require('../../models/user')) {
 	return (req, res) => {
-		const data = req.body
-		if (!data.username || !data.password || !data.email) {
-			const responseMessage = Utilities.createError(errorMessages.FAILED_TO_CREATE_USER)
-			res.status(statusCodes.BAD_REQUEST)
-			res.send(responseMessage)
-			return 
-		}
-
 		const salt = Utilities.generateSalt(SALT_SIZE)
 		const password = Utilities.createSaltedHash(salt, req.body.password)
 
@@ -25,14 +17,18 @@ function createPostRegisterController(UserModel = require('../../models/user')) 
 		}
 
 		const userInstance = new UserModel(userData)
-
+		console.log('userInstance', userInstance.save())
 		userInstance.save()
-			.then(() => res.status(statusCodes.OK).send('Created new user'))
+			.then(() => {
+				res.status(statusCodes.OK)
+				const responseMessage = Utilities.createMessage(responseMessages.successes.USER_HAS_BEEN_CREATED)
+				res.json(responseMessage)
+			})
 			.catch(err => {
-				logger.error(`Register contoller error: ${err}`)
-				const responseMessage = Utilities.createError(errorMessages.FAILED_TO_CREATE_USER)
+				logger.info(`Register contoller error: ${err}`)
+				const responseMessage = Utilities.createMessage(responseMessages.errors.FAILED_TO_CREATE_USER)
 				res.status(statusCodes.BAD_REQUEST)
-				res.send(responseMessage)
+				res.json(responseMessage)
 				return 
 			})
 	}

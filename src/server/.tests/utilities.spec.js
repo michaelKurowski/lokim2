@@ -91,7 +91,7 @@ describe('utilities.js', () => {
 		})
 	})
 
-	describe('#createError()', () => {
+	describe('#createMessage()', () => {
 		beforeEach(() => {
 			suite = {}
 			suite.DUMMY_MESSAGE = 'Im a happy error'
@@ -102,7 +102,7 @@ describe('utilities.js', () => {
 			const message = suite.DUMMY_MESSAGE
 
 			//when
-			const createdError = Utilities.createError(message)
+			const createdError = Utilities.createMessage(message)
 
 			//then
 			assert.exists(createdError.description)

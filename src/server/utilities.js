@@ -15,7 +15,7 @@ class Utilities {
 		return  hash.update(passpharse + salt).digest('hex')	
 	}
 
-	static createError(textMessage) {
+	static createMessage(textMessage) {
 		return {
 			description: textMessage
 		}
