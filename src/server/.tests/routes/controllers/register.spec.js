@@ -4,7 +4,7 @@ const sinon = require('sinon')
 const httpMocks = require('node-mocks-http')
 const responseMessages = require('../../../routes/controllers/utilities/responseMessages')
 const statusCodes = require('../../../routes/controllers/utilities/statusCodes')
-
+const EventEmitter = require('events').EventEmitter
 let suite = null
 
 //TODO Mock res & req objects using node-mocks-http
@@ -13,7 +13,7 @@ describe('register controller', () => {
 		suite = {}
 		suite.URL = '/register'
 		suite.responseMock = httpMocks.createResponse({
-			eventEmitter: require('events').EventEmitter
+			eventEmitter: EventEmitter
 		})
 	})
 	afterEach(() => {
