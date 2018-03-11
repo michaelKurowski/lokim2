@@ -5,7 +5,7 @@ const httpMocks = require('node-mocks-http')
 const responseMessages = require('../../../routes/controllers/utilities/responseMessages')
 const statusCodes = require('../../../routes/controllers/utilities/statusCodes')
 const EventEmitter = require('events').EventEmitter
-let suite = null
+let suite = {}
 
 //TODO Mock res & req objects using node-mocks-http
 describe('register controller', () => {
@@ -15,9 +15,6 @@ describe('register controller', () => {
 		suite.responseMock = httpMocks.createResponse({
 			eventEmitter: EventEmitter
 		})
-	})
-	afterEach(() => {
-		suite = null
 	})
 
 	describe('POST', () => {
