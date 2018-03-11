@@ -17,7 +17,6 @@ function createPostRegisterController(UserModel = require('../../models/user')) 
 		}
 
 		const userInstance = new UserModel(userData)
-		console.log('userInstance', userInstance.save())
 		userInstance.save()
 			.then(() => {
 				res.status(statusCodes.OK)
