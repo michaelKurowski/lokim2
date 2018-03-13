@@ -1,7 +1,8 @@
 const winston = require('winston')
 const Logger = winston.Logger
 const config = require('./config.json')
-const logsFilePath = `./logs/${config.logFile}`
+const path = require('path')
+const logsFilePath = path.resolve(`${__dirname}/logs/${config.logFile}`)
 
 const consoleOutput = winston.transports.Console
 const fileOutput = winston.transports.File
