@@ -1,4 +1,4 @@
 src/server/node_modules
 **/.DS_Store
-src/server/logs/
+src/server/logs/*
 **/*.log
