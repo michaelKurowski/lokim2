@@ -62,7 +62,6 @@ describe('GitListener', () => {
 			suite.spawnMock.stdout = new EventEmitter()
 
 			suite.spawnStub = sinon.stub().returns(suite.spawnMock)
-			suite.spawnSpy = sinon.spy(suite.spawnStub)
 		})
 
 		it('should return a promise', () => {
