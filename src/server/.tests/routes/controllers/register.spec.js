@@ -7,7 +7,6 @@ const statusCodes = require('../../../routes/controllers/utilities/statusCodes')
 const EventEmitter = require('events').EventEmitter
 let suite = {}
 
-//TODO Mock res & req objects using node-mocks-http
 describe('register controller', () => {
 	beforeEach(() => {
 		suite = {}
@@ -42,7 +41,7 @@ describe('register controller', () => {
 					}
 				})
 				suite.responseMock.on('send', then)
-				
+
 				//when
 				suite.registerPostFailingController(requestMock, suite.responseMock)
 
