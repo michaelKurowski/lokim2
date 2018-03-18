@@ -1,7 +1,7 @@
 const gitMessages = require('./gitMessages')
 const logger = require('../logger')
 const config = require('../config.json')
-const spawn = require('child_process').spawn
+const spawnChildProcess = require('child_process').spawn
 const path = require('path')
 
 const CURRENT_PATH = path.resolve(__dirname)
@@ -35,7 +35,7 @@ class GitListener {
 		logger.info(`Git monitor is listening on port ${PORT}`)
 	}
 
-	pullBranch() {
+	pullBranch(spawn = spawnChildProcess) {
 		return new Promise( (resolve, reject) => {
 			const COMMAND_CONFIG = {cwd: CURRENT_PATH}
 			const ARGUMENTS = ['pull', '--force', 'origin', BRANCH]
@@ -43,10 +43,10 @@ class GitListener {
 
 			const gitPull = spawn(COMMAND, ARGUMENTS, COMMAND_CONFIG)
 
-			gitPull.stdout.on('data', resolve)
 			gitPull.on('error', reject)
 			gitPull.on('close', code => {
-				if (code !== 0) reject(`git pull failed, and closed with code: ${code}`)
+				if (code !== 0) return reject(`git pull failed, and closed with code: ${code}`)
+				resolve()
 			})
 		})
 

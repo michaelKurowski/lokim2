@@ -1,8 +1,13 @@
 const GitListener = require('../../gitSyncer/GitListener')
-const assert = require('chai').assert
+const chai = require('chai')
+const chaiAsPromised = require('chai-as-promised')
 const httpMocks = require('node-mocks-http')
 const EventEmitter = require('events').EventEmitter
 const GitWebHookMocker = require('./GitWebHookMocker')
+const sinon = require('sinon')
+
+chai.use(chaiAsPromised)
+const assert = chai.assert
 
 let suite = {}
 
@@ -52,6 +57,56 @@ describe('GitListener', () => {
 	})
 
 	describe('#pullBranch', () => {
+		beforeEach(() => {
+			suite.spawnMock = new EventEmitter()
+			suite.spawnMock.stdout = new EventEmitter()
 
+			suite.spawnStub = sinon.stub().returns(suite.spawnMock)
+			suite.spawnSpy = sinon.spy(suite.spawnStub)
+		})
+
+		it('should return a promise', () => {
+			//given
+
+			//when
+			const functionOutput = suite.gitListener.pullBranch(suite.spawnStub)
+
+			//then
+			const isOutputPromise = functionOutput instanceof Promise
+			assert.isTrue(isOutputPromise)
+		})
+
+		it('should reject promise when command exitting with code 1', () => {
+			//given
+
+			//when
+			const functionOutput = suite.gitListener.pullBranch(suite.spawnStub)
+			suite.spawnMock.emit('close', 1)
+
+			//then
+			return assert.isRejected(functionOutput)
+		})
+
+		it('should resolve promise when command closing with code 0', () => {
+			//given
+
+			//when
+			const functionOutput = suite.gitListener.pullBranch(suite.spawnStub)
+			suite.spawnMock.emit('close', 0)
+
+			//then
+			return assert.isFulfilled(functionOutput)
+		})
+
+		it('should resolve promise when error event is being sent', () => {
+			//given
+
+			//when
+			const functionOutput = suite.gitListener.pullBranch(suite.spawnStub)
+			suite.spawnMock.emit('error')
+
+			//then
+			return assert.isRejected(functionOutput)
+		})
 	})
 })
