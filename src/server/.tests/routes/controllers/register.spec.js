@@ -31,6 +31,7 @@ describe('register controller', () => {
 
 			it('should respond with user creation failure when all required data is provided and model validation fails', done => {
 				//given
+				const RESPONSE_EVENT_TYPE = 'send'
 				const requestMock = httpMocks.createRequest({
 					method: suite.METHOD,
 					url: suite.URL,
@@ -40,7 +41,7 @@ describe('register controller', () => {
 						password: suite.DUMMY_PASSWORD
 					}
 				})
-				suite.responseMock.on('send', then)
+				suite.responseMock.on(RESPONSE_EVENT_TYPE, then)
 
 				//when
 				suite.registerPostFailingController(requestMock, suite.responseMock)
@@ -51,13 +52,14 @@ describe('register controller', () => {
 					const expectedResponseBody = JSON.stringify({
 						description: responseMessages.errors.FAILED_TO_CREATE_USER
 					})
-					assert.deepEqual(responseBody, expectedResponseBody)
+					assert.strictEqual(responseBody, expectedResponseBody)
 					done()
 				}
 			})
 
 			it('should respond with user creation success when all required data is provided and model validation finishes successfuly', done => {
 				//given
+				const RESPONSE_EVENT_TYPE = 'send'
 				const requestMock = httpMocks.createRequest({
 					method: suite.METHOD,
 					url: suite.URL,
@@ -67,20 +69,21 @@ describe('register controller', () => {
 						password: suite.DUMMY_PASSWORD
 					}
 				})
+
+				suite.responseMock.on(RESPONSE_EVENT_TYPE, then)
+
 				//when
 				suite.registerPostSuccessfulController(requestMock, suite.responseMock)
 
 				//then
-				suite.responseMock.on('send', () => {
+				function then() {
 					const responseBody = suite.responseMock._getData()
 					const expectedResponseBody = JSON.stringify({
 						description: responseMessages.successes.USER_HAS_BEEN_CREATED
 					})
-
-					assert.deepEqual(responseBody, expectedResponseBody)
+					assert.strictEqual(responseBody, expectedResponseBody)
 					done()
-				})
-
+				}
 			})
 		})
 	})
