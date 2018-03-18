@@ -5,6 +5,7 @@ const httpMocks = require('node-mocks-http')
 const EventEmitter = require('events').EventEmitter
 const GitWebHookMocker = require('./GitWebHookMocker')
 const sinon = require('sinon')
+const config = require('../../config.json')
 
 chai.use(chaiAsPromised)
 const assert = chai.assert
@@ -62,6 +63,8 @@ describe('GitListener', () => {
 			suite.spawnMock.stdout = new EventEmitter()
 
 			suite.spawnStub = sinon.stub().returns(suite.spawnMock)
+
+			suite.spawnSpy = sinon.spy(suite.spawnStub)
 		})
 
 		it('should return a promise', () => {
@@ -77,10 +80,12 @@ describe('GitListener', () => {
 
 		it('should reject promise when command exitting with code 1', () => {
 			//given
+			const CLOSE_CODE = 1
+			const EVENT_TYPE = 'close'
 
 			//when
 			const functionOutput = suite.gitListener.pullBranch(suite.spawnStub)
-			suite.spawnMock.emit('close', 1)
+			suite.spawnMock.emit(EVENT_TYPE, CLOSE_CODE)
 
 			//then
 			return assert.isRejected(functionOutput)
@@ -88,10 +93,12 @@ describe('GitListener', () => {
 
 		it('should resolve promise when command closing with code 0', () => {
 			//given
+			const CLOSE_CODE = 0
+			const EVENT_TYPE = 'close'
 
 			//when
 			const functionOutput = suite.gitListener.pullBranch(suite.spawnStub)
-			suite.spawnMock.emit('close', 0)
+			suite.spawnMock.emit('close', CLOSE_CODE)
 
 			//then
 			return assert.isFulfilled(functionOutput)
@@ -99,13 +106,38 @@ describe('GitListener', () => {
 
 		it('should resolve promise when error event is being sent', () => {
 			//given
+			const EVENT_TYPE = 'error'
 
 			//when
 			const functionOutput = suite.gitListener.pullBranch(suite.spawnStub)
-			suite.spawnMock.emit('error')
+			suite.spawnMock.emit(EVENT_TYPE)
 
 			//then
 			return assert.isRejected(functionOutput)
+		})
+
+		it('should spawn new child process', () => {
+			//given
+
+			//when
+			const functionOutput = suite.gitListener.pullBranch(suite.spawnSpy)
+
+			//then
+			assert.isTrue(suite.spawnSpy.called)
+		})
+
+		it('should spawn git pull --force origin <branch from config>', () => {
+			//given
+			const COMMAND = 'pull'
+			const ARGUMENTS = ['--force', 'origin', config.gitIntegration.branch]
+
+			//when
+			const functionOutput = suite.gitListener.pullBranch(suite.spawnSpy)
+
+			//then
+			const expectedCommand = [COMMAND, ...ARGUMENTS]
+			const actualCommand = suite.spawnSpy.args[0][1]
+			assert.deepEqual(actualCommand, expectedCommand)
 		})
 	})
 })
