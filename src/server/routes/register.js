@@ -4,7 +4,7 @@ const router = express.Router()
 const UserModel = require('../models/user')
 const logger = require('../logger.js')
 const Utilities = require('../utilities')
-const errorMessages = require('./utilities/errorMessages')
+const msg = require('./utilities/messages')
 const statusCodes = require('./utilities/statusCodes')
 const SALT_SIZE = 70
 
@@ -27,7 +27,7 @@ router.post('/', (req, res) => {
 		.catch( err => {
 			logger.error(err)
 			return res.status(statusCodes.BAD_REQUEST)
-				.send(Utilities.createError(errorMessages.BAD_REQUST))
+				.send(Utilities.createError(msg.Errors.BAD_REQUST))
 		})
 })
 

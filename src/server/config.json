@@ -11,5 +11,15 @@
     "gitIntegration": {
         "branch": "master",
         "listeningPort": 5001
-    }
+    },
+	"session": {
+		"secret": "",
+		"resave": null,
+		"saveUninitialized": null,
+		"cookie": {
+			"secure": null,
+			"expires": 0
+		}
+	}
+	
 }

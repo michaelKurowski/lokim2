@@ -4,31 +4,73 @@ const logger = require('../logger')
 const UserModel = require('../models/user')
 const Utilities = require('../utilities')
 const statusCodes = require('./utilities/statusCodes')
-const errorMsg = require('./utilities/errorMessages')
+const msg = require('./utilities/messages')
 
-router.post('/', (req, res) => {
-	const index = {
-		username: req.body.username
-	}
+const passport = require('passport')
+const LocalStrategy = require('passport-local').Strategy
+
+const LOGIN_STRATEGY = 'loginStratefy'
+
+router.post('/', (req, res, next) => {
 	
-	const password = req.body.password
+	if(req.isAuthenticated()) {
+		return res.status(statusCodes.OK).send(msg.Success.LOGGED_USER)
+	}
+
+	passport.authenticate(LOGIN_STRATEGY, function(err, user, info) {
+
+		if (!user) { 
+			res.status(statusCodes.UNAUTHORIZED)
+			return res.send(Utilities.createError(msg.Errors.UNAUTHORIZED_ACCESS)) }
+		
+		req.logIn(user, function(err) {
+			if (err) { 
+				logger.error(err) 
+				res.status(statusCodes.INTERNAL_SERVER)
+				return res.send(Utilities.createError(msg.Errors.INTERNAL_SERVER))
+			}
+			return res.status(statusCodes.OK).send(msg.Success.LOGGED_USER)
+		})
+	})(req, res, next)
+})
+
+passport.serializeUser( (user, done) => {
+	done(null, user.id)
+} )
+
+passport.deserializeUser( (id, done) => {
+	UserModel.findById(id, (err, user) => {
+		done(err, user)
+	})
+})
+
+passport.use(LOGIN_STRATEGY, new LocalStrategy({
+	usernameField: 'username',
+	passwordField: 'password'
+}, 
+(username, password, done) => {
+
+	const index = {
+		username
+	}
 
 	UserModel.findOne(index).exec()
-		.then( (doc) => {
-			const hash = Utilities.createSaltedHash(doc.salt, password)
+		.then( (user) => {
+			const hash = Utilities.createSaltedHash(user.salt, password)
 
-			if (hash == doc.password)
-				return res.status(statusCodes.OK).send('OK')
-			
-			return res.status(statusCodes.UNAUTHORIZED)
-				.json(Utilities.createError(errorMsg.UNAUTHORIZED_ACCESS))
+			if (hash == user.password) {
+				return done(null, user)
+			}
+
+			return done(null, false, {message: msg.Errors.UNAUTHORIZED_ACCESS})
 		})
 		.catch(err => {
 			logger.error(err)
-			return res.status(statusCodes.BAD_REQUEST)
-				.json(Utilities.createError(errorMsg.BAD_REQUST))
+			return done(null, false, {message: msg.Errors.INTERNAL_SERVER})
 		})
+
 	
-})
+}))
+
 
 module.exports = router
