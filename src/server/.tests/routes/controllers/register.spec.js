@@ -41,20 +41,20 @@ describe('register controller', () => {
 						password: suite.DUMMY_PASSWORD
 					}
 				})
-
+				suite.responseMock.on('send', then)
+				
 				//when
 				suite.registerPostFailingController(requestMock, suite.responseMock)
 
 				//then
-				suite.responseMock.on('send', () => {
+				function then() {
 					const responseBody = suite.responseMock._getData()
 					const expectedResponseBody = JSON.stringify({
 						description: responseMessages.errors.FAILED_TO_CREATE_USER
 					})
 					assert.deepEqual(responseBody, expectedResponseBody)
 					done()
-				})
-
+				}
 			})
 
 			it('should respond with user creation success when all required data is provided and model validation finishes successfuly', done => {
