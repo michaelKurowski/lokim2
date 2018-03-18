@@ -8,7 +8,7 @@ const sinon = require('sinon')
 const config = require('../../config.json')
 
 chai.use(chaiAsPromised)
-const assert = chai.assert
+const assert = chai.assert
 
 let suite = {}
 
@@ -98,7 +98,7 @@ describe('GitListener', () => {
 
 			//when
 			const functionOutput = suite.gitListener.pullBranch(suite.spawnStub)
-			suite.spawnMock.emit('close', CLOSE_CODE)
+			suite.spawnMock.emit(EVENT_TYPE, CLOSE_CODE)
 
 			//then
 			return assert.isFulfilled(functionOutput)
@@ -120,7 +120,7 @@ describe('GitListener', () => {
 			//given
 
 			//when
-			const functionOutput = suite.gitListener.pullBranch(suite.spawnSpy)
+			suite.gitListener.pullBranch(suite.spawnSpy)
 
 			//then
 			assert.isTrue(suite.spawnSpy.called)
@@ -132,7 +132,7 @@ describe('GitListener', () => {
 			const ARGUMENTS = ['--force', 'origin', config.gitIntegration.branch]
 
 			//when
-			const functionOutput = suite.gitListener.pullBranch(suite.spawnSpy)
+			suite.gitListener.pullBranch(suite.spawnSpy)
 
 			//then
 			const expectedCommand = [COMMAND, ...ARGUMENTS]

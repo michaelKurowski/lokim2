@@ -1,9 +1,7 @@
 const registerController = require('../../../routes/controllers/register')
 const assert = require('chai').assert
-const sinon = require('sinon')
 const httpMocks = require('node-mocks-http')
 const responseMessages = require('../../../routes/controllers/utilities/responseMessages')
-const statusCodes = require('../../../routes/controllers/utilities/statusCodes')
 const EventEmitter = require('events').EventEmitter
 let suite = {}
 
