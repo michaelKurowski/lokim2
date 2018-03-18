@@ -1,13 +1,9 @@
 const logger = require('../../logger')
-const UserModel = require('../../models/user')
 const Utilities = require('../../utilities')
 const statusCodes = require('./utilities/statusCodes')
 const msg = require('./utilities/responseMessages')
-
+const passportStatics = require('../../passport/passportStatics')
 const passport = require('passport')
-const LocalStrategy = require('passport-local').Strategy
-
-const LOGIN_STRATEGY = 'loginStratefy'
 
 function createPostLoginController() {
 	return (req, res, next) => {
