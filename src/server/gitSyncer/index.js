@@ -7,5 +7,5 @@ const PORT = config.gitIntegration.listeningPort
 const listener = new GitListener()
 
 app.use(bodyParser.json())
-app.post('/', listener.handleHttpRequests)
+app.post('/', listener.handleHttpRequests.bind(listener))
 app.listen(PORT, listener.handleListeningErrors)

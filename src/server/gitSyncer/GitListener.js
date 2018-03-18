@@ -24,6 +24,7 @@ class GitListener {
 		}
 
 		logger.info(gitMessages.logger.PUSH_EVENT_RECEIVED)
+		this.pullBranch()
 		return response.send('OK')
 	}
 
@@ -40,17 +41,20 @@ class GitListener {
 			const COMMAND_CONFIG = {cwd: CURRENT_PATH}
 			const ARGUMENTS = ['pull', '--force', 'origin', BRANCH]
 			const COMMAND = 'git'
-
 			const gitPull = spawn(COMMAND, ARGUMENTS, COMMAND_CONFIG)
-
-			gitPull.on('error', reject)
+			gitPull.stdout.on('data', chunk => logger.info(chunk.toString()))
+			gitPull.on('error', err => {
+				logger.info(err)
+				reject()
+			})
 			gitPull.on('close', code => {
 				if (code !== 0) return reject(`git pull failed, and closed with code: ${code}`)
 				resolve()
 			})
 		})
-
 	}
 }
+
+
 
 module.exports = GitListener
