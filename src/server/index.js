@@ -6,10 +6,19 @@ const app = express()
 const logger = require('./logger.js')
 
 const passport = require('passport')
+const passportMiddleware = require('./passport/passportMiddleware')
+const passportStatics = require('./passport/passportStatics')
 const expressSession = require('express-session')
 const MongoSessionStore = require('connect-mongo')(expressSession)
 
 const dbConnection = require('./dbConnection')
+
+passport.serializeUser(passportMiddleware.serializeUser)
+
+passport.deserializeUser(passportMiddleware.deserializeUser)
+
+passport.use(passportStatics.LOGIN_STRATEGY, passportMiddleware.loginStrategy )
+
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
