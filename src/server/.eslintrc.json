@@ -2,7 +2,8 @@
 	"env": {
 		"node": true,
 		"commonjs": true,
-		"es6": true
+		"es6": true,
+		"mocha": true
 	},
 	"extends": "eslint:recommended",
 	"rules": {
@@ -25,6 +26,10 @@
 		],
 		"comma-spacing": 2,
 		"space-before-blocks": "error",
-		"arrow-spacing": "error"
-	}
+		"arrow-spacing": "error",
+		"no-only-tests/no-only-tests": 2
+	},
+	"plugins": [
+		"no-only-tests"
+	]
 }
