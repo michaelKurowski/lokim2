@@ -1,5 +1,8 @@
 {
     "eslint.enable": true,
     "eslint.provideLintTask": true,
-    "eslint.options": { "configFile": "./src/server/.eslintrc.json" }
+    "eslint.options": {
+        "configFile": "./src/server/.eslintrc.json",
+        "ignorePath": "./src/server/.eslintignore"
+    }
 }
