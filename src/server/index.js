@@ -6,18 +6,27 @@ const app = express()
 const logger = require('./logger.js')
 
 const passport = require('passport')
-const passportMiddleware = require('./passport/passportMiddleware')
-const passportStatics = require('./passport/passportStatics')
+const LocalStrategy = require('passport-local').Strategy
+const passportMiddlewareCallbacks = require('./passport/middlewareCallbacks')
+const passportStrategiesNames = require('./passport/strategiesNames')
 const expressSession = require('express-session')
 const MongoSessionStore = require('connect-mongo')(expressSession)
 
 const dbConnection = require('./dbConnection')
 
-passport.serializeUser(passportMiddleware.serializeUser)
+passport.serializeUser(passportMiddlewareCallbacks.loginStrategy().serializeUserCallback)
 
-passport.deserializeUser(passportMiddleware.deserializeUser)
+passport.deserializeUser(passportMiddlewareCallbacks.loginStrategy().deserializeUserCallback)
 
-passport.use(passportStatics.LOGIN_STRATEGY, passportMiddleware.loginStrategy )
+passport.use(passportStrategiesNames.LOGIN_STRATEGY, 
+	new LocalStrategy(
+		{
+			usernameField: 'username',
+			passwordField: 'password'
+		},
+		passportMiddlewareCallbacks.loginStrategy().StrategyCallback
+	)
+)
 
 
 app.use(bodyParser.json())
