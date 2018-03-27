@@ -55,6 +55,4 @@ class GitListener {
 	}
 }
 
-
-
 module.exports = GitListener
