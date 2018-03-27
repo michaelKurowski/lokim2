@@ -24,16 +24,14 @@ describe('login controller', () => {
 			suite.METHOD = 'POST'
 			suite.nextMock = sinon.stub()
 			suite.passportMock = createPassportMock()
-			suite.passportCallbackMock = createPassportCallbackMock()
-			suite.createPostLoginController = loginController.post(suite.passportMock, suite.passportCallbackMock)
+			suite.loginUtilsMock = createLoginUtilskMock()
+			suite.createPostLoginController = loginController.post(suite.passportMock, suite.loginUtilsMock)
 			suite.isAuthenticatedPOSITIVE= () => true
 			suite.isAuthenticatedFAILURE = () => false
 		})
 
-		it('should respond with successfully login when cookie with correct session was given', done => {
-
+		it('should respond with successfully login message when cookie with correct session was given', () => {
 			//given
-		
 			const requestMock = {
 				isAuthenticated: suite.isAuthenticatedPOSITIVE
 			}
@@ -44,58 +42,48 @@ describe('login controller', () => {
 			//then
 			const responseStatus = suite.responseMock._getStatusCode()
 			const responseBody = suite.responseMock._getData()
-
 			const expectedResponseStatus = statusCodes.OK
 			const expectedResponseBody = JSON.stringify({
 				description: responseMessages.successes.LOGGED_USER
 			})
 
-
 			assert.equal(responseStatus, expectedResponseStatus)
 			assert.strictEqual(responseBody, expectedResponseBody)
-			done()
 		})
 
-		it('should be called authentication callback when cookie session is expired or cookie is not given', done => {
-
+		it('should call authentication callback to login strategy when cookie session is expired or cookie is not given', () => {
 			//given
 			const requestMock = {
 				isAuthenticated: suite.isAuthenticatedFAILURE
 			}
 			
-			
 			//when
 			suite.createPostLoginController(requestMock, suite.responseMock, suite.nextMock)
 
-
 			//then
-			assert.isTrue(suite.passportMock.authenticate.getCall(0).calledWith(
+			const passportMockAuthenticateCall = suite.passportMock.authenticate.getCall(0)
+			const handleAuthenticationStub = suite.loginUtilsMock.authenticationUtils().handleAuthentication
+
+			assert.isTrue(passportMockAuthenticateCall.calledWith(
 				passportStrategiesNames.LOGIN_STRATEGY, 
-				suite.passportCallbackMock.authenticateCallback()))
-
-
-			assert.isTrue(suite.passportCallbackMock.authenticateCallback.getCall(0).calledWith(
-				requestMock, 
-				suite.responseMock))
-
-			done()
+				handleAuthenticationStub))
 		})
-
-
 	})
 
-	function createPassportCallbackMock() {
+	function createLoginUtilskMock() {
 		return {
-			authenticateCallback: sinon.stub().returns(() => {return 'Mocked callback'})
+			authenticationUtils: () => {
+				return {
+					handleAuthentication: 'mocked authenticate callback'
+				}
+			}
 		}
 	}
 
 	function createPassportMock() {
-		const authenticateStub = sinon.stub().returns((a, b, c) => {})
+		const authenticateStub = sinon.stub().returns(() => {})
 		return {
 			authenticate: sinon.spy(authenticateStub)
 		}
-	}
-	
-		
+	}		
 })

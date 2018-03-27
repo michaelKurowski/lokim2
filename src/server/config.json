@@ -14,12 +14,11 @@
     },
 	"session": {
 		"secret": "",
-		"resave": null,
-		"saveUninitialized": null,
+		"resave": false,
+		"saveUninitialized": true,
 		"cookie": {
-			"secure": null,
-			"expires": 0
+			"secure": false,
+			"expires": 900000
 		}
 	}
-	
 }

@@ -1,13 +1,13 @@
-const findUserCallback = require('./findUserCallback')
+const passportUtils = require('./passportUtils')
 
 function passportLoginStrategy(UserModel = require('../models/user')) {
 	return {
-		StrategyCallback: (username, password, done) => {
+		strategyCallback: (username, password, done) => {
 		
 			const index = {
 				username
 			}
-			const findUser = findUserCallback(username, password, done)
+			const findUser = passportUtils.handleFindUser(username, password, done)
 			UserModel.findOne(index).exec()
 				.then((user) => findUser.thenCallback(user))
 				.catch(err => findUser.catchCallback(err))

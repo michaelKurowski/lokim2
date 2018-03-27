@@ -7,16 +7,16 @@ const logger = require('./logger.js')
 
 const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy
-const passportMiddlewareCallbacks = require('./passport/middlewareCallbacks')
+const passportMiddlewareUtils = require('./passport/middlewareUtils')
 const passportStrategiesNames = require('./passport/strategiesNames')
 const expressSession = require('express-session')
 const MongoSessionStore = require('connect-mongo')(expressSession)
 
 const dbConnection = require('./dbConnection')
 
-passport.serializeUser(passportMiddlewareCallbacks.loginStrategy().serializeUserCallback)
+passport.serializeUser(passportMiddlewareUtils.loginStrategy().serializeUserCallback)
 
-passport.deserializeUser(passportMiddlewareCallbacks.loginStrategy().deserializeUserCallback)
+passport.deserializeUser(passportMiddlewareUtils.loginStrategy().deserializeUserCallback)
 
 passport.use(passportStrategiesNames.LOGIN_STRATEGY, 
 	new LocalStrategy(
@@ -24,7 +24,7 @@ passport.use(passportStrategiesNames.LOGIN_STRATEGY,
 			usernameField: 'username',
 			passwordField: 'password'
 		},
-		passportMiddlewareCallbacks.loginStrategy().StrategyCallback
+		passportMiddlewareUtils.loginStrategy().strategyCallback
 	)
 )
 
