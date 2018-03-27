@@ -27,7 +27,8 @@
 		"comma-spacing": 2,
 		"space-before-blocks": "error",
 		"arrow-spacing": "error",
-		"no-only-tests/no-only-tests": 2
+		"no-only-tests/no-only-tests": 2,
+		"no-multiple-empty-lines": ["error", { "max": 2}]
 	},
 	"plugins": [
 		"no-only-tests"
