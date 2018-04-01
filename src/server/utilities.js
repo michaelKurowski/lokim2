@@ -21,32 +21,32 @@ class Utilities {
 		}
 	}
 
-	static createWebsocketRoute(io, namespaceInfo, controllersBundle) {
+	static createWebsocketRoute(io, namespaceInfo, controllersBundle, connectionsRepository) {
 		io.of(namespaceInfo.name)
-			.on('connection', bindEventListenersToSocket(namespaceInfo, controllersBundle))
+			.on('connection', bindEventListenersToSocket(namespaceInfo, controllersBundle, connectionsRepository))
 	}
 }
 
-function bindEventListenersToSocket(namespaceInfo, controllersBundle) {
+function bindEventListenersToSocket(namespaceInfo, controllersBundle, connectionsRepository) {
 	return socket => {
 		const eventTypesSet = namespaceInfo.eventTypes
 		const areEventTypesNotSet = !(eventTypesSet instanceof Set)
 		if (areEventTypesNotSet) throw `Event types of "${namespaceInfo.name}" should be instance of Set, but are "${eventTypesSet.constructor.name}"`
 		const eventTypesList = [...namespaceInfo.eventTypes]
-		_.forEach(eventTypesList, setEventListener(socket, controllersBundle))
+		_.forEach(eventTypesList, setEventListener(socket, controllersBundle, connectionsRepository))
 	}
 }
 
-function runConnectionEventHandler(socketToPass, controllersBundle) {
-	controllersBundle['connection'](socketToPass)
+function runConnectionEventHandler(socketToPass, controllersBundle, connectionsRepository) {
+	controllersBundle['connection'](socketToPass, connectionsRepository)
 }
 
-function setEventListener(socket, controllersBundle) {
+function setEventListener(socket, controllersBundle, connectionsRepository) {
 	return eventType => {
 		if (!controllersBundle[eventType]) throw `Can't find event "${eventType}" in controller of namespace "${namespaceInfo.name}"`
 		if (eventType === 'connection')
-			return runConnectionEventHandler(socket, controllersBundle)
-		socket.on(eventType, data => controllersBundle[eventType](data, socket))
+			return runConnectionEventHandler(socket, controllersBundle, connectionsRepository)
+		socket.on(eventType, data => controllersBundle[eventType](data, socket, connectionsRepository))
 	}
 }
 
