@@ -4,18 +4,19 @@ const _ = require('lodash')
 class Room {
 	static connection(socket, connections) {
 		//TODO get user ID from req
-		const userId = 'AAAA' + uuidv4()
+		const userId = socket.client.conn.id
 		const roomId = 'AAAA' + uuidv4()
-		console.log(userId, 'connected')
+		console.log(userId, 'connected', Object.keys(socket.handshake), 'cookie ' + socket.handshake.headers.cookie)
 		connections.usersToConnectionsMap.set(userId, socket)
 		Room.join({roomId}, socket, connections)
 	}
 
 	static join(data, socket, connections) {
 		const {roomId} = data
-		socket.emit('joined', {userId: socket.client.conn.id})
+		const userId = socket.client.conn.id
+		socket.emit('joined', {userId, roomId})
 		socket.join(roomId)
-		socket.emit('debug', `Joined to room ${roomId}`)
+		socket.emit('debug', `"${userId}" joined to room "${roomId}"`)
 	}
 
 	static message(data, socket, connections) {
@@ -33,11 +34,11 @@ class Room {
 		const {invitedUsers} = data
 		const roomId = uuidv4()
 
-		Room.join(roomId, socket, connections)
+		Room.join({roomId}, socket, connections)
 
 		_.forEach(invitedUsers, userId => {
 			const invitedUserSocket = connections.usersToConnectionsMap.get(userId)
-			Room.join(roomId, invitedUserSocket, connections)
+			Room.join({roomId}, invitedUserSocket, connections)
 		})
 	}
 
