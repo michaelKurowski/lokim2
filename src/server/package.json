@@ -4,6 +4,7 @@
   "description": "Ultra secure communicator server",
   "main": "index.js",
   "scripts": {
+    "start": "node ./index.js",
     "test": "./node_modules/mocha/bin/mocha './.tests/**/*.spec.js'",
     "eslint": "node ./node_modules/eslint/bin/eslint.js -c ./.eslintrc.json --ignore-path ./.eslintignore ./"
   },
