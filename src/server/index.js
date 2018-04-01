@@ -6,7 +6,7 @@ const app = express()
 const httpServer = require('http').Server(app);
 const logger = require('./logger.js')
 const initializeWebSocketRouting = require('./ws-routes/ws-routes')
-const io = require('socket.io')(httpServer)
+const io = require('socket.io')(httpServer, {path: '/connection'})
 
 const passport = require('passport')
 const expressSession = require('express-session')

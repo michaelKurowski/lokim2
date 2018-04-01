@@ -5,7 +5,7 @@
 
 	function connect() {
 		const address = document.getElementById('address').value
-		connection = io.connect(address)
+		connection = io(address, {path: '/connection'})
 		connection.on('connection', frame => {
 			console.log('connected to address')
 		})
