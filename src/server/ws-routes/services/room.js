@@ -5,23 +5,21 @@ class Room {
 	static connection(socket, connections) {
 		//TODO get user ID from req
 		const userId = 'AAAA' + uuidv4()
+		const roomId = 'AAAA' + uuidv4()
 		console.log(userId, 'connected')
-		socket.join(userId)
 		connections.usersToConnectionsMap.set(userId, socket)
-		
-		socket.emit('joined', {userId})
+		Room.join({roomId}, socket, connections)
 	}
 
 	static join(data, socket, connections) {
-		const roomId = data.roomId
+		const {roomId} = data
 		socket.emit('joined', {userId: socket.client.conn.id})
 		socket.join(roomId)
 		socket.emit('debug', `Joined to room ${roomId}`)
 	}
 
 	static message(data, socket, connections) {
-		const roomId = data.roomId
-		const message = data.message
+		const {roomId, message} = data
 		
 		socket.to(roomId).emit('message', message)
 		socket.to(roomId).emit('debug', `Sent message to room ${roomId}`)
@@ -32,7 +30,7 @@ class Room {
 	}
 
 	static create(data, socket, connections) {
-		const invitedUsers = data.invitedUsers
+		const {invitedUsers} = data
 		const roomId = uuidv4()
 
 		Room.join(roomId, socket, connections)
