@@ -1,6 +1,4 @@
-const UserModel = require('../../models/user')
 const uuidv4 = require('uuid/v4')
-const namespaces = require('../../protocol/webSocketNamespaces')
 const _ = require('lodash')
 
 class Room {
@@ -16,7 +14,6 @@ class Room {
 
 	static join(data, socket, connections) {
 		const roomId = data.roomId
-		console.log('#join', data, roomId, typeof data)
 		socket.emit('joined', {userId: socket.client.conn.id})
 		socket.join(roomId)
 		socket.emit('debug', `Joined to room ${roomId}`)
@@ -37,25 +34,16 @@ class Room {
 	static create(data, socket, connections) {
 		const invitedUsers = data.invitedUsers
 		const roomId = uuidv4()
-		//console.log(socket)
 
-		socket.join(roomId)
-		socket.emit('joined', {userId: socket.client.conn.id})
-		socket.emit('debug', `Joined room: ${roomId}`)
-		
+		Room.join(roomId, socket, connections)
+
 		_.forEach(invitedUsers, userId => {
-			//TODO get users from connections
-			const invitedUserSocket = socket.server.sockets.sockets[userId]
-			invitedUserSocket.join(roomId)
-			invitedUserSocket.to(roomId).emit('joined', {userId: userId})
-			invitedUserSocket.to(roomId).emit('debug', `Joined room: ${roomId}`)
+			const invitedUserSocket = connections.usersToConnectionsMap.get(userId)
+			Room.join(roomId, invitedUserSocket, connections)
 		})
-		
-
 	}
 
 	static list(data, socket, connections) {
-		console.log(Object.keys(socket.server.sockets.sockets))
 		const namespace = socket.nsp
 		namespace.clients((error, clients) => {
 			socket.emit('listClients', clients)
