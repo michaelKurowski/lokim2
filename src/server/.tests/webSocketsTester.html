@@ -1,0 +1,75 @@
+<script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js'></script>
+
+<script>
+	let connection
+
+	function connect() {
+		const address = document.getElementById('address').value
+		connection = io.connect(address)
+		connection.on('connection', frame => {
+			console.log('connected to address')
+		})
+	}
+
+	function emitEvent() {
+		const eventName = document.getElementById('event-name-to-send').value
+		const eventValue = document.getElementById('event-value').value
+		const eventValueObject = eventValue ? JSON.parse(eventValue) : null
+		console.log(typeof eventValueObject)
+		connection.emit(eventName, eventValueObject)
+	}
+
+	function listenForEvent() {
+		const eventName = document.getElementById('event-name-to-listen').value
+
+		const eventsTable = document.getElementById('events-to-listen')
+		eventsTable.innerHTML += `<tr><td></td><td>${eventName}</td></tr>`
+
+
+		connection.on(eventName, packet => {
+			console.log(`Received :${eventName}: event. Value: "${packet}"`)
+			const wsTable = document.getElementById('ws-table')
+
+			wsTable.innerHTML += `<tr><td>Address</td><td>Received</td><td>${eventName}</td><td>${packet}</td></tr>`
+		})
+	}
+</script>
+
+<style>
+
+	table {
+		border-style: solid;
+		width: 100%;
+		max-height: 600px;
+		overflow: scroll;
+	}
+
+	tr {
+		border-style: dashed;
+		border-color: silver;
+	}
+
+	td {
+		border-style: dashed;
+		border-color: silver;
+	}
+</style>
+
+Run Chrome with following command line, to make it easier to test LokIM:</br> </br>
+google-chrome --disable-web-security --no-first-run --allow-insecure-localhost </br></br> </br>
+
+Address: <input id='address' value='http://localhost:5000/room'/> <button onclick='connect()'>Connect</button><br><br>
+
+Event name: <input id='event-name-to-listen' value='listClients'/><button onclick='listenForEvent()'>Listen for event</button><br><br>
+
+Event name: <input id='event-name-to-send' value='list'/> Event value: <input id='event-value' /> <button onclick='emitEvent()'>Emit Event</button><br><br>
+</br></br>
+Listening on below events:</br>
+<table id='events-to-listen'>
+	<tr><td>Address</td><td>Event Name</td></tr>
+</table>
+</br></br>
+Packets traffic:</br>
+<table id='ws-table'>
+	<tr><td>Address</td><td>Sent/Received</td><td>Event name</td><td>Value</td></tr>
+</table>

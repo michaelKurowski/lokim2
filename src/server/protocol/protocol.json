@@ -1,0 +1,20 @@
+{
+	"ROOM": {
+		"name" : "room",
+		"clientEventTypes": {
+			"MESSAGE" : {
+				"name": "message",
+				"description": "Sends message to a room.",
+				"schema": {
+					"roomId": "string",
+					"message": "string"
+				}
+			},
+			"JOIN": "join",
+			"LEAVE": "leave",
+			"CREATE": "create",
+			"LIST": "list",
+			"CONNECTION": "connection"
+		}
+	}
+}
