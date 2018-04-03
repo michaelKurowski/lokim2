@@ -1,25 +1,35 @@
 
-const CODES = {
+const MESSAGES = {
 	successes : {
-		OK : [200, 'OK']
+		OK : {
+			code: 200, 
+			description: 'OK'}
 	},
 	errors : {
-		BAD_REQUEST : [400, 'BAD_REQUEST'],
-		UNAUTHORIZED : [401, 'UNAUTHORIZED'],
-		INTERNAL_ERROR : [500, 'INTERNAL SERVER ERROR']
+		BAD_REQUEST : {
+			code: 400, 
+			description: 'BAD_REQUEST'
+		},
+		UNAUTHORIZED : {
+			code: 401, 
+			description: 'UNAUTHORIZED'
+		},
+		INTERNAL_ERROR : {
+			code: 500, 
+			description: 'INTERNAL SERVER ERROR'}
 	}
 }
 
-function createResponse(res, code, extraPayload) {
+function createResponse(res, message, extraPayload) {
 	const payload = {
-		description: code[1],
+		description: message.description,
 		extraPayload
 	}
 
-	return res.status(code[0]).json(payload)
+	return res.status(message.code).json(payload)
 }
 
 module.exports = {
-	CODES,
+	MESSAGES,
 	createResponse
 }

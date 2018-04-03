@@ -31,13 +31,14 @@ app.use(expressSession({
 app.use(passport.initialize())
 app.use(passport.session())
 
-passport.serializeUser(passportStrategies.serialzeUser)
-passport.deserializeUser(passportStrategies.deserializeUser)
+const loginStrategy = passportStrategies.loginStrategy()
+passport.serializeUser(loginStrategy.serialzeUser)
+passport.deserializeUser(loginStrategy.deserializeUser)
 
 passport.use(passportStrategyUtils.STRATEGY_NAME, new LocalStrategy({
 	usernameField: passportStrategyUtils.FIELDS_NAMES.username_field,
 	passwordField: passportStrategyUtils.FIELDS_NAMES.password_field
-}, passportStrategies.loginStrategy))
+}, loginStrategy.validateUser))
 
 app.use(router)
 

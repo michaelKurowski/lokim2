@@ -9,8 +9,7 @@ const FIELDS_NAMES = {
 
 function strategyHandlers(req, res, next) {
 	const serializeHandler = (err) => {
-		if (err)
-			return responseManager.createResponse(res, err)
+		if (err) return responseManager.createResponse(res, err)
 		
 		next()
 	}
@@ -22,7 +21,7 @@ function strategyHandlers(req, res, next) {
 		if (user)	
 			req.logIn(user, serializeHandler)
 		else
-			return responseManager.createResponse(res, responseManager.CODES.errors.UNAUTHORIZED)
+			return responseManager.createResponse(res, responseManager.MESSAGES.errors.UNAUTHORIZED)
 	}
 
 	return {
@@ -32,16 +31,16 @@ function strategyHandlers(req, res, next) {
 		
 }
 
-function findUserHandler(username, password, done) {
+function validateUserPassword(username, password, done) {
 	const foundUser = user => {
 		const hash = Utilities.createSaltedHash(user.salt, password)
-		if (hash == user.password)
+		if (hash === user.password)
 			return done(null, user)
 
-		return done(responseManager.CODES.errors.UNAUTHORIZED, null)
+		return done(responseManager.MESSAGES.errors.UNAUTHORIZED, null)
 	}
 
-	const userNotFound = () => done(responseManager.CODES.errors.UNAUTHORIZED, null)
+	const userNotFound = () => done(responseManager.MESSAGES.errors.UNAUTHORIZED, null)
 	
 	return {
 		foundUser,
@@ -53,5 +52,5 @@ module.exports = {
 	FIELDS_NAMES,
 	STRATEGY_NAME,
 	strategyHandlers,
-	findUserHandler
+	validateUserPassword
 }

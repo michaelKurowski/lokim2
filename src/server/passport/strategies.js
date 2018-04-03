@@ -1,29 +1,31 @@
 const strategyUtils = require('./strategyUtils')
-const UserModel = require('../models/user')
 
-const loginStrategy = (username, password, done) => {
-	const index = {
-		username
+const loginStrategy = (UserModel = require('../models/user')) => {
+	const validateUser = (username, password, done) => {
+		const index = {
+			username
+		}
+	
+		const validateUserPassword = strategyUtils.validateUserPassword(username, password, done)
+		UserModel.findOne(index).exec()
+			.then(validateUserPassword.foundUser)
+			.catch(validateUserPassword.userNotFound)
 	}
-	
-	const findUserHandler = strategyUtils.findUserHandler(username, password, done)
-	UserModel.findOne(index).exec()
-		.then(findUserHandler.foundUser)
-		.catch(findUserHandler.userNotFound)
 
-	
-}
+	const serialzeUser = (user, done) => {
+		const error = null
+		done(error, user.id)
+	}
 
-const serialzeUser = (user, done) => done(null, user.id)
+	const deserializeUser = (id, done) => UserModel.findById(id, done)
 
-const deserializeUser = (id, done) => {
-	UserModel.findById(id, (err, user) => {
-		done(err, user)
-	})
+	return {
+		validateUser,
+		serialzeUser,
+		deserializeUser
+	}
 }
 
 module.exports = {
-	loginStrategy,
-	serialzeUser,
-	deserializeUser
+	loginStrategy
 }
