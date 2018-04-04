@@ -8,6 +8,7 @@ const logger = require('./logger.js')
 const passport = require('passport')
 const expressSession = require('express-session')
 const MongoSessionStore = require('connect-mongo')(expressSession)
+const mongoSanitize = require('express-mongo-sanitize')
 
 const dbConnection = require('./dbConnection')
 const passportStrategies = require('./passport/strategies')
@@ -15,7 +16,7 @@ const passportStrategyUtils = require('./passport/strategyUtils')
 const LocalStrategy = require('passport-local').Strategy
 
 app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(mongoSanitize())
 
 app.use(expressSession({ 
 	store: new MongoSessionStore({ mongooseConnection: dbConnection} ),
@@ -36,8 +37,8 @@ passport.serializeUser(loginStrategy.serialzeUser)
 passport.deserializeUser(loginStrategy.deserializeUser)
 
 passport.use(passportStrategyUtils.STRATEGY_NAME, new LocalStrategy({
-	usernameField: passportStrategyUtils.FIELDS_NAMES.username_field,
-	passwordField: passportStrategyUtils.FIELDS_NAMES.password_field
+	usernameField: passportStrategyUtils.FIELDS_NAMES.USERNAME_FIELD,
+	passwordField: passportStrategyUtils.FIELDS_NAMES.PASSWORD_FIELD
 }, loginStrategy.validateUser))
 
 app.use(router)
