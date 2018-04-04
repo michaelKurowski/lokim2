@@ -1,11 +1,11 @@
-const strategyUtils = require('./strategyUtils')
 const responseManager = require('../routes/controllers/utilities/responseManager')
 
-const loginStrategy = (UserModel = require('../models/user')) => {
+const loginStrategy = (UserModel = require('../models/user'), strategyUtils = require('./strategyUtils')) => {
 	const validateUser = (username, password, done) => {
 		const index = {
 			username
 		}
+		
 		UserModel.findOne(index).exec()
 			.then(user => strategyUtils.validateUserPassword(user, password, done))
 			.catch(() => {

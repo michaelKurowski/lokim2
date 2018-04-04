@@ -34,11 +34,13 @@ function validateUserPassword(user, password, done) {
 	const hash = Utilities.createSaltedHash(user.salt, password)
 	if (hash === user.password) {
 		const error = null
-		return done(error, user)
+		done(error, user)
+		return true
 	}
 
 	const userToSerialize = null
-	return done(responseManager.MESSAGES.errors.UNAUTHORIZED, userToSerialize)
+	done(responseManager.MESSAGES.errors.UNAUTHORIZED, userToSerialize)
+	return false
 }
 
 module.exports = {
