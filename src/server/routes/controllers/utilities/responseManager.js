@@ -3,7 +3,8 @@ const MESSAGES = {
 	successes : {
 		OK : {
 			code: 200, 
-			description: 'OK'}
+			description: 'OK'
+		}
 	},
 	errors : {
 		BAD_REQUEST : {

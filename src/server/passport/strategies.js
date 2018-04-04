@@ -1,15 +1,17 @@
 const strategyUtils = require('./strategyUtils')
+const responseManager = require('../routes/controllers/utilities/responseManager')
 
 const loginStrategy = (UserModel = require('../models/user')) => {
 	const validateUser = (username, password, done) => {
 		const index = {
 			username
 		}
-	
-		const validateUserPassword = strategyUtils.validateUserPassword(username, password, done)
 		UserModel.findOne(index).exec()
-			.then(validateUserPassword.foundUser)
-			.catch(validateUserPassword.userNotFound)
+			.then(user => strategyUtils.validateUserPassword(user, password, done))
+			.catch(() => {
+				const userToSerialize = null
+				done(responseManager.MESSAGES.errors.UNAUTHORIZED, userToSerialize)
+			})
 	}
 
 	const serialzeUser = (user, done) => {

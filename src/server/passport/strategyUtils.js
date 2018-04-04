@@ -3,8 +3,8 @@ const Utilities = require('../utilities')
 
 const STRATEGY_NAME = 'LOGIN_STRATEGY'
 const FIELDS_NAMES = {
-	username_field: 'username',
-	password_field: 'password'
+	USERNAME_FIELD: 'username',
+	PASSWORD_FIELD: 'password'
 }
 
 function strategyHandlers(req, res, next) {
@@ -27,25 +27,18 @@ function strategyHandlers(req, res, next) {
 	return {
 		serializeHandler,
 		loginStrategyHandler
-	}
-		
+	}		
 }
 
-function validateUserPassword(username, password, done) {
-	const foundUser = user => {
-		const hash = Utilities.createSaltedHash(user.salt, password)
-		if (hash === user.password)
-			return done(null, user)
-
-		return done(responseManager.MESSAGES.errors.UNAUTHORIZED, null)
+function validateUserPassword(user, password, done) {
+	const hash = Utilities.createSaltedHash(user.salt, password)
+	if (hash === user.password) {
+		const error = null
+		return done(error, user)
 	}
 
-	const userNotFound = () => done(responseManager.MESSAGES.errors.UNAUTHORIZED, null)
-	
-	return {
-		foundUser,
-		userNotFound
-	}
+	const userToSerialize = null
+	return done(responseManager.MESSAGES.errors.UNAUTHORIZED, userToSerialize)
 }
 
 module.exports = {
