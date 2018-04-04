@@ -27,10 +27,11 @@
 
 
 		connection.on(eventName, packet => {
-			console.log(`Received :${eventName}: event. Value: "${packet}"`)
+			const stringifiedPacket = JSON.stringify(packet)
+			console.log(`Received :${eventName}: event. Value: "${stringifiedPacket}"`)
 			const wsTable = document.getElementById('ws-table')
 
-			wsTable.innerHTML += `<tr><td>Address</td><td>Received</td><td>${eventName}</td><td>${packet}</td></tr>`
+			wsTable.innerHTML += `<tr><td>Address</td><td>Received</td><td>${eventName}</td><td>${stringifiedPacket}</td></tr>`
 		})
 	}
 </script>

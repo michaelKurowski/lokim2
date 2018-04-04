@@ -1,7 +1,7 @@
 const responseMessages = require('./utilities/responseMessages')
 const statusCodes = require('./utilities/statusCodes')
 const Utilities = require('../../utilities')
-const logger = require('../../logger.js')
+const logger = require('../../logger')
 const SALT_SIZE = 70
 
 function createPostRegisterController(UserModel = require('../../models/user')) {

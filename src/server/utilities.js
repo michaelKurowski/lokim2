@@ -29,11 +29,17 @@ class Utilities {
 
 function bindEventListenersToSocket(namespaceInfo, controllersBundle, connectionsRepository) {
 	return socket => {
-		const eventTypesSet = namespaceInfo.eventTypes
-		const areEventTypesNotSet = !(eventTypesSet instanceof Set)
-		if (areEventTypesNotSet) throw `Event types of "${namespaceInfo.name}" should be instance of Set, but are "${eventTypesSet.constructor.name}"`
-		const eventTypesList = [...namespaceInfo.eventTypes]
-		_.forEach(eventTypesList, setEventListener(socket, controllersBundle, connectionsRepository))
+		const eventTypes = _.values(namespaceInfo.eventTypes)
+		const serverEventTypes = _.values(namespaceInfo.serverEventTypes)
+		const doesClientEventListContainDuplicates = 
+			_.uniq(eventTypes).length !== eventTypes.length
+		const doesServerEventListContainDuplicates = 
+			_.uniq(serverEventTypes).length !== serverEventTypes.length
+		if (doesClientEventListContainDuplicates
+			|| doesServerEventListContainDuplicates)
+			throw `Event types of "${namespaceInfo.name}" contain duplicates.`
+
+		_.forEach(eventTypes, setEventListener(socket, controllersBundle, connectionsRepository, namespaceInfo))
 	}
 }
 
@@ -41,7 +47,7 @@ function runConnectionEventHandler(socketToPass, controllersBundle, connectionsR
 	controllersBundle['connection'](socketToPass, connectionsRepository)
 }
 
-function setEventListener(socket, controllersBundle, connectionsRepository) {
+function setEventListener(socket, controllersBundle, connectionsRepository, namespaceInfo) {
 	return eventType => {
 		if (!controllersBundle[eventType]) throw `Can't find event "${eventType}" in controller of namespace "${namespaceInfo.name}"`
 		if (eventType === 'connection')
