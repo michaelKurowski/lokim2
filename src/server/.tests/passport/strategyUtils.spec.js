@@ -124,7 +124,7 @@ describe('StrategyUtils', () => {
 		})
 	})
 
-	describe.only('#validateUserPassword', () => {
+	describe('#validateUserPassword', () => {
 		beforeEach(() => {
 			suite.userInstance = {
 				password: '528bb9348a1c04089df122608b4cad7618daf48df66efbada15d982853ed016f',
