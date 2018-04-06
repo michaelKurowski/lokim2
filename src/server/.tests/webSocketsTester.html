@@ -3,6 +3,16 @@
 <script>
 	let connection
 
+	fetch(new Request('/login', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: '{"username":"test_user","password": "test_password"}',
+		credentials: "same-origin" 
+	}
+	))
+
 	function connect() {
 		const address = document.getElementById('address').value
 		connection = io(address, {path: '/connection'})
@@ -59,7 +69,7 @@
 Run Chrome with following command line, to make it easier to test LokIM:</br> </br>
 google-chrome --disable-web-security --no-first-run --allow-insecure-localhost </br></br> </br>
 
-Address: <input id='address' value='http://localhost:5000/room'/> <button onclick='connect()'>Connect</button><br><br>
+Address: <input id='address' value='http://127.0.0.1:5000/room'/> <button onclick='connect()'>Connect</button><br><br>
 
 Event name: <input id='event-name-to-listen' value='listClients'/><button onclick='listenForEvent()'>Listen for event</button><br><br>
 

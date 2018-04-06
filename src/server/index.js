@@ -1,14 +1,15 @@
 const express = require('express')
 const router = require('./routes/router')
 const bodyParser = require('body-parser')
+const cookieParser = require('cookie-parser')
 const config = require('./config.json')
 const app = express()
 const httpServer = require('http').Server(app);
 const logger = require('./logger')
 const initializeWebSocketRouting = require('./ws-routes/initializeWebSocketRouting')
 const io = require('socket.io')(httpServer, {path: '/connection'})
-
 const passport = require('passport')
+const passportSocketIo = require('passport.socketio')
 const expressSession = require('express-session')
 const MongoSessionStore = require('connect-mongo')(expressSession)
 const mongoSanitize = require('express-mongo-sanitize')
@@ -17,19 +18,22 @@ const dbConnection = require('./dbConnection')
 const passportStrategies = require('./passport/strategies')
 const passportStrategyUtils = require('./passport/strategyUtils')
 const LocalStrategy = require('passport-local').Strategy
-
+const path = require('path')
+const sessionStore = new MongoSessionStore({ mongooseConnection: dbConnection} )
 app.use(bodyParser.json())
+app.use(cookieParser(config.session.secret))
 app.use(mongoSanitize())
 
-app.use(expressSession({ 
-	store: new MongoSessionStore({ mongooseConnection: dbConnection} ),
+app.use(expressSession({
+	store: sessionStore,
 	secret: config.session.secret, 
 	resave: config.session.resave, 
 	saveUninitialized: config.session.saveUninitialized,
 	cookie: { 
 		secure: config.session.cookie.secure,
 		maxAge: config.session.cookie.maxAge
-	} }))
+	}})
+)
 
 app.use(passport.initialize())
 app.use(passport.session())
@@ -43,6 +47,7 @@ passport.use(passportStrategyUtils.STRATEGY_NAME, new LocalStrategy({
 	passwordField: passportStrategyUtils.FIELDS_NAMES.PASSWORD_FIELD
 }, loginStrategy.validateUser))
 
+if (config.devMode) app.use('/test', express.static(path.join(__dirname, '/.tests')))
 app.use(router)
 
 httpServer.listen(config.httpServer.port, (err) => {
@@ -53,5 +58,13 @@ httpServer.listen(config.httpServer.port, (err) => {
 	logger.info(`HTTP server is listening on port ${config.httpServer.port}`)
 })
 
+io.set('authorization', passportSocketIo.authorize({
+	key: 'connect.sid',
+	secret: config.session.secret,
+	store: sessionStore,
+	cookieParser: cookieParser,
+	success: (data, accept) => accept(null, true),
+	fail: (data, msg, err) => console.log(data, 'fail', msg)
+}))
 
 initializeWebSocketRouting(io)

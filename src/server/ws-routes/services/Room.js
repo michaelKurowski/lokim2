@@ -5,32 +5,28 @@ const SERVER_EVENTS = namespaceInfo.serverEventTypes
 
 class Room {
 	static connection(socket, connections) {
-		//TODO get user ID from req
-		const userId = socket.client.conn.id
-		const roomId = 'AAAA' + uuidv4()
-		//console.log(userId, 'connected', Object.keys(socket.handshake), 'cookie ' + socket.handshake.headers.cookie)
+		const userId = socket.request.user.username
+		const roomId = uuidv4()
 		connections.usersToConnectionsMap.set(userId, socket)
 		Room.join({roomId}, socket, connections)
 	}
 
 	static join(data, socket, connections) {
 		const {roomId} = data
-		const userId = socket.client.conn.id //TODO get user ID from deserialized req
-		console.log(JSON.stringify({userId, roomId}), 'JOINED')
+		const userId = socket.request.user.username
 		socket.emit(SERVER_EVENTS.JOINED, {userId, roomId})
 		socket.join(roomId)
 	}
 
 	static message(data, socket, connections) {
 		const {roomId, message} = data
-		console.log(JSON.stringify({roomId, message}))
 		socket.to(roomId).emit(SERVER_EVENTS.MESSAGE, message)
 	}
 
 	static leave(data, socket, connections) {
 		const {roomId} = data
 		socket.leave(roomId)
-		socket.emit(SERVER_EVENTS.LEFT, {userId: socket.client.conn.id})
+		socket.emit(SERVER_EVENTS.LEFT, {userId: socket.request.user.username})
 	}
 
 	static create(data, socket, connections) {
