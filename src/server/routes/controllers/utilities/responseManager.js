@@ -21,7 +21,7 @@ const MESSAGES = {
 	}
 }
 
-function createResponse(res, message, extraPayload) {
+function sendResponse(res, message, extraPayload) {
 	const payload = {
 		description: message.description,
 		extraPayload
@@ -32,5 +32,5 @@ function createResponse(res, message, extraPayload) {
 
 module.exports = {
 	MESSAGES,
-	createResponse
+	sendResponse
 }

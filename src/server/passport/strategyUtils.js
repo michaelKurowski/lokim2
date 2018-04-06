@@ -9,19 +9,19 @@ const FIELDS_NAMES = {
 
 function strategyHandlers(req, res, next) {
 	const serializeHandler = (err) => {
-		if (err) return responseManager.createResponse(res, err)
+		if (err) return responseManager.sendResponse(res, err)
 		
 		next()
 	}
 
 	const loginStrategyHandler = (err, user, info) => {
 		if (err)
-			return responseManager.createResponse(res, err)
+			return responseManager.sendResponse(res, err)
 
 		if (user)	
 			req.logIn(user, serializeHandler)
 		else
-			return responseManager.createResponse(res, responseManager.MESSAGES.errors.UNAUTHORIZED)
+			return responseManager.sendResponse(res, responseManager.MESSAGES.errors.BAD_REQUEST)
 	}
 
 	return {
@@ -35,12 +35,12 @@ function validateUserPassword(user, password, done) {
 	if (hash === user.password) {
 		const error = null
 		done(error, user)
-		return true
+		return
 	}
 
 	const userToSerialize = null
 	done(responseManager.MESSAGES.errors.UNAUTHORIZED, userToSerialize)
-	return false
+	return
 }
 
 module.exports = {

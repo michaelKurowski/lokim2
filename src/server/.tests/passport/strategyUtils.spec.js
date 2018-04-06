@@ -81,7 +81,7 @@ describe('StrategyUtils', () => {
 
 			})
 
-			it('should respond with {description: UNATHORIZED , code: 401}, when userInstance is null', () => {
+			it('should respond with BAD REQUEST, when userInstance is null', () => {
 				//given
 				const error = null
 				const userInstance = null
@@ -94,7 +94,7 @@ describe('StrategyUtils', () => {
 				const statusCode = suite.responseMock._getStatusCode()
 				const payload = suite.responseMock._getData()
 
-				const expectedError =  responseManager.MESSAGES.errors.UNAUTHORIZED
+				const expectedError =  responseManager.MESSAGES.errors.BAD_REQUEST
 				const expectedStatusCode = expectedError.code
 				const expectedPayload = JSON.stringify({
 					description: expectedError.description
@@ -105,7 +105,7 @@ describe('StrategyUtils', () => {
 
 			})
 
-			it('should call req.logIn with arguments userInstance and serializeHandler, when was passed correct userInstance without any error', () => {
+			it('should call req.logIn, when was passed correct userInstance without any error', () => {
 				//given
 				const error = null
 				const userInstance = {
@@ -136,27 +136,27 @@ describe('StrategyUtils', () => {
 
 		it('should call done with error = null and correct userInstance as arguments, when password from request and from userInstance is the same', () => {
 			//given
-			const error = null
+			const exceptedError = null
 			const requestPassowrd = 'ImPickleRick'
 
 			//when
 			suite.validateUserPasswordMock(suite.userInstance, requestPassowrd, suite.doneSpy)
 
 			//then
-			assert.isTrue(suite.doneSpy.calledWith(error, suite.userInstance))
+			assert.isTrue(suite.doneSpy.calledWith(exceptedError, suite.userInstance))
 		})
 
 		it('should call done with error UNAUTHORIZED and NULL userInstance as arguments, when password from request and from userInstance is NOT the same', () => {
 			//given
-			const error = responseManager.MESSAGES.errors.UNAUTHORIZED
+			const exceptedError = responseManager.MESSAGES.errors.UNAUTHORIZED
 			const requestPassowrd = 'ImNotPickleRick'
 
 			//when
 			suite.validateUserPasswordMock(suite.userInstance, requestPassowrd, suite.doneSpy)
 
 			//then
-			const userInstance = null
-			assert.isTrue(suite.doneSpy.calledWith(error, userInstance))
+			const exceptedUserInstance = null
+			assert.isTrue(suite.doneSpy.calledWith(exceptedError, exceptedUserInstance))
 		})
 	})
 })

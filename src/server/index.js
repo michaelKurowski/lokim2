@@ -25,8 +25,7 @@ app.use(expressSession({
 	saveUninitialized: config.session.saveUninitialized,
 	cookie: { 
 		secure: config.session.cookie.secure,
-		expires: new Date(Date.now() + config.session.cookie.expires),
-		maxAge: new Date(Date.now() + config.session.cookie.expires)
+		maxAge: config.session.cookie.maxAge
 	} }))
 
 app.use(passport.initialize())

@@ -6,6 +6,6 @@ const responseManager = require('./controllers/utilities/responseManager')
 
 router.post('/register', registerController.post())
 router.post('/login', logInUser(), 
-	(req, res) => responseManager.createResponse(res, responseManager.MESSAGES.successes.OK))
+	(req, res) => responseManager.sendResponse(res, responseManager.MESSAGES.successes.OK))
 
 module.exports = router

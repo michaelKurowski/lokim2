@@ -18,7 +18,7 @@
 		"saveUninitialized": true,
 		"cookie": {
 			"secure": false,
-			"expires": 900000
+			"maxAge": 900000
 		}
 	}
 }

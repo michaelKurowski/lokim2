@@ -13,9 +13,9 @@ describe('responseManager', () => {
 		})
 	})
 
-	describe('#createResponse', () => {
+	describe('#sendResponse', () => {
 		beforeEach(() => {
-			suite.createResponseMock = responseManager.createResponse
+			suite.sendResponseMock = responseManager.sendResponse
 		})
 		it('Should send response with given status code and description. Message status and description was taken from MESSAGES dictionary', () => {
 			//given
@@ -24,9 +24,8 @@ describe('responseManager', () => {
 				description: 'UNAUTHORIZED'
 			}
 
-
 			//when
-			suite.createResponseMock(suite.responeMock, message)
+			suite.sendResponseMock(suite.responeMock, message)
 
 			//then
 			const statusCode = suite.responeMock._getStatusCode()

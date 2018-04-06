@@ -14,7 +14,7 @@ describe('logInUser', () => {
 		suite.authenticatio
 
 	})
-	it('should call next() without calling authenticationMiddleware, when req.isAuthenticated is true', () => {
+	it('should terminate this login middleware by calling next() when user is already logged in ', () => {
 		//given
 		const requestMock = {
 			isAuthenticated: () => true
@@ -29,7 +29,7 @@ describe('logInUser', () => {
 		assert.isFalse(authenticateSpy.calledOnce)
 	})
 
-	it('should call passport.authentiate middleware, when req.isAuthenticated is false ', () => {
+	it('should call passport authentication with creditinals, when user is not logged', () => {
 		//given
 		const requestMock = {
 			isAuthenticated: () => false
