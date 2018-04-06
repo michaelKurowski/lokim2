@@ -29,6 +29,7 @@ describe('Room websocket service', () => {
 
 	afterEach(done => {
 		suite.server.close(done)
+		if (_.isFunction(suite.client.disconnect)) suite.client.disconnect()
 	})
 
 	describe('#connection', () => {
@@ -38,13 +39,11 @@ describe('Room websocket service', () => {
 
 			//when
 			suite.client = socketClient.connect(SOCKET_URL, SOCKET_OPTIONS)
-			suite.client.on(SERVER_EVENTS.JOINED, then)
 
 			//then
+			suite.client.on(SERVER_EVENTS.JOINED, then)
 			function then(data) {
-				suite.client.disconnect()
 				done()
-				
 			}
 		})
 		/*
@@ -68,14 +67,13 @@ describe('Room websocket service', () => {
 			)
 			
 			suite.client = socketClient.connect(SOCKET_URL, SOCKET_OPTIONS)
-			suite.client.on(SERVER_EVENTS.JOINED, then)
 
 			//when
 			suite.client.emit(CLIENT_EVENTS.JOIN, requestMock)
 
 			//then
+			suite.client.on(SERVER_EVENTS.JOINED, then)
 			function then(data) {
-				suite.client.disconnect()
 				done()
 			}
 		})
@@ -93,12 +91,3 @@ describe('Room websocket service', () => {
 
 	})
 })
-
-function mockSocket() {
-	return {
-		emit: sinon.spy(),
-		join: sinon.spy(),
-		to: sinon.spy(),
-		leave: sinon.spy()
-	}
-}
