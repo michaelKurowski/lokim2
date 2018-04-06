@@ -14,7 +14,7 @@ describe('logInUser', () => {
 		suite.authenticatio
 
 	})
-	it('should terminate this login middleware by calling next() when user is already logged in ', () => {
+	it('should skip to next middleware by calling next() when user is already logged in ', () => {
 		//given
 		const requestMock = {
 			isAuthenticated: () => true
