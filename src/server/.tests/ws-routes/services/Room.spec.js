@@ -143,6 +143,62 @@ describe('Room websocket service', () => {
 	})
 
 	describe('#message', () => {
+		it('should call emit message event type on socket when receiving a message event from client', done => {
+			//given
+			const requestMock = {
+				roomId: 'random room id',
+				message: 'dummy message'
+			}
+
+			suite.server.on(CLIENT_EVENTS.CONNECTION, connection => {
+				suite.emitSpy = sinon.spy(connection, 'emit')
+				connection.on(CLIENT_EVENTS.MESSAGE, data => {
+					RoomProvider.message(data, connection, suite.connectionsMock)
+					then()
+				})
+			})
+			
+			suite.client = socketClient.connect(SOCKET_URL, SOCKET_OPTIONS)
+
+			//when
+			suite.client.emit(CLIENT_EVENTS.MESSAGE, requestMock)
+
+			//then
+			function then(data) {
+				assert.isTrue(suite.emitSpy.calledWith(CLIENT_EVENTS.MESSAGE))
+				done()
+			}
+		})
+
+		it('should call emit message event type to the right room on socket when receiving a message event from client', done => {
+			//given
+			const ROOM_ID = 'random room id'
+			const requestMock = {
+				roomId: ROOM_ID,
+				message: 'dummy message'
+			}
+
+			suite.server.on(CLIENT_EVENTS.CONNECTION, connection => {
+				suite.emitSpy = sinon.spy(connection, 'emit')
+				suite.toSpy = sinon.spy(connection, 'to')
+				connection.on(CLIENT_EVENTS.MESSAGE, data => {
+					RoomProvider.message(data, connection, suite.connectionsMock)
+					then()
+				})
+			})
+			
+			suite.client = socketClient.connect(SOCKET_URL, SOCKET_OPTIONS)
+
+			//when
+			suite.client.emit(CLIENT_EVENTS.MESSAGE, requestMock)
+
+			//then
+			function then(data) {
+				assert.isTrue(suite.toSpy.calledWith(ROOM_ID))
+				assert.isTrue(suite.emitSpy.calledWith(CLIENT_EVENTS.MESSAGE))
+				done()
+			}
+		})
 
 	})
 
