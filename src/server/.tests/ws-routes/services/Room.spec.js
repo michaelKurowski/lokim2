@@ -143,7 +143,7 @@ describe('Room websocket service', () => {
 	})
 
 	describe('#message', () => {
-		it('should call emit message event type on socket when receiving a message event from client', done => {
+		it('should emit message event type on socket when receiving a message event from client', done => {
 			//given
 			const requestMock = {
 				roomId: 'random room id',
@@ -170,7 +170,7 @@ describe('Room websocket service', () => {
 			}
 		})
 
-		it('should call emit message event type to the right room on socket when receiving a message event from client', done => {
+		it('should emit message event type to the right room on socket when receiving a message event from client', done => {
 			//given
 			const ROOM_ID = 'random room id'
 			const requestMock = {
@@ -199,11 +199,68 @@ describe('Room websocket service', () => {
 				done()
 			}
 		})
-
 	})
 
 	describe('#leave', () => {
+		it('should leave room', done => {
+			//given
+			const ROOM_ID = 'random room id'
+			const requestMock = {
+				roomId: ROOM_ID
+			}
 
+			suite.server.on(CLIENT_EVENTS.CONNECTION, connection => {
+				suite.leaveSpy = sinon.spy(connection, 'leave')
+				connection.on(CLIENT_EVENTS.MESSAGE, data => {
+					RoomProvider.leave(data, connection, suite.connectionsMock)
+					then()
+				})
+			})
+			
+			suite.client = socketClient.connect(SOCKET_URL, SOCKET_OPTIONS)
+
+			//when
+			suite.client.emit(CLIENT_EVENTS.MESSAGE, requestMock)
+
+			//then
+			function then(data) {
+				assert.isTrue(suite.leaveSpy.calledWith(ROOM_ID))
+				done()
+			}
+		})
+
+		it('should emit "left" event with username of the person who left to the left room', done => {
+			//given
+			const ROOM_ID = 'random room id'
+			const requestMock = {
+				roomId: ROOM_ID
+			}
+
+			suite.server.on(CLIENT_EVENTS.CONNECTION, connection => {
+				suite.emitSpy = sinon.spy(connection, 'emit')
+				suite.toSpy = sinon.spy(connection, 'to')
+				connection.on(CLIENT_EVENTS.LEAVE, data => {
+					RoomProvider.leave(data, connection, suite.connectionsMock)
+					then()
+				})
+			})
+			
+			suite.client = socketClient.connect(SOCKET_URL, SOCKET_OPTIONS)
+
+			//when
+			suite.client.emit(CLIENT_EVENTS.LEAVE, requestMock)
+
+			//then
+			function then() {
+				const expectedEventMessage = {
+					username: suite.USERNAME_MOCK
+				}
+
+				assert.isTrue(suite.toSpy.calledWith(ROOM_ID))
+				assert.isTrue(suite.emitSpy.calledWith(SERVER_EVENTS.LEFT, expectedEventMessage))
+				done()
+			}
+		})
 	})
 
 	describe('#create', () => {

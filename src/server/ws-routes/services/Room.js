@@ -5,16 +5,16 @@ const SERVER_EVENTS = namespaceInfo.serverEventTypes
 
 class Room {
 	static connection(socket, connections) {
-		const userId = socket.request.user.username
+		const username = socket.request.user.username
 		const roomId = uuidv4()
-		connections.usersToConnectionsMap.set(userId, socket)
+		connections.usersToConnectionsMap.set(username, socket)
 		Room.join({roomId}, socket, connections)
 	}
 
 	static join(data, socket, connections) {
 		const {roomId} = data
-		const userId = socket.request.user.username
-		socket.emit(SERVER_EVENTS.JOINED, {userId, roomId})
+		const username = socket.request.user.username
+		socket.emit(SERVER_EVENTS.JOINED, {username, roomId})
 		socket.join(roomId)
 	}
 
@@ -25,8 +25,8 @@ class Room {
 
 	static leave(data, socket, connections) {
 		const {roomId} = data
+		socket.to(roomId).emit(SERVER_EVENTS.LEFT, {username: socket.request.user.username})
 		socket.leave(roomId)
-		socket.emit(SERVER_EVENTS.LEFT, {userId: socket.request.user.username})
 	}
 
 	static create(data, socket, connections) {
