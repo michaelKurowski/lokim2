@@ -19,10 +19,8 @@ const passportStrategyUtils = require('./passport/strategyUtils')
 const LocalStrategy = require('passport-local').Strategy
 const path = require('path')
 const sessionStore = new MongoSessionStore({ mongooseConnection: dbConnection} )
-app.use(bodyParser.json())
-app.use(mongoSanitize())
 
-app.use(expressSession({
+const cookieSession = expressSession({
 	store: sessionStore,
 	secret: config.session.secret, 
 	resave: config.session.resave, 
@@ -30,8 +28,12 @@ app.use(expressSession({
 	cookie: { 
 		secure: config.session.cookie.secure,
 		maxAge: config.session.cookie.maxAge
-	}})
-)
+	}
+})
+
+app.use(bodyParser.json())
+app.use(mongoSanitize())
+app.use(cookieSession)
 
 app.use(passport.initialize())
 app.use(passport.session())
@@ -60,8 +62,8 @@ io.set('authorization', passportSocketIo.authorize({
 	key: 'connect.sid',
 	secret: config.session.secret,
 	store: sessionStore,
-	success: (data, accept) => accept(null, true),
-	fail: (data, msg, err) => {}
+	success: (data, accept) => {console.log('success'); accept(null, true);},
+	fail: (data, msg, err) => {console.log('du[a', msg)}
 }))
 
 initializeWebSocketRouting(io)

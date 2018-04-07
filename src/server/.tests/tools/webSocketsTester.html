@@ -3,18 +3,23 @@
 <script>
 	let connection
 
-	fetch(new Request('/login', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: '{"username":"test_user","password": "test_password"}',
-		credentials: "same-origin" 
+	function login() {
+		const password = document.getElementById('password').value
+		const username = document.getElementById('username').value
+		const requestConfig = {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: `{"username": "${username}","password": "${password}"}`,
+			credentials: "same-origin" 
+		}
+
+		fetch(new Request('/login', requestConfig))
 	}
-	))
 
 	function connect() {
-		const address = document.getElementById('address').value
+		const address = `${location.host}${document.getElementById('address').value}`
 		connection = io(address, {path: '/connection'})
 		connection.on('connection', frame => {
 			console.log('connected to address')
@@ -64,23 +69,41 @@
 		border-style: dashed;
 		border-color: silver;
 	}
+
+	body {
+		white-space: pre-line
+	}
 </style>
 
-Run Chrome with following command line, to make it easier to test LokIM:</br> </br>
-google-chrome --disable-web-security --no-first-run --allow-insecure-localhost </br></br> </br>
 
-Address: <input id='address' value='http://127.0.0.1:5000/room'/> <button onclick='connect()'>Connect</button><br><br>
+Run Chrome with following command line, to make it easier to test LokIM:
 
-Event name: <input id='event-name-to-listen' value='listClients'/><button onclick='listenForEvent()'>Listen for event</button><br><br>
+google-chrome --disable-web-security --no-first-run --allow-insecure-localhost
 
-Event name: <input id='event-name-to-send' value='list'/> Event value: <input id='event-value' /> <button onclick='emitEvent()'>Emit Event</button><br><br>
-</br></br>
-Listening on below events:</br>
+
+Username: <input id='username' value='test_user'>
+Username: <input id='password' value='test_password'>
+
+<button onclick='login()'>Authorize user</button>
+
+
+Address: <input id='address' value='/room'/> <button onclick='connect()'>Connect</button>
+
+Event name: <input id='event-name-to-listen' value='listClients'/> <button onclick='listenForEvent()'>Listen for event</button>
+
+Event name: <input id='event-name-to-send' value='list'/> Event value: <input id='event-value' /> <button onclick='emitEvent()'>Emit Event</button>
+
+
+Listening on below events:
 <table id='events-to-listen'>
-	<tr><td>Address</td><td>Event Name</td></tr>
+	<tr>
+		<td>Address</td> <td>Event Name</td>
+	</tr>
 </table>
-</br></br>
-Packets traffic:</br>
+
+Packets traffic:
 <table id='ws-table'>
-	<tr><td>Address</td><td>Sent/Received</td><td>Event name</td><td>Value</td></tr>
+	<tr>
+		<td>Address</td> <td>Sent/Received</td> <td>Event name</td> <td>Value</td>
+	</tr>
 </table>
