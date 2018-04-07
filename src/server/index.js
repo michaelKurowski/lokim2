@@ -20,7 +20,7 @@ const LocalStrategy = require('passport-local').Strategy
 const path = require('path')
 const sessionStore = new MongoSessionStore({ mongooseConnection: dbConnection} )
 
-const cookieSession = expressSession({
+const cookieSession = {
 	store: sessionStore,
 	secret: config.session.secret, 
 	resave: config.session.resave, 
@@ -29,14 +29,34 @@ const cookieSession = expressSession({
 		secure: config.session.cookie.secure,
 		maxAge: config.session.cookie.maxAge
 	}
-})
+}
+
+const websocketCookieSession = {
+	key: 'connect.sid',
+	secret: config.session.secret,
+	store: sessionStore,
+	success: (data, accept) => {
+		if (config.devMode) logger.debug('New websocket connection estabilished')
+		accept()
+	},
+	fail: (data, msg, err, accept) => {
+		if (config.devMode) logger.debug('Failed to connect via websocket connection', msg)
+		accept(new Error(err))
+	}
+}
+
+//Express flow
 
 app.use(bodyParser.json())
 app.use(mongoSanitize())
-app.use(cookieSession)
-
+app.use(expressSession(cookieSession))
 app.use(passport.initialize())
 app.use(passport.session())
+app.use(router)
+
+if (config.devMode) app.use('/test', express.static(path.join(__dirname, '/.tests/tools')))
+
+//Passport setting
 
 const loginStrategy = passportStrategies.loginStrategy()
 passport.serializeUser(loginStrategy.serialzeUser)
@@ -47,8 +67,7 @@ passport.use(passportStrategyUtils.STRATEGY_NAME, new LocalStrategy({
 	passwordField: passportStrategyUtils.FIELDS_NAMES.PASSWORD_FIELD
 }, loginStrategy.validateUser))
 
-if (config.devMode) app.use('/test', express.static(path.join(__dirname, '/.tests/tools')))
-app.use(router)
+//Initialize http server
 
 httpServer.listen(config.httpServer.port, (err) => {
 	if (err) {
@@ -58,12 +77,7 @@ httpServer.listen(config.httpServer.port, (err) => {
 	logger.info(`HTTP server is listening on port ${config.httpServer.port}`)
 })
 
-io.set('authorization', passportSocketIo.authorize({
-	key: 'connect.sid',
-	secret: config.session.secret,
-	store: sessionStore,
-	success: (data, accept) => {console.log('success'); accept(null, true);},
-	fail: (data, msg, err) => {console.log('du[a', msg)}
-}))
+//websocket flow
 
+io.use(passportSocketIo.authorize(websocketCookieSession))
 initializeWebSocketRouting(io)
