@@ -61,7 +61,7 @@ io.set('authorization', passportSocketIo.authorize({
 	secret: config.session.secret,
 	store: sessionStore,
 	success: (data, accept) => accept(null, true),
-	fail: (data, msg, err) => console.log(data, 'fail', msg)
+	fail: (data, msg, err) => {}
 }))
 
 initializeWebSocketRouting(io)
