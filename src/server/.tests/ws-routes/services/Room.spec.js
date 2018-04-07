@@ -15,7 +15,6 @@ const SOCKET_OPTIONS = {
 	'force new connection': true
 }
 
-
 let suite
 describe('Room websocket service', () => {
 	beforeEach(() => {
@@ -264,7 +263,73 @@ describe('Room websocket service', () => {
 	})
 
 	describe('#create', () => {
+		it('should make user join to newly created room', done => {
+			//given
+			const requestMock = {
+				invitedUsersIndexes: []
+			}
 
+			suite.server.on(CLIENT_EVENTS.CONNECTION, connection => {
+				suite.emitSpy = sinon.spy(connection, 'emit')
+				suite.newSocket = connection
+				connection.on(CLIENT_EVENTS.CREATE, data => {
+					RoomProvider.create(data, connection, suite.connectionsMock)
+					then()
+				})
+			})
+			
+			suite.client = socketClient.connect(SOCKET_URL, SOCKET_OPTIONS)
+
+			//when
+			suite.client.emit(CLIENT_EVENTS.CREATE, requestMock)
+
+			//then
+			function then() {
+				sinon.assert.calledWith(suite.emitSpy.firstCall, SERVER_EVENTS.JOINED, sinon.match({username: suite.USERNAME_MOCK}))
+				done()
+			}
+		})
+	})
+
+	describe('user chat invitations', () => {
+		it('should make invited users join to newly created room', done => {
+			//given
+			let connectionCounter = 0
+			const USER_A_USERNAME = 'userA'
+			const USER_B_USERNAME = 'userB'
+			const requestMock = {
+				invitedUsersIndexes: [USER_B_USERNAME]
+			}
+
+			suite.server.on(CLIENT_EVENTS.CONNECTION, connection => {
+				suite.emitSpy = sinon.spy(connection, 'emit')
+				suite.newSocket = connection
+				connection.on(CLIENT_EVENTS.CREATE, data => {
+					
+					connectionCounter++
+					if (connectionCounter === 1) connection.request.user = USER_A_USERNAME
+					if (connectionCounter === 2) connection.request.user = USER_B_USERNAME
+					RoomProvider.connection(connection, suite.connectionsMock)
+					RoomProvider.create(data, connection, suite.connectionsMock)
+					then()
+				})
+			})
+			
+			suite.clientA = socketClient.connect(SOCKET_URL, SOCKET_OPTIONS)
+			suite.clientB = socketClient.connect(SOCKET_URL, SOCKET_OPTIONS)
+
+			//when
+			suite.clientA.emit(CLIENT_EVENTS.CREATE, requestMock)
+
+			//then
+			function then() {
+				suite.clientA.disconnect()
+				suite.clientB.disconnect()
+				sinon.assert.calledWith(suite.emitSpy.firstCall, SERVER_EVENTS.JOINED, sinon.match({username: suite.USER_A_USERNAME}))
+				sinon.assert.calledWith(suite.emitSpy.secondCall, SERVER_EVENTS.JOINED, sinon.match({username: suite.USER_B_USERNAME}))
+				done()
+			}
+		})
 	})
 
 	describe('communication between users', () => {

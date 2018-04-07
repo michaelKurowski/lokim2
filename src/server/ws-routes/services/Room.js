@@ -39,9 +39,9 @@ class Room {
 }
 
 function joinUsersToRoom(invitedUsersIndexes, roomId, connections) {
-	_.forEach(invitedUsersIndexes, userId => {
-		const invitedUserSocket = connections.usersToConnectionsMap.get(userId)
-		Room.join({roomId}, invitedUserSocket, connections)
+	_.forEach(invitedUsersIndexes, username => {
+		const invitedUserSocket = connections.usersToConnectionsMap.get(username)
+		if (invitedUserSocket) Room.join({roomId}, invitedUserSocket, connections)
 	})
 }
 
