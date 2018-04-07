@@ -3,13 +3,15 @@ const _ = require('lodash')
 const sinon = require('sinon')
 const socketClient = require('socket.io-client')
 const io = require('socket.io')
-const RoomProvider = require('../../../ws-routes/services/Room')
-
+const RoomProvider = require('../../../ws-routes/controllers/Room')
+const config = require('../../../config.json')
 const namespaceInfo = require('../../../protocol/protocol.json').room
+
+
 const SERVER_EVENTS = namespaceInfo.serverEventTypes
 const CLIENT_EVENTS = namespaceInfo.eventTypes
-const SOCKET_PORT = 5000
-const SOCKET_URL = `http://0.0.0.0:${SOCKET_PORT}`
+const SOCKET_PORT = config.httpServer.port
+const SOCKET_URL = `http://localhost:${SOCKET_PORT}`
 const SOCKET_OPTIONS = {
 	transports: ['websocket'],
 	'force new connection': true
@@ -61,6 +63,7 @@ describe('Room websocket service', () => {
 
 			//then
 			suite.client.on(SERVER_EVENTS.JOINED, then)
+
 			function then(data) {
 				const hasSessionStored = suite.connectionsMock.usersToConnectionsMap.has(suite.USERNAME_MOCK)
 				assert.isTrue(hasSessionStored)
@@ -83,7 +86,7 @@ describe('Room websocket service', () => {
 			suite.client.on(SERVER_EVENTS.JOINED, then)
 			function then(data) {
 				const storedSession = suite.connectionsMock.usersToConnectionsMap.get(suite.USERNAME_MOCK)
-				assert.isTrue(storedSession === suite.newSocket)
+				assert.strictEqual(storedSession, suite.newSocket)
 				done()
 			}
 		})
@@ -134,8 +137,9 @@ describe('Room websocket service', () => {
 
 			//then
 			suite.client.on(SERVER_EVENTS.JOINED, then)
+
 			function then(data) {
-				assert.isTrue(suite.roomJoinSpy.calledOnce)
+				sinon.assert.calledOnce(suite.roomJoinSpy)
 				done()
 			}
 		})
@@ -164,7 +168,7 @@ describe('Room websocket service', () => {
 
 			//then
 			function then(data) {
-				assert.isTrue(suite.emitSpy.calledWith(CLIENT_EVENTS.MESSAGE))
+				sinon.assert.calledWith(suite.emitSpy.firstCall, CLIENT_EVENTS.MESSAGE)
 				done()
 			}
 		})
@@ -193,8 +197,8 @@ describe('Room websocket service', () => {
 
 			//then
 			function then(data) {
-				assert.isTrue(suite.toSpy.calledWith(ROOM_ID))
-				assert.isTrue(suite.emitSpy.calledWith(CLIENT_EVENTS.MESSAGE))
+				sinon.assert.calledWith(suite.toSpy.firstCall, ROOM_ID)
+				sinon.assert.calledWith(suite.emitSpy.firstCall, CLIENT_EVENTS.MESSAGE)
 				done()
 			}
 		})
@@ -223,7 +227,8 @@ describe('Room websocket service', () => {
 
 			//then
 			function then(data) {
-				assert.isTrue(suite.leaveSpy.calledWith(ROOM_ID))
+				const expectedEventData = {roomId: ROOM_ID}
+				sinon.assert.calledWith(suite.leaveSpy.firstCall, expectedEventData)
 				done()
 			}
 		})
@@ -254,9 +259,9 @@ describe('Room websocket service', () => {
 				const expectedEventMessage = {
 					username: suite.USERNAME_MOCK
 				}
+				sinon.assert.calledWith(suite.toSpy.firstCall, ROOM_ID)
+				sinon.assert.calledWith(suite.emitSpy.firstCall, SERVER_EVENTS.LEFT, expectedEventMessage)
 
-				assert.isTrue(suite.toSpy.calledWith(ROOM_ID))
-				assert.isTrue(suite.emitSpy.calledWith(SERVER_EVENTS.LEFT, expectedEventMessage))
 				done()
 			}
 		})
@@ -294,21 +299,21 @@ describe('Room websocket service', () => {
 	describe('user chat invitations', () => {
 		it('should make invited users join to newly created room', done => {
 			//given
-			let connectionCounter = 0
 			const USER_A_USERNAME = 'userA'
 			const USER_B_USERNAME = 'userB'
 			const requestMock = {
 				invitedUsersIndexes: [USER_B_USERNAME]
 			}
 
+			suite.getUsername = sinon.stub()
+			suite.getUsername.onFirstCall().returns(USER_A_USERNAME)
+			suite.getUsername.onSecondCall().returns(USER_B_USERNAME)
+
 			suite.server.on(CLIENT_EVENTS.CONNECTION, connection => {
 				suite.emitSpy = sinon.spy(connection, 'emit')
 				suite.newSocket = connection
 				connection.on(CLIENT_EVENTS.CREATE, data => {
-					
-					connectionCounter++
-					if (connectionCounter === 1) connection.request.user = USER_A_USERNAME
-					if (connectionCounter === 2) connection.request.user = USER_B_USERNAME
+					connection.request.user = suite.getUsername()
 					RoomProvider.connection(connection, suite.connectionsMock)
 					RoomProvider.create(data, connection, suite.connectionsMock)
 					then()
@@ -325,6 +330,7 @@ describe('Room websocket service', () => {
 			function then() {
 				suite.clientA.disconnect()
 				suite.clientB.disconnect()
+
 				sinon.assert.calledWith(suite.emitSpy.firstCall, SERVER_EVENTS.JOINED, sinon.match({username: suite.USER_A_USERNAME}))
 				sinon.assert.calledWith(suite.emitSpy.secondCall, SERVER_EVENTS.JOINED, sinon.match({username: suite.USER_B_USERNAME}))
 				done()
@@ -372,7 +378,6 @@ describe('Room websocket service', () => {
 			)
 
 			//then
-
 			Promise.all([clientAJoinedRoom, clientBJoinedRoom])
 				.then(() => {
 					suite.clientA.emit(CLIENT_EVENTS.MESSAGE, messageMock)}

@@ -26,7 +26,7 @@ class Room {
 	static leave(data, socket, connections) {
 		const {roomId} = data
 		socket.to(roomId).emit(SERVER_EVENTS.LEFT, {username: socket.request.user.username})
-		socket.leave(roomId)
+		socket.leave({roomId})
 	}
 
 	static create(data, socket, connections) {
