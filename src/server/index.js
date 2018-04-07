@@ -1,10 +1,9 @@
 const express = require('express')
 const router = require('./routes/router')
 const bodyParser = require('body-parser')
-const cookieParser = require('cookie-parser')
 const config = require('./config.json')
 const app = express()
-const httpServer = require('http').Server(app);
+const httpServer = require('http').Server(app)
 const logger = require('./logger')
 const initializeWebSocketRouting = require('./ws-routes/initializeWebSocketRouting')
 const io = require('socket.io')(httpServer, {path: '/connection'})
@@ -21,7 +20,6 @@ const LocalStrategy = require('passport-local').Strategy
 const path = require('path')
 const sessionStore = new MongoSessionStore({ mongooseConnection: dbConnection} )
 app.use(bodyParser.json())
-app.use(cookieParser(config.session.secret))
 app.use(mongoSanitize())
 
 app.use(expressSession({
@@ -47,7 +45,7 @@ passport.use(passportStrategyUtils.STRATEGY_NAME, new LocalStrategy({
 	passwordField: passportStrategyUtils.FIELDS_NAMES.PASSWORD_FIELD
 }, loginStrategy.validateUser))
 
-if (config.devMode) app.use('/test', express.static(path.join(__dirname, '/.tests')))
+if (config.devMode) app.use('/test', express.static(path.join(__dirname, '/.tests/tools')))
 app.use(router)
 
 httpServer.listen(config.httpServer.port, (err) => {
@@ -62,7 +60,6 @@ io.set('authorization', passportSocketIo.authorize({
 	key: 'connect.sid',
 	secret: config.session.secret,
 	store: sessionStore,
-	cookieParser: cookieParser,
 	success: (data, accept) => accept(null, true),
 	fail: (data, msg, err) => console.log(data, 'fail', msg)
 }))
