@@ -1,6 +1,6 @@
 //const assert = require('chai').assert
 const _ = require('lodash')
-//const sinon = require('sinon')
+const sinon = require('sinon')
 const socketClient = require('socket.io-client')
 const io = require('socket.io')
 const RoomProvider = require('../../../ws-routes/services/Room')
@@ -24,6 +24,11 @@ describe('Room websocket service', () => {
 			usersToConnectionsMap: new Map()
 		}
 		suite.server = io.listen(SOCKET_PORT)
+		suite.middlewareMock = sinon.stub().callsFake((socket, next) => {
+			socket.request.user = {username: 'DUMMY_USERNAME'}
+			next()
+		})
+		suite.server.use(suite.middlewareMock)
 		suite.client = {}
 	})
 
