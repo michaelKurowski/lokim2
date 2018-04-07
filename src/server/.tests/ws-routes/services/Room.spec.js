@@ -203,6 +203,8 @@ describe('Room websocket service', () => {
 			suite.clientB.on(CLIENT_EVENTS.MESSAGE, then)
 
 			function then(data) {
+				suite.clientA.disconnect()
+				suite.clientB.disconnect()
 				done()
 			}
 		})
