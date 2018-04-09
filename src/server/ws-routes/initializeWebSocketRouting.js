@@ -1,10 +1,11 @@
 const ConnectionsRepository = require('./ConnectionsRepository')
-
 const Utilities = require('../utilities')
 
+const RoomController = require('./controllers/Room')
 
-module.exports = initializeWebSocketRouting
 
 function initializeWebSocketRouting(io, protocol = require('../protocol/protocol.json')) {
-	Utilities.createWebsocketRoute(io, protocol.room, require('./controllers/Room'), new ConnectionsRepository())
+	Utilities.createWebsocketRoute(io, protocol.room, RoomController, new ConnectionsRepository())
 }
+
+module.exports = initializeWebSocketRouting

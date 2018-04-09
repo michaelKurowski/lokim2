@@ -73,7 +73,6 @@ describe('Room websocket service', () => {
 
 		it('should add a new entry to connections list which is instance of socket when connecting to Room namespace', done => {
 			//given
-			
 			suite.server.on(CLIENT_EVENTS.CONNECTION, socket => {
 				suite.newSocket = socket
 				RoomProvider.connection(socket, suite.connectionsMock)

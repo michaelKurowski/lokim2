@@ -19,6 +19,7 @@ const passportStrategyUtils = require('./passport/strategyUtils')
 const LocalStrategy = require('passport-local').Strategy
 const path = require('path')
 const sessionStore = new MongoSessionStore({ mongooseConnection: dbConnection} )
+const COOKIE_SESSION_VARIABLE = 'connect.sid'
 
 const cookieSession = {
 	store: sessionStore,
@@ -32,7 +33,7 @@ const cookieSession = {
 }
 
 const websocketCookieSession = {
-	key: 'connect.sid',
+	key: COOKIE_SESSION_VARIABLE,
 	secret: config.session.secret,
 	store: sessionStore,
 	success: (data, accept) => {
