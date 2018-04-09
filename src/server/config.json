@@ -20,5 +20,6 @@
 			"secure": false,
 			"maxAge": 900000
 		}
-	}
+	},
+	"devMode": false
 }

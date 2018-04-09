@@ -1,0 +1,19 @@
+{
+	"room": {
+		"name": "room",
+		"eventTypes": {
+			"MESSAGE": "message",
+			"JOIN": "join",
+			"LEAVE": "leave",
+			"CREATE": "create",
+			"CONNECTION": "connection"
+		},
+		"serverEventTypes": {
+			"JOINED": "joined",
+			"MESSAGE": "message",
+			"LEFT": "left",
+			"CONNECT": "connect",
+			"DISCONNECT": "disconnect"
+		}
+	}
+}

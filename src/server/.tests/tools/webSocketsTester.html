@@ -1,0 +1,109 @@
+<script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js'></script>
+
+<script>
+	let connection
+
+	function login() {
+		const password = document.getElementById('password').value
+		const username = document.getElementById('username').value
+		const requestConfig = {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: `{"username": "${username}","password": "${password}"}`,
+			credentials: "same-origin" 
+		}
+
+		fetch(new Request('/login', requestConfig))
+	}
+
+	function connect() {
+		const address = `${location.host}${document.getElementById('address').value}`
+		connection = io(address, {path: '/connection'})
+		connection.on('connection', frame => {
+			console.log('connected to address')
+		})
+	}
+
+	function emitEvent() {
+		const eventName = document.getElementById('event-name-to-send').value
+		const eventValue = document.getElementById('event-value').value
+		const eventValueObject = eventValue ? JSON.parse(eventValue) : null
+		console.log(typeof eventValueObject)
+		connection.emit(eventName, eventValueObject)
+	}
+
+	function listenForEvent() {
+		const eventName = document.getElementById('event-name-to-listen').value
+
+		const eventsTable = document.getElementById('events-to-listen')
+		eventsTable.innerHTML += `<tr><td></td><td>${eventName}</td></tr>`
+
+
+		connection.on(eventName, packet => {
+			const stringifiedPacket = JSON.stringify(packet)
+			console.log(`Received :${eventName}: event. Value: "${stringifiedPacket}"`)
+			const wsTable = document.getElementById('ws-table')
+
+			wsTable.innerHTML += `<tr><td>Address</td><td>Received</td><td>${eventName}</td><td>${stringifiedPacket}</td></tr>`
+		})
+	}
+</script>
+
+<style>
+
+	table {
+		border-style: solid;
+		width: 100%;
+		max-height: 600px;
+		overflow: scroll;
+	}
+
+	tr {
+		border-style: dashed;
+		border-color: silver;
+	}
+
+	td {
+		border-style: dashed;
+		border-color: silver;
+	}
+
+	body {
+		white-space: pre-line
+	}
+</style>
+
+
+Run Chrome with following command line, to make it easier to test LokIM:
+
+google-chrome --disable-web-security --no-first-run --allow-insecure-localhost
+
+
+Username: <input id='username' value='test_user'>
+Username: <input id='password' value='test_password'>
+
+<button onclick='login()'>Authorize user</button>
+
+
+Address: <input id='address' value='/room'/> <button onclick='connect()'>Connect</button>
+
+Event name: <input id='event-name-to-listen' value='listClients'/> <button onclick='listenForEvent()'>Listen for event</button>
+
+Event name: <input id='event-name-to-send' value='list'/> Event value: <input id='event-value' /> <button onclick='emitEvent()'>Emit Event</button>
+
+
+Listening on below events:
+<table id='events-to-listen'>
+	<tr>
+		<td>Address</td> <td>Event Name</td>
+	</tr>
+</table>
+
+Packets traffic:
+<table id='ws-table'>
+	<tr>
+		<td>Address</td> <td>Sent/Received</td> <td>Event name</td> <td>Value</td>
+	</tr>
+</table>
