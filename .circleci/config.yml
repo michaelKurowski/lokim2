@@ -3,6 +3,10 @@ jobs:
   build:
     docker:
       - image: circleci/node:8.9.4
+      - image: mongo:3.4.4
+        environment:
+          POSTGRES_USER: root
+          POSTGRES_DB: circle-test_test
     steps:
       - checkout
       - restore_cache:
