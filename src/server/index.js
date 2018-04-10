@@ -82,3 +82,11 @@ httpServer.listen(config.httpServer.port, (err) => {
 
 io.use(passportSocketIo.authorize(websocketCookieSession))
 initializeWebSocketRouting(io)
+
+module.exports = {
+	app,
+	passport,
+	io,
+	httpServer,
+	dbConnection
+}
