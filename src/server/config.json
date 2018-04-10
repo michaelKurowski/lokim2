@@ -21,5 +21,9 @@
 			"maxAge": 900000
 		}
 	},
-	"devMode": false
+	"devPropeties": {
+		"devMode": false,
+		"httpTestPort": 5001
+	}
+	
 }

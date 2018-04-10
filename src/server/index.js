@@ -37,11 +37,11 @@ const websocketCookieSession = {
 	secret: config.session.secret,
 	store: sessionStore,
 	success: (data, accept) => {
-		if (config.devMode) logger.debug('New websocket connection estabilished')
+		if (config.devPropeties.devMode) logger.debug('New websocket connection estabilished')
 		accept()
 	},
 	fail: (data, msg, err, accept) => {
-		if (config.devMode) logger.debug('Failed to connect via websocket connection', msg)
+		if (config.devPropeties.devMode) logger.debug('Failed to connect via websocket connection', msg)
 		accept(new Error(err))
 	}
 }
@@ -55,7 +55,7 @@ app.use(passport.initialize())
 app.use(passport.session())
 app.use(router)
 
-if (config.devMode) app.use('/test', express.static(path.join(__dirname, '/.tests/tools')))
+if (config.devPropeties.devMode) app.use('/test', express.static(path.join(__dirname, '/.tests/tools')))
 
 //Passport setting
 

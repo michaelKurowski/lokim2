@@ -9,7 +9,7 @@ const namespaceInfo = require('../../../protocol/protocol.json').room
 
 
 const CLIENT_EVENTS = namespaceInfo.eventTypes
-const SOCKET_PORT = config.httpServer.port
+const SOCKET_PORT = config.devPropeties.httpTestPort
 const SOCKET_URL = `http://localhost:${SOCKET_PORT}`
 const SOCKET_OPTIONS = {
 	transports: ['websocket'],
