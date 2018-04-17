@@ -16,11 +16,23 @@ const mongoSanitize = require('express-mongo-sanitize')
 const dbConnection = require('./dbConnection')
 const passportStrategies = require('./passport/strategies')
 const passportStrategyUtils = require('./passport/strategyUtils')
+//const expressSetup = require('./expressSetup')
+
 const LocalStrategy = require('passport-local').Strategy
-const path = require('path')
 const sessionStore = new MongoSessionStore({ mongooseConnection: dbConnection} )
 const COOKIE_SESSION_VARIABLE = 'connect.sid'
-
+/*
+function init() {
+	
+	return {
+		app,
+		passport,
+		io,
+		httpServer,
+		dbConnection
+	}
+}
+*/
 const cookieSession = {
 	store: sessionStore,
 	secret: config.session.secret, 
@@ -54,8 +66,6 @@ app.use(expressSession(cookieSession))
 app.use(passport.initialize())
 app.use(passport.session())
 app.use(router)
-
-if (config.devPropeties.devMode) app.use('/test', express.static(path.join(__dirname, '/.tests/tools')))
 
 //Passport setting
 

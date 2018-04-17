@@ -1,4 +1,5 @@
-const assert = require('chai').assert
+//const assert = require('chai').assert
+//const logger = require('../../logger')
 let suite
 describe('application startup', () => {
 	beforeEach(() => {
@@ -8,11 +9,10 @@ describe('application startup', () => {
 
 	afterEach(() => {
 		suite.application.httpServer.close()
+		suite.application.dbConnection.close()
 	})
 
-	it('should not throw any db connection errors', () => {
-		return suite.application.dbConnection.catch(err => {
-			assert.isNull(err)
-		})
+	it('should connect to db without errors', () => {
+		return suite.application.dbConnection
 	})
 })
