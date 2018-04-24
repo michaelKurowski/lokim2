@@ -24,10 +24,7 @@ const sessionStore = new MongoSessionStore({ mongooseConnection: dbConnection} )
 const COOKIE_SESSION_VARIABLE = 'connect.sid'
 
 function init({
-	httpPort = config.httpServer.port,
-	databaseHost = config.database.host,
-	databaseUsername = config.database.username,
-	databasePassword = config.database.password
+	httpPort = config.httpServer.port
 } = {}) {
 	const cookieSession = {
 		store: sessionStore,
@@ -75,10 +72,8 @@ function init({
 	}, loginStrategy.validateUser))
 
 	//Initialize http server
-	const httpServerListening =
-		util.promisify(httpServer.listen.bind(httpServer))(httpPort)
-
-	httpServerListening
+	const startHttpServer = httpServer.listen.bind(httpServer)
+	const httpServerListening = util.promisify(startHttpServer)(httpPort)
 		.then(() => {
 			logger.info(`HTTP server is listening on port ${httpPort}`)
 			return httpServer
