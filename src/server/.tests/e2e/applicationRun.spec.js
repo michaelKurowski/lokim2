@@ -1,20 +1,15 @@
 const config = require('../../config.json')
 let suite
 describe('application startup', () => {
-	beforeEach(() => {
+	beforeEach('starting server instance for test', () => {
 		suite = {}
 		suite.application = require('../../init')({httpPort: config.devPropeties.httpTestPort})
 	})
 
-	afterEach(done => {
-		//TODO: Avoid failing hooks when there are errors during index.js evalution
-		suite.application.httpServerListening
-			.then(listening => {
-				if (!listening) return done()
-				listening.close()
-				done()
-			})
+	afterEach('clearing network connections after test', () => {
 		suite.application.dbConnection.close()
+		return suite.application.httpServerListening
+			.then(listening => listening.close())
 	})
 
 	it('should connect to db without errors', () => {
