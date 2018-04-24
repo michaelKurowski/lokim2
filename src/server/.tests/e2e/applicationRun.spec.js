@@ -4,14 +4,15 @@ let suite
 describe('application startup', () => {
 	beforeEach(() => {
 		suite = {}
-		suite.application = require('../../index')
+		suite.application = require('../../init')()
 	})
 
 	afterEach(done => {
 		//TODO: Avoid failing hooks when there are errors during index.js evalution
-		suite.application.httpServer
-			.then(httpListening => {
-				httpListening.close()
+		suite.application.httpServerListening
+			.then(listening => {
+				if (!listening) return done()
+				listening.close()
 				done()
 			})
 		suite.application.dbConnection.close()
@@ -22,6 +23,6 @@ describe('application startup', () => {
 	})
 
 	it('should connect start HTTP server with no issues', () => {
-		return suite.application.httpServer
+		return suite.application.httpServerListening
 	})
 })
