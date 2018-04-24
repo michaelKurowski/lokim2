@@ -17,7 +17,6 @@ const util = require('util')
 const dbConnection = require('./dbConnection')
 const passportStrategies = require('./passport/strategies')
 const passportStrategyUtils = require('./passport/strategyUtils')
-//const expressSetup = require('./expressSetup')
 
 const LocalStrategy = require('passport-local').Strategy
 const sessionStore = new MongoSessionStore({ mongooseConnection: dbConnection} )

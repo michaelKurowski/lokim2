@@ -1,10 +1,9 @@
-//const assert = require('chai').assert
-//const logger = require('../../logger')
+const config = require('../../config.json')
 let suite
 describe('application startup', () => {
 	beforeEach(() => {
 		suite = {}
-		suite.application = require('../../init')()
+		suite.application = require('../../init')({httpPort: config.devPropeties.httpTestPort})
 	})
 
 	afterEach(done => {
