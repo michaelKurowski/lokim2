@@ -80,13 +80,18 @@ passport.use(passportStrategyUtils.STRATEGY_NAME, new LocalStrategy({
 
 //Initialize http server
 
-httpServer.listen(config.httpServer.port, (err) => {
-	if (err) {
-		logger.error(`Error during attempting to listen for port ${config.httpServer.port}`)
-		return
-	}
-	logger.info(`HTTP server is listening on port ${config.httpServer.port}`)
+const httpServerPromise = new Promise((resolve, reject) => {
+	httpServer.listen(config.httpServer.port, (err) => {
+		if (err) {
+			logger.error(`Error during attempting to listen for port ${config.httpServer.port}`)
+			reject(err)
+			return
+		}
+		logger.info(`HTTP server is listening on port ${config.httpServer.port}`)
+		resolve(httpServer)
+	})
 })
+
 
 //websocket flow
 
@@ -97,6 +102,6 @@ module.exports = {
 	app,
 	passport,
 	io,
-	httpServer,
+	httpServer: httpServerPromise,
 	dbConnection
 }

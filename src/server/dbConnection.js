@@ -10,11 +10,11 @@ const username = _.trim(config.database.username) ?
 	process.env.MONGO_INITDB_ROOT_USERNAME
 
 const password = _.trim(config.database.username) ?
-	config.database.username :
+	config.database.password :
 	process.env.MONGO_INITDB_ROOT_PASSWORD
 
 const host = _.trim(config.database.username) ?
-	config.database.username :
+	config.database.host :
 	DEFAULT_DATABASE_HOST
 
 const db = mongoose.createConnection(`mongodb://${username}:${password}@${host}`)
