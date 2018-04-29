@@ -338,6 +338,16 @@ describe('Room websocket service', () => {
 	})
 
 	describe('communication between users', () => {
+		beforeEach(() => {
+			suite.clientA = socketClient.connect(SOCKET_URL, SOCKET_OPTIONS)
+			suite.clientB = socketClient.connect(SOCKET_URL, SOCKET_OPTIONS)
+		})
+
+		afterEach(() => {
+			suite.clientA.disconnect()
+			suite.clientB.disconnect()
+		})
+
 		it('should enable communication between two users when they both join the same room', done => {
 			//given
 			const ROOM_ID = 'random room id'
@@ -360,9 +370,6 @@ describe('Room websocket service', () => {
 				)
 			})
 			
-			suite.clientA = socketClient.connect(SOCKET_URL, SOCKET_OPTIONS)
-			suite.clientB = socketClient.connect(SOCKET_URL, SOCKET_OPTIONS)
-
 			//when
 			suite.clientA.emit(CLIENT_EVENTS.JOIN, joinRoomRequestMock)
 			suite.clientB.emit(CLIENT_EVENTS.JOIN, joinRoomRequestMock)
@@ -385,8 +392,6 @@ describe('Room websocket service', () => {
 			suite.clientB.on(CLIENT_EVENTS.MESSAGE, then)
 
 			function then(data) {
-				suite.clientA.disconnect()
-				suite.clientB.disconnect()
 				done()
 			}
 		})
