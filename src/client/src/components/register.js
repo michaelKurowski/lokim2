@@ -1,6 +1,7 @@
 const React = require('react')
 const fetch = require('node-fetch')
 const {Link, Redirect} = require('react-router-dom')
+const responseCodes = require('../statusCodeResponses')
 
 const REGISTER_URL = '/register'
 
