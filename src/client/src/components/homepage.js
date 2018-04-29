@@ -2,6 +2,7 @@ const React = require('react')
 const {Link, Redirect} = require('react-router-dom')
 const fetch = require('node-fetch')
 const logo = require('../logo.svg')
+const responseCodes = require('../statusCodeResponses')
 const LOGIN_URL = '/login'
 
 class HomePage extends React.Component {
@@ -26,6 +27,10 @@ class HomePage extends React.Component {
         }).then(response => {
             if(response.status === 200){
                 this.setState({successfulLogin: true})
+            }
+            if(responseCodes.hasOwnProperty(response.status)){
+                alert(responseCodes[response.status])
+                console.log(response.status, response)
             }
         }).catch(err => console.err(err))
     }

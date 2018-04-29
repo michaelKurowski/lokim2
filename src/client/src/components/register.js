@@ -30,8 +30,13 @@ class Register extends React.Component {
             headers: { 'Content-Type': 'application/json' }
         })
         .then(response => {
-            if(response.status === 200) this.setState({successfulRegister: true})
-            console.log(`${response.status}: ${response.statusText}`)
+            if(response.status === 200){
+                this.setState({successfulRegister: true})
+            }
+            if(responseCodes.hasOwnProperty(response.status)){
+                alert(responseCodes[response.status])
+                console.log(response.status, response)
+            }
         })
         .catch(error => {
             console.err(error)
