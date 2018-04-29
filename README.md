@@ -6,7 +6,10 @@ This is a backend for LokIM Instant Messanger, focused on anonymity and security
 3. Run `npm start` from `/src/server` directory in order to run the server.
 ## For devs
 In order to run tests, run `npm test` from `/src/server`.
+
 You can use it, and debug from inside Visual Studio Code by running `Mocha Tests` debug task.
+
+To generate docs, run `npm run generate-docs`
 ## Technologies used:
 * DB
     * MongoDB
