@@ -8,7 +8,7 @@
     "test": "./node_modules/mocha/bin/mocha './.tests/**/*.spec.js'",
     "eslint": "node ./node_modules/eslint/bin/eslint.js -c ./.eslintrc.json --ignore-path ./.eslintignore ./",
     "generate-docs": "node ./node_modules/jsdoc/jsdoc -r ./ws-routes/",
-    "test-coverage": "node ./node_modules/nyc/bin/nyc --all npm test"
+    "test-coverage": "node ./node_modules/nyc/bin/nyc --all --check-coverage npm test"
   },
   "repository": {
     "type": "git",
