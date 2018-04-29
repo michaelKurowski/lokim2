@@ -8,7 +8,6 @@ const config = require('../../../config.json')
 const namespaceInfo = require('../../../protocol/protocol.json').room
 
 
-const SERVER_EVENTS = namespaceInfo.serverEventTypes
 const CLIENT_EVENTS = namespaceInfo.eventTypes
 const SOCKET_PORT = config.httpServer.port
 const SOCKET_URL = `http://localhost:${SOCKET_PORT}`
@@ -48,7 +47,7 @@ describe('Room websocket service', () => {
 			suite.client = socketClient.connect(SOCKET_URL, SOCKET_OPTIONS)
 
 			//then
-			suite.client.on(SERVER_EVENTS.JOINED, then)
+			suite.client.on(CLIENT_EVENTS.JOIN, then)
 			function then(data) {
 				done()
 			}
@@ -62,7 +61,7 @@ describe('Room websocket service', () => {
 			suite.client = socketClient.connect(SOCKET_URL, SOCKET_OPTIONS)
 
 			//then
-			suite.client.on(SERVER_EVENTS.JOINED, then)
+			suite.client.on(CLIENT_EVENTS.JOIN, then)
 
 			function then(data) {
 				const hasSessionStored = suite.connectionsMock.usersToConnectionsMap.has(suite.USERNAME_MOCK)
@@ -82,7 +81,7 @@ describe('Room websocket service', () => {
 			suite.client = socketClient.connect(SOCKET_URL, SOCKET_OPTIONS)
 
 			//then
-			suite.client.on(SERVER_EVENTS.JOINED, then)
+			suite.client.on(CLIENT_EVENTS.JOIN, then)
 			function then(data) {
 				const storedSession = suite.connectionsMock.usersToConnectionsMap.get(suite.USERNAME_MOCK)
 				assert.strictEqual(storedSession, suite.newSocket)
@@ -110,7 +109,7 @@ describe('Room websocket service', () => {
 			suite.client.emit(CLIENT_EVENTS.JOIN, requestMock)
 
 			//then
-			suite.client.on(SERVER_EVENTS.JOINED, then)
+			suite.client.on(CLIENT_EVENTS.JOIN, then)
 			function then(data) {
 				done()
 			}
@@ -135,7 +134,7 @@ describe('Room websocket service', () => {
 			suite.client.emit(CLIENT_EVENTS.JOIN, requestMock)
 
 			//then
-			suite.client.on(SERVER_EVENTS.JOINED, then)
+			suite.client.on(CLIENT_EVENTS.JOIN, then)
 
 			function then(data) {
 				sinon.assert.calledOnce(suite.roomJoinSpy)
@@ -259,7 +258,7 @@ describe('Room websocket service', () => {
 					username: suite.USERNAME_MOCK
 				}
 				sinon.assert.calledWith(suite.toSpy.firstCall, ROOM_ID)
-				sinon.assert.calledWith(suite.emitSpy.firstCall, SERVER_EVENTS.LEFT, expectedEventMessage)
+				sinon.assert.calledWith(suite.emitSpy.firstCall, CLIENT_EVENTS.LEAVE, expectedEventMessage)
 
 				done()
 			}
@@ -289,7 +288,7 @@ describe('Room websocket service', () => {
 
 			//then
 			function then() {
-				sinon.assert.calledWith(suite.emitSpy.firstCall, SERVER_EVENTS.JOINED, sinon.match({username: suite.USERNAME_MOCK}))
+				sinon.assert.calledWith(suite.emitSpy.firstCall, CLIENT_EVENTS.JOIN, sinon.match({username: suite.USERNAME_MOCK}))
 				done()
 			}
 		})
@@ -330,8 +329,8 @@ describe('Room websocket service', () => {
 				suite.clientA.disconnect()
 				suite.clientB.disconnect()
 
-				sinon.assert.calledWith(suite.emitSpy.firstCall, SERVER_EVENTS.JOINED, sinon.match({username: suite.USER_A_USERNAME}))
-				sinon.assert.calledWith(suite.emitSpy.secondCall, SERVER_EVENTS.JOINED, sinon.match({username: suite.USER_B_USERNAME}))
+				sinon.assert.calledWith(suite.emitSpy.firstCall, CLIENT_EVENTS.JOIN, sinon.match({username: suite.USER_A_USERNAME}))
+				sinon.assert.calledWith(suite.emitSpy.secondCall, CLIENT_EVENTS.JOIN, sinon.match({username: suite.USER_B_USERNAME}))
 				done()
 			}
 		})
@@ -375,12 +374,12 @@ describe('Room websocket service', () => {
 			suite.clientB.emit(CLIENT_EVENTS.JOIN, joinRoomRequestMock)
 
 			const clientAJoinedRoom = new Promise(resolve => 
-				suite.clientA.on(SERVER_EVENTS.JOINED, resolve)
+				suite.clientA.on(CLIENT_EVENTS.JOIN, resolve)
 			)
 
 
 			const clientBJoinedRoom = new Promise(resolve => 
-				suite.clientB.on(SERVER_EVENTS.JOINED, resolve)
+				suite.clientB.on(CLIENT_EVENTS.JOIN, resolve)
 			)
 
 			//then
