@@ -1,5 +1,5 @@
 /**
- * @module
+ * @module dataTypes
 */
 
 /**
@@ -7,7 +7,7 @@
  * @typedef module:dataTypes.uuid
  * @type {string}
  * @see https://en.wikipedia.org/wiki/Universally_unique_identifier#Format
- * @memberOf 
+ * @memberof module:dataTypes
  * @example
  * "f64f2940-fae4-11e7-8c5f-ef356f279131"
  * "c6235813-3ba4-3801-ae84-e0a6ebb7d138"
