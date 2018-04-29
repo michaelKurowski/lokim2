@@ -1,28 +1,163 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+li a{
+  color: white;
+  text-decoration:  none;
+}
+li a:hover{
+  color: white;
+  text-decoration: none;
+}
+
+hr {
+  display: block;
+  height: 1px;
+  border: 0;
+  border-top: 1px solid #ccc;
+  margin: 1em 0;
+  padding: 0;
+}
+
 .App {
+  background: linear-gradient(rgb(23,36, 44), rgb(16, 15, 20));
+  border-style: solid;
+  border-color: #013e53;
+  border-width: 5px;
+  height: 100vh;
   text-align: center;
+  width: 100%;
 }
 
 .App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+  height: 116px;
 }
 
 .App-header {
-  background-color: #222;
-  height: 150px;
+  height: 200px;
   padding: 20px;
   color: white;
-}
-
-.App-title {
-  font-size: 1.5em;
 }
 
 .App-intro {
   font-size: large;
 }
 
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.userInput {
+  width: 60%;
+  padding: 12px 20px;
+  margin: 10px 0;
+  box-sizing: border-box;
 }
+
+.registerDiv {
+  background: linear-gradient(rgb(23,36, 44), rgb(16, 15, 20));
+  border-style: solid;
+  border-color: #013e53;
+  border-width: 5px;
+  padding: 12px 20px;
+  margin: 10px 0;
+  text-align: center;
+}
+
+.registerDiv h2, li {
+  color: white;
+}
+
+.homeButton {
+  font-size: 20px;
+  margin: 8px;
+}
+.info-paragraph {
+  padding-top: 8px;
+  font-size: 12px;
+  color: white;
+}
+
+/* CHAT WINDOW */
+.chatWindow ul {
+  list-style-type: none;
+}
+.chatWindow {
+  background: linear-gradient(rgb(23,36, 44), rgb(16, 15, 20));
+  border-style: solid;
+  border-color: rgb(1, 62, 83);
+  border-width: 5px;
+  height: 100%;
+}
+
+.iconHeading {
+  background: white;
+  border-radius: 50%;
+  margin: 5px 0px;
+  height: 48px;
+  width: 48px;
+}
+.iconImage{
+  border-radius: 50%;
+  margin: 5px 0px;
+  height: 48px;
+  width: 48px;
+
+}
+
+
+.menuArea {
+  background-color: #2a2a2a;
+}
+.menuHeading {
+  font-size: 18px;
+  margin: 5px 0;
+  padding: 5px;
+}
+.menu-right{
+  float: right;
+}
+.menuItem {
+  font-size: 16px;
+  margin: 0;
+  padding: 0 5px;
+}
+.messageArea {
+  border-radius: 1%;
+  background-color: whitesmoke;
+  padding: 5px;
+  width: 100%;
+}
+
+.messageContainer {
+  color: black;
+  margin: 5px 0;
+  padding: 0px 5px;
+}
+.messageContainer li{
+  color: black;
+}
+.messageContainer p{
+  font-size: 90%;
+}
+
+.textHolder {
+  background-color: whitesmoke;
+  border-radius: 5px;
+  position: relative;
+}
+
+.messageBox textarea{
+  color: black;
+
+  -webkit-appearance: none;
+  background-color: transparent;
+  border: none;
+  font-size: 0.9375rem;
+  font-weight: 400;
+  letter-spacing: -0.025rem;
+  margin: 2px 2px 2px 0;
+  max-height: 144px;
+  min-height: 20px;
+  outline: none;
+  resize: none;
+  width: 100%
+}
+

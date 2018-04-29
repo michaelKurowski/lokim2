@@ -1,10 +1,10 @@
-const React, {Component} = require('react')
+const React = require('react')
 const {Link, Redirect} = require('react-router-dom')
 const fetch = require('node-fetch')
-const logo = require('../../resources/Lokim_MAIN.svg')
+const logo = require('../logo.svg')
 const LOGIN_URL = '/login'
 
-class Home extends Component {
+class HomePage extends React.Component {
     constructor(props){
         super(props)
 
@@ -32,6 +32,10 @@ class Home extends Component {
         this.setState({ [key] : event.target.value})
     }
     handleSubmit(event){
+        this.login(this.state.username, this.state.password)
+        event.preventDefault()
+    }
+    render(){
         if(this.state.successfulLogin){
             return <Redirect to='/chat'/>
         }
@@ -54,3 +58,5 @@ class Home extends Component {
     }
     
 }
+
+module.exports = HomePage
