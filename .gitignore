@@ -2,3 +2,4 @@ src/server/node_modules
 src/client/node_modules
 **/.DS_Store
 **/*.log
+src/server/config.json

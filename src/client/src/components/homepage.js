@@ -19,7 +19,11 @@ class HomePage extends React.Component {
     }
 
     loginHandler(username, password){
-        fetch(LOGIN_URL, {username, password}).then(response => {
+        fetch(LOGIN_URL, {
+            method: 'POST',
+            body: JSON.stringify({username, password}),
+            headers: { 'Content-Type': 'application/json' }
+        }).then(response => {
             if(response.status === 200){
                 this.setState({successfulLogin: true})
             }
@@ -32,7 +36,7 @@ class HomePage extends React.Component {
         this.setState({ [key] : event.target.value})
     }
     handleSubmit(event){
-        this.login(this.state.username, this.state.password)
+        this.loginHandler(this.state.username, this.state.password)
         event.preventDefault()
     }
     render(){
