@@ -1,3 +1,4 @@
 src/server/node_modules
 **/.DS_Store
 **/*.log
+src/server/out
