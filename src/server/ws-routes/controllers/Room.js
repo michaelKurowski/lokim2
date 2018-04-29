@@ -3,9 +3,8 @@ const uuidv4 = require('uuid/v4')
 const _ = require('lodash')
 const namespaceInfo =  require('../../protocol/protocol.json').room
 const EVENT_TYPES = namespaceInfo.eventTypes
-
 /**
- * /Room websocket namespace and its eventsaaa
+ * /Room websocket namespace and its events
  * @namespace
  */
 class Room {
@@ -21,7 +20,7 @@ class Room {
 	 * @name join
 	 * @memberof Room
 	 * @member
-	 * @property {uuid} roomId Room ID of the room to join
+	 * @property {module:dataTypes.uuid} roomId Room to join
 	 * @property {string} username Username of user that joined (only for server-sourced emits)
 	 */
 
@@ -38,7 +37,7 @@ class Room {
 	 * @name message
 	 * @memberof Room
 	 * @member
-	 * @property {uuid} roomId Room ID of the choosed room
+	 * @property {module:dataTypes.uuid} roomId Room to receive a message
 	 * @property {string} message Text message
 	 * @property {string} username Username of user that joined (only for server-sourced emits)
 	 */
@@ -55,7 +54,7 @@ class Room {
 	 * @name leave
 	 * @memberof Room
 	 * @member
-	 * @property {uuid} roomId Room ID of the choosed room
+	 * @property {module:dataTypes.uuid} roomId Room to leave
 	 * @property {string} username Username of user that joined (only for server-sourced emits)
 	 */
 
