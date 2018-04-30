@@ -3,7 +3,7 @@ const React = require('react')
 const socketIOClient = require('socket.io-client')
 const protocol = require('../utils/io-protocol').eventTypes
 
-const endpoint = 'http://localhost.com:5000' /* Take this from config file in the future */
+const endpoint = 'http://localhost:5000' /* Take this from config file in the future */
 
 /*
 Consulted documentation:
@@ -27,7 +27,7 @@ class ChatPage extends React.Component {
     componentDidMount(){
         //Setup socket.io here
         console.log('Component Mounted')
-        const socket = socketIOClient(endpoint, {path: '/connection'})
+        const socket = socketIOClient(endpoint, {path: '/room'})
         
         socket.on(protocol.CONNECTION, data => {
             console.log(socket)
