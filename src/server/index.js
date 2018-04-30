@@ -79,6 +79,6 @@ httpServer.listen(config.httpServer.port, (err) => {
 })
 
 //websocket flow
-
+io.set('origins', '*:*') /* Remove this in production */
 io.use(passportSocketIo.authorize(websocketCookieSession))
 initializeWebSocketRouting(io)

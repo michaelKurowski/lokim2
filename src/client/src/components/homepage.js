@@ -46,7 +46,10 @@ class HomePage extends React.Component {
     }
     render(){
         if(this.state.successfulLogin){
-            return <Redirect to='/chat'/>
+            return <Redirect to={{
+                pathname: '/chat',
+                state: {username: this.state.username}
+            }}/>
         }
         return (
             <div className="App">
