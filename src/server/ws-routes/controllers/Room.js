@@ -1,4 +1,3 @@
-
 const uuidv4 = require('uuid/v4')
 const _ = require('lodash')
 const namespaceInfo =  require('../../protocol/protocol.json').room
@@ -28,7 +27,6 @@ class Room {
 	static [EVENT_TYPES.JOIN](data, socket, connections) {
 		const {roomId} = data
 		const username = socket.request.user.username
-		socket.emit(SERVER_EVENTS.JOINED, {username, roomId})
 		const timestamp = new Date().getTime()
 
 		socket.emit(EVENT_TYPES.JOIN, {username, roomId, timestamp})
@@ -48,7 +46,6 @@ class Room {
 
 	static [EVENT_TYPES.MESSAGE](data, socket, connections) {
 		const {roomId, message} = data
-		socket.to(roomId).emit(SERVER_EVENTS.MESSAGE, message)
 		const username = socket.request.user.username
 		const timestamp = new Date().getTime()
 
@@ -67,12 +64,13 @@ class Room {
 
 	static [EVENT_TYPES.LEAVE](data, socket, connections) {
 		const {roomId} = data
+
 		const timestamp = new Date().getTime()
 		const username = socket.request.user.username
 		socket.to(roomId).emit(EVENT_TYPES.LEAVE, {username, timestamp})
 		socket.leave({roomId})
 	}
-  
+
 	/**
 	 * User creates a room with choosed users
 	 * @name create
@@ -84,12 +82,13 @@ class Room {
 	static [EVENT_TYPES.CREATE](data, socket, connections) {
 		const {invitedUsersIndexes} = data
 		const roomId = uuidv4()
+
 		Room.join({roomId}, socket, connections)
 		joinUsersToRoom(invitedUsersIndexes, roomId, connections)
 	}
-}	
+}
 
-	function joinUsersToRoom(invitedUsersIndexes, roomId, connections) {
+function joinUsersToRoom(invitedUsersIndexes, roomId, connections) {
 	_.forEach(invitedUsersIndexes, username => {
 		const invitedUserSocket = connections.usersToConnectionsMap.get(username)
 		if (invitedUserSocket) Room.join({roomId}, invitedUserSocket, connections)
