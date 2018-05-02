@@ -7,13 +7,6 @@
 			"LEAVE": "leave",
 			"CREATE": "create",
 			"CONNECTION": "connection"
-		},
-		"serverEventTypes": {
-			"JOINED": "joined",
-			"MESSAGE": "message",
-			"LEFT": "left",
-			"CONNECT": "connect",
-			"DISCONNECT": "disconnect"
 		}
 	}
 }

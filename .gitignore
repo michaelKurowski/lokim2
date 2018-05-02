@@ -3,3 +3,4 @@ src/client/node_modules
 **/.DS_Store
 **/*.log
 src/server/config.json
+src/server/out
