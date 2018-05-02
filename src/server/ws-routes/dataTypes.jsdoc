@@ -3,7 +3,7 @@
 */
 
 /**
- * UUID v4 string value
+ * UUID v4 string value.
  * @typedef module:dataTypes.uuid
  * @type {string}
  * @see https://en.wikipedia.org/wiki/Universally_unique_identifier#Format
@@ -12,4 +12,12 @@
  * "f64f2940-fae4-11e7-8c5f-ef356f279131"
  * "c6235813-3ba4-3801-ae84-e0a6ebb7d138"
  * "e8b5a51d-11c8-3310-a6ab-367563f20686"
+ */
+
+/**
+ * Timestamp as by returned via Date.getTime() JS method.
+ * @typedef module:dataTypes.timestamp
+ * @type {number}
+ * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTime
+ * @memberof module:dataTypes
  */
