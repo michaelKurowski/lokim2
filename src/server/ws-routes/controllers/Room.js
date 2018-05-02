@@ -22,13 +22,15 @@ class Room {
 	 * @member
 	 * @property {module:dataTypes.uuid} roomId Room to join
 	 * @property {string} username Username of the user that joined (only for server-sourced emits)
+	 * @property {module:timestamp} timestamp Timestamp of when server acknowledged that user joined the room (only for server-sourced emits)
 	 */
 
 	static [EVENT_TYPES.JOIN](data, socket, connections) {
 		const {roomId} = data
 		const username = socket.request.user.username
+		const timestamp = new Date().getTime()
 
-		socket.emit(EVENT_TYPES.JOIN, {username, roomId})
+		socket.emit(EVENT_TYPES.JOIN, {username, roomId, timestamp})
 		socket.join(roomId)
 	}
 
@@ -40,13 +42,15 @@ class Room {
 	 * @property {module:dataTypes.uuid} roomId Room to receive a message
 	 * @property {string} message Text message
 	 * @property {string} username Username of the user that sent the message (only for server-sourced emits)
+	 * @property {module:timestamp} timestamp Timestamp of when server acknowledged that message has been send (only for server-sourced emits)
 	 */
 
 	static [EVENT_TYPES.MESSAGE](data, socket, connections) {
 		const {roomId, message} = data
 		const username = socket.request.user.username
+		const timestamp = new Date().getTime()
 
-		socket.to(roomId).emit(EVENT_TYPES.MESSAGE, {message, username})
+		socket.to(roomId).emit(EVENT_TYPES.MESSAGE, {message, username, timestamp})
 	}
 
 	/**
@@ -56,12 +60,15 @@ class Room {
 	 * @member
 	 * @property {module:dataTypes.uuid} roomId Room to leave
 	 * @property {string} username Username of the user that left (only for server-sourced emits)
+	 * @property {module:timestamp} timestamp Timestamp of when server acknowledged that user left the room (only for server-sourced emits)
 	 */
 
 	static [EVENT_TYPES.LEAVE](data, socket, connections) {
 		const {roomId} = data
 
-		socket.to(roomId).emit(EVENT_TYPES.LEAVE, {username: socket.request.user.username})
+		const timestamp = new Date().getTime()
+		const username = socket.request.user.username
+		socket.to(roomId).emit(EVENT_TYPES.LEAVE, {username, timestamp})
 		socket.leave({roomId})
 	}
 

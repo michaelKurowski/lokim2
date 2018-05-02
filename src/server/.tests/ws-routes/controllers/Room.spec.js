@@ -91,7 +91,7 @@ describe('Room websocket service', () => {
 	})
 
 	describe('#join', () => {
-		it('should send "joined" event when receiving "join" request', done => {
+		it('should send "join" event when receiving "join" request', done => {
 			//given
 			const requestMock = {
 				roomId: 'random room id'
@@ -138,6 +138,32 @@ describe('Room websocket service', () => {
 
 			function then(data) {
 				sinon.assert.calledOnce(suite.roomJoinSpy)
+				done()
+			}
+		})
+
+		it('should attach number type timestamp property to "join" events sent from server', done => {
+			//given
+			const requestMock = {
+				roomId: 'random room id'
+			}
+
+			suite.server.on(CLIENT_EVENTS.CONNECTION, connection => 
+				connection.on(CLIENT_EVENTS.JOIN, data => 
+					RoomProvider.join(data, connection, suite.connectionsMock)
+				)
+			)
+			
+			suite.client = socketClient.connect(SOCKET_URL, SOCKET_OPTIONS)
+
+			//when
+			suite.client.emit(CLIENT_EVENTS.JOIN, requestMock)
+
+			//then
+			suite.client.on(CLIENT_EVENTS.JOIN, then)
+			function then(data) {
+				
+				assert.isNumber(data.timestamp)
 				done()
 			}
 		})
@@ -192,11 +218,42 @@ describe('Room websocket service', () => {
 
 			//when
 			suite.client.emit(CLIENT_EVENTS.MESSAGE, requestMock)
-
+			
 			//then
 			function then(data) {
 				sinon.assert.calledWith(suite.toSpy.firstCall, ROOM_ID)
 				sinon.assert.calledWith(suite.emitSpy.firstCall, CLIENT_EVENTS.MESSAGE)
+				done()
+			}
+		})
+
+		it('should emit message event type wth numerical timestamp attached to it', done => {
+			//given
+			const requestMock = {
+				roomId: 'random room id',
+				message: 'dummy message'
+			}
+
+			suite.server.on(CLIENT_EVENTS.CONNECTION, connection => {
+				suite.emitSpy = sinon.spy(connection, 'emit')
+				connection.on(CLIENT_EVENTS.MESSAGE, data => {
+					RoomProvider.message(data, connection, suite.connectionsMock)
+					then()
+				})
+			})
+			
+			suite.client = socketClient.connect(SOCKET_URL, SOCKET_OPTIONS)
+
+			//when
+			suite.client.emit(CLIENT_EVENTS.MESSAGE, requestMock)
+
+			//then
+			function then(data) {
+
+				const expectedData = {
+					timestamp: sinon.match.number
+				}
+				sinon.assert.calledWithMatch(suite.emitSpy.firstCall, CLIENT_EVENTS.MESSAGE, expectedData)
 				done()
 			}
 		})
@@ -231,7 +288,7 @@ describe('Room websocket service', () => {
 			}
 		})
 
-		it('should emit "left" event with username of the person who left to the left room', done => {
+		it('should emit "leave" event with username of the person who left to the left room', done => {
 			//given
 			const ROOM_ID = 'random room id'
 			const requestMock = {
@@ -258,7 +315,40 @@ describe('Room websocket service', () => {
 					username: suite.USERNAME_MOCK
 				}
 				sinon.assert.calledWith(suite.toSpy.firstCall, ROOM_ID)
-				sinon.assert.calledWith(suite.emitSpy.firstCall, CLIENT_EVENTS.LEAVE, expectedEventMessage)
+				sinon.assert.calledWithMatch(suite.emitSpy.firstCall, CLIENT_EVENTS.LEAVE, expectedEventMessage)
+
+				done()
+			}
+		})
+
+		it('should emit "leave" event with numerical timestamp', done => {
+			//given
+			const ROOM_ID = 'random room id'
+			const requestMock = {
+				roomId: ROOM_ID
+			}
+
+			suite.server.on(CLIENT_EVENTS.CONNECTION, connection => {
+				suite.emitSpy = sinon.spy(connection, 'emit')
+				suite.toSpy = sinon.spy(connection, 'to')
+				connection.on(CLIENT_EVENTS.LEAVE, data => {
+					RoomProvider.leave(data, connection, suite.connectionsMock)
+					then()
+				})
+			})
+			
+			suite.client = socketClient.connect(SOCKET_URL, SOCKET_OPTIONS)
+
+			//when
+			suite.client.emit(CLIENT_EVENTS.LEAVE, requestMock)
+
+			//then
+			function then() {
+				const expectedEventMessage = {
+					timestamp: sinon.match.number
+				}
+				sinon.assert.calledWith(suite.toSpy.firstCall, ROOM_ID)
+				sinon.assert.calledWithMatch(suite.emitSpy.firstCall, CLIENT_EVENTS.LEAVE, expectedEventMessage)
 
 				done()
 			}
