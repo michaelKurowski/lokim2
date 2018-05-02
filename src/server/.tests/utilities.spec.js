@@ -1,17 +1,19 @@
 const Utilities = require('../utilities')
 const assert = require('chai').assert
-
-
+const ConnectionsRepository = require('../ws-routes/ConnectionsRepository')
+const sinon = require('sinon')
 let suite = null
 
 describe('utilities.js', () => {
+	beforeEach(() => {
+		suite = {}
+	})
 	afterEach(() => {
 		suite = null
 	})
 
 	describe('#createSaltedHash()', () => {
 		beforeEach(() => {
-			suite = {}
 			suite.DUMMY_PASSPHRASE = 'imADummyPassphrase321'
 			suite.DUMMY_SALT = 'imADummySalt321'
 		})
@@ -52,7 +54,6 @@ describe('utilities.js', () => {
 
 	describe('#generateSalt()', () => {
 		beforeEach(() => {
-			suite = {}
 			suite.DUMMY_SALT_SIZE = 60
 		})
 
@@ -92,7 +93,6 @@ describe('utilities.js', () => {
 
 	describe('#createMessage()', () => {
 		beforeEach(() => {
-			suite = {}
 			suite.DUMMY_MESSAGE = 'Im a happy error'
 		})
 
@@ -105,6 +105,102 @@ describe('utilities.js', () => {
 
 			//then
 			assert.exists(createdError.description)
+		})
+	})
+
+	describe('#createWebsocketRoute()', () => {
+		beforeEach(() => {
+			suite.socketMock = {on: sinon.stub()}
+			suite.ioMock = {}
+			suite.ioMock.of = sinon.stub().returns(suite.ioMock)
+			suite.ioMock.on = (namespace, callback) => callback(suite.socketMock)
+			suite.connectionsRepository = new ConnectionsRepository()
+		})
+
+		it('should throw error about lack of  event type handler when there\'s no event type handler for described event type in protocol', () => {
+			//given
+			suite.controllersBundle = class {}
+			suite.protocol = {
+				dummyNamespace: {
+					name: 'dummyNamespace',
+					eventTypes: {
+						COOL_EVENT_TYPE: 'coolEventType'
+					}
+				}
+			}
+
+			const thisBind = null
+
+			const functionCallToTest = 
+				Utilities.createWebsocketRoute.bind(
+					thisBind,
+					suite.ioMock,
+					suite.protocol.dummyNamespace,
+					suite.controllersBundle,
+					suite.connectionsRepository
+				)
+
+			//then
+			const EXPECTED_ERROR_MESSAGE = 'Can\'t find event "coolEventType" in controller of namespace "dummyNamespace"'
+			assert.throws(functionCallToTest, Error, EXPECTED_ERROR_MESSAGE)	
+		})
+
+		it('should not throw error about lack of event type handler when there\'s event type handler for described event type in protocol', () => {
+			//given
+			suite.controllersBundle = class {
+				static coolEventType() {
+
+				}
+			}
+			suite.protocol = {
+				dummyNamespace: {
+					name: 'dummyNamespace',
+					eventTypes: {
+						COOL_EVENT_TYPE: 'coolEventType'
+					}
+				}
+			}
+
+			const thisBind = null
+
+			const functionCallToTest = 
+				Utilities.createWebsocketRoute.bind(
+					thisBind,
+					suite.ioMock,
+					suite.protocol.dummyNamespace,
+					suite.controllersBundle,
+					suite.connectionsRepository
+				)
+
+			//then
+			const EXPECTED_ERROR_MESSAGE = 'Can\'t find event "coolEventType" in controller of namespace "dummyNamespace"'
+			assert.doesNotThrow(functionCallToTest, Error, EXPECTED_ERROR_MESSAGE)	
+		})
+
+		it('should invoke connection event handler with socket and connections map during creating a routing for new incomming connection', () => {
+			//given
+			suite.controllersBundle = {
+				connection: sinon.spy()
+			}
+			suite.protocol = {
+				dummyNamespace: {
+					name: 'dummyNamespace',
+					eventTypes: {
+						CONNECTION: 'connection'
+					}
+				}
+			}
+
+
+			Utilities.createWebsocketRoute(
+				suite.ioMock,
+				suite.protocol.dummyNamespace,
+				suite.controllersBundle,
+				suite.connectionsRepository
+			)
+
+			//then
+			sinon.assert.calledWith(suite.controllersBundle.connection, suite.socketMock, suite.connectionsRepository)
 		})
 	})
 })
