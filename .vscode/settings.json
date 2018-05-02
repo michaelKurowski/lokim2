@@ -4,5 +4,8 @@
     "eslint.options": {
         "configFile": "./src/server/.eslintrc.json",
         "ignorePath": "./src/server/.eslintignore"
+    },
+    "files.associations": {
+        "*.jsdoc": "javascript"
     }
 }

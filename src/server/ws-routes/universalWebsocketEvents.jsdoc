@@ -1,0 +1,88 @@
+/**
+ * Event types shared by all namespaces.
+ * @namespace universalWebsocketEvents
+ */
+
+/**
+ * @name connect
+ * @member
+ * @memberof universalWebsocketEvents
+ * @see https://socket.io/docs/client-api/#event-connect
+ */
+
+/**
+ * @name disconnect
+ * @memberof universalWebsocketEvents
+ * @member
+ * @see https://socket.io/docs/client-api/#socket-disconnect
+ */
+
+/**
+ * @name connect_error
+ * @memberof universalWebsocketEvents
+ * @member
+ * @see https://socket.io/docs/client-api/#event-connect_error-1
+ */
+
+/**
+ * @name connect_timeout
+ * @memberof universalWebsocketEvents
+ * @member
+ * @see https://socket.io/docs/client-api/#event-connect_timeout-1
+ */
+
+/**
+ * @name error
+ * @memberof universalWebsocketEvents
+ * @member
+ * @see https://socket.io/docs/client-api/#event-error
+ */
+
+/**
+ * @name reconnect
+ * @memberof universalWebsocketEvents
+ * @member
+ * @see https://socket.io/docs/client-api/#event-reconnect-1
+ */
+
+/**
+ * @name reconnect_attempt
+ * @memberof universalWebsocketEvents
+ * @member
+ * @see https://socket.io/docs/client-api/#event-reconnect_attempt-1
+ */
+
+/**
+ * @name reconnecting
+ * @memberof universalWebsocketEvents
+ * @member
+ * @see https://socket.io/docs/client-api/#event-reconnecting-1
+ */
+
+/**
+ * @name reconnect_error
+ * @memberof universalWebsocketEvents
+ * @member
+ * @see https://socket.io/docs/client-api/#event-reconnect_error-1
+ */
+
+/**
+ * @name reconnect_failed
+ * @memberof universalWebsocketEvents
+ * @member
+ * @see https://socket.io/docs/client-api/#event-reconnect_failed-1
+ */
+
+/**
+ * @name ping
+ * @memberof universalWebsocketEvents
+ * @member
+ * @see https://socket.io/docs/client-api/#event-ping-1
+ */
+
+/**
+ * @name pong
+ * @memberof universalWebsocketEvents
+ * @member
+ * @see https://socket.io/docs/client-api/#event-pong-1
+ */

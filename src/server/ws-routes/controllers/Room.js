@@ -1,10 +1,14 @@
+
 const uuidv4 = require('uuid/v4')
 const _ = require('lodash')
 const namespaceInfo =  require('../../protocol/protocol.json').room
-const SERVER_EVENTS = namespaceInfo.serverEventTypes
-
+const EVENT_TYPES = namespaceInfo.eventTypes
+/**
+ * /Room websocket namespace and its events
+ * @namespace
+ */
 class Room {
-	static connection(socket, connections) {
+	static [EVENT_TYPES.CONNECTION](socket, connections) {
 		const username = socket.request.user.username
 		console.log('Hi, I\'m the connection method', username || 'No user')
 		const roomId = uuidv4()
@@ -12,34 +16,80 @@ class Room {
 		Room.join({roomId}, socket, connections)
 	}
 
-	static join(data, socket, connections) {
+	/**
+	 * User joins a room
+	 * @name join
+	 * @memberof Room
+	 * @member
+	 * @property {module:dataTypes.uuid} roomId Room to join
+	 * @property {string} username Username of the user that joined (only for server-sourced emits)
+	 * @property {module:dataTypes.timestamp} timestamp Timestamp of when server acknowledged that user joined the room (only for server-sourced emits)
+	 */
+
+	static [EVENT_TYPES.JOIN](data, socket, connections) {
 		const {roomId} = data
 		const username = socket.request.user.username
 		console.log('Join Event', username, roomId)
 		socket.emit(SERVER_EVENTS.JOINED, {username, roomId})
+		const timestamp = new Date().getTime()
+
+		socket.emit(EVENT_TYPES.JOIN, {username, roomId, timestamp})
 		socket.join(roomId)
 	}
 
-	static message(data, socket, connections) {
+	/**
+	 * User sends a message
+	 * @name message
+	 * @memberof Room
+	 * @member
+	 * @property {module:dataTypes.uuid} roomId Room to receive a message
+	 * @property {string} message Text message
+	 * @property {string} username Username of the user that sent the message (only for server-sourced emits)
+	 * @property {module:dataTypes.timestamp} timestamp Timestamp of when server acknowledged that message has been send (only for server-sourced emits)
+	 */
+
+	static [EVENT_TYPES.MESSAGE](data, socket, connections) {
 		const {roomId, message} = data
 		console.log('Message Event', roomId, message)
 		socket.to(roomId).emit(SERVER_EVENTS.MESSAGE, message)
+		const username = socket.request.user.username
+		const timestamp = new Date().getTime()
+
+		socket.to(roomId).emit(EVENT_TYPES.MESSAGE, {message, username, timestamp})
 	}
 
-	static leave(data, socket, connections) {
+	/**
+	 * User leaves a room
+	 * @name leave
+	 * @memberof Room
+	 * @member
+	 * @property {module:dataTypes.uuid} roomId Room to leave
+	 * @property {string} username Username of the user that left (only for server-sourced emits)
+	 * @property {module:dataTypes.timestamp} timestamp Timestamp of when server acknowledged that user left the room (only for server-sourced emits)
+	 */
+
+	static [EVENT_TYPES.LEAVE](data, socket, connections) {
 		const {roomId} = data
-		socket.to(roomId).emit(SERVER_EVENTS.LEFT, {username: socket.request.user.username})
+		const timestamp = new Date().getTime()
+		const username = socket.request.user.username
+		socket.to(roomId).emit(EVENT_TYPES.LEAVE, {username, timestamp})
 		socket.leave({roomId})
 	}
+  
+	/**
+	 * User creates a room with choosed users
+	 * @name create
+	 * @memberof Room
+	 * @member
+	 * @property {string[]} invitedUsersIndexes List of users usernames
+	 */
 
-	static create(data, socket, connections) {
-		console.log('Create Event')
+	static [EVENT_TYPES.CREATE](data, socket, connections) {
 		const {invitedUsersIndexes} = data
 		const roomId = uuidv4()
 		console.log('Create Event:', invitedUsersIndexes, roomId)
 		Room.join({roomId}, socket, connections)
 		joinUsersToRoom(invitedUsersIndexes, roomId, connections)
-	}
 }
 
 function joinUsersToRoom(invitedUsersIndexes, roomId, connections) {

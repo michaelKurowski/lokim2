@@ -3,6 +3,15 @@ jobs:
   build:
     docker:
       - image: circleci/node:8.9.4
+        environment:
+          MONGO_INITDB_ROOT_USERNAME: mongousradmin
+          MONGO_INITDB_ROOT_PASSWORD: mongopassadmin
+          MONGO_INITDB_DATABASE: container
+      - image: circleci/mongo:3.4.4
+        environment:
+          MONGO_INITDB_ROOT_USERNAME: mongousradmin
+          MONGO_INITDB_ROOT_PASSWORD: mongopassadmin
+          MONGO_INITDB_DATABASE: container
     steps:
       - checkout
       - restore_cache:
