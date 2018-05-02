@@ -15,13 +15,14 @@
 			credentials: "same-origin" 
 		}
 
-		fetch(new Request('/login', requestConfig))
+		fetch(new Request('/login', requestConfig)).then(res => res.json()).then(console.log)
 	}
 
 	function connect() {
 		const address = `${location.host}${document.getElementById('address').value}`
+		console.log(address)
 		connection = io(address, {path: '/connection'})
-		connection.on('connection', frame => {
+		connection.on('connect', frame => {
 			console.log('connected to address')
 		})
 	}

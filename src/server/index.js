@@ -20,6 +20,7 @@ const LocalStrategy = require('passport-local').Strategy
 const path = require('path')
 const sessionStore = new MongoSessionStore({ mongooseConnection: dbConnection} )
 const COOKIE_SESSION_VARIABLE = 'connect.sid'
+const cors = require('cors')
 
 const cookieSession = {
 	store: sessionStore,
@@ -47,7 +48,7 @@ const websocketCookieSession = {
 }
 
 //Express flow
-
+app.use(cors({credentials: true, origin: 'http://localhost:3000'}))
 app.use(bodyParser.json())
 app.use(mongoSanitize())
 app.use(expressSession(cookieSession))
@@ -79,6 +80,6 @@ httpServer.listen(config.httpServer.port, (err) => {
 })
 
 //websocket flow
-io.set('origins', '*:*') /* Remove this in production */
+//io.set('origins', '*:*') /* Remove this in production */
 io.use(passportSocketIo.authorize(websocketCookieSession))
 initializeWebSocketRouting(io)

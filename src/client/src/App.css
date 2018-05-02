@@ -2,11 +2,11 @@
   padding: 0;
   margin: 0;
 }
-li a{
+.registerDiv li a{
   color: white;
   text-decoration:  none;
 }
-li a:hover{
+.registerDiv li a:hover{
   color: white;
   text-decoration: none;
 }
@@ -61,10 +61,6 @@ hr {
   text-align: center;
 }
 
-.registerDiv h2, li {
-  color: white;
-}
-
 .homeButton {
   font-size: 20px;
   margin: 8px;
@@ -75,89 +71,7 @@ hr {
   color: white;
 }
 
-/* CHAT WINDOW */
-.chatWindow ul {
+.roomIdList {
   list-style-type: none;
-}
-.chatWindow {
-  background: linear-gradient(rgb(23,36, 44), rgb(16, 15, 20));
-  border-style: solid;
-  border-color: rgb(1, 62, 83);
-  border-width: 5px;
-  height: 100%;
-}
-
-.iconHeading {
-  background: white;
-  border-radius: 50%;
-  margin: 5px 0px;
-  height: 48px;
-  width: 48px;
-}
-.iconImage{
-  border-radius: 50%;
-  margin: 5px 0px;
-  height: 48px;
-  width: 48px;
-
-}
-
-
-.menuArea {
-  background-color: #2a2a2a;
-}
-.menuHeading {
-  font-size: 18px;
-  margin: 5px 0;
-  padding: 5px;
-}
-.menu-right{
-  float: right;
-}
-.menuItem {
-  font-size: 16px;
-  margin: 0;
-  padding: 0 5px;
-}
-.messageArea {
-  border-radius: 1%;
-  background-color: whitesmoke;
-  padding: 5px;
-  width: 100%;
-}
-
-.messageContainer {
-  color: black;
-  margin: 5px 0;
-  padding: 0px 5px;
-}
-.messageContainer li{
-  color: black;
-}
-.messageContainer p{
-  font-size: 90%;
-}
-
-.textHolder {
-  background-color: whitesmoke;
-  border-radius: 5px;
-  position: relative;
-}
-
-.messageBox textarea{
-  color: black;
-
-  -webkit-appearance: none;
-  background-color: transparent;
-  border: none;
-  font-size: 0.9375rem;
-  font-weight: 400;
-  letter-spacing: -0.025rem;
-  margin: 2px 2px 2px 0;
-  max-height: 144px;
-  min-height: 20px;
-  outline: none;
-  resize: none;
-  width: 100%
 }
 

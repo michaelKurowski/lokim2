@@ -22,8 +22,9 @@ class HomePage extends React.Component {
     loginHandler(username, password){
         fetch(LOGIN_URL, {
             method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({username, password}),
-            headers: { 'Content-Type': 'application/json' }
+            credentials: 'same-origin'
         }).then(response => {
             if(response.status === 200){
                 this.setState({successfulLogin: true})
