@@ -22,6 +22,8 @@ class Utilities {
 	}
 
 	static createWebsocketRoute(io, namespaceInfo, controllersBundle, connectionsRepository) {
+		if (!namespaceInfo.name || !namespaceInfo.eventTypes)
+			throw new Error(`${JSON.stringify(namespaceInfo)} is not a valid namespace protcol object`)
 		io.of(namespaceInfo.name)
 			.on('connection', bindEventListenersToSocket(namespaceInfo, controllersBundle, connectionsRepository))
 	}
@@ -37,19 +39,19 @@ function bindEventListenersToSocket(namespaceInfo, controllersBundle, connection
 			_.uniq(serverEventTypes).length !== serverEventTypes.length
 		if (doesClientEventListContainDuplicates
 			|| doesServerEventListContainDuplicates)
-			throw `Event types of "${namespaceInfo.name}" contain duplicates.`
+			throw new Error(`Event types of "${namespaceInfo.name}" contain duplicates.`)
 
 		_.forEach(eventTypes, setEventListener(socket, controllersBundle, connectionsRepository, namespaceInfo))
 	}
 }
 
 function runConnectionEventHandler(socketToPass, controllersBundle, connectionsRepository) {
-	controllersBundle['connection'](socketToPass, connectionsRepository)
+	controllersBundle.connection(socketToPass, connectionsRepository)
 }
 
 function setEventListener(socket, controllersBundle, connectionsRepository, namespaceInfo) {
 	return eventType => {
-		if (!controllersBundle[eventType]) throw `Can't find event "${eventType}" in controller of namespace "${namespaceInfo.name}"`
+		if (!controllersBundle[eventType]) throw new Error(`Can't find event "${eventType}" in controller of namespace "${namespaceInfo.name}"`)
 		if (eventType === 'connection')
 			return runConnectionEventHandler(socket, controllersBundle, connectionsRepository)
 		socket.on(eventType, data => controllersBundle[eventType](data, socket, connectionsRepository))
