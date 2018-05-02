@@ -177,7 +177,7 @@ describe('utilities.js', () => {
 			assert.doesNotThrow(functionCallToTest, Error, EXPECTED_ERROR_MESSAGE)	
 		})
 
-		it('should invoke connection event handler with socket and connections map during creating a routing for new incomming connection', () => {
+		it('should invoke connection event handler with socket and connections map during creating a routing for new incoming connection', () => {
 			//given
 			suite.controllersBundle = {
 				connection: sinon.spy()
