@@ -2,14 +2,7 @@
   padding: 0;
   margin: 0;
 }
-.registerDiv li a{
-  color: white;
-  text-decoration:  none;
-}
-.registerDiv li a:hover{
-  color: white;
-  text-decoration: none;
-}
+
 
 hr {
   display: block;
@@ -61,6 +54,19 @@ hr {
   text-align: center;
 }
 
+.registerDiv li{
+  color: white;
+}
+
+.registerDiv li a{
+  color: white;
+  text-decoration:  none;
+}
+.registerDiv li a:hover{
+  color: white;
+  text-decoration: none;
+}
+
 .homeButton {
   font-size: 20px;
   margin: 8px;
@@ -75,3 +81,10 @@ hr {
   list-style-type: none;
 }
 
+.roomID {
+  background-color: pink;
+}
+
+.roomID li {
+  font-size: 24px;
+}

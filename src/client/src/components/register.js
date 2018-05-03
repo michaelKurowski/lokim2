@@ -19,9 +19,7 @@ class Register extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this)
     }
     handleChange(event){
-        const settings = {'Username': 'username' , 'Password' : 'password', 'Email': 'email'}
-        const key = settings[event.target.placeholder]
-        this.setState({ [key] : event.target.value})
+        this.setState({ [event.target.name] : event.target.value})
     }
     
     handleSubmit(event){
@@ -52,9 +50,9 @@ class Register extends React.Component {
             <div className='container-fluid registerDiv'>
             <h2> Register for a new LokIM Account </h2>
             <form onSubmit={this.handleSubmit}>
-                <input type='text' className='userInput' placeholder='Username' value={this.state.username} onChange={this.handleChange} required/><br/>
-                <input type='password' className='userInput' placeholder='Password' value={this.state.password} onChange={this.handleChange} required/><br/>
-                <input type='text' className='userInput' placeholder='Email' value={this.state.email} onChange={this.handleChange} required/><br/>
+                <input type='text' className='userInput' placeholder='Username' value={this.state.username} onChange={this.handleChange} name='username' required/><br/>
+                <input type='password' className='userInput' placeholder='Password' value={this.state.password} onChange={this.handleChange} name='password' required/><br/>
+                <input type='text' className='userInput' placeholder='Email' value={this.state.email} onChange={this.handleChange} name='email' required/><br/>
                 <input type='submit' className='btn btn-primary' value='Register'/>
                 <li className='btn btn-secondary' style={{'margin' : '10px 10px'}}><Link to='/'>Go Back</Link></li>
             </form>   

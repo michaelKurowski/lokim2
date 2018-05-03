@@ -2,14 +2,18 @@ const React = require('react')
 //const {Link, Redirect} = require('react-router-dom')
 const io = require('socket.io-client')
 const protocol = require('../utils/io-protocol').eventTypes
-
+const Room = require('./room')
 const IO_CONNECTION_URL = 'localhost:5000/room' /* Take this from config file in the future */
 const socket = io(IO_CONNECTION_URL, {path: '/connection'})
-const connectStyle = {
-    color: 'blue'
+
+
+function ConnectStatus(connection){
+    return connection ? <h4 style={{color: 'blue'}}>Connected</h4> 
+        : <h4 style={{color: 'red'}}>Disconnected / Error </h4> 
 }
-const dcStyle = {
-    color: 'red'
+
+function updateState(key, array, newItems){
+    return {[key]: array.concat([newItems])}
 }
 /*
 Consulted documentation:
@@ -26,12 +30,15 @@ class ChatPage extends React.Component {
         super(props)
         this.state = {
             connected: false,
-            username: this.props.location.state.username,
-            userRooms: [],
+            input: '',
             messages: [],
-            response: ''
+            response: '',
+            selectedRoom: '',
+            username: this.props.location.state.username,
+            userRooms: []
         }
-         
+
+        this.handleChange = this.handleChange.bind(this)
     }
     componentDidMount(){
         //Setup socket.io here
@@ -39,25 +46,38 @@ class ChatPage extends React.Component {
         socket.on('connect', _ => {
             this.setState({connected: true})
             console.log('connected to address:', _)
-            if(this.state.username === 'jmoss'){
-            socket.emit('create', {invitedUsersIndexes:['jmoss', 'test_user'] })
-            }
-            socket.on('joined', data => {
+            console.log(socket)
+            socket.on('join', data => {
                 console.log('Joined', data)
-                const {roomId} = data
-                this.setState({userRooms: this.state.userRooms.concat([roomId])})
+                const {roomId, username} = data
+                this.setState(updateState('userRooms', this.state.userRooms, {roomId, username}))
                 socket.on('message', msgData => {
                     console.log('Message', msgData)
-                    this.setState({messages: this.state.messages.concat([msgData])})
+                    this.setState(updateState('messages', this.state.messages, msgData))
                 })
                 socket.emit('message', {roomId, message: 'Hello World!: ' + Math.round(Math.random() * 10)})
-               
-                socket.emit('leave', {roomId})
             })
         })    
     }
     emitEvent(eventType, data){
         console.log('Emitter', eventType, data)
+    }
+    populateData(roomDetails){
+        const {roomId} = roomDetails
+        console.log('Populate', roomDetails)
+        this.setState({selectedRoom: roomId}) 
+    }
+    populateMessages(roomID){
+        const value = this.state.messages.map((e,i) => <li key={i}>{e}</li>)
+        return value
+    }
+    findUsers(roomId){
+        const value = this.state.userRooms.find(obj => obj.roomId === roomId)
+        console.log('findUsers', value)
+        return !!value ? value.username : ''
+    }
+    handleChange(e) {
+        this.setState({input: e.target.value})
     }
     render(){
 
@@ -67,22 +87,22 @@ class ChatPage extends React.Component {
                     <div className='col-md-3'>
                         <h2>User: {this.state.username.toUpperCase()}</h2>
                         <ul className='list-group roomIdList'>
-                        {this.state.userRooms.map((e,i) => <li key={i}>Room ID: {e}</li>)}
+                        {this.state.userRooms.map((e,i) => <Room name={`Room #${i}`} ID={e.roomId} onClick={() => this.populateData(e)}/>)}
                         </ul>
                     </div>
                     <div className='col-md-6'>
                         <div className='messageArea'>
                             <ul>
-                                {this.state.messages.map((e,i) => <li key={i}>{e}</li>)}
+                                {this.populateMessages(this.state.selectedRoom)}
                             </ul>
                         </div>
-                        <input className='form-control' placeholder='Message...'/>
+                        <input className='form-control' placeholder='Message...' value={this.state.input} onChange={this.handleChange}/>
                     </div>
                     <div className='col-md-3'>
                         <h4>Room Information/Etc </h4>
-                        {this.state.connected ? 
-                        <h4 style={connectStyle}>Connected</h4> 
-                        : <h4 style={dcStyle}>Disconnected / Error </h4> }
+                        <ConnectStatus />
+                        <h6>Current Room: {this.state.selectedRoom}</h6>
+                        <h6>Users in current room: {this.findUsers(this.state.selectedRoom)}</h6>
                     </div>
                 </div>
             </div>

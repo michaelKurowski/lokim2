@@ -13,6 +13,7 @@ const expressSession = require('express-session')
 const MongoSessionStore = require('connect-mongo')(expressSession)
 const mongoSanitize = require('express-mongo-sanitize')
 const util = require('util')
+const cors = require('cors')
 
 const dbConnection = require('./dbConnection')
 const passportStrategies = require('./passport/strategies')
@@ -51,7 +52,7 @@ function init({
 	}
 
 	//Express flow
-
+	app.use(cors({credentials: true, origin: 'http://localhost:3000'}))
 	app.use(bodyParser.json())
 	app.use(mongoSanitize())
 	app.use(expressSession(cookieSession))
