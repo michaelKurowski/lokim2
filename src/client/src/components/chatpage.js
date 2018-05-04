@@ -27,7 +27,7 @@ class ChatPage extends React.Component {
         this.state = {
             connected: false,
             input: '',
-            messages: [],
+            messages: {},
             selectedRoom: '',
             username: this.props.location.state.username,
             userRooms: []
@@ -40,23 +40,24 @@ class ChatPage extends React.Component {
         socket.on(protocols.CONNECTION, _ => this.setState({connected: true}))
         socket.on(protocols.MESSAGE, data => this.populateMessages(data))
         socket.on(protocols.JOIN, data => this.populateData(data))
-        socket.emit(protocols.JOIN, {roomId: 'df7a1d12-7be0-4aab-8685-0cbf237bb135'})
+        socket.emit(protocols.JOIN, {roomId: 'df7a1d12-7be0-4aab-8685-0cbf237bb135'}) // Development purposes - remove in production
     }
     populateData(data){
         const {roomId, username} = data
-        console.log('populateData', data)
         this.setState(updateState('userRooms', this.state.userRooms, {roomId, username}))
     }
-    populateRoomData(roomDetails){
+    changeSelectedRoom(roomDetails){
         const {roomId} = roomDetails
-        console.log('Populate Room Data', roomDetails)
         this.setState({selectedRoom: roomId}) 
     }
     populateMessages(messageData){
-        console.log(protocols.MESSAGE, messageData)
-
-        if(this.state.selectedRoom)
-            this.setState(updateState('messages', this.state.messages, null))
+        const {roomId, username, message, timestamp} = messageData
+        //Create a clone to mutate
+        const messages = Object.assign({}, this.state.messages)
+        //Add new message to the list
+        messages[roomId] = (messages[roomId] || []).concat({username, message, timestamp})
+        //Update list
+        this.setState({messages})
     }
     findUsersOfRoom(roomId){
         const value = roomId
@@ -66,17 +67,27 @@ class ChatPage extends React.Component {
         return value ? value.username : ''
     }
     generateMessages(){
-        return this.state.messages.map((msg, i) => <li key={i}>{msg}</li>)
+        //Check that a room is selected
+        if(this.state.selectedRoom){
+                //Check if the room has messages
+            if(!this.state.messages[this.state.selectedRoom]) return
+
+            return this.state.messages[this.state.selectedRoom]
+                .map((msg, i) => <li key={i}>{`${msg.username}:\t ${msg.message} \t ${msg.timestamp}`}</li>)
+        }
+
+        return <h6>Please join a room before attempting to load messages</h6>
     }
     handleChange(e) {
         this.setState({input: e.target.value})
     }
     sendMessage(){
         if(this.state.input.length > 0 && this.state.selectedRoom){
-            return socket.emit(protocols.MESSAGE, {
-                roomId: this.state.selectedRoom,
-                message: this.state.input
-            })
+            const roomId =  this.state.selectedRoom, message = this.state.input
+            socket.emit(protocols.MESSAGE, {roomId, message})
+
+            const localMessage = {roomId, username: this.state.username, message, timestamp: new Date().getTime()}
+            this.populateMessages(localMessage)
         }
             return console.error('No room selected || input field is empty.')
             //TODO - Add GUI Notification of fail
@@ -91,7 +102,7 @@ class ChatPage extends React.Component {
                         <ul className='list-group roomIdList'>
                         <p>Click The Pinkness for Room Selection</p>
                         {this.state.userRooms.map((e,i) => 
-                            <Room key={i} name={`Room #${i}`} ID={e.roomId} onClick={() => this.populateRoomData(e)}/>
+                            <Room key={i} name={`Room #${i}`} ID={e.roomId} onClick={() => this.changeSelectedRoom(e)}/>
                         )}
                         </ul>
                     </div>
