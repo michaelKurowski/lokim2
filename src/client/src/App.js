@@ -5,15 +5,16 @@ const Register = require('./components/register')
 const ChatPage = require('./components/chatpage')
 const {BrowserRouter, Route} = require('react-router-dom')
 
+const LOGIN_URL = '/', REGISTER_URL = '/register', CHAT_URL = '/chat'
 
 class App extends React.Component {
   render() {
     return (
       <BrowserRouter>
         <div className='container-fluid'>
-          <Route exact path='/' component={HomePage} />
-          <Route path='/register' component={Register} />
-          <Route path='/chat' component={ChatPage}/>
+          <Route exact path={LOGIN_URL} component={HomePage} />
+          <Route path={REGISTER_URL} component={Register} />
+          <Route path={CHAT_URL} component={ChatPage}/>
         </div>
       </BrowserRouter>
     )

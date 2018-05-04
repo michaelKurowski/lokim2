@@ -37,14 +37,14 @@ hr {
   font-size: large;
 }
 
-.userInput {
+.user-input {
   width: 60%;
   padding: 12px 20px;
   margin: 10px 0;
   box-sizing: border-box;
 }
 
-.registerDiv {
+.register-div {
   background: linear-gradient(rgb(23,36, 44), rgb(16, 15, 20));
   border-style: solid;
   border-color: #013e53;
@@ -54,20 +54,20 @@ hr {
   text-align: center;
 }
 
-.registerDiv li{
+.register-div li{
   color: white;
 }
 
-.registerDiv li a{
+.register-div li a{
   color: white;
   text-decoration:  none;
 }
-.registerDiv li a:hover{
+.register-div li a:hover{
   color: white;
   text-decoration: none;
 }
 
-.homeButton {
+.home-button {
   font-size: 20px;
   margin: 8px;
 }
@@ -77,14 +77,14 @@ hr {
   color: white;
 }
 
-.roomIdList {
+.room-ID-list {
   list-style-type: none;
 }
 
-.roomID {
+.room-ID {
   background-color: pink;
 }
 
-.roomID li {
+.room-ID li {
   font-size: 24px;
 }

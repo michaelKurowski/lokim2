@@ -3,7 +3,11 @@ const {Link, Redirect} = require('react-router-dom')
 const fetch = require('node-fetch')
 const logo = require('../logo.svg')
 const responseCodes = require('../statusCodeResponses')
-const LOGIN_URL = '/login'
+
+const LOGIN_URL = '/login', POST = 'POST', credentials = 'same-origin'
+const headers = { 'Content-Type': 'application/json' }
+
+const CHAT_PATH = '/chat', REGISTER_PATH = '/register'
 
 class HomePage extends React.Component {
     constructor(props){
@@ -21,10 +25,8 @@ class HomePage extends React.Component {
 
     loginHandler(username, password){
         fetch(LOGIN_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({username, password}),
-            credentials: 'same-origin'
+            method: POST, headers, credentials,
+            body: JSON.stringify({username, password})
         }).then(response => {
             if(response.status === 200){
                 this.setState({successfulLogin: true})
@@ -46,7 +48,7 @@ class HomePage extends React.Component {
     render(){
         if(this.state.successfulLogin){
             return <Redirect to={{
-                pathname: '/chat',
+                pathname: CHAT_PATH,
                 state: {username: this.state.username}
             }}/>
         }
@@ -60,9 +62,9 @@ class HomePage extends React.Component {
             <form onSubmit={this.handleSubmit}>
             <input className='userInput' type="text" value={this.state.username} onChange={this.handleChange} placeholder="Username" name="username" required/><br/>
             <input className='userInput' type="password" value={this.state.password} onChange={this.handleChange} placeholder="Password" name="password" required/><br/>
-            <input type='submit' className='homeButton btn btn-primary' value='Login'/>
+            <input type='submit' className='home-button btn btn-primary' value='Login'/>
             </form>
-            <li className="homeButton btn btn-secondary"><Link to='/register'>Create Account</Link></li>
+            <li className="home-button btn btn-secondary"><Link to={REGISTER_PATH}>Create Account</Link></li>
             <p className='info-paragraph'>LokIM connects to other users via websockets through a server and very little information is stored on the server post-emission. All data regarding a user is stored on said user&#8216;s device. The only information we store on the server is that which is required for essential functionality.</p>
             </div>
         )

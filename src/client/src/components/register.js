@@ -3,7 +3,8 @@ const fetch = require('node-fetch')
 const {Link, Redirect} = require('react-router-dom')
 const responseCodes = require('../statusCodeResponses')
 
-const REGISTER_URL = '/register'
+const SUCCESS_CODE = 200
+const REGISTER_URL = '/register', POST = 'POST', headers = { 'Content-Type': 'application/json' }
 
 class Register extends React.Component {
     constructor(props){
@@ -24,12 +25,11 @@ class Register extends React.Component {
     
     handleSubmit(event){
         fetch(REGISTER_URL, {
-            method: 'POST',
-            body: JSON.stringify(this.state),
-            headers: { 'Content-Type': 'application/json' }
+            method: POST, headers,
+            body: JSON.stringify(this.state)
         })
         .then(response => {
-            if(response.status === 200){
+            if(response.status === SUCCESS_CODE){
                 this.setState({successfulRegister: true})
             }
             if(responseCodes.hasOwnProperty(response.status)){
@@ -37,9 +37,7 @@ class Register extends React.Component {
                 console.log(response.status, response)
             }
         })
-        .catch(error => {
-            console.err(error)
-        })
+        .catch(error => console.err(error))
         event.preventDefault()
     }
     render(){
@@ -47,12 +45,12 @@ class Register extends React.Component {
             return <Redirect to='/'/>
         }
         return (
-            <div className='container-fluid registerDiv'>
+            <div className='container-fluid register-div'>
             <h2> Register for a new LokIM Account </h2>
             <form onSubmit={this.handleSubmit}>
-                <input type='text' className='userInput' placeholder='Username' value={this.state.username} onChange={this.handleChange} name='username' required/><br/>
-                <input type='password' className='userInput' placeholder='Password' value={this.state.password} onChange={this.handleChange} name='password' required/><br/>
-                <input type='text' className='userInput' placeholder='Email' value={this.state.email} onChange={this.handleChange} name='email' required/><br/>
+                <input type='text' className='user-input' placeholder='Username' value={this.state.username} onChange={this.handleChange} name='username' required/><br/>
+                <input type='password' className='user=input' placeholder='Password' value={this.state.password} onChange={this.handleChange} name='password' required/><br/>
+                <input type='text' className='user-input' placeholder='Email' value={this.state.email} onChange={this.handleChange} name='email' required/><br/>
                 <input type='submit' className='btn btn-primary' value='Register'/>
                 <li className='btn btn-secondary' style={{'margin' : '10px 10px'}}><Link to='/'>Go Back</Link></li>
             </form>   

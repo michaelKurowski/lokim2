@@ -11,8 +11,8 @@ class Room extends React.Component{
     }
     render(){
         return(
-            <div className='roomID' key={this.state.ID} onClick={this.props.onClick}>
-                <li className=''>{this.state.name}</li>
+            <div className='room-ID' key={this.state.ID} onClick={this.props.onClick}>
+                <li>{this.state.name}</li>
             </div>
         )
     }
