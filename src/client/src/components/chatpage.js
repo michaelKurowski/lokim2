@@ -37,13 +37,14 @@ class ChatPage extends React.Component {
         this.sendMessage = this.sendMessage.bind(this)
     }
     componentDidMount(){
-        socket.on(protocols.CONNECTION, () => this.setState({connected: true}))
-        socket.on(protocols.JOIN, data => this.populateData(data))
+        socket.on(protocols.CONNECTION, _ => this.setState({connected: true}))
         socket.on(protocols.MESSAGE, data => this.populateMessages(data))
+        socket.on(protocols.JOIN, data => this.populateData(data))
+        socket.emit(protocols.JOIN, {roomId: 'df7a1d12-7be0-4aab-8685-0cbf237bb135'})
     }
     populateData(data){
         const {roomId, username} = data
-        console.log(data)
+        console.log('populateData', data)
         this.setState(updateState('userRooms', this.state.userRooms, {roomId, username}))
     }
     populateRoomData(roomDetails){
@@ -51,9 +52,11 @@ class ChatPage extends React.Component {
         console.log('Populate Room Data', roomDetails)
         this.setState({selectedRoom: roomId}) 
     }
-    populateMessages(roomID){
-        const value = this.state.messages.map((e,i) => <li key={i}>{e}</li>)
-        return value
+    populateMessages(messageData){
+        console.log(protocols.MESSAGE, messageData)
+
+        if(this.state.selectedRoom)
+            this.setState(updateState('messages', this.state.messages, null))
     }
     findUsersOfRoom(roomId){
         const value = roomId
@@ -62,16 +65,21 @@ class ChatPage extends React.Component {
         
         return value ? value.username : ''
     }
+    generateMessages(){
+        return this.state.messages.map((msg, i) => <li key={i}>{msg}</li>)
+    }
     handleChange(e) {
         this.setState({input: e.target.value})
     }
     sendMessage(){
-        if(this.state.input.length > 0){
-            socket.emit(protocols.MESSAGE, {
+        if(this.state.input.length > 0 && this.state.selectedRoom){
+            return socket.emit(protocols.MESSAGE, {
                 roomId: this.state.selectedRoom,
                 message: this.state.input
             })
         }
+            return console.error('No room selected || input field is empty.')
+            //TODO - Add GUI Notification of fail
     }
     render(){
 
@@ -81,6 +89,7 @@ class ChatPage extends React.Component {
                     <div className='col-md-3'>
                         <h2>User: {this.state.username.toUpperCase()}</h2>
                         <ul className='list-group roomIdList'>
+                        <p>Click The Pinkness for Room Selection</p>
                         {this.state.userRooms.map((e,i) => 
                             <Room key={i} name={`Room #${i}`} ID={e.roomId} onClick={() => this.populateRoomData(e)}/>
                         )}
@@ -89,7 +98,7 @@ class ChatPage extends React.Component {
                     <div className='col-md-6'>
                         <div className='messageArea'>
                             <ul>
-                                {this.populateMessages(this.state.selectedRoom)}
+                               {this.generateMessages()}
                             </ul>
                         </div>
                         <input className='form-control' placeholder='Message...' value={this.state.input} onChange={this.handleChange}/>
