@@ -1,5 +1,5 @@
 const React = require('react')
-//const {Link, Redirect} = require('react-router-dom')
+const {Link} = require('react-router-dom')
 const ConnectStatus = require('./connectStatus')
 const Room = require('./room')
 
@@ -28,7 +28,6 @@ class ChatPage extends React.Component {
             connected: false,
             input: '',
             messages: [],
-            response: '',
             selectedRoom: '',
             username: this.props.location.state.username,
             userRooms: []
@@ -102,6 +101,7 @@ class ChatPage extends React.Component {
                         <ConnectStatus connection={this.state.connected}/>
                         <h6>Current Room: {this.state.selectedRoom}</h6>
                         <h6>Users in current room: {this.findUsersOfRoom(this.state.selectedRoom)}</h6>
+                        <Link className='btn btn-danger' to='/'>Logout</Link>
                     </div>
                 </div>
             </div>
