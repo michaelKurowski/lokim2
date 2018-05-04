@@ -4,7 +4,7 @@ const {Link, Redirect} = require('react-router-dom')
 const responseCodes = require('../statusCodeResponses')
 
 const SUCCESS_CODE = 200
-const REGISTER_URL = '/register', POST = 'POST', headers = { 'Content-Type': 'application/json' }
+const REGISTER_URL = '/register', HOMEPAGE_PATH = '/', POST = 'POST', headers = { 'Content-Type': 'application/json' }
 
 class Register extends React.Component {
     constructor(props){
@@ -52,7 +52,7 @@ class Register extends React.Component {
                 <input type='password' className='user=input' placeholder='Password' value={this.state.password} onChange={this.handleChange} name='password' required/><br/>
                 <input type='text' className='user-input' placeholder='Email' value={this.state.email} onChange={this.handleChange} name='email' required/><br/>
                 <input type='submit' className='btn btn-primary' value='Register'/>
-                <li className='btn btn-secondary' style={{'margin' : '10px 10px'}}><Link to='/'>Go Back</Link></li>
+                <li className='btn btn-secondary' style={{'margin' : '10px 10px'}}><Link to={HOMEPAGE_PATH}>Go Back</Link></li>
             </form>   
             </div>
         )
