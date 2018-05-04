@@ -1,20 +1,11 @@
 const React = require('react')
 //const {Link, Redirect} = require('react-router-dom')
-const io = require('socket.io-client')
-const protocol = require('../utils/io-protocol').eventTypes
+const ConnectStatus = require('./connectStatus')
 const Room = require('./room')
-const IO_CONNECTION_URL = 'localhost:5000/room' /* Take this from config file in the future */
-const socket = io(IO_CONNECTION_URL, {path: '/connection'})
 
+const socket = require('../utils/sockets/ws-routing')
+const protocols = require('../utils/io-protocol')
 
-function ConnectStatus(connection){
-    return connection ? <h4 style={{color: 'blue'}}>Connected</h4> 
-        : <h4 style={{color: 'red'}}>Disconnected / Error </h4> 
-}
-
-function updateState(key, array, newItems){
-    return {[key]: array.concat([newItems])}
-}
 /*
 Consulted documentation:
 https://github.com/facebook/create-react-app/issues/2260
@@ -25,6 +16,11 @@ https://github.com/ReactTraining/react-router/blob/master/packages/react-router/
 https://socket.io/docs/client-api/
 
 */
+
+function updateState(key, array, newItems){
+    return {[key]: array.concat([newItems])}
+}
+
 class ChatPage extends React.Component {
     constructor(props){
         super(props)
@@ -39,45 +35,45 @@ class ChatPage extends React.Component {
         }
 
         this.handleChange = this.handleChange.bind(this)
+        this.sendMessage = this.sendMessage.bind(this)
     }
     componentDidMount(){
-        //Setup socket.io here
-        console.log('Component Mounted')
-        socket.on('connect', _ => {
-            this.setState({connected: true})
-            console.log('connected to address:', _)
-            console.log(socket)
-            socket.on('join', data => {
-                console.log('Joined', data)
-                const {roomId, username} = data
-                this.setState(updateState('userRooms', this.state.userRooms, {roomId, username}))
-                socket.on('message', msgData => {
-                    console.log('Message', msgData)
-                    this.setState(updateState('messages', this.state.messages, msgData))
-                })
-                socket.emit('message', {roomId, message: 'Hello World!: ' + Math.round(Math.random() * 10)})
-            })
-        })    
+        console.log('Connection:', socket.connected)
+        socket.on(protocols.CONNECTION, () => this.setState({connected: true}))
+        socket.on(protocols.JOIN, data => this.populateData(data))
+        socket.on(protocols.MESSAGE, data => this.populateMessages(data))
     }
-    emitEvent(eventType, data){
-        console.log('Emitter', eventType, data)
+    populateData(data){
+        const {roomId, username} = data
+        console.log(data)
+        this.setState(updateState('userRooms', this.state.userRooms, {roomId, username}))
     }
-    populateData(roomDetails){
+    populateRoomData(roomDetails){
         const {roomId} = roomDetails
-        console.log('Populate', roomDetails)
+        console.log('Populate Room Data', roomDetails)
         this.setState({selectedRoom: roomId}) 
     }
     populateMessages(roomID){
         const value = this.state.messages.map((e,i) => <li key={i}>{e}</li>)
         return value
     }
-    findUsers(roomId){
-        const value = this.state.userRooms.find(obj => obj.roomId === roomId)
-        console.log('findUsers', value)
-        return !!value ? value.username : ''
+    findUsersOfRoom(roomId){
+        const value = roomId
+        ? this.state.userRooms.find(obj => obj.roomId === roomId)
+        : null
+        
+        return value ? value.username : ''
     }
     handleChange(e) {
         this.setState({input: e.target.value})
+    }
+    sendMessage(){
+        if(this.state.input.length > 0){
+            socket.emit(protocols.MESSAGE, {
+                roomId: this.state.selectedRoom,
+                message: this.state.input
+            })
+        }
     }
     render(){
 
@@ -87,7 +83,9 @@ class ChatPage extends React.Component {
                     <div className='col-md-3'>
                         <h2>User: {this.state.username.toUpperCase()}</h2>
                         <ul className='list-group roomIdList'>
-                        {this.state.userRooms.map((e,i) => <Room name={`Room #${i}`} ID={e.roomId} onClick={() => this.populateData(e)}/>)}
+                        {this.state.userRooms.map((e,i) => 
+                            <Room key={i} name={`Room #${i}`} ID={e.roomId} onClick={() => this.populateRoomData(e)}/>
+                        )}
                         </ul>
                     </div>
                     <div className='col-md-6'>
@@ -97,28 +95,18 @@ class ChatPage extends React.Component {
                             </ul>
                         </div>
                         <input className='form-control' placeholder='Message...' value={this.state.input} onChange={this.handleChange}/>
+                        <button className='btn btn-primary' onClick={this.sendMessage}>Send</button>
                     </div>
                     <div className='col-md-3'>
                         <h4>Room Information/Etc </h4>
-                        <ConnectStatus />
+                        <ConnectStatus connection={this.state.connected}/>
                         <h6>Current Room: {this.state.selectedRoom}</h6>
-                        <h6>Users in current room: {this.findUsers(this.state.selectedRoom)}</h6>
+                        <h6>Users in current room: {this.findUsersOfRoom(this.state.selectedRoom)}</h6>
                     </div>
                 </div>
             </div>
         )
     }
-    /*
-
-    <h2>Chat is in development</h2>
-                <h4>Response: {this.state.response}</h4>
-                <p> Hello {this.state.username}!</p>
-                <p> Testing Socket.IO with the backend </p>
-                <ul>
-                {this.state.messages.map((e,i) => <li key={i}>{e}</li>)}
-                </ul>
-
-    */
 }
 
 module.exports = ChatPage

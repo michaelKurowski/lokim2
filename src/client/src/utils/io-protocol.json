@@ -1,9 +1,7 @@
 {
-    "eventTypes": {
-        "MESSAGE": "message",
-        "JOIN": "join",
-        "LEAVE": "leave",
-        "CREATE": "create",
-        "CONNECTION": "connect"
-    }
+    "MESSAGE": "message",
+    "JOIN": "join",
+    "LEAVE": "leave",
+    "CREATE": "create",
+    "CONNECTION": "connect"
 }
