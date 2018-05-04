@@ -1,5 +1,6 @@
 src/server/node_modules
 src/client/node_modules
+src/server/.nyc_output
 **/.DS_Store
 **/*.log
 src/server/out
