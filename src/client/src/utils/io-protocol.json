@@ -3,5 +3,7 @@
     "JOIN": "join",
     "LEAVE": "leave",
     "CREATE": "create",
-    "CONNECTION": "connect"
+    "CONNECTION": "connect",
+    "DISCONNECT": "disconnect",
+    "FAILED": "connect_failed"
 }

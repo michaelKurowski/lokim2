@@ -37,7 +37,6 @@ class ChatPage extends React.Component {
         this.sendMessage = this.sendMessage.bind(this)
     }
     componentDidMount(){
-        console.log('Connection:', socket.connected)
         socket.on(protocols.CONNECTION, () => this.setState({connected: true}))
         socket.on(protocols.JOIN, data => this.populateData(data))
         socket.on(protocols.MESSAGE, data => this.populateMessages(data))
