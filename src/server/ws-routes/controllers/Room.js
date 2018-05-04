@@ -49,7 +49,7 @@ class Room {
 		const username = socket.request.user.username
 		const timestamp = new Date().getTime()
 
-		socket.to(roomId).emit(EVENT_TYPES.MESSAGE, {message, username, timestamp})
+		socket.to(roomId).emit(EVENT_TYPES.MESSAGE, {message, username, timestamp, roomId})
 	}
 
 	/**
