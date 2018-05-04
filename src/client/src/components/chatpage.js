@@ -60,11 +60,8 @@ class ChatPage extends React.Component {
         this.setState({messages})
     }
     findUsersOfRoom(roomId){
-        const value = roomId
-        ? this.state.userRooms.find(obj => obj.roomId === roomId)
-        : null
-        
-        return value ? value.username : ''
+        const value = roomId ? this.state.userRooms.find(obj => obj.roomId === roomId) : {}
+        return value.username || ''
     }
     generateMessages(){
         //Check that a room is selected
@@ -93,7 +90,6 @@ class ChatPage extends React.Component {
             //TODO - Add GUI Notification of fail
     }
     render(){
-
         return(
             <div className='container-fluid'>
                 <div className='row'>
