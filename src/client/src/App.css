@@ -88,3 +88,11 @@ hr {
 .room-ID li {
   font-size: 24px;
 }
+
+.success {
+  color: blue;
+}
+
+.disconnect {
+  color: red;
+}
