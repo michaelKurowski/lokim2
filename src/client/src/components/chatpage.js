@@ -1,8 +1,7 @@
 const React = require('react')
-const {Link} = require('react-router-dom')
+const {BrowserRouter, Link} = require('react-router-dom')
 const ConnectStatus = require('./connectStatus')
 const Room = require('./room')
-
 const socket = require('../utils/sockets/ws-routing')
 const protocols = require('../utils/io-protocol')
 
@@ -29,7 +28,7 @@ class ChatPage extends React.Component {
             input: '',
             messages: {},
             selectedRoom: '',
-            username: this.props.location.state.username,
+            username: this.props.location.state.username || null,
             userRooms: []
         }
 
@@ -91,6 +90,7 @@ class ChatPage extends React.Component {
     }
     render(){
         return(
+            <BrowserRouter>
             <div className='container-fluid'>
                 <div className='row'>
                     <div className='col-md-3'>
@@ -120,6 +120,7 @@ class ChatPage extends React.Component {
                     </div>
                 </div>
             </div>
+            </BrowserRouter>
         )
     }
 }
