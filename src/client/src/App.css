@@ -49,9 +49,13 @@ hr {
   border-style: solid;
   border-color: #013e53;
   border-width: 5px;
+  color: white;
   padding: 12px 20px;
   margin: 10px 0;
   text-align: center;
+}
+.register-div .btn {
+  margin-right: 10px;
 }
 
 .register-div li{
@@ -70,6 +74,11 @@ hr {
 .home-button {
   font-size: 20px;
   margin: 8px;
+}
+
+.home-button a{
+  color: white;
+  text-decoration: none;
 }
 .info-paragraph {
   padding-top: 8px;
