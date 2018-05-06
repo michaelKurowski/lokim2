@@ -66,7 +66,7 @@ class ChatPage extends React.Component {
         
             return this.state.messages[this.state.selectedRoom]
                 .map((msg, i) => 
-                    <li key={i}>
+                    <li className='message' key={i}>
                         {`${msg.username}:\t ${msg.message} \t ${msg.timestamp}`}
                     </li>
                 )
@@ -90,10 +90,9 @@ class ChatPage extends React.Component {
     }
     render(){
         return(
-            <BrowserRouter>
             <div className='container-fluid'>
                 <div className='row'>
-                    <div className='col-md-3'>
+                    <div className='sidebar col-md-3'>
                         <h2>User: {this.state.username.toUpperCase()}</h2>
                         <ul className='list-group room-ID-list'>
                         <p>Click The Pinkness for Room Selection</p>
@@ -103,7 +102,7 @@ class ChatPage extends React.Component {
                         </ul>
                     </div>
                     <div className='col-md-6'>
-                        <div className='messageArea'>
+                        <div className='message-area'>
                             <ul>
                                {this.generateMessages()}
                             </ul>
@@ -120,7 +119,6 @@ class ChatPage extends React.Component {
                     </div>
                 </div>
             </div>
-            </BrowserRouter>
         )
     }
 }

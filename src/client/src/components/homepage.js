@@ -53,22 +53,20 @@ class HomePage extends React.Component {
             }}/>
         }
         return (
-            <BrowserRouter>
-                <div className="App">
-                    <div className="App-header">
-                        <img src={logo} className="App-logo" alt="logo" />
-                        <h2>Welcome to Loki Instant Messenger</h2>
-                        <p className="App-intro">Hello LokIM User!</p>
-                    </div>
-                    <form onSubmit={this.handleSubmit}>
-                        <input className='user-input' type="text" value={this.state.username} onChange={this.handleChange} placeholder="Username" name="username" required/><br/>
-                        <input className='user-input' type="password" value={this.state.password} onChange={this.handleChange} placeholder="Password" name="password" required/><br/>
-                        <input type='submit' className='home-button btn btn-primary' value='Login'/>
-                    </form>
-                    <li className="home-button btn btn-secondary"><Link to={REGISTER_PATH}>Create Account</Link></li>
-                    <p className='info-paragraph'>LokIM connects to other users via websockets through a server and very little information is stored on the server post-emission. All data regarding a user is stored on said user&#8216;s device. The only information we store on the server is that which is required for essential functionality.</p>
+            <div className="App">
+                <div className="App-header">
+                    <img src={logo} className="App-logo" alt="logo" />
+                    <h2>Welcome to Loki Instant Messenger</h2>
+                    <p className="App-intro">Hello LokIM User!</p>
                 </div>
-            </BrowserRouter>
+                <form onSubmit={this.handleSubmit}>
+                    <input className='user-input' type="text" value={this.state.username} onChange={this.handleChange} placeholder="Username" name="username" required/><br/>
+                    <input className='user-input' type="password" value={this.state.password} onChange={this.handleChange} placeholder="Password" name="password" required/><br/>
+                    <input type='submit' className='home-button btn btn-primary' value='Login'/>
+                </form>
+                <li className="home-button btn btn-secondary"><Link to={REGISTER_PATH}>Create Account</Link></li>
+                <p className='info-paragraph'>LokIM connects to other users via websockets through a server and very little information is stored on the server post-emission. All data regarding a user is stored on said user&#8216;s device. The only information we store on the server is that which is required for essential functionality.</p>
+            </div>
         )
     }
     
