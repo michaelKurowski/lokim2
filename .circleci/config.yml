@@ -15,12 +15,18 @@ jobs:
     steps:
       - checkout
       - restore_cache:
+          name: Restore cache (backend)
           keys:
           - v1-dependencies-{{ checksum "src/server/package.json" }}
-          - v2-dependencies-{{ checksum "src/client/package.json" }}
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
-          - v2-dependencies-
+
+      - restore_cache:
+          name: Restore cache (frontend)
+          keys:
+          - v1-dependencies-{{ checksum "src/client/package.json" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
 
       - run: 
           name: Deployment (backend)
@@ -31,14 +37,16 @@ jobs:
           command: cd src/client && npm install
 
       - save_cache:
+          name: Saving cache (backend)
           paths:
             - src/server/node_modules
           key: v1-dependencies-{{ checksum "src/server/package.json" }}
 
       - save_cache:
+          name: Saving cache (frontend)
           paths:
             - src/client/node_modules
-          key: v2-dependencies-{{ checksum "src/client/package.json" }}
+          key: v1-dependencies-{{ checksum "src/client/package.json" }}
 
       - run:
           name: Static Analysis (backend)
