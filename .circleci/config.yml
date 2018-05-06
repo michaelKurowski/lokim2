@@ -58,7 +58,7 @@ jobs:
 
       - run:
           name: Mocha tests (frontend)
-          command: cd src/client/ && npm run test
+          command: cd src/client/ && npm run test-coverage
 
       - run:
           name: Print the Current Time
