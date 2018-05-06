@@ -5,7 +5,8 @@ const ConnectStatus = require('./connectStatus')
 const Room = require('./room')
 const socket = require('../utils/sockets/ws-routing')
 const protocols = require('../utils/io-protocol')
-const HOMEPAGE_PATH = '/', EMPTY = ''
+const HOMEPAGE_PATH = '/'
+const USERNAMES_PLACEHOLDER = ''
 /*
 Consulted documentation:
 https://github.com/facebook/create-react-app/issues/2260
@@ -57,7 +58,7 @@ class ChatPage extends React.Component {
     }
     findUsersOfRoom(roomId){
         const roomObject = this.state.userRooms.find(room => room.roomId === roomId)
-        return _.get(roomObject, 'usernames', EMPTY)
+        return _.get(roomObject, 'usernames', USERNAMES_PLACEHOLDER)
     }
     generateMessages(){
         if(this.state.selectedRoom){
