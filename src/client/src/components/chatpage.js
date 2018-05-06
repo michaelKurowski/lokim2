@@ -1,10 +1,11 @@
 const React = require('react')
 const {BrowserRouter, Link} = require('react-router-dom')
+const _ = require('lodash')
 const ConnectStatus = require('./connectStatus')
 const Room = require('./room')
 const socket = require('../utils/sockets/ws-routing')
 const protocols = require('../utils/io-protocol')
-
+const HOMEPAGE_PATH = '/'
 /*
 Consulted documentation:
 https://github.com/facebook/create-react-app/issues/2260
@@ -15,11 +16,6 @@ https://github.com/ReactTraining/react-router/blob/master/packages/react-router/
 https://socket.io/docs/client-api/
 
 */
-
-function updateState(key, array, newItems){
-    return {[key]: array.concat([newItems])}
-}
-
 class ChatPage extends React.Component {
     constructor(props){
         super(props)
@@ -32,58 +28,61 @@ class ChatPage extends React.Component {
             userRooms: []
         }
 
-        this.handleChange = this.handleChange.bind(this)
+        this.handleUserInput = this.handleUserInput.bind(this)
         this.sendMessage = this.sendMessage.bind(this)
     }
     componentDidMount(){
-        socket.on(protocols.CONNECTION, _ => this.setState({connected: true}))
-        socket.on(protocols.MESSAGE, data => this.populateMessages(data))
-        socket.on(protocols.JOIN, data => this.populateData(data))
+        socket.on(protocols.CONNECTION, () => this.setState({connected: true}))
+        socket.on(protocols.MESSAGE, data => this.storeMessage(data))
+        socket.on(protocols.JOIN, data => this.updateJoinedRooms(data))
         socket.emit(protocols.JOIN, {roomId: 'df7a1d12-7be0-4aab-8685-0cbf237bb135'}) // Development purposes - remove in production
     }
-    populateData(data){
-        const {roomId, username} = data
-        this.setState(updateState('userRooms', this.state.userRooms, {roomId, username}))
+    updateJoinedRooms(data){
+        const {roomId} = data
+        const usernames = data.username
+        this.setState({userRooms: this.state.userRooms.concat({roomId, usernames})})
     }
     changeSelectedRoom(roomDetails){
         const {roomId} = roomDetails
         this.setState({selectedRoom: roomId}) 
     }
-    populateMessages(messageData){
+    storeMessage(messageData){
         const {roomId, username, message, timestamp} = messageData
-        //Create a clone to mutate
-        const messages = Object.assign({}, this.state.messages)
-        //Add new message to the list
-        messages[roomId] = (messages[roomId] || []).concat({username, message, timestamp})
-        //Update list
+        const messages = _.clone(this.state.messages)
+
+        if(!_.has(messages, roomId)) messages[roomId] = []
+        messages[roomId].push({username, message, timestamp})
+
         this.setState({messages})
     }
     findUsersOfRoom(roomId){
-        const value = roomId ? this.state.userRooms.find(obj => obj.roomId === roomId) : {}
-        return value.username || ''
+        const roomObject = this.state.userRooms.find(room => room.roomId === roomId)
+        return _.get(roomObject, 'usernames', '')
     }
     generateMessages(){
-        //Check that a room is selected
         if(this.state.selectedRoom){
-                //Check if the room has messages
             if(!this.state.messages[this.state.selectedRoom]) return
-
+        
             return this.state.messages[this.state.selectedRoom]
-                .map((msg, i) => <li key={i}>{`${msg.username}:\t ${msg.message} \t ${msg.timestamp}`}</li>)
+                .map((msg, i) => 
+                    <li key={i}>
+                        {`${msg.username}:\t ${msg.message} \t ${msg.timestamp}`}
+                    </li>
+                )
         }
-
         return <h6>Please join a room before attempting to load messages</h6>
     }
-    handleChange(e) {
+    handleUserInput(e) {
         this.setState({input: e.target.value})
     }
     sendMessage(){
-        if(this.state.input.length > 0 && this.state.selectedRoom){
-            const roomId =  this.state.selectedRoom, message = this.state.input
+        if(!_.isEmpty(this.state.input) && this.state.selectedRoom){
+            const roomId =  this.state.selectedRoom
+            const message = this.state.input
             socket.emit(protocols.MESSAGE, {roomId, message})
 
             const localMessage = {roomId, username: this.state.username, message, timestamp: new Date().getTime()}
-            this.populateMessages(localMessage)
+            this.storeMessage(localMessage)
         }
             return console.error('No room selected || input field is empty.')
             //TODO - Add GUI Notification of fail
@@ -108,7 +107,7 @@ class ChatPage extends React.Component {
                                {this.generateMessages()}
                             </ul>
                         </div>
-                        <input className='form-control' placeholder='Message...' value={this.state.input} onChange={this.handleChange}/>
+                        <input className='form-control' placeholder='Message...' value={this.state.input} onChange={this.handleUserInput}/>
                         <button className='btn btn-primary' onClick={this.sendMessage}>Send</button>
                     </div>
                     <div className='col-md-3'>
@@ -116,7 +115,7 @@ class ChatPage extends React.Component {
                         <ConnectStatus connection={this.state.connected}/>
                         <h6>Current Room: {this.state.selectedRoom}</h6>
                         <h6>Users in current room: {this.findUsersOfRoom(this.state.selectedRoom)}</h6>
-                        <Link className='btn btn-danger' to='/'>Logout</Link>
+                        <Link className='btn btn-danger' to={HOMEPAGE_PATH}>Logout</Link>
                     </div>
                 </div>
             </div>
