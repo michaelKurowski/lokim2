@@ -42,7 +42,7 @@ class Register extends React.Component {
     }
     render(){
         if(this.state.successfulRegister){
-            return <Redirect to='/'/>
+            return <Redirect to={HOMEPAGE_PATH}/>
         }
         return (
             <div className='container-fluid register-div'>
