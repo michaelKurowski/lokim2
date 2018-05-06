@@ -1,16 +1,23 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from 'react'
 import Room from './room'
-describe('<Room />', () => {
-    it('renders Room component without crashing', () => {
-        const div = document.createElement('div');
-        ReactDOM.render(<Room />, div);
-        ReactDOM.unmountComponentAtNode(div);
-    });
+import {configure, shallow} from 'enzyme'
+import Adapter from 'enzyme-adapter-react-16'
 
+let suite = {}
+configure({adapter: new Adapter()})
+
+describe('<Room />', () => {
+    beforeEach(() => {
+        suite.wrapper = shallow(<Room />)
+    })
+    afterEach(() => {
+        suite = {}
+    })
+    it('renders with no props without exploding', () => {
+        expect(suite.wrapper.length).toBe(1)
+    })
     it('renders Room component with parameters', () => {
-        const div = document.createElement('div')
-        ReactDOM.render(<Room name='dummyName' ID={123} onClick={() => {}}/>, div)
-        ReactDOM.unmountComponentAtNode(div)
+        suite.wrapper = shallow(<Room name='dummyName' ID={123} onClick={() => {}}/>)
+        expect(suite.wrapper.length).toBe(1)
     })
 })
