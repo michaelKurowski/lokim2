@@ -5,7 +5,7 @@ const ConnectStatus = require('./connectStatus')
 const Room = require('./room')
 const socket = require('../utils/sockets/ws-routing')
 const protocols = require('../utils/io-protocol')
-const HOMEPAGE_PATH = '/'
+const HOMEPAGE_PATH = '/', EMPTY = ''
 /*
 Consulted documentation:
 https://github.com/facebook/create-react-app/issues/2260
@@ -57,7 +57,7 @@ class ChatPage extends React.Component {
     }
     findUsersOfRoom(roomId){
         const roomObject = this.state.userRooms.find(room => room.roomId === roomId)
-        return _.get(roomObject, 'usernames', '')
+        return _.get(roomObject, 'usernames', EMPTY)
     }
     generateMessages(){
         if(this.state.selectedRoom){
@@ -72,8 +72,8 @@ class ChatPage extends React.Component {
         }
         return <h6>Please join a room before attempting to load messages</h6>
     }
-    handleUserInput(e) {
-        this.setState({input: e.target.value})
+    handleUserInput(event) {
+        this.setState({input: event.target.value})
     }
     sendMessage(){
         if(!_.isEmpty(this.state.input) && this.state.selectedRoom){
