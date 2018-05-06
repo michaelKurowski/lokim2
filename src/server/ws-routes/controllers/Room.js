@@ -3,6 +3,7 @@ const uuidv4 = require('uuid/v4')
 const _ = require('lodash')
 const namespaceInfo =  require('../../protocol/protocol.json').room
 const EVENT_TYPES = namespaceInfo.eventTypes
+const util = require('util')
 /**
  * /Room websocket namespace and its events
  * @namespace
@@ -29,9 +30,9 @@ class Room {
 		const {roomId} = data
 		const username = socket.request.user.username
 		const timestamp = new Date().getTime()
-
-		socket.emit(EVENT_TYPES.JOIN, {username, roomId, timestamp})
+		socket.to(roomId).emit(EVENT_TYPES.JOIN, {username, roomId, timestamp})
 		socket.join(roomId)
+		Room.listMembers(data, socket, connections)
 	}
 
 	/**
@@ -86,6 +87,34 @@ class Room {
 
 		Room.join({roomId}, socket, connections)
 		joinUsersToRoom(invitedUsersIndexes, roomId, connections)
+	}
+
+	/**
+	 * Lists members of a room
+	 * @name listMembers
+	 * @memberof Room
+	 * @member
+	 * @property {module:dataTypes.uuid} roomId Room to leave
+	 * @property {string} username Username of the user that left (only for server-sourced emits)
+	 * @property {module:dataTypes.timestamp} timestamp Timestamp of when server acknowledged that user left the room (only for server-sourced emits)
+	*/
+
+	static [EVENT_TYPES.LIST_MEMBERS](data, socket, connections) {
+		const roomId = data.roomId
+
+		const socketIdentifiers = socket.adapter.rooms[roomId].sockets
+
+		
+		const usernames = _.map(socketIdentifiers, socketId => 
+			socket.client.sockets
+		)
+		//console.log(util.inspect(socket.client.sockets))
+		//console.log(socket.adapter.rooms[roomId].sockets)
+		
+		console.log(usernames)
+		socket.emit({
+			roomId
+		})
 	}
 }
 
