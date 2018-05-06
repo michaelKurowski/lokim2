@@ -1,5 +1,5 @@
 import React from 'react'
-import Room from './room'
+import Room from '../../components/room'
 import {configure, shallow} from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
 

@@ -1,7 +1,7 @@
 import React from 'react'
 import {BrowserRouter as Router} from 'react-router-dom';
-import HomePage from './homepage'
-import logo from '../logo.svg'
+import HomePage from '../../components/homepage'
+import logo from '../../logo.svg'
 import {configure, mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16'
 

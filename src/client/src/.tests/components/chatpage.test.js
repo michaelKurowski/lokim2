@@ -1,7 +1,7 @@
 import React from 'react';
-import ChatPage from './chatpage'
-import ConnectStatus from './connectStatus'
-import Room from './room'
+import ChatPage from '../../components/chatpage'
+import ConnectStatus from '../../components/connectStatus'
+import Room from '../../components/room'
 import {configure, mount } from 'enzyme';
 import {BrowserRouter as Router} from 'react-router-dom';
 import Adapter from 'enzyme-adapter-react-16'

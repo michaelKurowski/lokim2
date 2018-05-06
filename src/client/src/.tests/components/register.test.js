@@ -1,5 +1,5 @@
 import React from 'react';
-import Register from './register'
+import Register from '../../components/register'
 import {BrowserRouter as Router} from 'react-router-dom';
 import enzyme, {configure, mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16'

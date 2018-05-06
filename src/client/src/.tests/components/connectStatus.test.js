@@ -1,5 +1,5 @@
 import React from 'react';
-import ConnectStatus from './connectStatus'
+import ConnectStatus from '../../components/connectStatus'
 import { shallow, configure } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16'
 
