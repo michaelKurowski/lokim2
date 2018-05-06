@@ -1,6 +1,7 @@
 import React from 'react';
 import Register from './register'
-import enzyme, { shallow, configure, mount } from 'enzyme';
+import {BrowserRouter as Router} from 'react-router-dom';
+import enzyme, {configure, mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16'
 
 /* Using documentation - http://airbnb.io/enzyme/docs/api/shallow.html */ 
@@ -9,7 +10,7 @@ configure({adapter: new Adapter()})
 
 describe('<Register />', () => {
     beforeEach(() => {
-        suite.wrapper = shallow(<Register />)
+        suite.wrapper = mount(<Router><Register /></Router>)
     })
     afterEach(() => {
         suite = {}

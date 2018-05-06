@@ -1,7 +1,8 @@
 import React from 'react'
+import {BrowserRouter as Router} from 'react-router-dom';
 import HomePage from './homepage'
 import logo from '../logo.svg'
-import {configure, shallow } from 'enzyme';
+import {configure, mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16'
 
 configure({adapter: new Adapter()})
@@ -9,7 +10,7 @@ let suite = {}
 
 describe('<HomePage />', () => {
     beforeEach(() => {
-        suite.wrapper = shallow(<HomePage />)
+        suite.wrapper = mount(<Router><HomePage /></Router>)
     })
     afterEach(() => {
         suite = {}
