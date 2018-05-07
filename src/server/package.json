@@ -10,6 +10,11 @@
     "generate-docs": "node ./node_modules/jsdoc/jsdoc -r ./ws-routes/",
     "test-coverage": "node ./node_modules/nyc/bin/nyc --all --check-coverage npm test"
   },
+  "nyc": {
+    "exclude": [
+      "**/*.spec.js"
+    ]
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/michaelKurowski/lokim2.git"
@@ -38,7 +43,7 @@
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "passport.socketio": "^3.7.0",
-    "socket.io": "^2.0.4",
+    "socket.io": "^2.1.0",
     "uuid": "^3.2.1",
     "winston": "^2.4.0",
     "winston-transport": "^3.0.1"
