@@ -397,10 +397,10 @@ describe('Room websocket service', () => {
 			suite.getUsername.onSecondCall().returns(USER_B_USERNAME)
 
 			suite.server.on(CLIENT_EVENTS.CONNECTION, connection => {
-				suite.emitSpy = sinon.spy(connection, 'emit')
 				suite.newSocket = connection
 				connection.request.user = {}
 				connection.request.user.username = suite.getUsername()
+				suite[connection.request.user.username] = sinon.spy(connection, 'join')
 				RoomProvider.connection(connection, suite.connectionsMock)
 
 				connection.on(CLIENT_EVENTS.CREATE, data => {
@@ -419,16 +419,13 @@ describe('Room websocket service', () => {
 			//when
 			suite.clientA.emit(CLIENT_EVENTS.CREATE, requestMock)
 
-			function dupa(arg) {
-				console.log(arg)
-			}
 			//then
 			function then(data) {
 				suite.clientA.disconnect()
 				suite.clientB.disconnect()
 
-				sinon.assert.calledWith(suite.emitSpy.secondCall, CLIENT_EVENTS.JOIN, sinon.match({username: suite.USER_A_USERNAME}))
-				sinon.assert.calledWith(suite.emitSpy.firstCall, CLIENT_EVENTS.JOIN, sinon.match({username: suite.USER_B_USERNAME}))
+				sinon.assert.called(suite[USER_A_USERNAME])
+				sinon.assert.called(suite[USER_B_USERNAME])
 				done()
 			}
 		})
