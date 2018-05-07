@@ -72,10 +72,10 @@ describe('<ChatPage />', () => {
     expect(suite.Component.state('username')).toBe('dummyUser')
   })
   it('Should update joined rooms', () => {
-    const fakeData = {roomId: 'dummyRoom', username: 'dummyUser'}
+    const fakeData = {roomId: 'dummyRoom', usernames: 'dummyUser'}
     suite.Component.instance().updateJoinedRooms(fakeData)
     expect(suite.Component.state('userRooms')[0].roomId).toBe(fakeData.roomId)
-    expect(suite.Component.state('userRooms')[0].usernames).toBe(fakeData.username)
+    expect(suite.Component.state('userRooms')[0].usernames).toBe(fakeData.usernames)
   })
   it('Should store a message to sessionStorage', () => {
     const roomId = 'dummyRoom'
@@ -96,8 +96,49 @@ describe('<ChatPage />', () => {
     const roomId = 'dummyRoom'
     const fakeData = {username: 'dummyUser', message: 'fakeMessage', timestamp: new Date().getTime()}
     suite.Component.instance().changeSelectedRoom({roomId})
-    console.log('Room:', suite.Component.state('selectedRoom'))
     suite.Component.instance().updateMessageState({roomId, ...fakeData})
+    expect(suite.Component.state('messages').length).toBe(1)
+  })
+  it('Should return no users of room', () => {
+      expect(suite.Component.instance().findUsersOfRoom('dummyRoom')).toBe('')
+  })
+  it('Should return a user in the room', () => {
+    suite.Component.instance().updateJoinedRooms({usernames: 'dummyUser', roomId: 'dummyRoom'})
+    expect(suite.Component.instance().findUsersOfRoom('dummyRoom')).toBe('dummyUser')
+  })
+  it('Should generate a warning to select a room first', () => {
+    expect(typeof suite.Component.instance().generateMessages())
+    .toBe(typeof {})
+  })
+  it('Should generate nothing if a room is specified and there are no messages to render', () => {
+    const roomId = 'dummyRoom'
+    suite.Component.instance().changeSelectedRoom({roomId})
+    expect(suite.Component.instance().generateMessages()).toBe(undefined)
+  })
+  it('Should generate a message if a room is specified and there are messages to render', () => {
+    const roomId = 'dummyRoom'
+    suite.Component.instance().changeSelectedRoom({roomId})
+    const msg = {username: 'dummyUser', message: 'fakeMessage', timestamp: new Date().getTime()}
+    suite.Component.instance().updateMessageState({roomId, ...msg})
+    expect(suite.Component.instance().generateMessages().length).toBe(1)
+  })
+  it('Should throw an error if the input is empty', () => {
+    const roomId = 'dummyRoom'
+    suite.Component.instance().changeSelectedRoom({roomId})
+    expect(() => suite.Component.instance().sendMessage()).toThrow()
+  })
+  it('Should throw an error if there is no room selected', () => {
+    suite.Component.instance().handleUserInput({ target: { value: 'dummyInput'}})
+    expect(() => suite.Component.instance().sendMessage()).toThrow()
+  })
+  it('Should throw an error if there is no room and there is no input', () => {
+    expect(() => suite.Component.instance().sendMessage()).toThrow()
+  })
+  it('Should add a new message to the state', () => {
+    const roomId = 'dummyRoom'
+    suite.Component.instance().changeSelectedRoom({roomId})
+    suite.Component.instance().handleUserInput({ target: { value: 'dummyInput'}})
+    suite.Component.instance().sendMessage()
     expect(suite.Component.state('messages').length).toBe(1)
   })
 })

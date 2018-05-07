@@ -1,6 +1,6 @@
 const React = require('react')
 const {BrowserRouter, Link, Redirect} = require('react-router-dom')
-const fetch = require('node-fetch')
+//const fetch = require('node-fetch')
 const logo = require('../logo.svg')
 const responseCodes = require('../statusCodeResponses')
 
@@ -24,7 +24,7 @@ class HomePage extends React.Component {
     }
 
     loginHandler(username, password){
-        fetch(LOGIN_URL, {
+        return fetch(LOGIN_URL, {
             method: POST, headers, credentials,
             body: JSON.stringify({username, password})
         }).then(response => {
@@ -35,7 +35,7 @@ class HomePage extends React.Component {
                 alert(responseCodes[response.status])
                 console.log(response.status, response)
             }
-        }).catch(err => console.err(err))
+        }).catch(err => console.log(err))
     }
 
     handleChange(event){

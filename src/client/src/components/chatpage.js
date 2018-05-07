@@ -45,7 +45,7 @@ class ChatPage extends React.Component {
     }
     updateJoinedRooms(data){
         const {roomId} = data
-        const usernames = data.username
+        const usernames = data.usernames
         this.setState({userRooms: this.state.userRooms.concat({roomId, usernames})})
     }
     changeSelectedRoom(roomDetails){
@@ -63,7 +63,6 @@ class ChatPage extends React.Component {
         this.storeMessage(roomId, {username, message, timestamp})
 
         if(roomId === this.state.selectedRoom){
-            console.log(roomId)
             this.setState({messages: JSON.parse(window.sessionStorage.getItem(roomId))})
         }
     }
@@ -73,12 +72,14 @@ class ChatPage extends React.Component {
     }
     generateMessages(){
         if(this.state.selectedRoom){
-            if(!_.isEmpty(this.state.messages))
+            if(!_.isEmpty(this.state.messages)){
                 return this.state.messages.map((msg, i) => 
                     <li className='message' key={i}>
                         {`${msg.username}:\t ${msg.message} \t ${msg.timestamp}`}
                     </li>
                 )
+            }
+            return
         }
         return <h6>Please join a room before attempting to load messages</h6>
     }
@@ -92,9 +93,9 @@ class ChatPage extends React.Component {
             socket.emit(protocols.MESSAGE, {roomId, message})
 
             const localMessage = {roomId, username: this.state.username, message, timestamp: new Date().getTime()}
-            this.updateMessageState(localMessage)
+            return this.updateMessageState(localMessage)
         }
-            return console.error('No room selected || input field is empty.')
+        throw new Error('No room selected || input field is empty.')
             //TODO - Add GUI Notification of fail
     }
     render(){
