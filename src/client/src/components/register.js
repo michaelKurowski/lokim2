@@ -30,11 +30,9 @@ class Register extends React.Component {
         })
         .then(response => {
             if(response.status === SUCCESS_CODE){
-                this.setState({successfulRegister: true})
+                return this.setState({successfulRegister: true})
             }
-            if(responseCodes.hasOwnProperty(response.status)){
-                alert(responseCodes[response.status])
-            }
+            alert(responseCodes[response.status])
         })
         .catch(error => console.log('Error:', error))
         event.preventDefault()

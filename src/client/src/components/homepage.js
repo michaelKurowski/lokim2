@@ -29,11 +29,9 @@ class HomePage extends React.Component {
             body: JSON.stringify({username, password})
         }).then(response => {
             if(response.status === 200){
-                this.setState({successfulLogin: true})
+                return this.setState({successfulLogin: true})
             }
-            if(responseCodes.hasOwnProperty(response.status)){
-                alert(responseCodes[response.status])
-            }
+            alert(responseCodes[response.status])
         }).catch(err => console.log('Error:', err))
     }
 
