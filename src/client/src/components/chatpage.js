@@ -15,6 +15,11 @@ https://github.com/socketio/socket.io/issues/2294
 
 https://github.com/ReactTraining/react-router/blob/master/packages/react-router/docs/api/Redirect.md
 https://socket.io/docs/client-api/
+https://www.w3schools.com/jsref/prop_win_sessionstorage.asp
+https://www.w3schools.com/jsref/prop_win_localstorage.asp
+https://developer.mozilla.org/en-US/docs/Web/API/Cache
+https://davidwalsh.name/cache
+
 
 */
 class ChatPage extends React.Component {
@@ -25,7 +30,7 @@ class ChatPage extends React.Component {
             input: '',
             messages: {},
             selectedRoom: '',
-            username: this.props.location.state.username || null,
+            username: this.props.location.state.username,
             userRooms: []
         }
 
@@ -59,7 +64,7 @@ class ChatPage extends React.Component {
     updateMessageState(messageData){
         const {roomId, username, message, timestamp} = messageData
         this.storeMessage(roomId, {username, message, timestamp})
-        
+
         if(roomId === this.state.selectedRoom)
             this.setState({messages: window.sessionStorage.getItem(roomId)})
     }
@@ -69,10 +74,8 @@ class ChatPage extends React.Component {
     }
     generateMessages(){
         if(this.state.selectedRoom){
-            if(!this.state.messages[this.state.selectedRoom]) return
-        
-            return this.state.messages[this.state.selectedRoom]
-                .map((msg, i) => 
+            if(!_.isEmpty(this.state.messages))
+                return this.state.messages.map((msg, i) => 
                     <li className='message' key={i}>
                         {`${msg.username}:\t ${msg.message} \t ${msg.timestamp}`}
                     </li>
