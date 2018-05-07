@@ -4,6 +4,7 @@ const _ = require('lodash')
 const namespaceInfo =  require('../../protocol/protocol.json').room
 const EVENT_TYPES = namespaceInfo.eventTypes
 const util = require('util')
+const logger = require('../../logger')
 /**
  * /Room websocket namespace and its events
  * @namespace
@@ -30,9 +31,13 @@ class Room {
 		const {roomId} = data
 		const username = socket.request.user.username
 		const timestamp = new Date().getTime()
-		socket.to(roomId).emit(EVENT_TYPES.JOIN, {username, roomId, timestamp})
-		socket.join(roomId)
-		Room.listMembers(data, socket, connections)
+		
+		socket.join(roomId, () => {
+			socket.emit(EVENT_TYPES.JOIN, {username, roomId, timestamp})
+			socket.to(roomId).emit(EVENT_TYPES.JOIN, {username, roomId, timestamp})
+			Room.listMembers(data, socket, connections)
+		})
+		
 	}
 
 	/**
@@ -94,28 +99,34 @@ class Room {
 	 * @name listMembers
 	 * @memberof Room
 	 * @member
-	 * @property {module:dataTypes.uuid} roomId Room to leave
-	 * @property {string} username Username of the user that left (only for server-sourced emits)
+	 * @property {module:dataTypes.uuid} roomId Room to probe
 	 * @property {module:dataTypes.timestamp} timestamp Timestamp of when server acknowledged that user left the room (only for server-sourced emits)
+	 * @property {string[]} usernames Users in the probed room (only for server-sourced emits)
 	*/
 
 	static [EVENT_TYPES.LIST_MEMBERS](data, socket, connections) {
+		const timestamp = new Date().getTime()
 		const roomId = data.roomId
-
-		const socketIdentifiers = socket.adapter.rooms[roomId].sockets
-
-		
-		const usernames = _.map(socketIdentifiers, socketId => 
-			socket.client.sockets
-		)
-		//console.log(util.inspect(socket.client.sockets))
-		//console.log(socket.adapter.rooms[roomId].sockets)
-		
-		console.log(usernames)
-		socket.emit({
-			roomId
-		})
+		const room = socket.nsp.in(roomId)
+		//console.log(socket.nsp.rooms)
+		getRoomClients(room)
+			.then(clients => {
+				const usernames = _.map(clients, socketId => 
+					getUsername(room.connected[socketId]))
+				socket.to(roomId).emit(EVENT_TYPES.LIST_MEMBERS,
+					{roomId, timestamp, usernames})
+			})
+			.catch(err => logger.error(err))
 	}
+}
+
+async function getRoomClients(room) {
+	const getClients = room.clients.bind(room)
+	return await util.promisify(getClients)()
+}
+
+function getUsername(socket) {
+	return socket.request.user.username
 }
 
 function joinUsersToRoom(invitedUsersIndexes, roomId, connections) {

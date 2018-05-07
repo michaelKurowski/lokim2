@@ -484,5 +484,54 @@ describe('Room websocket service', () => {
 				done()
 			}
 		})
+
+		it('should make users visible to each other when joining the same room', done => {
+			//given
+			const ROOM_ID = 'random room id'
+			const joinRoomRequestMock = {
+				roomId: ROOM_ID
+			}
+
+			const messageMock = {
+				roomId: ROOM_ID
+			}
+
+			suite.server.on(CLIENT_EVENTS.CONNECTION, connection => {
+				connection.on(CLIENT_EVENTS.JOIN, data => 
+					RoomProvider.join(data, connection, suite.connectionsMock)
+				)
+
+				connection.on(CLIENT_EVENTS.LIST_MEMBERS, data => 
+					RoomProvider[CLIENT_EVENTS.LIST_MEMBERS](data, connection, suite.connectionsMock)
+				)
+			})
+			
+			//when
+			suite.clientA.emit(CLIENT_EVENTS.JOIN, joinRoomRequestMock)
+			suite.clientB.emit(CLIENT_EVENTS.JOIN, joinRoomRequestMock)
+
+			const clientAJoinedRoom = new Promise(resolve => 
+				suite.clientA.on(CLIENT_EVENTS.JOIN, resolve)
+			)
+
+
+			const clientBJoinedRoom = new Promise(resolve => 
+				suite.clientB.on(CLIENT_EVENTS.JOIN, resolve)
+			)
+
+			//then
+			Promise.all([clientAJoinedRoom, clientBJoinedRoom])
+				.then(() => {
+					suite.clientA.emit(CLIENT_EVENTS.LIST_MEMBERS, messageMock)}
+				)
+
+			suite.clientA.on(CLIENT_EVENTS.LIST_MEMBERS, then)
+
+			function then(data) {
+				const EXPECTED_USERNAMES = ['DUMMY_USERNAME', 'DUMMY_USERNAME']
+				assert.deepEqual(data.usernames, EXPECTED_USERNAMES)
+				done()
+			}
+		})
 	})
 })
