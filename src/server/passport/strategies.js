@@ -14,7 +14,7 @@ const loginStrategy = (UserModel = require('../models/user'), strategyUtils = re
 			})
 	}
 
-	const serialzeUser = (user, done) => {
+	const serializeUser = (user, done) => {
 		const error = null
 		done(error, user.id)
 	}
@@ -23,7 +23,7 @@ const loginStrategy = (UserModel = require('../models/user'), strategyUtils = re
 
 	return {
 		validateUser,
-		serialzeUser,
+		serializeUser,
 		deserializeUser
 	}
 }
