@@ -34,7 +34,7 @@ class ChatPage extends React.Component {
     }
     componentDidMount(){
         socket.on(protocols.CONNECTION, () => this.setState({connected: true}))
-        socket.on(protocols.MESSAGE, data => this.storeMessage(data))
+        socket.on(protocols.MESSAGE, data => this.updateMessageState(data))
         socket.on(protocols.JOIN, data => this.updateJoinedRooms(data))
         socket.emit(protocols.JOIN, {roomId: 'df7a1d12-7be0-4aab-8685-0cbf237bb135'}) // Development purposes - remove in production
     }
@@ -47,14 +47,21 @@ class ChatPage extends React.Component {
         const {roomId} = roomDetails
         this.setState({selectedRoom: roomId}) 
     }
-    storeMessage(messageData){
+    storeMessage(roomId, newMessage){
+        const store = window.sessionStorage
+        const roomMessages = store.getItem(roomId)
+        const updatedRoomMessages = _.concat(roomMessages, newMessage)
+        store.setItem(roomId, updatedRoomMessages)
+
+        console.log('newMessage:', newMessage, 'roomMessages:', roomMessages, 'updated:', updatedRoomMessages)
+        console.log(store.getItem(roomId))
+    }
+    updateMessageState(messageData){
         const {roomId, username, message, timestamp} = messageData
-        const messages = _.clone(this.state.messages)
-
-        if(!_.has(messages, roomId)) messages[roomId] = []
-        messages[roomId].push({username, message, timestamp})
-
-        this.setState({messages})
+        this.storeMessage(roomId, {username, message, timestamp})
+        
+        if(roomId === this.state.selectedRoom)
+            this.setState({messages: window.sessionStorage.getItem(roomId)})
     }
     findUsersOfRoom(roomId){
         const roomObject = this.state.userRooms.find(room => room.roomId === roomId)
@@ -83,7 +90,7 @@ class ChatPage extends React.Component {
             socket.emit(protocols.MESSAGE, {roomId, message})
 
             const localMessage = {roomId, username: this.state.username, message, timestamp: new Date().getTime()}
-            this.storeMessage(localMessage)
+            this.updateMessageState(localMessage)
         }
             return console.error('No room selected || input field is empty.')
             //TODO - Add GUI Notification of fail
