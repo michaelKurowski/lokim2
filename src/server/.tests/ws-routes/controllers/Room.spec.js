@@ -367,12 +367,11 @@ describe('Room websocket service', () => {
 				suite.newSocket = connection
 				connection.on(CLIENT_EVENTS.CREATE, data => {
 					RoomProvider.create(data, connection, suite.connectionsMock)
-					then()
 				})
 			})
 			
 			suite.client = socketClient.connect(SOCKET_URL, SOCKET_OPTIONS)
-
+			suite.client.on(CLIENT_EVENTS.JOIN, then)
 			//when
 			suite.client.emit(CLIENT_EVENTS.CREATE, requestMock)
 
@@ -400,11 +399,17 @@ describe('Room websocket service', () => {
 			suite.server.on(CLIENT_EVENTS.CONNECTION, connection => {
 				suite.emitSpy = sinon.spy(connection, 'emit')
 				suite.newSocket = connection
+				connection.request.user = {}
+				connection.request.user.username = suite.getUsername()
+				RoomProvider.connection(connection, suite.connectionsMock)
+
 				connection.on(CLIENT_EVENTS.CREATE, data => {
-					connection.request.user = suite.getUsername()
-					RoomProvider.connection(connection, suite.connectionsMock)
+					Promise.all([
+						new Promise(resolve => suite.clientA.on(CLIENT_EVENTS.JOIN, resolve)),
+						new Promise(resolve => suite.clientB.on(CLIENT_EVENTS.JOIN, resolve))
+					]).then(then)
+
 					RoomProvider.create(data, connection, suite.connectionsMock)
-					then()
 				})
 			})
 			
@@ -414,13 +419,16 @@ describe('Room websocket service', () => {
 			//when
 			suite.clientA.emit(CLIENT_EVENTS.CREATE, requestMock)
 
+			function dupa(arg) {
+				console.log(arg)
+			}
 			//then
-			function then() {
+			function then(data) {
 				suite.clientA.disconnect()
 				suite.clientB.disconnect()
 
-				sinon.assert.calledWith(suite.emitSpy.firstCall, CLIENT_EVENTS.JOIN, sinon.match({username: suite.USER_A_USERNAME}))
-				sinon.assert.calledWith(suite.emitSpy.secondCall, CLIENT_EVENTS.JOIN, sinon.match({username: suite.USER_B_USERNAME}))
+				sinon.assert.calledWith(suite.emitSpy.secondCall, CLIENT_EVENTS.JOIN, sinon.match({username: suite.USER_A_USERNAME}))
+				sinon.assert.calledWith(suite.emitSpy.firstCall, CLIENT_EVENTS.JOIN, sinon.match({username: suite.USER_B_USERNAME}))
 				done()
 			}
 		})
@@ -487,6 +495,10 @@ describe('Room websocket service', () => {
 
 		it('should make users visible to each other when joining the same room', done => {
 			//given
+			const USER_A_USERNAME = 'userA'
+			const USER_B_USERNAME = 'userB'
+
+
 			const ROOM_ID = 'random room id'
 			const joinRoomRequestMock = {
 				roomId: ROOM_ID
@@ -496,7 +508,13 @@ describe('Room websocket service', () => {
 				roomId: ROOM_ID
 			}
 
+			suite.getUsername = sinon.stub()
+			suite.getUsername.onFirstCall().returns(USER_A_USERNAME)
+			suite.getUsername.onSecondCall().returns(USER_B_USERNAME)
+
 			suite.server.on(CLIENT_EVENTS.CONNECTION, connection => {
+				connection.request.user = {}
+				connection.request.user.username = suite.getUsername()
 				connection.on(CLIENT_EVENTS.JOIN, data => 
 					RoomProvider.join(data, connection, suite.connectionsMock)
 				)
@@ -528,7 +546,7 @@ describe('Room websocket service', () => {
 			suite.clientA.on(CLIENT_EVENTS.LIST_MEMBERS, then)
 
 			function then(data) {
-				const EXPECTED_USERNAMES = ['DUMMY_USERNAME', 'DUMMY_USERNAME']
+				const EXPECTED_USERNAMES = [USER_A_USERNAME, USER_B_USERNAME]
 				assert.deepEqual(data.usernames, EXPECTED_USERNAMES)
 				done()
 			}

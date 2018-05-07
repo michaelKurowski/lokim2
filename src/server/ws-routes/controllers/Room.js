@@ -104,11 +104,10 @@ class Room {
 	 * @property {string[]} usernames Users in the probed room (only for server-sourced emits)
 	*/
 
-	static [EVENT_TYPES.LIST_MEMBERS](data, socket, connections) {
+	static async [EVENT_TYPES.LIST_MEMBERS](data, socket, connections) {
 		const timestamp = new Date().getTime()
 		const roomId = data.roomId
 		const room = socket.nsp.in(roomId)
-		//console.log(socket.nsp.rooms)
 		getRoomClients(room)
 			.then(clients => {
 				const usernames = _.map(clients, socketId => 
