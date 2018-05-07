@@ -28,7 +28,7 @@ class ChatPage extends React.Component {
         this.state = {
             connected: false,
             input: '',
-            messages: {},
+            messages: [],
             selectedRoom: '',
             username: this.props.location.state.username,
             userRooms: []
@@ -54,19 +54,18 @@ class ChatPage extends React.Component {
     }
     storeMessage(roomId, newMessage){
         const store = window.sessionStorage
-        const roomMessages = store.getItem(roomId)
+        const roomMessages = store.getItem(roomId) || []
         const updatedRoomMessages = _.concat(roomMessages, newMessage)
-        store.setItem(roomId, updatedRoomMessages)
-
-        console.log('newMessage:', newMessage, 'roomMessages:', roomMessages, 'updated:', updatedRoomMessages)
-        console.log(store.getItem(roomId))
+        store.setItem(roomId, JSON.stringify(updatedRoomMessages))
     }
     updateMessageState(messageData){
         const {roomId, username, message, timestamp} = messageData
         this.storeMessage(roomId, {username, message, timestamp})
 
-        if(roomId === this.state.selectedRoom)
-            this.setState({messages: window.sessionStorage.getItem(roomId)})
+        if(roomId === this.state.selectedRoom){
+            console.log(roomId)
+            this.setState({messages: JSON.parse(window.sessionStorage.getItem(roomId))})
+        }
     }
     findUsersOfRoom(roomId){
         const roomObject = this.state.userRooms.find(room => room.roomId === roomId)
