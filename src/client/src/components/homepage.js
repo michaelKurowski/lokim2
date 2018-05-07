@@ -33,9 +33,8 @@ class HomePage extends React.Component {
             }
             if(responseCodes.hasOwnProperty(response.status)){
                 alert(responseCodes[response.status])
-                console.log(response.status, response)
             }
-        }).catch(err => console.log(err))
+        }).catch(err => console.log('Error:', err))
     }
 
     handleChange(event){

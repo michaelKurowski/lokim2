@@ -56,7 +56,7 @@ describe('<HomePage />', () => {
         expect(suite.Component.state('password')).toBe('')
     })    
     it('successfulLogin to be false with statusCode other than 200', () => {
-        fetchMock.post('/login', 401);
+        fetchMock.post('/login', 400);
         suite.Component.instance().loginHandler('dummyUser', 'dummyPassword')
         expect(suite.Component.state('successfulLogin')).toBe(false)
     })

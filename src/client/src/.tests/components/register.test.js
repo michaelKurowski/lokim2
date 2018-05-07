@@ -1,4 +1,5 @@
 import React from 'react';
+import fetchMock from 'fetch-mock'
 import Register from '../../components/register'
 import {BrowserRouter as Router} from 'react-router-dom';
 import enzyme, {configure, mount, shallow } from 'enzyme';
@@ -44,6 +45,11 @@ describe('<Register />', () => {
     it('Should change the password state on user input', () => {
         suite.Component.instance().handleChange({target: {name:'password', value: 'dummyInput'}})
         expect(suite.Component.state('password')).toBe('dummyInput')
+    })
+    it('successfulRegister to be false with statusCode other than 200', () => {
+        fetchMock.post('/register', 401);
+        suite.Component.instance().handleSubmit({preventDefault: () => {}})
+        expect(suite.Component.state('successfulRegister')).toBe(false)
     })
 
 })

@@ -1,5 +1,5 @@
 const React = require('react')
-const fetch = require('node-fetch')
+//const fetch = require('node-fetch')
 const {BrowserRouter, Link, Redirect} = require('react-router-dom')
 const responseCodes = require('../statusCodeResponses')
 
@@ -34,10 +34,9 @@ class Register extends React.Component {
             }
             if(responseCodes.hasOwnProperty(response.status)){
                 alert(responseCodes[response.status])
-                console.log(response.status, response)
             }
         })
-        .catch(error => console.err(error))
+        .catch(error => console.log('Error:', error))
         event.preventDefault()
     }
     render(){
