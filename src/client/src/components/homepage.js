@@ -1,8 +1,7 @@
 const React = require('react')
-const {BrowserRouter, Link, Redirect} = require('react-router-dom')
+const {Link, Redirect} = require('react-router-dom')
 const logo = require('../logo.svg')
-const responseCodes = require('../statusCodeResponses')
-const fetch = require('node-fetch')
+const _fetch = require('node-fetch')
 
 const LOGIN_URL = '/login', POST = 'POST', credentials = 'same-origin'
 const headers = { 'Content-Type': 'application/json' }
@@ -23,13 +22,14 @@ class HomePage extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this)
     }
 
-    loginHandler(username, password, fetch = fetch){
-        fetch('http://localhost:5000/login', {
+    loginHandler(username, password, fetch = _fetch){
+        fetch(LOGIN_URL, {
             method: POST, headers, credentials,
             body: JSON.stringify({username, password})
         }).then(response => {
+            console.log(response)
             if(response.status === 200){
-                return this.setState({successfulLogin: true})
+                this.setState({successfulLogin: true})
             }
         }).catch(err => console.log('Error:', err))
     }
@@ -38,7 +38,7 @@ class HomePage extends React.Component {
         this.setState({ [event.target.name] : event.target.value})
     }
     handleSubmit(event){
-        this.loginHandler(fetch, this.state.username, this.state.password)
+        this.loginHandler(this.state.username, this.state.password)
         event.preventDefault()
     }
     render(){

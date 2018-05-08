@@ -1,7 +1,6 @@
 const React = require('react')
-const {BrowserRouter, Link, Redirect} = require('react-router-dom')
-const responseCodes = require('../statusCodeResponses')
-const fetch = require('node-fetch')
+const {Link, Redirect} = require('react-router-dom')
+const _fetch = require('node-fetch')
 
 const SUCCESS_CODE = 200
 const REGISTER_URL = '/register', HOMEPAGE_PATH = '/', POST = 'POST', headers = { 'Content-Type': 'application/json' }
@@ -27,7 +26,7 @@ class Register extends React.Component {
         this.registerHandler(this.state)
         event.preventDefault()
     }
-    registerHandler(userData, fetch = fetch){
+    registerHandler(userData, fetch = _fetch){
         const {username, password, email} = userData
         fetch(REGISTER_URL, {
             method: POST, headers,
