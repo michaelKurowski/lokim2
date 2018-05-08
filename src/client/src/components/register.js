@@ -24,18 +24,21 @@ class Register extends React.Component {
     }
     
     handleSubmit(event){
+        this.registerHandler(this.state)
+        event.preventDefault()
+    }
+    registerHandler(userData, fetch = fetch){
+        const {username, password, email} = userData
         fetch(REGISTER_URL, {
             method: POST, headers,
-            body: JSON.stringify(this.state)
+            body: JSON.stringify({username, password, email})
         })
         .then(response => {
             if(response.status === SUCCESS_CODE){
-                return this.setState({successfulRegister: true})
+                this.setState({successfulRegister: true})
             }
-            alert(responseCodes[response.status])
         })
         .catch(error => console.log('Error:', error))
-        event.preventDefault()
     }
     render(){
         if(this.state.successfulRegister){

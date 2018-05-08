@@ -1,8 +1,12 @@
+import fetch from 'jest-fetch-mock'
+jest.setMock('node-fetch', fetch)
+
 import React from 'react';
 import Register from '../../components/register'
 import {BrowserRouter as Router} from 'react-router-dom';
 import enzyme, {configure, mount, shallow } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16'
+import sinon from 'sinon'
 
 /* Using documentation - http://airbnb.io/enzyme/docs/api/shallow.html */ 
 let suite = {}
@@ -45,6 +49,28 @@ describe('<Register />', () => {
         suite.Component.instance().handleChange({target: {name:'password', value: 'dummyInput'}})
         expect(suite.Component.state('password')).toBe('dummyInput')
     })
+    it('Should call registerHandler on event submit', () => {
+        const registerHandler = sinon.spy()
+        suite.Component.instance().registerHandler = registerHandler
+        suite.Component.instance().handleSubmit({preventDefault: () => {}})
+        sinon.assert.called(registerHandler)
+    })
+    it('Should return true if the status code is 200', async done => {
+        const fakeUserData = {username: 'dummyUser', password: 'dupa', email: 'Ihatetesting@fetch.com'}
+        fetch.mockResponse(JSON.stringify({description:'OK'}))
+        await suite.Component.instance().registerHandler(fakeUserData, fetch)
+        expect(fetch).toHaveBeenCalled()
+        expect(suite.Component.state('successfulRegister')).toBe(true)
+        done()
+    })
+    it('Should return false if the status code is not 200', async done => {
+        const fakeUserData = {username: 'dummyUser', password: 'dupa', email: 'Ihatetesting@fetch.com'}
+        fetch.mockReject(JSON.stringify({description:'OK'}))
+        await suite.Component.instance().registerHandler(fakeUserData, fetch)
+        expect(fetch).toHaveBeenCalled()
+        expect(suite.Component.state('successfulRegister')).toBe(false)
+        done()
+    })    
 })
 
 
