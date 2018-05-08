@@ -1,6 +1,8 @@
+import fetch from 'jest-fetch-mock'
+jest.setMock('node-fetch', fetch)
+
 import React from 'react'
 import {BrowserRouter as Router} from 'react-router-dom';
-import fetchMock from 'fetch-mock'
 import HomePage from '../../components/homepage'
 import logo from '../../logo.svg'
 import {configure, mount, shallow} from 'enzyme';
@@ -9,11 +11,15 @@ import sinon from 'sinon'
 
 
 
+
 configure({adapter: new Adapter()})
+
 let suite = {}
 
 describe('<HomePage />', () => {
+
     beforeEach(() => {
+        fetch.resetMocks()
         suite.wrapper = mount(<Router><HomePage /></Router>)
         suite.Component = shallow(<Router><HomePage /></Router>).find(HomePage).dive()
     })
@@ -54,10 +60,19 @@ describe('<HomePage />', () => {
     })
     it('password should be empty on launch', () => {
         expect(suite.Component.state('password')).toBe('')
-    })    
-    it('successfulLogin to be false with statusCode other than 200', () => {
-        fetchMock.post('/login', 400);
-        suite.Component.instance().loginHandler('dummyUser', 'dummyPassword')
-        expect(suite.Component.state('successfulLogin')).toBe(false)
     })
+    it('should return true if statusCode is 200', async done => {
+        fetch.mockResponse(JSON.stringify({description:'OK'}))
+        await suite.Component.instance().loginHandler('dummyUser', 'dummyPassword', fetch)
+        expect(fetch).toHaveBeenCalled()
+        expect(suite.Component.state('successfulLogin')).toBe(true)
+        done()
+    }); 
+    it('should return false if statusCode is NOT 200', async done => {
+        fetch.mockReject(JSON.stringify({description:'BAD'}))
+        await suite.Component.instance().loginHandler('dummyUser', 'dummyPassword', fetch)
+        expect(fetch).toHaveBeenCalled()
+        expect(suite.Component.state('successfulLogin')).toBe(false)
+        done()
+    });
 })

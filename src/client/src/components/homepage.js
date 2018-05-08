@@ -2,7 +2,7 @@ const React = require('react')
 const {BrowserRouter, Link, Redirect} = require('react-router-dom')
 const logo = require('../logo.svg')
 const responseCodes = require('../statusCodeResponses')
-require('isomorphic-fetch')
+const fetch = require('node-fetch')
 
 const LOGIN_URL = '/login', POST = 'POST', credentials = 'same-origin'
 const headers = { 'Content-Type': 'application/json' }
@@ -23,15 +23,14 @@ class HomePage extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this)
     }
 
-    loginHandler(username, password){
-        return fetch(LOGIN_URL, {
+    loginHandler(username, password, fetch = fetch){
+        fetch('http://localhost:5000/login', {
             method: POST, headers, credentials,
             body: JSON.stringify({username, password})
         }).then(response => {
             if(response.status === 200){
                 return this.setState({successfulLogin: true})
             }
-            alert(responseCodes[response.status])
         }).catch(err => console.log('Error:', err))
     }
 
@@ -39,7 +38,7 @@ class HomePage extends React.Component {
         this.setState({ [event.target.name] : event.target.value})
     }
     handleSubmit(event){
-        this.loginHandler(this.state.username, this.state.password)
+        this.loginHandler(fetch, this.state.username, this.state.password)
         event.preventDefault()
     }
     render(){
