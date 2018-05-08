@@ -52,21 +52,26 @@ class ChatPage extends React.Component {
         this.setState({userRooms: this.state.userRooms.concat({roomId, usernames})})
     }
     changeSelectedRoom(roomDetails){
+        console.log(roomDetails)
         const {roomId} = roomDetails
-        this.setState({selectedRoom: roomId}) 
+        this.setState({selectedRoom: roomId}, () =>  this.updateMessageState({roomId}))
     }
     storeMessage(roomId, newMessage){
         const store = window.sessionStorage
-        const roomMessages = store.getItem(roomId) || []
+        const roomMessages = store.getItem(roomId) ? JSON.parse(store.getItem(roomId)) : []
         const updatedRoomMessages = _.concat(roomMessages, newMessage)
         store.setItem(roomId, JSON.stringify(updatedRoomMessages))
     }
     updateMessageState(messageData){
         const {roomId, username, message, timestamp} = messageData
-        this.storeMessage(roomId, {username, message, timestamp})
 
+        if(!_.isEmpty(message)){
+            console.log('updateMessageState', message)
+            this.storeMessage(roomId, {username, message, timestamp})
+        }
         if(roomId === this.state.selectedRoom){
-            this.setState({messages: JSON.parse(window.sessionStorage.getItem(roomId))})
+            console.log('updateMsgState:', roomId)
+            this.setState({messages: JSON.parse(window.sessionStorage.getItem(roomId))}, this.generateMessages)
         }
     }
     findUsersOfRoom(roomId){
