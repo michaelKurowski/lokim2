@@ -2,19 +2,37 @@ const responseManager = require('../routes/controllers/utilities/responseManager
 
 const loginStrategy = (UserModel = require('../models/user'), strategyUtils = require('./strategyUtils')) => {
 	const validateUser = (username, password, done) => {
-		const index = {
-			username
-		}
+		const validation = {user: null, query: {username}, password, validationResult: null}
 		
-		UserModel.findOne(index).exec()
-			.then(user => strategyUtils.validateUserPassword(user, password, done))
-			.catch(() => {
+		return Promise.resolve(validation)
+			.then(assignFoundUser)
+			.then(assignPasswordValidationResult)
+			.then(finish)
+			.catch(error => {
 				const userToSerialize = null
 				done(responseManager.MESSAGES.errors.UNAUTHORIZED, userToSerialize)
 			})
+
+		function finish(validation) {
+			done(validation.validationResult, validation.user)
+		}
+
+		function assignPasswordValidationResult(validation) {
+			validation.validationResult = 
+				strategyUtils.validateUserPassword(validation.user, validation.password)
+			return validation
+		}
+	
+		function assignFoundUser(validation) {
+			return UserModel.findOne(validation.query).exec()
+				.then(user => {
+					validation.user = user
+					return validation
+				})
+		}
 	}
 
-	const serialzeUser = (user, done) => {
+	const serializeUser = (user, done) => {
 		const error = null
 		done(error, user.id)
 	}
@@ -23,7 +41,7 @@ const loginStrategy = (UserModel = require('../models/user'), strategyUtils = re
 
 	return {
 		validateUser,
-		serialzeUser,
+		serializeUser,
 		deserializeUser
 	}
 }

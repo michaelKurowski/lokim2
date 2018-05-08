@@ -62,7 +62,7 @@ function init({
 	//Passport setting
 
 	const loginStrategy = passportStrategies.loginStrategy()
-	passport.serializeUser(loginStrategy.serialzeUser)
+	passport.serializeUser(loginStrategy.serializeUser)
 	passport.deserializeUser(loginStrategy.deserializeUser)
 
 	passport.use(passportStrategyUtils.STRATEGY_NAME, new LocalStrategy({
