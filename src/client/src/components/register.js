@@ -1,7 +1,7 @@
 const React = require('react')
-//const fetch = require('node-fetch')
 const {BrowserRouter, Link, Redirect} = require('react-router-dom')
 const responseCodes = require('../statusCodeResponses')
+require('isomorphic-fetch')
 
 const SUCCESS_CODE = 200
 const REGISTER_URL = '/register', HOMEPAGE_PATH = '/', POST = 'POST', headers = { 'Content-Type': 'application/json' }

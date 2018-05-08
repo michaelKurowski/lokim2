@@ -1,8 +1,8 @@
 const React = require('react')
 const {BrowserRouter, Link, Redirect} = require('react-router-dom')
-//const fetch = require('node-fetch')
 const logo = require('../logo.svg')
 const responseCodes = require('../statusCodeResponses')
+require('isomorphic-fetch')
 
 const LOGIN_URL = '/login', POST = 'POST', credentials = 'same-origin'
 const headers = { 'Content-Type': 'application/json' }
