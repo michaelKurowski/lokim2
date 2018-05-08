@@ -32,15 +32,7 @@ function strategyHandlers(req, res, next) {
 
 function validateUserPassword(user, password, done) {
 	const hash = Utilities.createSaltedHash(user.salt, password)
-	if (hash === user.password) {
-		const error = null
-		done(error, user)
-		return
-	}
-
-	const userToSerialize = null
-	done(responseManager.MESSAGES.errors.UNAUTHORIZED, userToSerialize)
-	return
+	return (hash === user.password) ? null : responseManager.MESSAGES.errors.UNAUTHORIZED
 }
 
 module.exports = {

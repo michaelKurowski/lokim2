@@ -1,4 +1,5 @@
 const strategiesProvider = require('../../passport/strategies')
+const responseManager = require('../../routes/controllers/utilities/responseManager')
 const sinon = require('sinon')
 const assert = require('chai').assert
 
@@ -7,13 +8,64 @@ describe('passport strategies', () => {
 	beforeEach(() => {
 		suite = {}
 		suite.FAKE_FIND_BY_ID_RESULT = 'fakeUsr'
-		suite.userModelMock = {findById: sinon.stub().returns(suite.FAKE_FIND_BY_ID_RESULT)}
+		suite.userModelMock = {
+			findById: sinon.stub().returns(suite.FAKE_FIND_BY_ID_RESULT)
+		}
 		suite.strategiesUtilsMock = {}
 		suite.loginStrategy = strategiesProvider.loginStrategy(suite.userModelMock, suite.strategiesUtilsMock)
 	})
 	describe('login strategy', () => {
 		describe('validateUser', () => {
-			//TODO
+			it('should pass to next middleware validation message returned by strategiesUtils.validateUserPassword() and user found by mongoose query', () => {
+				//given
+				const USERNAME = 'dummyUsername'
+				const PASSWORD = 'dummyPassword'
+				const doneCallback = sinon.spy()
+				const PASSWORD_VALIDATION_RESULT = responseManager.MESSAGES.errors.UNAUTHORIZED
+				const mongooseQuery = {
+					exec: sinon.stub().returns(Promise.resolve(suite.FAKE_FIND_BY_ID_RESULT))
+				}
+				suite.userModelMock = {findOne: sinon.stub().returns(mongooseQuery)}
+
+				suite.strategiesUtilsMock = {
+					validateUserPassword: sinon.stub().returns(PASSWORD_VALIDATION_RESULT)
+				}
+				suite.loginStrategy =
+					strategiesProvider.loginStrategy(suite.userModelMock, suite.strategiesUtilsMock)
+
+				//when
+				return suite.loginStrategy.validateUser(USERNAME, PASSWORD, doneCallback)
+					.then(() => {
+						//then
+						sinon.assert.calledWith(doneCallback, PASSWORD_VALIDATION_RESULT, suite.FAKE_FIND_BY_ID_RESULT)
+					})
+			})
+
+			it('should pass fail autorization if error occured in strategiesUtils.validateUserPassword(), and username equal to null', () => {
+				//given
+				const USERNAME = 'dummyUsername'
+				const PASSWORD = 'dummyPassword'
+				const doneCallback = sinon.spy()
+				const PASSWORD_VALIDATION_RESULT = responseManager.MESSAGES.errors.UNAUTHORIZED
+				const EXPECTED_FOUND_USER = null
+				const mongooseQuery = {
+					exec: sinon.stub().returns(Promise.resolve(suite.FAKE_FIND_BY_ID_RESULT))
+				}
+				suite.userModelMock = {findOne: sinon.stub().returns(mongooseQuery)}
+
+				suite.strategiesUtilsMock = {
+					validateUserPassword: sinon.stub().throws()
+				}
+				suite.loginStrategy =
+					strategiesProvider.loginStrategy(suite.userModelMock, suite.strategiesUtilsMock)
+
+				//when
+				return suite.loginStrategy.validateUser(USERNAME, PASSWORD, doneCallback)
+					.then(() => {
+						//then
+						sinon.assert.calledWith(doneCallback, PASSWORD_VALIDATION_RESULT, EXPECTED_FOUND_USER)
+					})
+			})
 		})
 
 		describe('#serializeUser', () => {

@@ -130,33 +130,31 @@ describe('StrategyUtils', () => {
 				password: '528bb9348a1c04089df122608b4cad7618daf48df66efbada15d982853ed016f',
 				salt: 'someSaltySalt'
 			}
-			suite.doneSpy = sinon.spy()
 			suite.validateUserPasswordMock = strategyUtils.validateUserPassword
 		})
 
-		it('should call done with error = null and correct userInstance as arguments, when password from request and from userInstance is the same', () => {
+		it('should return no error, when password from request and from userInstance is the same', () => {
 			//given
 			const exceptedError = null
-			const requestPassowrd = 'ImPickleRick'
+			const requestPassword = 'ImPickleRick'
 
 			//when
-			suite.validateUserPasswordMock(suite.userInstance, requestPassowrd, suite.doneSpy)
+			const validationResult = suite.validateUserPasswordMock(suite.userInstance, requestPassword)
 
 			//then
-			assert.isTrue(suite.doneSpy.calledWith(exceptedError, suite.userInstance))
+			assert.strictEqual(validationResult, exceptedError)
 		})
 
-		it('should call done with error UNAUTHORIZED and NULL userInstance as arguments, when password from request and from userInstance is NOT the same', () => {
+		it('should return error UNAUTHORIZED, when password from request and from userInstance is NOT the same', () => {
 			//given
 			const exceptedError = responseManager.MESSAGES.errors.UNAUTHORIZED
-			const requestPassowrd = 'ImNotPickleRick'
+			const requestPassword = 'ImNotPickleRick'
 
 			//when
-			suite.validateUserPasswordMock(suite.userInstance, requestPassowrd, suite.doneSpy)
+			const validationResult = suite.validateUserPasswordMock(suite.userInstance, requestPassword)
 
 			//then
-			const exceptedUserInstance = null
-			assert.isTrue(suite.doneSpy.calledWith(exceptedError, exceptedUserInstance))
+			assert.strictEqual(validationResult, exceptedError)
 		})
 	})
 })
