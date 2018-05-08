@@ -43,6 +43,9 @@ class ChatPage extends React.Component {
         socket.on(protocols.JOIN, data => this.updateJoinedRooms(data))
         socket.emit(protocols.JOIN, {roomId: 'df7a1d12-7be0-4aab-8685-0cbf237bb135'}) // Development purposes - remove in production
     }
+    componentWillUnmount(){
+        socket.disconnect()
+    }
     updateJoinedRooms(data){
         const {roomId} = data
         const usernames = data.usernames
