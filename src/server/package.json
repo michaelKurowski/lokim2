@@ -12,7 +12,8 @@
   },
   "nyc": {
     "exclude": [
-      "**/*.spec.js"
+      "**/*.spec.js",
+      "out/"
     ]
   },
   "repository": {
