@@ -7,7 +7,7 @@ let suite
 describe('passport strategies', () => {
 	beforeEach(() => {
 		suite = {}
-		suite.FAKE_FIND_BY_ID_RESULT = 'fakeUsr'
+		suite.FAKE_FIND_BY_ID_RESULT = 'fakeUser'
 		suite.userModelMock = {
 			findById: sinon.stub().returns(suite.FAKE_FIND_BY_ID_RESULT)
 		}
