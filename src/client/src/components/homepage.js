@@ -22,7 +22,8 @@ class HomePage extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this)
     }
 
-    loginHandler(username, password, fetch = _fetch){
+    loginHandler(username, password, fetch){
+        fetch = fetch || /* istanbul ignore next */ _fetch
         fetch(LOGIN_URL, {
             method: POST, headers, credentials,
             body: JSON.stringify({username, password})
