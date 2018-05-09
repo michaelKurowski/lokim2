@@ -7,21 +7,8 @@ const socket = require('../utils/sockets/ws-routing')
 const protocols = require('../utils/io-protocol')
 const HOMEPAGE_PATH = '/'
 const USERNAMES_PLACEHOLDER = ''
-/*
-Consulted documentation:
-https://github.com/facebook/create-react-app/issues/2260
-https://github.com/socketio/socket.io/issues/1942#issuecomment-299764672
-https://github.com/socketio/socket.io/issues/2294
-
-https://github.com/ReactTraining/react-router/blob/master/packages/react-router/docs/api/Redirect.md
-https://socket.io/docs/client-api/
-https://www.w3schools.com/jsref/prop_win_sessionstorage.asp
-https://www.w3schools.com/jsref/prop_win_localstorage.asp
-https://developer.mozilla.org/en-US/docs/Web/API/Cache
-https://davidwalsh.name/cache
 
 
-*/
 class ChatPage extends React.Component {
     constructor(props){
         super(props)
@@ -45,7 +32,6 @@ class ChatPage extends React.Component {
         /* istanbul ignore next */
         socket.on(protocols.JOIN, data => this.updateJoinedRooms(data))
         /* istanbul ignore next */
-        socket.emit(protocols.JOIN, {roomId: 'df7a1d12-7be0-4aab-8685-0cbf237bb135'}) // Development purposes - remove in production
     }
     componentWillUnmount(){
         /* istanbul ignore next */
@@ -57,7 +43,6 @@ class ChatPage extends React.Component {
         this.setState({userRooms: this.state.userRooms.concat({roomId, usernames})})
     }
     changeSelectedRoom(roomDetails){
-        console.log(roomDetails)
         const {roomId} = roomDetails
         this.setState({selectedRoom: roomId}, () =>  this.updateMessageState({roomId}))
     }
@@ -71,11 +56,9 @@ class ChatPage extends React.Component {
         const {roomId, username, message, timestamp} = messageData
 
         if(!_.isEmpty(message)){
-            console.log('updateMessageState', message)
             this.storeMessage(roomId, {username, message, timestamp})
         }
         if(roomId === this.state.selectedRoom){
-            console.log('updateMsgState:', roomId)
             this.setState({messages: JSON.parse(window.sessionStorage.getItem(roomId))}, this.generateMessages)
         }
     }
@@ -84,17 +67,13 @@ class ChatPage extends React.Component {
         return _.get(roomObject, 'usernames', USERNAMES_PLACEHOLDER)
     }
     generateMessages(){
-        if(this.state.selectedRoom){
-            if(!_.isEmpty(this.state.messages)){
-                return this.state.messages.map((msg, i) => 
-                    <li className='message' key={i}>
-                        {`${msg.username}:\t ${msg.message} \t ${msg.timestamp}`}
-                    </li>
-                )
-            }
-            return
-        }
-        return <h6>Please join a room before attempting to load messages</h6>
+        if(this.state.selectedRoom) return <h6>Please join a room before attempting to load messages</h6>
+        if(_.isEmpty(this.state.messages)) return
+        return this.state.messages.map((msg, i) => 
+            <li className='message' key={i}>
+                {`${msg.username}:\t ${msg.message} \t ${msg.timestamp}`}
+            </li>
+        )
     }
     handleUserInput(event) {
         this.setState({input: event.target.value})
@@ -109,7 +88,6 @@ class ChatPage extends React.Component {
             return this.updateMessageState(localMessage)
         }
         throw new Error('No room selected || input field is empty.')
-            //TODO - Add GUI Notification of fail
     }
     render(){
         return(
