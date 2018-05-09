@@ -8,7 +8,25 @@ import enzyme, {configure, mount, shallow } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16'
 import sinon from 'sinon'
 
-/* Using documentation - http://airbnb.io/enzyme/docs/api/shallow.html */ 
+const EXPECTED_ELEMENTS_COUNT = 1
+const OTHER_EXPECTED_ELEMENTS_COUNT = 2
+const EXPECT_THREE_ELEMENTS = 3
+const MAGIC_STRING = ''
+const USER_INPUT = '.user-input'
+const REGISTER_BUTTON = '.register_button'
+const DUMMY_ROOM = 'dummyRoom'
+const DUMMY_USER = 'dummyUser'
+const DUMMY_INPUT = 'dummyInput'
+const DUMMY_EMAIL = 'Ihatetesting@fetch.com'
+const USER_NAME = 'username'
+const PASS_WORD = 'password'
+const SUCCESSFUL_REGISTER = 'successfulRegister'
+const FALSE = false
+const TRUE = true
+const UNDEFINED = undefined
+const OK = 'OK'
+
+
 let suite = {}
 configure({adapter: new Adapter()})
 
@@ -21,33 +39,33 @@ describe('<Register />', () => {
         suite = {}
     })
     it('renders without exploding', () => {
-        expect(suite.wrapper.length).toBe(1)
+        expect(suite.wrapper.length).toBe(EXPECTED_ELEMENTS_COUNT)
     })
     it('should render three inputs', () => {
-       expect(suite.wrapper.find('.user-input').length).toBe(3)
+       expect(suite.wrapper.find(USER_INPUT).length).toBe(EXPECT_THREE_ELEMENTS)
     })
     it('should render one button', () => {
-      expect(suite.wrapper.find('.register-button').length).toBe(1)
+      expect(suite.wrapper.find(REGISTER_BUTTON).length).toBe(EXPECTED_ELEMENTS_COUNT)
     })
     it('username should be empty on launch', () => {
-        expect(suite.Component.state('username')).toBe('')
+        expect(suite.Component.state(USER_NAME)).toBe(MAGIC_STRING)
     })
     it('password should be empty on launch', () => {
-        expect(suite.Component.state('password')).toBe('')
+        expect(suite.Component.state(PASS_WORD)).toBe(MAGIC_STRING)
     })
     it('email should be empty on launch', () => {
-        expect(suite.Component.state('email')).toBe('')
+        expect(suite.Component.state('email')).toBe(MAGIC_STRING)
     })
     it('successfulRegister should be false on launch', () => {
-        expect(suite.Component.state('successfulRegister')).toBe(false)
+        expect(suite.Component.state(SUCCESSFUL_LOGIN)).toBe(FALSE)
     })
     it('Should change the username state on user input', () => {
-        suite.Component.instance().handleChange({target: {name:'username', value: 'dummyInput'}})
-        expect(suite.Component.state('username')).toBe('dummyInput')
+        suite.Component.instance().handleChange({target: {name: USER_NAME, value: DUMMY_INPUT}})
+        expect(suite.Component.state(USER_NAME)).toBe(DUMMY_INPUT)
     })
     it('Should change the password state on user input', () => {
-        suite.Component.instance().handleChange({target: {name:'password', value: 'dummyInput'}})
-        expect(suite.Component.state('password')).toBe('dummyInput')
+        suite.Component.instance().handleChange({target: {name: PASS_WORD, value: DUMMY_INPUT}})
+        expect(suite.Component.state(PASS_WORD)).toBe(DUMMY_INPUT)
     })
     it('Should call registerHandler on event submit', () => {
         const registerHandler = sinon.spy()
@@ -56,19 +74,19 @@ describe('<Register />', () => {
         sinon.assert.called(registerHandler)
     })
     it('Should return true if the status code is 200', async done => {
-        const fakeUserData = {username: 'dummyUser', password: 'dupa', email: 'Ihatetesting@fetch.com'}
-        fetch.mockResponse(JSON.stringify({description:'OK'}))
+        const fakeUserData = {username: DUMMY_USER, password: DUMMY_PASSWORD, email: DUMMY_EMAIL}
+        fetch.mockResponse(JSON.stringify({description: OK}))
         await suite.Component.instance().registerHandler(fakeUserData, fetch)
         expect(fetch).toHaveBeenCalled()
-        expect(suite.Component.state('successfulRegister')).toBe(true)
+        expect(suite.Component.state(SUCCESSFUL_REGISTER)).toBe(TRUE)
         done()
     })
     it('Should return false if the status code is not 200', async done => {
-        const fakeUserData = {username: 'dummyUser', password: 'dupa', email: 'Ihatetesting@fetch.com'}
-        fetch.mockReject(JSON.stringify({description:'OK'}))
+        const fakeUserData = {username: DUMMY_USER, password: DUMMY_PASSWORD, email: DUMMY_EMAIL}
+        fetch.mockReject(JSON.stringify({description: OK}))
         await suite.Component.instance().registerHandler(fakeUserData, fetch)
         expect(fetch).toHaveBeenCalled()
-        expect(suite.Component.state('successfulRegister')).toBe(false)
+        expect(suite.Component.state(SUCCESSFUL_REGISTER)).toBe(FALSE)
         done()
     })    
 })
