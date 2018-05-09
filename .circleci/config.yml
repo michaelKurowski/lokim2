@@ -57,7 +57,7 @@ jobs:
           command: cd src/server/ && npm run test-coverage
 
       - run:
-          name: Mocha tests (frontend)
+          name: Jest tests (frontend)
           command: cd src/client/ && npm run test-coverage
 
       - run:
