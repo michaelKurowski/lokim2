@@ -5,7 +5,9 @@ const Register = require('./components/register')
 const ChatPage = require('./components/chatpage')
 const {BrowserRouter, Route} = require('react-router-dom')
 
-const LOGIN_URL = '/', REGISTER_URL = '/register', CHAT_URL = '/chat'
+const LOGIN_URL = '/'
+const REGISTER_URL = '/register'
+const CHAT_URL = '/chat'
 
 class App extends React.Component {
   render() {
