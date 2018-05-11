@@ -48,7 +48,7 @@ describe('Room websocket service', () => {
 
 			//then
 			suite.client.on(CLIENT_EVENTS.JOIN, then)
-			function then(data) {
+			function then() {
 				done()
 			}
 		})
@@ -63,7 +63,7 @@ describe('Room websocket service', () => {
 			//then
 			suite.client.on(CLIENT_EVENTS.JOIN, then)
 
-			function then(data) {
+			function then() {
 				const hasSessionStored = suite.connectionsMock.usersToConnectionsMap.has(suite.USERNAME_MOCK)
 				assert.isTrue(hasSessionStored)
 				done()
@@ -82,7 +82,7 @@ describe('Room websocket service', () => {
 
 			//then
 			suite.client.on(CLIENT_EVENTS.JOIN, then)
-			function then(data) {
+			function then() {
 				const storedSession = suite.connectionsMock.usersToConnectionsMap.get(suite.USERNAME_MOCK)
 				assert.strictEqual(storedSession, suite.newSocket)
 				done()
@@ -110,7 +110,7 @@ describe('Room websocket service', () => {
 
 			//then
 			suite.client.on(CLIENT_EVENTS.JOIN, then)
-			function then(data) {
+			function then() {
 				done()
 			}
 		})
@@ -136,7 +136,7 @@ describe('Room websocket service', () => {
 			//then
 			suite.client.on(CLIENT_EVENTS.JOIN, then)
 
-			function then(data) {
+			function then() {
 				sinon.assert.calledOnce(suite.roomJoinSpy)
 				done()
 			}
@@ -191,7 +191,7 @@ describe('Room websocket service', () => {
 			suite.client.emit(CLIENT_EVENTS.MESSAGE, requestMock)
 
 			//then
-			function then(data) {
+			function then() {
 				sinon.assert.calledWith(suite.emitSpy.firstCall, CLIENT_EVENTS.MESSAGE)
 				done()
 			}
@@ -220,7 +220,7 @@ describe('Room websocket service', () => {
 			suite.client.emit(CLIENT_EVENTS.MESSAGE, requestMock)
 			
 			//then
-			function then(data) {
+			function then() {
 				sinon.assert.calledWith(suite.toSpy.firstCall, ROOM_ID)
 				sinon.assert.calledWith(suite.emitSpy.firstCall, CLIENT_EVENTS.MESSAGE)
 				done()
@@ -248,7 +248,7 @@ describe('Room websocket service', () => {
 			suite.client.emit(CLIENT_EVENTS.MESSAGE, requestMock)
 
 			//then
-			function then(data) {
+			function then() {
 
 				const expectedData = {
 					timestamp: sinon.match.number
@@ -281,7 +281,7 @@ describe('Room websocket service', () => {
 			suite.client.emit(CLIENT_EVENTS.MESSAGE, requestMock)
 
 			//then
-			function then(data) {
+			function then() {
 				const expectedEventData = {roomId: ROOM_ID}
 				sinon.assert.calledWith(suite.leaveSpy.firstCall, expectedEventData)
 				done()
@@ -480,7 +480,7 @@ describe('Room websocket service', () => {
 
 			suite.clientB.on(CLIENT_EVENTS.MESSAGE, then)
 
-			function then(data) {
+			function then() {
 				done()
 			}
 		})

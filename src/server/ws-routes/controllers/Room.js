@@ -24,7 +24,7 @@ class Room {
 	 * @property {module:dataTypes.timestamp} timestamp Timestamp of when server acknowledged that user joined the room (only for server-sourced emits)
 	 */
 
-	static [EVENT_TYPES.JOIN](data, socket, connections) {
+	static [EVENT_TYPES.JOIN](data, socket) {
 		const {roomId} = data
 		const username = socket.request.user.username
 		const timestamp = new Date().getTime()
@@ -44,7 +44,7 @@ class Room {
 	 * @property {module:dataTypes.timestamp} timestamp Timestamp of when server acknowledged that message has been send (only for server-sourced emits)
 	 */
 
-	static [EVENT_TYPES.MESSAGE](data, socket, connections) {
+	static [EVENT_TYPES.MESSAGE](data, socket) {
 		const {roomId, message} = data
 		const username = socket.request.user.username
 		const timestamp = new Date().getTime()
@@ -62,7 +62,7 @@ class Room {
 	 * @property {module:dataTypes.timestamp} timestamp Timestamp of when server acknowledged that user left the room (only for server-sourced emits)
 	 */
 
-	static [EVENT_TYPES.LEAVE](data, socket, connections) {
+	static [EVENT_TYPES.LEAVE](data, socket) {
 		const {roomId} = data
 
 		const timestamp = new Date().getTime()
