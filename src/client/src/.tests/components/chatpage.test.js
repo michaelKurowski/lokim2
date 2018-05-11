@@ -5,7 +5,6 @@ const Room = require('../../components/room')
 const {configure, mount, shallow } = require('enzyme')
 const {BrowserRouter} = require('react-router-dom')
 const Adapter = require('enzyme-adapter-react-16')
-const sessionStorage = require('mock-local-storage')
 const DUMMY_ROOM = 'dummyRoom'
 const DUMMY_USER = 'dummyUser'
 const USERROOMS = 'userRooms'
@@ -25,7 +24,6 @@ const ZERO_INDEX = 0
 const EXPECT_NOTHING = 0
 const EMPTY_MAGIC_STRING = ''
 const FALSE = false
-const TRUE = true
 const UNDEFINED = undefined
 
 let suite = {}

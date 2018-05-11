@@ -1,0 +1,20 @@
+{
+	"env": {
+		"browser": true,
+		"jest": true,
+		"node": false
+	},
+	
+	"extends": [
+		"eslint:recommended",
+		"plugin:react/recommended"
+	],
+	"plugins": [
+		"no-only-tests"
+	],
+	"parserOptions": {
+		"ecmaFeatures": {
+			"jsx": true
+        }
+	}
+}

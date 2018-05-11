@@ -9,12 +9,9 @@ const Adapter = require('enzyme-adapter-react-16')
 const sinon = require('sinon')
 
 const EXPECTED_ELEMENTS_COUNT = 1
-const OTHER_EXPECTED_ELEMENTS_COUNT = 2
 const EXPECT_THREE_ELEMENTS = 3
 const MAGIC_STRING = ''
 const USER_INPUT = '.user-input'
-const REGISTER_BUTTON = '.register_button'
-const DUMMY_ROOM = 'dummyRoom'
 const DUMMY_USER = 'dummyUser'
 const DUMMY_INPUT = 'dummyInput'
 const DUMMY_PASSWORD ='dummyPassword'
@@ -24,7 +21,6 @@ const PASS_WORD = 'password'
 const SUCCESSFUL_REGISTER = 'successfulRegister'
 const FALSE = false
 const TRUE = true
-const UNDEFINED = undefined
 const OK = 'OK'
 
 

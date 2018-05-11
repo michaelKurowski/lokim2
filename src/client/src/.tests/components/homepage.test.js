@@ -15,7 +15,6 @@ const OTHER_EXPECTED_ELEMENTS_COUNT = 2
 const MAGIC_STRING = ''
 const USER_INPUT = '.user-input'
 const HOME_BUTTON = '.home-button'
-const DUMMY_ROOM = 'dummyRoom'
 const DUMMY_USER = 'dummyUser'
 const DUMMY_PASSWORD ='dummyPassword'
 const DUMMY_INPUT = 'dummyInput'
