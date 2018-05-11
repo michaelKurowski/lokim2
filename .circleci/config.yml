@@ -50,11 +50,11 @@ jobs:
 
       - run:
           name: Static Analysis (backend)
-          command: node ./src/server/node_modules/eslint/bin/eslint.js -c ./src/server/.eslintrc.json --ignore-path ./src/server/.eslintignore ./src/server
+          command: cd src/server && npm run eslint
 
       - run:
           name: Static Analysis (frontend)
-          command: node ./src/client/node_modules/eslint/bin/eslint.js -c ./src/client/.eslintrc.json --ignore-path ./src/client/.eslintignore ./src/client
+          command: cd src/client && npm run eslint
 
       - run:
           name: Mocha tests (backend)

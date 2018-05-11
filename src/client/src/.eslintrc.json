@@ -1,14 +1,16 @@
 {
 	"env": {
 		"browser": true,
-		"jest": true,
-		"node": false
+		"jest": true
 	},
 	
 	"extends": [
 		"eslint:recommended",
 		"plugin:react/recommended"
 	],
+	"rules": {
+		"no-console": 1
+	},
 	"plugins": [
 		"no-only-tests"
 	],

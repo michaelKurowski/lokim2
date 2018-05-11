@@ -25,9 +25,13 @@ const EXPECT_NOTHING = 0
 const EMPTY_MAGIC_STRING = ''
 const FALSE = false
 const UNDEFINED = undefined
-
+/* eslint-disable no-undef */
+const sessionStorage = require('mock-local-storage')
+/* eslint-enable no-undef */
 let suite = {}
+global.sessionStorage = sessionStorage
 global.window = {}
+
 
 configure({adapter: new Adapter()})
 
