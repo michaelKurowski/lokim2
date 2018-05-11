@@ -8,6 +8,6 @@ function ConnectStatus(props) {
 }
 
 ConnectStatus.propTypes = {
-	connection: PropTypes.string.isRequired
+	connection: PropTypes.bool
 }
 module.exports = ConnectStatus

@@ -45,9 +45,6 @@ describe('<Register />', () => {
 	it('should render three inputs', () => {
 		expect(suite.wrapper.find(USER_INPUT).length).toBe(EXPECT_THREE_ELEMENTS)
 	})
-	it('should render one button', () => {
-		expect(suite.wrapper.find(REGISTER_BUTTON).length).toBe(EXPECTED_ELEMENTS_COUNT)
-	})
 	it('username should be empty on launch', () => {
 		expect(suite.Component.state(USER_NAME)).toBe(MAGIC_STRING)
 	})
