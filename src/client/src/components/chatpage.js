@@ -68,7 +68,7 @@ class ChatPage extends React.Component {
 		return _.get(roomObject, 'usernames', USERNAMES_PLACEHOLDER)
 	}
 	generateMessages() {
-		if(this.state.selectedRoom) return <h6>Please join a room before attempting to load messages</h6>
+		if(!this.state.selectedRoom) return <h6>Please join a room before attempting to load messages</h6>
 		if(_.isEmpty(this.state.messages)) return
 		return this.state.messages.map((msg, i) => 
 			<li className='message' key={i}>
