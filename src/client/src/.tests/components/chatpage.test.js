@@ -29,7 +29,6 @@ const UNDEFINED = undefined
 const sessionStorage = require('mock-local-storage')
 /* eslint-enable no-undef */
 let suite = {}
-global.sessionStorage = sessionStorage
 global.window = {}
 
 
