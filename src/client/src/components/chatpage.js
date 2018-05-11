@@ -75,6 +75,18 @@ class ChatPage extends React.Component {
             </li>
         )
     }
+    generateRooms(){
+        if(_.isEmpty(this.state.userRooms)) return
+        this.state.userRooms.map(
+            (e,i) => 
+                <Room 
+                key={i}
+                name={`Room #${i}`}
+                ID={e.roomId}
+                onClick={() => this.changeSelectedRoom(e)}
+                />
+            )
+    }
     handleUserInput(event) {
         this.setState({input: event.target.value})
     }
@@ -97,9 +109,7 @@ class ChatPage extends React.Component {
                         <h2>User: {this.state.username.toUpperCase()}</h2>
                         <ul className='list-group room-ID-list'>
                         <p>Click The Pinkness for Room Selection</p>
-                        {this.state.userRooms.map((e,i) => 
-                            <Room key={i} name={`Room #${i}`} ID={e.roomId} onClick={() => this.changeSelectedRoom(e)}/>
-                        )}
+                        {this.generateRooms()}
                         </ul>
                     </div>
                     <div className='col-md-6'>
