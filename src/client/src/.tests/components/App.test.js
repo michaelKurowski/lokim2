@@ -10,7 +10,7 @@ describe('<App />', () => {
 	const wrapper = shallow(<App />)
 
 	it('renders without crashing', () => {
-		//expect(wrapper.find(App).length).toBe(ONE_ELEMENT)
+		expect(wrapper.render().length).toBe(ONE_ELEMENT)
 	})
 })
 
