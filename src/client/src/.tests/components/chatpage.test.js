@@ -25,9 +25,9 @@ const EXPECT_NOTHING = 0
 const EMPTY_MAGIC_STRING = ''
 const FALSE = false
 const UNDEFINED = undefined
-/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
 const sessionStorage = require('mock-local-storage')
-/* eslint-enable no-undef */
+/* eslint-enable no-unused-vars */
 let suite = {}
 global.window = {}
 
