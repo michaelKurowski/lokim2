@@ -53,6 +53,10 @@ jobs:
           command: node ./src/server/node_modules/eslint/bin/eslint.js -c ./src/server/.eslintrc.json --ignore-path ./src/server/.eslintignore ./src/server
 
       - run:
+          name: Static Analysis (frontend)
+          command: node ./src/client/node_modules/eslint/bin/eslint.js -c ./src/client/.eslintrc.json --ignore-path ./src/client/.eslintignore ./src/client
+
+      - run:
           name: Mocha tests (backend)
           command: cd src/server/ && npm run test-coverage
 

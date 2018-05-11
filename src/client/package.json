@@ -18,7 +18,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "test-coverage": "npm test -- --coverage",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "eslint": "node ./node_modules/eslint/bin/eslint.js -c ./.eslintrc.json --ignore-path ./.eslintignore ./"
   },
   "jest": {
     "collectCoverageFrom": [
@@ -38,6 +39,9 @@
   "devDependencies": {
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
+    "eslint": "^4.19.1",
+    "eslint-config-google": "^0.9.1",
+    "eslint-plugin-no-only-tests": "^2.0.0",
     "jest-fetch-mock": "^1.5.0",
     "mock-local-storage": "^1.0.5",
     "sinon": "^5.0.3"
