@@ -14,7 +14,7 @@ function strategyHandlers(req, res, next) {
 		next()
 	}
 
-	const loginStrategyHandler = (err, user, info) => {
+	const loginStrategyHandler = (err, user) => {
 		if (err)
 			return responseManager.sendResponse(res, err)
 
