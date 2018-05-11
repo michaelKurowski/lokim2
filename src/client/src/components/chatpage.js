@@ -5,6 +5,7 @@ const ConnectStatus = require('./connectStatus')
 const Room = require('./room')
 const socket = require('../utils/sockets/ws-routing')
 const protocols = require('../utils/io-protocol')
+const PropTypes = require('prop-types')
 const HOMEPAGE_PATH = '/'
 const USERNAMES_PLACEHOLDER = ''
 
@@ -132,6 +133,12 @@ class ChatPage extends React.Component {
 			</div>
 		)
 	}
+}
+
+ChatPage.propTypes = {
+	location: PropTypes.object,
+	state: PropTypes.object,
+	username: PropTypes.string.isRequired
 }
 
 module.exports = ChatPage

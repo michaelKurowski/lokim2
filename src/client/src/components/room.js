@@ -1,4 +1,5 @@
 const React = require('react')
+const PropTypes = require('prop-types')
 
 class Room extends React.Component {
 	constructor(props) {
@@ -16,6 +17,11 @@ class Room extends React.Component {
 			</div>
 		)
 	}
+}
+Room.propTypes = {
+	ID: PropTypes.string.isRequired,
+	name: PropTypes.string.isRequired,
+	onClick: PropTypes.func.isRequired
 }
 
 module.exports = Room

@@ -28,11 +28,10 @@ class HomePage extends React.Component {
 			method: POST, headers, credentials,
 			body: JSON.stringify({username, password})
 		}).then(response => {
-			console.log(response)
 			if(response.status === 200) {
 				this.setState({successfulLogin: true})
 			}
-		}).catch(err => console.log('Error:', err))
+		}).catch(err => new Error(err))
 	}
 
 	handleChange(event) {
@@ -65,8 +64,7 @@ class HomePage extends React.Component {
 				<p className='info-paragraph'>LokIM connects to other users via websockets through a server and very little information is stored on the server post-emission. All data regarding a user is stored on said user&#8216;s device. The only information we store on the server is that which is required for essential functionality.</p>
 			</div>
 		)
-	}
-    
+	}   
 }
 
 module.exports = HomePage
