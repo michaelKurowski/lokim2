@@ -1,7 +1,7 @@
-import React from 'react';
-import ConnectStatus from '../../components/connectStatus'
-import { shallow, configure } from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16'
+const React = require('react')
+const ConnectStatus = require('../../components/connectStatus')
+const { shallow, configure } = require('enzyme')
+const Adapter = require('enzyme-adapter-react-16')
 
 const DISCONNECT = '.disconnect'
 const SUCCESS = '.success'

@@ -1,7 +1,7 @@
-import React from 'react'
-import Room from '../../components/room'
-import {configure, shallow} from 'enzyme'
-import Adapter from 'enzyme-adapter-react-16'
+const React = require('react')
+const Room = require('../../components/room')
+const {configure, shallow} = require('enzyme')
+const Adapter = require('enzyme-adapter-react-16')
 
 const EXPECTED_ELEMENT_COUNT = 1
 const DUMMY_NAME = 'dummyName'

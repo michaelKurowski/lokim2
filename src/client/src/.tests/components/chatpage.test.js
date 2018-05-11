@@ -1,11 +1,11 @@
-import React from 'react';
-import ChatPage from '../../components/chatpage'
-import ConnectStatus from '../../components/connectStatus'
-import Room from '../../components/room'
-import {configure, mount, shallow } from 'enzyme';
-import {BrowserRouter as Router} from 'react-router-dom';
-import Adapter from 'enzyme-adapter-react-16'
-import sessionStorage from 'mock-local-storage'
+const React = require('react')
+const ChatPage = require('../../components/chatpage')
+const ConnectStatus = require('../../components/connectStatus')
+const Room = require('../../components/room')
+const {configure, mount, shallow } = require('enzyme')
+const {BrowserRouter} = require('react-router-dom')
+const Adapter = require('enzyme-adapter-react-16')
+const sessionStorage = require('mock-local-storage')
 const DUMMY_ROOM = 'dummyRoom'
 const DUMMY_USER = 'dummyUser'
 const USERROOMS = 'userRooms'
@@ -35,8 +35,8 @@ configure({adapter: new Adapter()})
 
 describe('<ChatPage />', () => {
   beforeEach(() => {
-    suite.wrapper = mount(<Router><ChatPage location={{state: {username: DUMMY_USER}}}/></Router>)
-    suite.Component = shallow(<Router><ChatPage location={{state: {username: DUMMY_USER}}}/></Router>).find(ChatPage).dive()
+    suite.wrapper = mount(<BrowserRouter><ChatPage location={{state: {username: DUMMY_USER}}}/></BrowserRouter>)
+    suite.Component = shallow(<BrowserRouter><ChatPage location={{state: {username: DUMMY_USER}}}/></BrowserRouter>).find(ChatPage).dive()
     window.sessionStorage = global.sessionStorage
   })
   afterEach(() => {

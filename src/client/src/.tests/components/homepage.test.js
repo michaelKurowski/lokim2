@@ -1,13 +1,13 @@
-import fetch from 'jest-fetch-mock'
+const fetch = require('jest-fetch-mock')
 jest.setMock('node-fetch', fetch)
 
-import React from 'react'
-import {BrowserRouter as Router} from 'react-router-dom';
-import HomePage from '../../components/homepage'
-import logo from '../../logo.svg'
-import {configure, mount, shallow} from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16'
-import sinon from 'sinon'
+const React = require('react')
+const {BrowserRouter} = require('react-router-dom')
+const HomePage = require('../../components/homepage')
+const logo = require('../../logo.svg')
+const {configure, mount, shallow} = require('enzyme')
+const Adapter = require('enzyme-adapter-react-16')
+const sinon = require('sinon')
 
 
 const EXPECTED_ELEMENTS_COUNT = 1
@@ -17,6 +17,7 @@ const USER_INPUT = '.user-input'
 const HOME_BUTTON = '.home_button'
 const DUMMY_ROOM = 'dummyRoom'
 const DUMMY_USER = 'dummyUser'
+const DUMMY_PASSWORD ='dummyPassword'
 const DUMMY_INPUT = 'dummyInput'
 const USER_NAME = 'username'
 const PASS_WORD = 'password'
@@ -34,8 +35,8 @@ describe('<HomePage />', () => {
 
     beforeEach(() => {
         fetch.resetMocks()
-        suite.wrapper = mount(<Router><HomePage /></Router>)
-        suite.Component = shallow(<Router><HomePage /></Router>).find(HomePage).dive()
+        suite.wrapper = mount(<BrowserRouter><HomePage /></BrowserRouter>)
+        suite.Component = shallow(<BrowserRouter><HomePage /></BrowserRouter>).find(HomePage).dive()
     })
     afterEach(() => {
         suite = {}

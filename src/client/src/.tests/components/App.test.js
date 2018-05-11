@@ -1,7 +1,7 @@
-import React from 'react';
-import {mount, configure} from 'enzyme'
-import Adapter from 'enzyme-adapter-react-16'
-import App from '../../App';
+const React = require('react')
+const {mount, configure} = require('enzyme')
+const Adapter = require('enzyme-adapter-react-16')
+const App = require('../../App')
 
 const ONE_ELEMENT = 1
 configure({adapter: new Adapter()})

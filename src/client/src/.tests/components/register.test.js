@@ -1,12 +1,12 @@
-import fetch from 'jest-fetch-mock'
+const fetch = require('jest-fetch-mock')
 jest.setMock('node-fetch', fetch)
 
-import React from 'react';
-import Register from '../../components/register'
-import {BrowserRouter as Router} from 'react-router-dom';
-import enzyme, {configure, mount, shallow } from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16'
-import sinon from 'sinon'
+const React = require('react')
+const Register = require('../../components/register')
+const {BrowserRouter} = require('react-router-dom')
+const {configure, mount, shallow } = require('enzyme')
+const Adapter = require('enzyme-adapter-react-16')
+const sinon = require('sinon')
 
 const EXPECTED_ELEMENTS_COUNT = 1
 const OTHER_EXPECTED_ELEMENTS_COUNT = 2
@@ -17,6 +17,7 @@ const REGISTER_BUTTON = '.register_button'
 const DUMMY_ROOM = 'dummyRoom'
 const DUMMY_USER = 'dummyUser'
 const DUMMY_INPUT = 'dummyInput'
+const DUMMY_PASSWORD ='dummyPassword'
 const DUMMY_EMAIL = 'Ihatetesting@fetch.com'
 const USER_NAME = 'username'
 const PASS_WORD = 'password'
@@ -32,8 +33,8 @@ configure({adapter: new Adapter()})
 
 describe('<Register />', () => {
     beforeEach(() => {
-        suite.wrapper = mount(<Router><Register /></Router>)
-        suite.Component = shallow(<Router><Register /></Router>).find(Register).dive()
+        suite.wrapper = mount(<BrowserRouter><Register /></BrowserRouter>)
+        suite.Component = shallow(<BrowserRouter><Register /></BrowserRouter>).find(Register).dive()
     })
     afterEach(() => {
         suite = {}
@@ -57,7 +58,7 @@ describe('<Register />', () => {
         expect(suite.Component.state('email')).toBe(MAGIC_STRING)
     })
     it('successfulRegister should be false on launch', () => {
-        expect(suite.Component.state(SUCCESSFUL_LOGIN)).toBe(FALSE)
+        expect(suite.Component.state(SUCCESSFUL_REGISTER)).toBe(FALSE)
     })
     it('Should change the username state on user input', () => {
         suite.Component.instance().handleChange({target: {name: USER_NAME, value: DUMMY_INPUT}})
