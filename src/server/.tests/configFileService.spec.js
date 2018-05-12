@@ -12,6 +12,43 @@ describe('Config file service', () => {
 	beforeEach(() => {
 		suite = {}
 	})
+
+	describe('#generateConfig()', () => {
+		beforeEach(() => {
+			const fileWriteError = new Error()
+			suite.fsMockSuccessful = {
+				writeFile: sinon.stub().callsFake(
+					(pathToConfig, configToGenerate, callback) => callback()
+				)
+			}
+			suite.fsMockFailing = {
+				writeFile: sinon.stub().callsFake(
+					(pathToConfig, configToGenerate, callback) => callback(fileWriteError)
+				)
+			}
+
+			suite.pathMock = {
+				join: sinon.stub()
+			}
+		})
+
+		it('should reject a promise in case of file write errors', () => {
+			const configFileService = configFileServiceProvider({
+				fs: suite.fsMockFailing,
+				path: suite.pathMock
+			})
+			return assert.isRejected(configFileService.generateConfig())
+		})
+
+		it('should resolve a promise in case of no errors', () => {
+			const configFileService = configFileServiceProvider({
+				fs: suite.fsMockSuccessful,
+				path: suite.pathMock
+			})
+			return assert.isFulfilled(configFileService.generateConfig())
+		})
+	})
+
 	describe('#isConfigFileExisting()', () => {
 		beforeEach(() => {
 
