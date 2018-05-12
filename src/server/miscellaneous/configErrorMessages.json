@@ -1,0 +1,27 @@
+{
+	"DATABASE": {
+		"EMPTY_USERNAME": "Database username can't be empty",
+		"EMPTY_PASSWORD": "Database password can't be empty",
+		"EMPTY_HOSTNAME": "Database hostname can't be empty"
+	},
+	"HTTP_SERVER": {
+		"WRONG_PORT": "Http server port configuration must be a number"
+	},
+	"LOGGING": {
+		"EMPTY_FILENAME": "Log file filename can't be empty",
+		"EMPTY_LOG_LEVEL": "Logging level can't be empty string"
+	},
+	"SESSION": {
+		"EMPTY_SECRET": "Session's secret can't be empty",
+		"WRONG_RESAVE": "Session's resave option must be boolean",
+		"WRONG_SAVE_UNINITIALIZED": "Session's wrong uninitialized option must be boolean",
+		"COOKIE": {
+			"WRONG_SECURE": "Session's cookie secure option must be boolean",
+			"WRONG_MAX_AGE": "Session's cookie max age option must be number"
+		}
+	},
+	"DEV_PROPETIES": {
+		"WRONG_DEV_MODE": "Dev mode option should be boolean",
+		"WRONG_HTTP_PORT": "Http test port should be a number"
+	}
+}
