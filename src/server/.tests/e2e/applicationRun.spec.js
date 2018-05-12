@@ -1,9 +1,9 @@
 const config = require('../../config.json')
 let suite
 describe('application startup', () => {
-	beforeEach('starting server instance for test', () => {
+	beforeEach('starting server instance for test', async () => {
 		suite = {}
-		suite.application = require('../../init')({httpPort: config.devPropeties.httpTestPort})
+		suite.application = await require('../../init')({httpPort: config.devPropeties.httpTestPort})
 	})
 
 	afterEach('clearing network connections after test', () => {
