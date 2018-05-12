@@ -7,7 +7,7 @@
 	let connection
 
 	function loadProtocol() {
-		fetch(new Request('../protocol/protocol.json'))
+		return fetch(new Request('../protocol/protocol.json'))
 			.then(response => {
 				response.text().then(text => {
 					const protocol = JSON.parse(text)
@@ -20,8 +20,24 @@
 			}).catch(err => console.log(new Error(err)))
 	}
 
+	function setupNamespaces() {
+		console.log(nameSpacesToEventsMap)
+		nameSpacesToEventsMap.forEach((eventTypes, namespace) => {
+			console.log(namespace)
+			addNamespace(namespace)
+		})
+	}
+
+	function addNamespace(namespace) {
+		document.getElementById('address').innerHTML += 
+			`<option value='${namespace}'>${namespace}</option>`
+	}
+
+	function clearNamespaces() {
+		document.getElementById('address').innerHTML = ''
+	}
+
 	function setupListeners() {
-		const namespace = address.split('/')[1]
 		const eventTypes = nameSpacesToEventsMap.get(namespace)
 		eventTypes.forEach(listenForEvent)
 		eventTypes.forEach(addEventOptionToSender)
@@ -47,6 +63,10 @@
 
 		fetch(new Request('/login', requestConfig)).then(res => res.json()).then(console.log)
 		loadProtocol()
+			.then(() => {
+				clearNamespaces()
+				setupNamespaces()
+			})
 	}
 
 	function connect() {
@@ -55,9 +75,10 @@
 			`<tr><td>Address</td><td>Event Name</td></tr>`
 		document.getElementById('ws-table').innerHTML = 
 			`<tr><td>Address</td> <td>Sent/Received</td> <td>Event name</td> <td>Value</td></tr>`
-		address = `${location.host}${document.getElementById('address').value}`
+		address = `${location.host}/${document.getElementById('address').value}`
+		namespace = document.getElementById('address').value
 		console.log(address)
-		connection = io(address, {path: '/connection'})
+		connection = io(`${address}`, {path: '/connection'})
 		connection.on('connect', frame => {
 			setupListeners(connection)
 			console.log('connected to address')
@@ -124,7 +145,9 @@ Username: <input id='password' value='test_password'>
 <button onclick='login()'>Authorize user</button>
 
 
-Address: <input id='address' value='/room'/> <button onclick='connect()'>Connect</button>
+Namespace:
+<select name='namespace' id='address'></select>
+<button onclick='connect()'>Connect</button>
 
 Event type:
 <select name='Event name' id='event-name-to-send'></select>
