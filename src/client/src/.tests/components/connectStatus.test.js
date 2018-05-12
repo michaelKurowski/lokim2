@@ -9,7 +9,7 @@ const EXPECTED_ELEMENT_COUNT = 1
 let suite = {}
 configure({adapter: new Adapter()})
 
-describe('<ConnectStatus />', () => {
+describe('<ConnectionStatus />', () => {
 	beforeEach(() => {
 		suite.wrapper = shallow(<ConnectStatus />)
 	})
@@ -17,7 +17,8 @@ describe('<ConnectStatus />', () => {
 		suite = {}
 	})
 	it('Should render without crashing', () => {
-		expect(suite.wrapper.length).toBe(EXPECTED_ELEMENT_COUNT)
+		const elementsCount = suite.wrapper.render().length
+		expect(elementsCount).toBe(EXPECTED_ELEMENT_COUNT)
 	})
 	it('Should return disconnected with falsey prop', () => {
 		suite.wrapper = shallow(<ConnectStatus connection={false}/>)

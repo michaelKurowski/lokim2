@@ -8,80 +8,89 @@ const {configure, mount, shallow } = require('enzyme')
 const Adapter = require('enzyme-adapter-react-16')
 const sinon = require('sinon')
 
-const EXPECTED_ELEMENTS_COUNT = 1
+const EXPECTED_ELEMENT_COUNT = 1
 const EXPECT_THREE_ELEMENTS = 3
-const MAGIC_STRING = ''
-const USER_INPUT = '.user-input'
-const DUMMY_USER = 'dummyUser'
-const DUMMY_INPUT = 'dummyInput'
+const NO_INPUT = ''
+const USER_INPUT_CLASS = '.user-input'
+const EMAIL = 'email'
+const DUMMY_USERNAME = 'dummyUser'
 const DUMMY_PASSWORD ='dummyPassword'
 const DUMMY_EMAIL = 'Ihatetesting@fetch.com'
 const USER_NAME = 'username'
 const PASS_WORD = 'password'
 const SUCCESSFUL_REGISTER = 'successfulRegister'
-const FALSE = false
-const TRUE = true
 const OK = 'OK'
 
-
+const REGISTER_COMPONENT = <BrowserRouter><Register /></BrowserRouter>
 let suite = {}
 configure({adapter: new Adapter()})
 
 describe('<Register />', () => {
 	beforeEach(() => {
-		suite.wrapper = mount(<BrowserRouter><Register /></BrowserRouter>)
-		suite.Component = shallow(<BrowserRouter><Register /></BrowserRouter>).find(Register).dive()
+		suite.wrapper = mount(REGISTER_COMPONENT)
+		suite.Component = shallow(REGISTER_COMPONENT).find(Register).dive()
 	})
 	afterEach(() => {
 		suite = {}
 	})
-	it('renders without exploding', () => {
-		expect(suite.wrapper.length).toBe(EXPECTED_ELEMENTS_COUNT)
+	describe('<Register /> Render Tests', () => {
+		it('renders without exploding', () => {
+			const elementsCount = suite.wrapper.render().length
+			expect(elementsCount).toBe(EXPECTED_ELEMENT_COUNT)
+		})
+		it('should render three inputs', () => {
+			expect(suite.wrapper.find(USER_INPUT_CLASS).length).toBe(EXPECT_THREE_ELEMENTS)
+		})
 	})
-	it('should render three inputs', () => {
-		expect(suite.wrapper.find(USER_INPUT).length).toBe(EXPECT_THREE_ELEMENTS)
+	describe('<Register /> Initial State Tests', () => {
+		it('username should be empty on launch', () => {
+			expect(suite.Component.state(USER_NAME)).toBe(NO_INPUT)
+		})
+		it('password should be empty on launch', () => {
+			expect(suite.Component.state(PASS_WORD)).toBe(NO_INPUT)
+		})
+		it('email should be empty on launch', () => {
+			expect(suite.Component.state(EMAIL)).toBe(NO_INPUT)
+		})
+		it('successfulRegister should be false on launch', () => {
+			expect(suite.Component.state(SUCCESSFUL_REGISTER)).toBeFalsy()
+		})
 	})
-	it('username should be empty on launch', () => {
-		expect(suite.Component.state(USER_NAME)).toBe(MAGIC_STRING)
-	})
-	it('password should be empty on launch', () => {
-		expect(suite.Component.state(PASS_WORD)).toBe(MAGIC_STRING)
-	})
-	it('email should be empty on launch', () => {
-		expect(suite.Component.state('email')).toBe(MAGIC_STRING)
-	})
-	it('successfulRegister should be false on launch', () => {
-		expect(suite.Component.state(SUCCESSFUL_REGISTER)).toBe(FALSE)
-	})
-	it('Should change the username state on user input', () => {
-		suite.Component.instance().handleChange({target: {name: USER_NAME, value: DUMMY_INPUT}})
-		expect(suite.Component.state(USER_NAME)).toBe(DUMMY_INPUT)
-	})
-	it('Should change the password state on user input', () => {
-		suite.Component.instance().handleChange({target: {name: PASS_WORD, value: DUMMY_INPUT}})
-		expect(suite.Component.state(PASS_WORD)).toBe(DUMMY_INPUT)
-	})
-	it('Should call registerHandler on event submit', () => {
-		const registerHandler = sinon.spy()
-		suite.Component.instance().registerHandler = registerHandler
-		suite.Component.instance().handleSubmit({preventDefault: () => {}})
-		sinon.assert.called(registerHandler)
-	})
-	it('Should return true if the status code is 200', async done => {
-		const fakeUserData = {username: DUMMY_USER, password: DUMMY_PASSWORD, email: DUMMY_EMAIL}
-		fetch.mockResponse(JSON.stringify({description: OK}))
-		await suite.Component.instance().registerHandler(fakeUserData, fetch)
-		expect(fetch).toHaveBeenCalled()
-		expect(suite.Component.state(SUCCESSFUL_REGISTER)).toBe(TRUE)
-		done()
-	})
-	it('Should return false if the status code is not 200', async done => {
-		const fakeUserData = {username: DUMMY_USER, password: DUMMY_PASSWORD, email: DUMMY_EMAIL}
-		fetch.mockReject(JSON.stringify({description: OK}))
-		await suite.Component.instance().registerHandler(fakeUserData, fetch)
-		expect(fetch).toHaveBeenCalled()
-		expect(suite.Component.state(SUCCESSFUL_REGISTER)).toBe(FALSE)
-		done()
+	describe('<Register /> Functionality Tests', () => {
+		it('Should change the username state on user input', () => {
+			const USER_INPUT = 'coolUsername'
+			suite.Component.instance().handleChange({target: {name: USER_NAME, value: USER_INPUT}})
+			const username = suite.Component.state(USER_NAME)
+			expect(username).toBe(USER_INPUT)
+		})
+		it('Should change the password state on user input', () => {
+			const USER_INPUT = 'coolPassword'
+			suite.Component.instance().handleChange({target: {name: PASS_WORD, value: USER_INPUT}})
+			const password = suite.Component.state(PASS_WORD)
+			expect(password).toBe(USER_INPUT)
+		})
+		it('Should call registerHandler on event submit', () => {
+			const registerHandler = sinon.spy()
+			suite.Component.instance().registerHandler = registerHandler
+			suite.Component.instance().handleSubmit({preventDefault: () => {}})
+			sinon.assert.called(registerHandler)
+		})
+		it('Should set successfulRegister to true if statusCode of register fetch request is 200', async done => {
+			const fakeUserData = {username: DUMMY_USERNAME, password: DUMMY_PASSWORD, email: DUMMY_EMAIL}
+			fetch.mockResponse(JSON.stringify({description: OK}))
+			await suite.Component.instance().registerHandler(fakeUserData, fetch)
+			expect(fetch).toHaveBeenCalled()
+			expect(suite.Component.state(SUCCESSFUL_REGISTER)).toBeTruthy()
+			done()
+		})
+		it('Should set successfulRegister to true if statusCode of register fetch request is NOT 200', async done => {
+			const fakeUserData = {username: DUMMY_USERNAME, password: DUMMY_PASSWORD, email: DUMMY_EMAIL}
+			fetch.mockReject(JSON.stringify({description: OK}))
+			await suite.Component.instance().registerHandler(fakeUserData, fetch)
+			expect(fetch).toHaveBeenCalled()
+			expect(suite.Component.state(SUCCESSFUL_REGISTER)).toBeFalsy()
+			done()
+		})
 	})    
 })
 

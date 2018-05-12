@@ -17,7 +17,8 @@ describe('<Room />', () => {
 		suite = {}
 	})
 	it('renders with no props without exploding', () => {
-		expect(suite.wrapper.length).toBe(EXPECTED_ELEMENT_COUNT)
+		const elementsCount = suite.wrapper.render().length
+		expect(elementsCount).toBe(EXPECTED_ELEMENT_COUNT)
 	})
 	it('renders Room component with parameters', () => {
 		suite.wrapper = shallow(<Room name={DUMMY_NAME} ID={123} onClick={() => {}}/>)
