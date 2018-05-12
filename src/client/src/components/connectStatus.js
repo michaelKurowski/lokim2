@@ -1,5 +1,4 @@
 const React = require('react')
-const PropTypes = require('prop-types')
 
 function ConnectStatus(props) {
 	const {connection} = props
@@ -7,7 +6,4 @@ function ConnectStatus(props) {
 		: <h4 className='disconnect'>Disconnected / Error </h4> 
 }
 
-ConnectStatus.propTypes = {
-	connection: PropTypes.bool
-}
 module.exports = ConnectStatus
