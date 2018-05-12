@@ -6,7 +6,8 @@
 			"JOIN": "join",
 			"LEAVE": "leave",
 			"CREATE": "create",
-			"CONNECTION": "connection"
+			"CONNECTION": "connection",
+			"LIST_MEMBERS": "listMembers"
 		}
 	}
 }

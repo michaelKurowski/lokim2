@@ -15,6 +15,7 @@
 			"request": "launch",
 			"name": "Mocha Tests (backend)",
 			"program": "${workspaceRoot}/src/server/node_modules/mocha/bin/_mocha",
+			"runtimeVersion": "8.9.4",
 			"args": [
 				"-u",
 				"tdd",
