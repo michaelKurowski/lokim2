@@ -29,7 +29,6 @@
 			"type": "node",
 			"request": "launch",
 			"name": "Jest Tests (frontend)",
-			//"program": "${workspaceRoot}/src/client/node_modules/.bin/react-scripts",
 			"runtimeVersion": "8.9.4",
 			"runtimeExecutable": "npm",
 			"runtimeArgs": [
