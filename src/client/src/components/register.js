@@ -38,7 +38,7 @@ class Register extends React.Component {
 				if(response.status === SUCCESS_CODE) {
 					this.setState({successfulRegister: true})
 				}
-			}).catch(err => console.err(err))
+			}).catch(err => console.log(err))
 	}
 	render() {
 		if(this.state.successfulRegister) {

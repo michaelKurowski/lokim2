@@ -13,7 +13,7 @@
 		{
 			"type": "node",
 			"request": "launch",
-			"name": "Mocha Tests",
+			"name": "Mocha Tests (backend)",
 			"program": "${workspaceRoot}/src/server/node_modules/mocha/bin/_mocha",
 			"args": [
 				"-u",
@@ -26,17 +26,22 @@
 			"internalConsoleOptions": "openOnSessionStart"
 		},
 		{
-            "name": "Debug Jest",
-            "type": "node",
-            "request": "launch",
+			"type": "node",
+			"request": "launch",
+			"name": "Jest Tests (frontend)",
+			//"program": "${workspaceRoot}/src/client/node_modules/.bin/react-scripts",
 			"runtimeVersion": "8.9.4",
-            "runtimeArgs": [
-                "${workspaceRoot}/src/client/node_modules/react-scripts/scripts/test.js",
-                "--runInBand",
-				"--env=jsdom",
-				"--inspect"
-            ],
-            "cwd": "${workspaceRoot}/src/client"
+			"runtimeExecutable": "npm",
+			"runtimeArgs": [
+				"run",
+				"test-debug"
+			],
+			"protocol": "inspector",
+			"port": 9229,
+			"cwd": "${workspaceRoot}/src/client/",
+			"console": "integratedTerminal",
+			"restart": true,
+			"internalConsoleOptions": "neverOpen"
 		}
 	]
 }

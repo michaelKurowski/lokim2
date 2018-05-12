@@ -29,11 +29,10 @@ const UNDEFINED = undefined
 const sessionStorage = require('mock-local-storage')
 /* eslint-enable no-unused-vars */
 let suite = {}
+
 global.window = {}
 
-
 configure({adapter: new Adapter()})
-
 describe('<ChatPage />', () => {
 	beforeEach(() => {
 		suite.wrapper = mount(<BrowserRouter><ChatPage location={{state: {username: DUMMY_USER}}}/></BrowserRouter>)
