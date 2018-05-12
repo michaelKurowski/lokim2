@@ -1,7 +1,37 @@
 <script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js'></script>
 
 <script>
+	const nameSpacesToEventsMap = new Map()
+	const events = []
+	let address
 	let connection
+
+	function loadProtocol() {
+		fetch(new Request('../protocol/protocol.json'))
+			.then(response => {
+				response.text().then(text => {
+					const protocol = JSON.parse(text)
+					const namespaces = Object.keys(protocol)
+					namespaces.forEach(namespace => {
+						const eventTypes = Object.values(protocol[namespace].eventTypes)
+						nameSpacesToEventsMap.set(namespace, eventTypes)
+					})
+				})
+			}).catch(err => console.log(new Error(err)))
+	}
+
+	function setupListeners() {
+		const namespace = address.split('/')[1]
+		const eventTypes = nameSpacesToEventsMap.get(namespace)
+		eventTypes.forEach(listenForEvent)
+		eventTypes.forEach(addEventOptionToSender)
+	}
+
+	function addEventOptionToSender(eventName) {
+		const select = document.getElementById('event-name-to-send')
+		select.innerHTML +=
+			`<option value='${eventName}'>${eventName}</option>`
+	}
 
 	function login() {
 		const password = document.getElementById('password').value
@@ -16,13 +46,15 @@
 		}
 
 		fetch(new Request('/login', requestConfig)).then(res => res.json()).then(console.log)
+		loadProtocol()
 	}
 
 	function connect() {
-		const address = `${location.host}${document.getElementById('address').value}`
+		address = `${location.host}${document.getElementById('address').value}`
 		console.log(address)
 		connection = io(address, {path: '/connection'})
 		connection.on('connect', frame => {
+			setupListeners(connection)
 			console.log('connected to address')
 		})
 	}
@@ -35,8 +67,7 @@
 		connection.emit(eventName, eventValueObject)
 	}
 
-	function listenForEvent() {
-		const eventName = document.getElementById('event-name-to-listen').value
+	function listenForEvent(eventName) {
 
 		const eventsTable = document.getElementById('events-to-listen')
 		eventsTable.innerHTML += `<tr><td></td><td>${eventName}</td></tr>`
@@ -90,9 +121,10 @@ Username: <input id='password' value='test_password'>
 
 Address: <input id='address' value='/room'/> <button onclick='connect()'>Connect</button>
 
-Event name: <input id='event-name-to-listen' value='listClients'/> <button onclick='listenForEvent()'>Listen for event</button>
-
-Event name: <input id='event-name-to-send' value='list'/> Event value: <input id='event-value' /> <button onclick='emitEvent()'>Emit Event</button>
+Event type:
+<select name='Event name' id='event-name-to-send'></select>
+Event value:
+<textarea id='event-value'></textarea> <button onclick='emitEvent()'>Emit Event</button>
 
 
 Listening on below events:
