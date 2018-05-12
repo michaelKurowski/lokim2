@@ -24,7 +24,7 @@
 			"type": "node",
 			"request": "launch",
 			"name": "Launch Program",
-			"program": "${file}"
+			"program": "${workspaceRoot}/src/server/index.js"
 		}
 	]
 }

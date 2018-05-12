@@ -1,34 +1,43 @@
-const express = require('express')
-const router = require('./routes/router')
-const bodyParser = require('body-parser')
-const config = require('./config.json')
-const app = express()
-const httpServer = require('http').Server(app)
-const logger = require('./logger')
-const initializeWebSocketRouting = require('./ws-routes/initializeWebSocketRouting')
-const io = require('socket.io')(httpServer, {path: '/connection'})
-const passport = require('passport')
-const passportSocketIo = require('passport.socketio')
-const expressSession = require('express-session')
-const MongoSessionStore = require('connect-mongo')(expressSession)
-const mongoSanitize = require('express-mongo-sanitize')
-const util = require('util')
-
-const dbConnection = require('./dbConnection')
-const passportStrategies = require('./passport/strategies')
-const passportStrategyUtils = require('./passport/strategyUtils')
-
-const LocalStrategy = require('passport-local').Strategy
-const sessionStore = new MongoSessionStore({ mongooseConnection: dbConnection} )
-const COOKIE_SESSION_VARIABLE = 'connect.sid'
-const configFileService = require('./configFileService')()
+let logger
 async function init({
-	httpPort = config.httpServer.port
+	httpPort
 } = {}) {
-	if (configFileService.isConfigFileExisting()) {
-		await configFileService.validateFields(config)
-	} else await configFileService.generateConfig()
-	
+
+	const configFileService = require('./configFileService')()
+	const isConfigExisting = await configFileService.isConfigFileExisting()
+	if (isConfigExisting) {
+		configFileService.validateFields(require('./config.json'))
+		logger = require('./logger')
+	} else {
+		await configFileService.generateConfig()
+		logger = require('./logger')
+		logger.info('No config file found, new config generated. Please fill it.')
+		configFileService.validateFields(require('./config.json'))
+		
+	}
+	const config = require('./config.json')
+	httpPort = httpPort || config.httpServer.port
+	const express = require('express')
+	const router = require('./routes/router')
+	const bodyParser = require('body-parser')
+
+	const app = express()
+	const httpServer = require('http').Server(app)
+
+	const initializeWebSocketRouting = require('./ws-routes/initializeWebSocketRouting')
+	const io = require('socket.io')(httpServer, {path: '/connection'})
+	const passport = require('passport')
+	const passportSocketIo = require('passport.socketio')
+	const expressSession = require('express-session')
+	const MongoSessionStore = require('connect-mongo')(expressSession)
+	const mongoSanitize = require('express-mongo-sanitize')
+	const util = require('util')
+	const passportStrategies = require('./passport/strategies')
+	const passportStrategyUtils = require('./passport/strategyUtils')
+	const LocalStrategy = require('passport-local').Strategy
+	const COOKIE_SESSION_VARIABLE = 'connect.sid'
+	const dbConnection = require('./dbConnection')
+	const sessionStore = new MongoSessionStore({ mongooseConnection: dbConnection} )
 	const cookieSession = {
 		store: sessionStore,
 		secret: config.session.secret, 

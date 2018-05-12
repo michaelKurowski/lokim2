@@ -13,7 +13,7 @@ if (!fs.existsSync(logsDirectoryPath)) fs.mkdirSync( logsDirectoryPath )
 
 module.exports = new Logger({
 	transports: [
-		new consoleOutput(),
+		new consoleOutput({ level: config.logging.logLevel }),
 		new fileOutput({filename: logsFilePath})
 	]
 })
