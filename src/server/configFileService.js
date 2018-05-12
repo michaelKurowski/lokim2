@@ -31,16 +31,16 @@ module.exports = function ({
 		generateConfig() {
 			const pathToConfig = path.join(process.cwd(), '/', CONFIG_FILE_PATH)
 			return new Promise((resolve, reject) => {
-				fs.readFile('./miscellaneous/templateConfig.json', 'utf8', (fileReadError, text) => {
-					if (fileReadError) return reject(fileReadError)
-					fs.writeFile(pathToConfig, text, fileWriteError => {
-						if (fileWriteError) return reject(fileWriteError)
-						const config = require('./config.json')
-						config.database.user = process.env.MONGO_INITDB_ROOT_USERNAME || ''
-						config.database.password = process.env.MONGO_INITDB_ROOT_PASSWORD || ''
-						resolve()
-					})
+				const configTemplate = require('./miscellaneous/templateConfig.json')
+				configTemplate.database.username = process.env.MONGO_INITDB_ROOT_USERNAME || ''
+				configTemplate.database.password = process.env.MONGO_INITDB_ROOT_PASSWORD || ''
+
+				const configToGenerate = JSON.stringify(configTemplate, null, '\t')
+				fs.writeFile(pathToConfig, configToGenerate, fileWriteError => {
+					if (fileWriteError) return reject(fileWriteError)
+					resolve()
 				})
+	
 
 			})
 		}
