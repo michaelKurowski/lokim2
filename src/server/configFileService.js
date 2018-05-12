@@ -31,10 +31,14 @@ module.exports = function ({
 		generateConfig() {
 			const pathToConfig = path.join(process.cwd(), '/', CONFIG_FILE_PATH)
 			return new Promise((resolve, reject) => {
-				fs.writeFile(pathToConfig, require('./miscellaneous/templateConfig.json'), err => {
-					if (err) return reject(err)
-					resolve()
+				fs.readFile('./miscellaneous/templateConfig.json', 'utf8', (fileReadError, text) => {
+					if (fileReadError) return reject(fileReadError)
+					fs.writeFile(pathToConfig, text, fileWriteError => {
+						if (fileWriteError) return reject(fileWriteError)
+						resolve()
+					})
 				})
+
 			})
 		}
 	}
