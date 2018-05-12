@@ -1,3 +1,18 @@
+const cors = require('cors')
+const express = require('express')
+const app = express()
+const httpServer = require('http').Server(app)
+const bodyParser = require('body-parser')
+const io = require('socket.io')(httpServer, {path: '/connection'})
+const passport = require('passport')
+const passportSocketIo = require('passport.socketio')
+const expressSession = require('express-session')
+const LocalStrategy = require('passport-local').Strategy
+const mongoSanitize = require('express-mongo-sanitize')
+const util = require('util')
+const MongoSessionStore = require('connect-mongo')(expressSession)
+const COOKIE_SESSION_VARIABLE = 'connect.sid'
+
 let logger
 async function init({
 	httpPort
@@ -17,25 +32,10 @@ async function init({
 	}
 	const config = require('./config.json')
 	httpPort = httpPort || config.httpServer.port
-	const express = require('express')
 	const router = require('./routes/router')
-	const bodyParser = require('body-parser')
-
-	const app = express()
-	const httpServer = require('http').Server(app)
-
 	const initializeWebSocketRouting = require('./ws-routes/initializeWebSocketRouting')
-	const io = require('socket.io')(httpServer, {path: '/connection'})
-	const passport = require('passport')
-	const passportSocketIo = require('passport.socketio')
-	const expressSession = require('express-session')
-	const MongoSessionStore = require('connect-mongo')(expressSession)
-	const mongoSanitize = require('express-mongo-sanitize')
-	const util = require('util')
 	const passportStrategies = require('./passport/strategies')
 	const passportStrategyUtils = require('./passport/strategyUtils')
-	const LocalStrategy = require('passport-local').Strategy
-	const COOKIE_SESSION_VARIABLE = 'connect.sid'
 	const dbConnection = require('./dbConnection')
 	const sessionStore = new MongoSessionStore({ mongooseConnection: dbConnection} )
 	const cookieSession = {

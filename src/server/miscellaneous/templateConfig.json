@@ -9,7 +9,7 @@
 	},
 	"logging" : {
 		"fileName": "logs.log",
-		"logLevel": "warn"
+		"logLevel": "info"
 	},
 	"session": {
 		"secret": "",
