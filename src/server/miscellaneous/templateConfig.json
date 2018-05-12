@@ -12,7 +12,7 @@
 		"logLevel": "info"
 	},
 	"session": {
-		"secret": "",
+		"secret": "default",
 		"resave": false,
 		"saveUninitialized": true,
 		"cookie": {
