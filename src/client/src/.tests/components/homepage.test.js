@@ -12,7 +12,7 @@ const sinon = require('sinon')
 
 const EXPECTED_ELEMENT_COUNT = 1
 const EXPECT_TWO_ELEMENTS = 2
-const MAGIC_STRING = ''
+const INTIAL_INPUT = ''
 const USER_INPUT = '.user-input'
 const HOME_BUTTON = '.home-button'
 const DUMMY_USER = 'dummyUser'
@@ -58,10 +58,10 @@ describe('<HomePage />', () => {
 			expect(suite.Component.state(SUCCESSFUL_LOGIN)).toBeFalsy()
 		})
 		it('username should be empty on launch', () => {
-			expect(suite.Component.state(USER_NAME)).toBe(MAGIC_STRING)
+			expect(suite.Component.state(USER_NAME)).toBe(INTIAL_INPUT)
 		})
 		it('password should be empty on launch', () => {
-			expect(suite.Component.state(PASS_WORD)).toBe(MAGIC_STRING)
+			expect(suite.Component.state(PASS_WORD)).toBe(INTIAL_INPUT)
 		})
 	})
 	describe('<HomePage /> Functionality Tests', () => {

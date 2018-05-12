@@ -5,7 +5,7 @@ const ConnectStatus = require('./connectStatus')
 const Room = require('./room')
 const socket = require('../utils/sockets/ws-routing')
 const protocols = require('../utils/io-protocol')
-const HOMEPAGE_PATH = '/'
+const HOMEPAGE_PATH = require('../routes/routes').paths.HOME
 const USERNAMES_PLACEHOLDER = ''
 
 

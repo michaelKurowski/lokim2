@@ -2,11 +2,14 @@ const React = require('react')
 const {Link, Redirect} = require('react-router-dom')
 const logo = require('../logo.svg')
 const _fetch = require('node-fetch')
-
-const LOGIN_URL = '/login', POST = 'POST', credentials = 'same-origin'
+const {urls, paths} = require('../routes/routes')
+const LOGIN_URL = urls.LOGIN
+const POST = 'POST'
+const credentials = 'same-origin'
 const headers = { 'Content-Type': 'application/json' }
 
-const CHAT_PATH = '/chat', REGISTER_PATH = '/register'
+const CHAT_PATH = paths.CHAT
+const REGISTER_PATH = paths.REGISTER
 
 class HomePage extends React.Component {
 	constructor(props) {

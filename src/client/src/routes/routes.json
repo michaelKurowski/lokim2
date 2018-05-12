@@ -1,0 +1,11 @@
+{
+    "paths": {
+        "REGISTER": "/register",
+        "CHAT": "/chat",
+        "HOME": "/"
+    },
+    "urls": {
+        "LOGIN": "/login",
+        "REGISTER": "/register"
+    }
+}

@@ -1,9 +1,12 @@
 const React = require('react')
 const {Link, Redirect} = require('react-router-dom')
 const _fetch = require('node-fetch')
-
+const {urls, paths} = require('../routes/routes')
 const SUCCESS_CODE = 200
-const REGISTER_URL = '/register', HOMEPAGE_PATH = '/', POST = 'POST', headers = { 'Content-Type': 'application/json' }
+const REGISTER_URL = urls.REGISTER_URL
+const HOMEPAGE_PATH = paths.HOME
+const POST = 'POST'
+const headers = { 'Content-Type': 'application/json' }
 
 class Register extends React.Component {
 	constructor(props) {
