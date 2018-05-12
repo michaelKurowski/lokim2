@@ -35,6 +35,9 @@ module.exports = function ({
 					if (fileReadError) return reject(fileReadError)
 					fs.writeFile(pathToConfig, text, fileWriteError => {
 						if (fileWriteError) return reject(fileWriteError)
+						const config = require('./config.json')
+						config.database.user = process.env.MONGO_INITDB_ROOT_USERNAME || ''
+						config.database.password = process.env.MONGO_INITDB_ROOT_PASSWORD || ''
 						resolve()
 					})
 				})

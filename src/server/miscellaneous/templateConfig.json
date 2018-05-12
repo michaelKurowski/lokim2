@@ -2,7 +2,7 @@
 	"database": {
 		"username": "",
 		"password": "",
-		"host": ""
+		"host": "localhost"
 	},
 	"httpServer": {
 		"port": 5000

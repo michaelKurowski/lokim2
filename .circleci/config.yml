@@ -57,6 +57,10 @@ jobs:
           command: cd src/client && npm run eslint
 
       - run:
+          name: Generate config file (backend)
+          command: cd src/server && npm run generate-config
+
+      - run:
           name: Mocha tests (backend)
           command: cd src/server/ && npm run test-coverage
 
