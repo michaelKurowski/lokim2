@@ -5,7 +5,7 @@ const path = require('path')
 const fs = require('fs')
 const consoleOutput = winston.transports.Console
 const fileOutput = winston.transports.File
-const logsFilePath = path.resolve(`${__dirname}/logs/${config.logFile}`)
+const logsFilePath = path.resolve(`${__dirname}/logs/${config.logging.fileName}`)
 const logsDirectoryPath = path.resolve(`${__dirname}/logs/`)
 
 

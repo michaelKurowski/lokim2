@@ -22,10 +22,14 @@ const passportStrategyUtils = require('./passport/strategyUtils')
 const LocalStrategy = require('passport-local').Strategy
 const sessionStore = new MongoSessionStore({ mongooseConnection: dbConnection} )
 const COOKIE_SESSION_VARIABLE = 'connect.sid'
-
-function init({
+const configFileService = require('./configFileService')()
+async function init({
 	httpPort = config.httpServer.port
 } = {}) {
+	if (configFileService.isConfigFileExisting()) {
+		await configFileService.validateFields(config)
+	} else await configFileService.generateConfig()
+	
 	const cookieSession = {
 		store: sessionStore,
 		secret: config.session.secret, 

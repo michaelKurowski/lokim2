@@ -1,0 +1,28 @@
+{
+	"database": {
+		"username": "",
+		"password": "",
+		"host": ""
+	},
+	"httpServer": {
+		"port": 5000
+	},
+	"logging" : {
+		"fileName": "logs.log",
+		"logLevel": "warn"
+	},
+	"session": {
+		"secret": "",
+		"resave": false,
+		"saveUninitialized": true,
+		"cookie": {
+			"secure": false,
+			"maxAge": 900000
+		}
+	},
+	"devPropeties": {
+		"devMode": false,
+		"httpTestPort": 5001
+	}
+	
+}

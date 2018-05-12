@@ -4,3 +4,4 @@ src/server/.nyc_output
 **/.DS_Store
 **/*.log
 src/server/out
+src/server/config.json
