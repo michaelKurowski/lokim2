@@ -6,6 +6,7 @@
     },
     "urls": {
         "LOGIN": "/login",
-        "REGISTER": "/register"
+        "REGISTER": "/register",
+        "CHAT": "/chat"
     }
 }
