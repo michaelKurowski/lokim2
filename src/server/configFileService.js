@@ -14,7 +14,7 @@ module.exports = function ({
 		isConfigFileExisting() {
 			const pathToConfig = path.join(process.cwd(), '/', CONFIG_FILE_PATH)
 			return new Promise((resolve, reject) => {
-				fs.stat(pathToConfig, (err, stat) => {
+				fs.stat(pathToConfig, err => {
 					if (!err) return resolve(true)
 					if (err.code === FILE_NOT_EXISTING) return resolve(false)
 					reject(new Error(ERROR_DURING_READING_CONFIG + err))
