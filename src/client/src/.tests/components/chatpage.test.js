@@ -191,5 +191,21 @@ describe('<ChatPage />', () => {
 			suite.Component.instance().sendMessage()
 			expect(suite.Component.state(MESSAGES).length).toBe(EXPECTED_ELEMENTS_COUNT)
 		})
+		it('Should handle the connection event by setting connection state to true', () => {
+			const RETURN_VALUE = suite.Component.instance().handleConnectionEvent()
+			const CONNECT_STATUS = suite.Component.state(CONNECTED)
+			expect(CONNECT_STATUS).toBeTruthy()
+			expect(RETURN_VALUE).toBeUndefined()
+		})
+		it('Should handle the message event by updating message state with data', () => {
+			const MESSAGE_DATA =  {username: DUMMY_USER, message: DUMMY_MESSAGE, timestamp: DUMMY_TIMESTAMP}
+			const RETURN_VALUE = suite.Component.instance().handleMessageEvent(MESSAGE_DATA)
+			expect(RETURN_VALUE).toBeUndefined()
+		})
+		it('Should handle the join event by updating userrooms state with data', () => {
+			const JOIN_DATA = {roomId: DUMMY_ROOM, usernames: DUMMY_USER}
+			const RETURN_VALUE = suite.Component.instance().handleJoinEvent(JOIN_DATA)
+			expect(RETURN_VALUE).toBeUndefined()
+		})
 	})
 })
