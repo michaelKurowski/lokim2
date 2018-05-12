@@ -38,7 +38,6 @@ class HomePage extends React.Component {
 	}
 
 	handleChange(event) {
-		if(!Object.keys(this.state).includes(event.target.name)) return //ADD GUI NOTIFICATION ISSUE #49
 		this.setState({ [event.target.name] : event.target.value})
 	}
 	handleSubmit(event) {

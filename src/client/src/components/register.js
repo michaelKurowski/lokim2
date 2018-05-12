@@ -22,7 +22,6 @@ class Register extends React.Component {
 		this.handleSubmit = this.handleSubmit.bind(this)
 	}
 	handleChange(event) {
-		if(!Object.keys(this.state).includes(event.target.name)) return //ADD GUI NOTIFICATION ISSUE #49
 		this.setState({ [event.target.name] : event.target.value})
 	}
     
