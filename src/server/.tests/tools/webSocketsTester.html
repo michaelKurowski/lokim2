@@ -50,6 +50,11 @@
 	}
 
 	function connect() {
+		document.getElementById('event-name-to-send').innerHTML = ''
+		document.getElementById('events-to-listen').innerHTML =
+			`<tr><td>Address</td><td>Event Name</td></tr>`
+		document.getElementById('ws-table').innerHTML = 
+			`<tr><td>Address</td> <td>Sent/Received</td> <td>Event name</td> <td>Value</td></tr>`
 		address = `${location.host}${document.getElementById('address').value}`
 		console.log(address)
 		connection = io(address, {path: '/connection'})
