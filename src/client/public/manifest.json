@@ -10,5 +10,7 @@
   ],
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#ffffff"
+  "theme-color": "#000000",
+  "background_color": "#ffffff",
+  "viewport": "width=device-width, initial-scale=1, shrink-to-fit=no"
 }
