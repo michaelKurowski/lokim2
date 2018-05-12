@@ -420,7 +420,7 @@ describe('Room websocket service', () => {
 			suite.clientA.emit(CLIENT_EVENTS.CREATE, requestMock)
 
 			//then
-			function then(data) {
+			function then() {
 				suite.clientA.disconnect()
 				suite.clientB.disconnect()
 
