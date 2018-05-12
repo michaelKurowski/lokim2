@@ -1,0 +1,9 @@
+{
+    "MESSAGE": "message",
+    "JOIN": "join",
+    "LEAVE": "leave",
+    "CREATE": "create",
+    "CONNECTION": "connect",
+    "DISCONNECT": "disconnect",
+    "FAILED": "connect_failed"
+}

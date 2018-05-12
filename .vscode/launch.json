@@ -6,8 +6,14 @@
 	"configurations": [
 		{
 			"type": "node",
+			"request": "attach",
+			"name": "Attach by Process ID",
+			"processId": "${command:PickProcess}"
+		},
+		{
+			"type": "node",
 			"request": "launch",
-			"name": "Mocha Tests",
+			"name": "Mocha Tests (backend)",
 			"program": "${workspaceRoot}/src/server/node_modules/mocha/bin/_mocha",
 			"runtimeVersion": "8.9.4",
 			"args": [
@@ -23,8 +29,19 @@
 		{
 			"type": "node",
 			"request": "launch",
-			"name": "Launch Program",
-			"program": "${file}"
+			"name": "Jest Tests (frontend)",
+			"runtimeVersion": "8.9.4",
+			"runtimeExecutable": "npm",
+			"runtimeArgs": [
+				"run",
+				"test-debug"
+			],
+			"protocol": "inspector",
+			"port": 9229,
+			"cwd": "${workspaceRoot}/src/client/",
+			"console": "integratedTerminal",
+			"restart": true,
+			"internalConsoleOptions": "neverOpen"
 		}
 	]
 }

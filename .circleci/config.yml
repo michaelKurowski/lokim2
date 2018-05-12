@@ -15,27 +15,54 @@ jobs:
     steps:
       - checkout
       - restore_cache:
+          name: Restore cache (backend)
           keys:
           - v1-dependencies-{{ checksum "src/server/package.json" }}
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
 
+      - restore_cache:
+          name: Restore cache (frontend)
+          keys:
+          - v1-dependencies-{{ checksum "src/client/package.json" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
       - run: 
-          name: Deployment
+          name: Deployment (backend)
           command: cd src/server && npm install
 
+      - run: 
+          name: Deployment (frontend)
+          command: cd src/client && npm install
+
       - save_cache:
+          name: Saving cache (backend)
           paths:
             - src/server/node_modules
           key: v1-dependencies-{{ checksum "src/server/package.json" }}
 
-      - run:
-          name: Static Analysis (EsLint)
-          command: node ./src/server/node_modules/eslint/bin/eslint.js -c ./src/server/.eslintrc.json --ignore-path ./src/server/.eslintignore ./src/server
+      - save_cache:
+          name: Saving cache (frontend)
+          paths:
+            - src/client/node_modules
+          key: v1-dependencies-{{ checksum "src/client/package.json" }}
 
       - run:
-          name: Mocha tests
+          name: Static Analysis (backend)
+          command: cd src/server && npm run eslint
+
+      - run:
+          name: Static Analysis (frontend)
+          command: cd src/client && npm run eslint
+
+      - run:
+          name: Mocha tests (backend)
           command: cd src/server/ && npm run test-coverage
+
+      - run:
+          name: Jest tests (frontend)
+          command: cd src/client/ && npm run test-coverage
 
       - run:
           name: Print the Current Time

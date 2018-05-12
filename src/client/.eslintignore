@@ -1,4 +1,4 @@
 node_modules/
 coverage/
 out/
-!.tests/
+!src/.tests
