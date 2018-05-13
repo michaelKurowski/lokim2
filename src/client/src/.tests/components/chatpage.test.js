@@ -119,8 +119,8 @@ describe('<ChatPage />', () => {
 		it('Should update joined rooms', () => {
 			const EXPECTED_DATA = {roomId: DUMMY_ROOM, usernames: DUMMY_USER}
 			suite.Component.instance().updateJoinedRooms(EXPECTED_DATA)
-			const USERROOM_ROOMID = suite.Component.state(USERROOMS)[0].roomId
-			const USERROOM_USERNAMES = suite.Component.state(USERROOMS)[0].usernames
+			const USERROOM_ROOMID = suite.Component.state(USERROOMS)[FIRST_INDEX].roomId
+			const USERROOM_USERNAMES = suite.Component.state(USERROOMS)[FIRST_INDEX].usernames
 	
 			expect(USERROOM_ROOMID).toBe(EXPECTED_DATA.roomId)
 			expect(USERROOM_USERNAMES).toBe(EXPECTED_DATA.usernames)
