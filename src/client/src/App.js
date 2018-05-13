@@ -1,13 +1,12 @@
-import './App.css'
 const React = require('react')
 const HomePage = require('./components/homepage')
 const Register = require('./components/register')
 const ChatPage = require('./components/chatpage')
 const {BrowserRouter, Route} = require('react-router-dom')
-const {urls} = require('./routes/routes')
-const LOGIN_URL = urls.LOGIN
-const REGISTER_URL = urls.REGISTER
-const CHAT_URL = urls.CHAT
+const {paths} = require('./routes/routes')
+const LOGIN_URL = paths.LOGIN
+const REGISTER_URL = paths.REGISTER
+const CHAT_URL = paths.CHAT
 
 class App extends React.Component {
 	render() {
