@@ -119,8 +119,8 @@ describe('<ChatPage />', () => {
 		it('Should update joined rooms', () => {
 			const EXPECTED_DATA = {roomId: DUMMY_ROOM, usernames: DUMMY_USER}
 			suite.Component.instance().updateJoinedRooms(EXPECTED_DATA)
-			const USERROOM_ROOMID = suite.Component.state(USERROOMS)[0].roomId
-			const USERROOM_USERNAMES = suite.Component.state(USERROOMS)[0].usernames
+			const USERROOM_ROOMID = suite.Component.state(USERROOMS)[FIRST_INDEX].roomId
+			const USERROOM_USERNAMES = suite.Component.state(USERROOMS)[FIRST_INDEX].usernames
 	
 			expect(USERROOM_ROOMID).toBe(EXPECTED_DATA.roomId)
 			expect(USERROOM_USERNAMES).toBe(EXPECTED_DATA.usernames)
@@ -190,6 +190,27 @@ describe('<ChatPage />', () => {
 			suite.Component.instance().handleUserInput({ target: { value: DUMMY_INPUT}})
 			suite.Component.instance().sendMessage()
 			expect(suite.Component.state(MESSAGES).length).toBe(EXPECTED_ELEMENTS_COUNT)
+		})
+		it('Should handle the connection event by setting connection state to true', () => {
+			const RETURN_VALUE = suite.Component.instance().handleConnectionEvent()
+			const CONNECT_STATUS = suite.Component.state(CONNECTED)
+			expect(CONNECT_STATUS).toBeTruthy()
+			expect(RETURN_VALUE).toBeUndefined()
+		})
+		it('Should handle the message event', () => {
+			const MESSAGE_DATA =  {username: DUMMY_USER, message: DUMMY_MESSAGE, timestamp: DUMMY_TIMESTAMP}
+			const RETURN_VALUE = suite.Component.instance().handleMessageEvent(MESSAGE_DATA)
+			expect(RETURN_VALUE).toBeUndefined()
+		})
+		it('Should handle the join event and update state', () => {
+			const JOIN_DATA = {roomId: DUMMY_ROOM, usernames: DUMMY_USER}
+			const RETURN_VALUE = suite.Component.instance().handleJoinEvent(JOIN_DATA)
+			const USERROOM_ROOMID = suite.Component.state(USERROOMS)[FIRST_INDEX].roomId
+			const USERROOM_USERNAMES = suite.Component.state(USERROOMS)[FIRST_INDEX].usernames
+	
+			expect(USERROOM_ROOMID).toBe(JOIN_DATA.roomId)
+			expect(USERROOM_USERNAMES).toBe(JOIN_DATA.usernames)
+			expect(RETURN_VALUE).toBeUndefined()
 		})
 	})
 })

@@ -25,17 +25,21 @@ class ChatPage extends React.Component {
 		this.sendMessage = this.sendMessage.bind(this)
 	}
 	componentDidMount() {
-		/* istanbul ignore next */
-		socket.on(protocols.CONNECTION, () => this.setState({connected: true}))
-		/* istanbul ignore next */
-		socket.on(protocols.MESSAGE, data => this.updateMessageState(data))
-		/* istanbul ignore next */
-		socket.on(protocols.JOIN, data => this.updateJoinedRooms(data))
-		/* istanbul ignore next */
+		socket.on(protocols.CONNECTION, this.handleSocketData)
+		socket.on(protocols.MESSAGE, this.handleMessageEvent)
+		socket.on(protocols.JOIN, this.handleJoinEvent)
 	}
 	componentWillUnmount() {
-		/* istanbul ignore next */
 		socket.disconnect()
+	}
+	handleConnectionEvent(){
+		this.setState({connected: true})
+	}
+	handleMessageEvent(data){
+		this.updateMessageState(data)
+	}
+	handleJoinEvent(data){
+		this.updateJoinedRooms(data)
 	}
 	updateJoinedRooms(data) {
 		const {roomId} = data
