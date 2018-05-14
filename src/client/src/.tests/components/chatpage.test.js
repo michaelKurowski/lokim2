@@ -117,13 +117,13 @@ describe('<ChatPage />', () => {
 	})
 	describe('<ChatPage /> Functionality Tests', () => {
 		it('Should update joined rooms', () => {
-			const EXPECTED_DATA = {roomId: DUMMY_ROOM, usernames: DUMMY_USER}
+			const EXPECTED_DATA = {roomId: DUMMY_ROOM, username: DUMMY_USER}
 			suite.Component.instance().updateJoinedRooms(EXPECTED_DATA)
 			const USERROOM_ROOMID = suite.Component.state(USERROOMS)[FIRST_INDEX].roomId
 			const USERROOM_USERNAMES = suite.Component.state(USERROOMS)[FIRST_INDEX].usernames
 	
 			expect(USERROOM_ROOMID).toBe(EXPECTED_DATA.roomId)
-			expect(USERROOM_USERNAMES).toBe(EXPECTED_DATA.usernames)
+			expect(USERROOM_USERNAMES).toBe(EXPECTED_DATA.username)
 		})
 		it('Should store a message to sessionStorage', () => {
 			const roomId = DUMMY_ROOM
@@ -152,7 +152,7 @@ describe('<ChatPage />', () => {
 			expect(suite.Component.instance().findUsersOfRoom(DUMMY_ROOM)).toBe(NO_ROOM_SELECTED)
 		})
 		it('Should return a user in the room, when user joined a room', () => {
-			suite.Component.instance().updateJoinedRooms({usernames: DUMMY_USER, roomId: DUMMY_ROOM})
+			suite.Component.instance().updateJoinedRooms({username: DUMMY_USER, roomId: DUMMY_ROOM})
 			expect(suite.Component.instance().findUsersOfRoom(DUMMY_ROOM)).toBe(DUMMY_USER)
 		})
 		it('Should generate a warning to select a room first', () => {
@@ -203,13 +203,13 @@ describe('<ChatPage />', () => {
 			expect(RETURN_VALUE).toBeUndefined()
 		})
 		it('Should handle the join event and update state', () => {
-			const JOIN_DATA = {roomId: DUMMY_ROOM, usernames: DUMMY_USER}
+			const JOIN_DATA = {roomId: DUMMY_ROOM, username: DUMMY_USER}
 			const RETURN_VALUE = suite.Component.instance().handleJoinEvent(JOIN_DATA)
 			const USERROOM_ROOMID = suite.Component.state(USERROOMS)[FIRST_INDEX].roomId
 			const USERROOM_USERNAMES = suite.Component.state(USERROOMS)[FIRST_INDEX].usernames
 	
 			expect(USERROOM_ROOMID).toBe(JOIN_DATA.roomId)
-			expect(USERROOM_USERNAMES).toBe(JOIN_DATA.usernames)
+			expect(USERROOM_USERNAMES).toBe(JOIN_DATA.username)
 			expect(RETURN_VALUE).toBeUndefined()
 		})
 	})
