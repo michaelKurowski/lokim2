@@ -24,9 +24,12 @@ class ChatPage extends React.Component {
 
 		this.handleUserInput = this.handleUserInput.bind(this)
 		this.sendMessage = this.sendMessage.bind(this)
+		this.handleConnectionEvent = this.handleConnectionEvent.bind(this)
+		this.handleMessageEvent = this.handleMessageEvent.bind(this)
+		this.handleJoinEvent = this.handleJoinEvent.bind(this)
 	}
 	componentDidMount() {
-		socket.on(protocols.CONNECTION, this.handleSocketData)
+		socket.on(protocols.CONNECTION, this.handleConnectionEvent)
 		socket.on(protocols.MESSAGE, this.handleMessageEvent)
 		socket.on(protocols.JOIN, this.handleJoinEvent)
 	}
@@ -34,17 +37,21 @@ class ChatPage extends React.Component {
 		socket.disconnect()
 	}
 	handleConnectionEvent(){
+		console.log('Connected')
 		this.setState({connected: true})
 	}
 	handleMessageEvent(data){
+		console.log('message', data)
 		this.updateMessageState(data)
 	}
 	handleJoinEvent(data){
+		console.log('JOIN', data)
+		console.log(this)
 		this.updateJoinedRooms(data)
 	}
 	updateJoinedRooms(data) {
 		const {roomId} = data
-		const usernames = data.usernames
+		const usernames = data.username
 		this.setState({userRooms: this.state.userRooms.concat({roomId, usernames})})
 	}
 	changeSelectedRoom(roomDetails) {
@@ -82,7 +89,7 @@ class ChatPage extends React.Component {
 	}
 	generateRooms() {
 		if(_.isEmpty(this.state.userRooms)) return
-		this.state.userRooms.map(
+		return this.state.userRooms.map(
 			(e, i) => 
 				<Room 
 					key={i}
