@@ -32,13 +32,13 @@ class ChatPage extends React.Component {
 	componentWillUnmount() {
 		socket.disconnect()
 	}
-	handleConnectionEvent(){
+	handleConnectionEvent() {
 		this.setState({connected: true})
 	}
-	handleMessageEvent(data){
+	handleMessageEvent(data) {
 		this.updateMessageState(data)
 	}
-	handleJoinEvent(data){
+	handleJoinEvent(data) {
 		this.updateJoinedRooms(data)
 	}
 	updateJoinedRooms(data) {
