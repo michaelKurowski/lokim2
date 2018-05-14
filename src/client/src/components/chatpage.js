@@ -1,5 +1,5 @@
 const React = require('react')
-const {Link} = require('react-router-dom')
+const {Redirect, Link} = require('react-router-dom')
 const _ = require('lodash')
 const ConnectStatus = require('./connectStatus')
 const Room = require('./room')
@@ -12,12 +12,13 @@ const USERNAMES_PLACEHOLDER = ''
 class ChatPage extends React.Component {
 	constructor(props) {
 		super(props)
+		const initProps = this.props.location.state
 		this.state = {
 			connected: false,
 			input: '',
 			messages: [],
 			selectedRoom: '',
-			username: this.props.location.state.username,
+			username: _.has(initProps, 'username') ? initProps['username'] : null,
 			userRooms: []
 		}
 
@@ -106,6 +107,8 @@ class ChatPage extends React.Component {
 		throw new Error('No room selected || input field is empty.')
 	}
 	render() {
+		if(!this.state.username) return <Redirect to={HOMEPAGE_PATH}/>
+		
 		return(
 			<div className='container-fluid'>
 				<div className='row'>
