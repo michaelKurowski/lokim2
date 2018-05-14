@@ -47,6 +47,12 @@ describe('<ChatPage />', () => {
 
 	})
 	describe('<ChatPage /> Render Tests', () => {
+		it('Should render HomePage with no username', () => {
+			const wrapper = mount(<BrowserRouter><ChatPage location={{state: {}}}/></BrowserRouter>)
+			const EXPECTED_DATA = wrapper.html()
+			console.log(EXPECTED_DATA)
+			expect(EXPECTED_DATA).toBeUndefined()
+		})
 		it('Should render without crashing', () => {
 			const ELEMENTS_COUNT = suite.wrapper.length
 			expect(ELEMENTS_COUNT).toBe(EXPECTED_ELEMENTS_COUNT)
