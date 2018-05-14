@@ -130,13 +130,13 @@ const wst = (socketIo => {// eslint-disable-line no-unused-vars
 	function pushIncommingEvent(eventType, packet) {
 		const incommingTrafficTable = getIncommingTrafficTable()
 		incommingTrafficTable.innerHTML += 
-			`<tr><td>Received</td><td>${eventType}</td><td>${JSON.stringify(packet)}</td></tr>`
+			`<tr><td>Received</td><td>${eventType}</td><td>${packet}</td></tr>`
 	}
 
 	function pushOutcommingEvent(eventType, packet) {
 		const incommingTrafficTable = getIncommingTrafficTable()
 		incommingTrafficTable.innerHTML += 
-			`<tr><td>Sent</td><td>${eventType}</td><td>${JSON.stringify(packet)}</td></tr>`
+			`<tr><td>Sent</td><td>${eventType}</td><td>${packet}</td></tr>`
 	}
 
 	function getEventTypeToSendData() {
