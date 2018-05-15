@@ -17,7 +17,7 @@ const SOCKET_OPTIONS = {
 }
 
 let suite
-describe('Room websocket service', () => {
+describe('Room websocket namespace', () => {
 	beforeEach(() => {
 		suite = {}
 		suite.connectionsMock = {
