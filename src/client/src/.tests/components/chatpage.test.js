@@ -49,8 +49,8 @@ describe('<ChatPage />', () => {
 	describe('<ChatPage /> Render Tests', () => {
 		it('Should render HomePage with no username', () => {
 			const wrapper = mount(<BrowserRouter><ChatPage location={{state: {}}}/></BrowserRouter>)
-			const EXPECTED_DATA = wrapper.html()
-			expect(EXPECTED_DATA).toBeFalsy()
+			const EXPECTED_DATA = wrapper.instance().history.location.pathname
+			expect(EXPECTED_DATA).toBe(HOME_PATH)
 		})
 		it('Should render without crashing', () => {
 			const ELEMENTS_COUNT = suite.wrapper.length
