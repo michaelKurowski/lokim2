@@ -50,7 +50,6 @@ describe('<ChatPage />', () => {
 		it('Should render HomePage with no username', () => {
 			const wrapper = mount(<BrowserRouter><ChatPage location={{state: {}}}/></BrowserRouter>)
 			const EXPECTED_DATA = wrapper.html()
-			console.log(EXPECTED_DATA)
 			expect(EXPECTED_DATA).toBeFalsy()
 		})
 		it('Should render without crashing', () => {
