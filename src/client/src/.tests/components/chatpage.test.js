@@ -51,7 +51,7 @@ describe('<ChatPage />', () => {
 			const wrapper = mount(<BrowserRouter><ChatPage location={{state: {}}}/></BrowserRouter>)
 			const EXPECTED_DATA = wrapper.html()
 			console.log(EXPECTED_DATA)
-			expect(EXPECTED_DATA).toBeUndefined()
+			expect(EXPECTED_DATA).toBeFalsy()
 		})
 		it('Should render without crashing', () => {
 			const ELEMENTS_COUNT = suite.wrapper.length
