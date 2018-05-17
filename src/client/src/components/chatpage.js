@@ -18,7 +18,7 @@ class ChatPage extends React.Component {
 			input: '',
 			messages: [],
 			selectedRoom: '',
-			username: _.has(initProps, 'username') ? initProps['username'] : null,
+			username: _.get(initProps, 'username', null),
 			userRooms: []
 		}
 
@@ -32,9 +32,6 @@ class ChatPage extends React.Component {
 		socket.on(protocols.CONNECTION, this.handleConnectionEvent)
 		socket.on(protocols.MESSAGE, this.handleMessageEvent)
 		socket.on(protocols.JOIN, this.handleJoinEvent)
-	}
-	componentWillUnmount() {
-		socket.disconnect()
 	}
 	handleConnectionEvent(){
 		this.setState({connected: true})
@@ -91,7 +88,7 @@ class ChatPage extends React.Component {
 					key={i}
 					name={`Room #${i}`}
 					ID={e.roomId}
-					onClick={() => this.changeSelectedRoom(e)}
+					onClick={this.changeSelectedRoom}
 				/>
 		)
 	}
@@ -110,6 +107,7 @@ class ChatPage extends React.Component {
 		throw new Error('No room selected || input field is empty.')
 	}
 	render() {
+		/* istanbul ignore next */
 		if(!this.state.username) return <Redirect to={HOMEPAGE_PATH}/>
 		
 		return(

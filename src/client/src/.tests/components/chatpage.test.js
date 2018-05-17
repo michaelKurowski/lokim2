@@ -2,8 +2,10 @@ const React = require('react')
 const ChatPage = require('../../components/chatpage')
 const ConnectStatus = require('../../components/connectStatus')
 const Room = require('../../components/room')
+const HomePage = require('../../components/homepage')
 const {configure, mount, shallow } = require('enzyme')
-const {BrowserRouter} = require('react-router-dom')
+const createRouterContext = require('react-router-test-context').default
+const {BrowserRouter, Switch, Route} = require('react-router-dom')
 const Adapter = require('enzyme-adapter-react-16')
 const DUMMY_ROOM = 'dummyRoom'
 const DUMMY_USER = 'dummyUser'
@@ -48,7 +50,14 @@ describe('<ChatPage />', () => {
 	})
 	describe('<ChatPage /> Render Tests', () => {
 		it('Should render HomePage when no username is provided', () => {
-			const wrapper = shallow(<BrowserRouter><ChatPage location={{state: {}}}/></BrowserRouter>)
+			const context = createRouterContext({ location: {pathname: '/chat' }})
+			const wrapper = mount(
+			<BrowserRouter>
+				<Switch>
+					<Route path='/' component={HomePage} />
+					<Route path='/chat' component={ChatPage} /> 
+				</Switch>
+			</BrowserRouter>, context)
 			const EXPECTED_DATA = wrapper.instance().history.location.pathname
 			expect(EXPECTED_DATA).toBe(HOME_PATH)
 		})
