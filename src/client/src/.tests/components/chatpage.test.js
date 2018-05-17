@@ -47,7 +47,7 @@ describe('<ChatPage />', () => {
 
 	})
 	describe('<ChatPage /> Render Tests', () => {
-		it('Should render HomePage with no username', () => {
+		it('Should render HomePage when no username is provided', () => {
 			const wrapper = shallow(<BrowserRouter><ChatPage location={{state: {}}}/></BrowserRouter>)
 			const EXPECTED_DATA = wrapper.instance().history.location.pathname
 			expect(EXPECTED_DATA).toBe(HOME_PATH)
