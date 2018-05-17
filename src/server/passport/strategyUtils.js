@@ -11,7 +11,7 @@ function strategyHandlers(req, res, next) {
 	const serializeHandler = (err) => {
 		if (err) return responseManager.sendResponse(res, err)
 		
-		next()
+		return responseManager.sendResponse(res, responseManager.MESSAGES.successes.OK)
 	}
 
 	const loginStrategyHandler = (err, user) => {

@@ -14,14 +14,13 @@ describe('StrategyUtils', () => {
 	describe('#strategyHandlers', () => {
 		beforeEach(() => {
 			suite.requestMock = createRequestMock()
-			suite.nextSpy = sinon.spy()
 			suite.responseMock = httpMocks.createResponse({
 				eventEmitter: EventEmitter
 			})
 			suite.strategyHandlersMock = strategyUtils.strategyHandlers(suite.requestMock, suite.responseMock, suite.nextSpy)
 		})
 		describe('#serializeHandler', () => {
-			it('should call next when no error is given', () => {
+			it('should respond with sucessful user login', () => {
 				//given
 				const error = null
 
@@ -29,7 +28,16 @@ describe('StrategyUtils', () => {
 				suite.strategyHandlersMock.serializeHandler(error)
 
 				//then
-				assert.isTrue(suite.nextSpy.calledOnce)
+				const responseStatusCode = suite.responseMock._getStatusCode()
+				const responseBody = suite.responseMock._getData()
+
+				const expectedBody = JSON.stringify({
+					description: 'OK'
+				})
+				const expectedStatusCode = 200
+
+				assert.strictEqual(responseBody, expectedBody)
+				assert.strictEqual(responseStatusCode, expectedStatusCode)
 			})
 
 			it('should respond with error status code and description', () => {

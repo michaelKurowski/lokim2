@@ -1,0 +1,13 @@
+const responseManager = require('../utilities/responseManager')
+
+function isAuthenticated() {
+	return (req, res, next) => {
+		const isAlreadyLoggedIn = req.isAuthenticated()
+		if(!isAlreadyLoggedIn) 
+			return responseManager.sendResponse(res, responseManager.MESSAGES.errors.UNAUTHORIZED)
+		
+		next()
+	}	
+}
+
+module.exports = isAuthenticated
