@@ -4,7 +4,7 @@ const Register = require('./components/register')
 const ChatPage = require('./components/chatpage')
 const {BrowserRouter, Route} = require('react-router-dom')
 const {paths} = require('./routes/routes')
-const LOGIN_URL = paths.LOGIN
+const LOGIN_URL = paths.HOME
 const REGISTER_URL = paths.REGISTER
 const CHAT_URL = paths.CHAT
 

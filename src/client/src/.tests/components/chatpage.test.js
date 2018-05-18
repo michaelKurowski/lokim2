@@ -2,8 +2,10 @@ const React = require('react')
 const ChatPage = require('../../components/chatpage')
 const ConnectStatus = require('../../components/connectStatus')
 const Room = require('../../components/room')
+const HomePage = require('../../components/homepage')
 const {configure, mount, shallow } = require('enzyme')
-const {BrowserRouter} = require('react-router-dom')
+const createRouterContext = require('react-router-test-context').default
+const {BrowserRouter, Switch, Route} = require('react-router-dom')
 const Adapter = require('enzyme-adapter-react-16')
 const DUMMY_ROOM = 'dummyRoom'
 const DUMMY_USER = 'dummyUser'
@@ -47,6 +49,18 @@ describe('<ChatPage />', () => {
 
 	})
 	describe('<ChatPage /> Render Tests', () => {
+		it('Should render HomePage when no username is provided', () => {
+			const context = createRouterContext({ location: {pathname: '/chat' }})
+			const wrapper = mount(
+			<BrowserRouter>
+				<Switch>
+					<Route path='/' component={HomePage} />
+					<Route path='/chat' component={ChatPage} /> 
+				</Switch>
+			</BrowserRouter>, context)
+			const EXPECTED_DATA = wrapper.instance().history.location.pathname
+			expect(EXPECTED_DATA).toBe(HOME_PATH)
+		})
 		it('Should render without crashing', () => {
 			const ELEMENTS_COUNT = suite.wrapper.length
 			expect(ELEMENTS_COUNT).toBe(EXPECTED_ELEMENTS_COUNT)
@@ -117,13 +131,13 @@ describe('<ChatPage />', () => {
 	})
 	describe('<ChatPage /> Functionality Tests', () => {
 		it('Should update joined rooms', () => {
-			const EXPECTED_DATA = {roomId: DUMMY_ROOM, usernames: DUMMY_USER}
+			const EXPECTED_DATA = {roomId: DUMMY_ROOM, username: DUMMY_USER}
 			suite.Component.instance().updateJoinedRooms(EXPECTED_DATA)
 			const USERROOM_ROOMID = suite.Component.state(USERROOMS)[FIRST_INDEX].roomId
 			const USERROOM_USERNAMES = suite.Component.state(USERROOMS)[FIRST_INDEX].usernames
 	
 			expect(USERROOM_ROOMID).toBe(EXPECTED_DATA.roomId)
-			expect(USERROOM_USERNAMES).toBe(EXPECTED_DATA.usernames)
+			expect(USERROOM_USERNAMES).toBe(EXPECTED_DATA.username)
 		})
 		it('Should store a message to sessionStorage', () => {
 			const roomId = DUMMY_ROOM
@@ -152,7 +166,7 @@ describe('<ChatPage />', () => {
 			expect(suite.Component.instance().findUsersOfRoom(DUMMY_ROOM)).toBe(NO_ROOM_SELECTED)
 		})
 		it('Should return a user in the room, when user joined a room', () => {
-			suite.Component.instance().updateJoinedRooms({usernames: DUMMY_USER, roomId: DUMMY_ROOM})
+			suite.Component.instance().updateJoinedRooms({username: DUMMY_USER, roomId: DUMMY_ROOM})
 			expect(suite.Component.instance().findUsersOfRoom(DUMMY_ROOM)).toBe(DUMMY_USER)
 		})
 		it('Should generate a warning to select a room first', () => {
@@ -203,13 +217,13 @@ describe('<ChatPage />', () => {
 			expect(RETURN_VALUE).toBeUndefined()
 		})
 		it('Should handle the join event and update state', () => {
-			const JOIN_DATA = {roomId: DUMMY_ROOM, usernames: DUMMY_USER}
+			const JOIN_DATA = {roomId: DUMMY_ROOM, username: DUMMY_USER}
 			const RETURN_VALUE = suite.Component.instance().handleJoinEvent(JOIN_DATA)
 			const USERROOM_ROOMID = suite.Component.state(USERROOMS)[FIRST_INDEX].roomId
 			const USERROOM_USERNAMES = suite.Component.state(USERROOMS)[FIRST_INDEX].usernames
 	
 			expect(USERROOM_ROOMID).toBe(JOIN_DATA.roomId)
-			expect(USERROOM_USERNAMES).toBe(JOIN_DATA.usernames)
+			expect(USERROOM_USERNAMES).toBe(JOIN_DATA.username)
 			expect(RETURN_VALUE).toBeUndefined()
 		})
 	})
