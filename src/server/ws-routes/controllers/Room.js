@@ -107,6 +107,7 @@ class Room {
 		const timestamp = new Date().getTime()
 		const roomId = data.roomId
 		const room = socket.nsp.in(roomId)
+		console.log('LIST MEMBERs', roomId)
 		getRoomClients(room)
 			.then(clients => {
 				const usernames = _.map(clients, socketId => 
