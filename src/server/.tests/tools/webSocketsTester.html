@@ -1,110 +1,65 @@
 <script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js'></script>
-
-<script>
-	let connection
-
-	function login() {
-		const password = document.getElementById('password').value
-		const username = document.getElementById('username').value
-		const requestConfig = {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: `{"username": "${username}","password": "${password}"}`,
-			credentials: "same-origin" 
-		}
-
-		fetch(new Request('/login', requestConfig)).then(res => res.json()).then(console.log)
-	}
-
-	function connect() {
-		const address = `${location.host}${document.getElementById('address').value}`
-		console.log(address)
-		connection = io(address, {path: '/connection'})
-		connection.on('connect', frame => {
-			console.log('connected to address')
-		})
-	}
-
-	function emitEvent() {
-		const eventName = document.getElementById('event-name-to-send').value
-		const eventValue = document.getElementById('event-value').value
-		const eventValueObject = eventValue ? JSON.parse(eventValue) : null
-		console.log(typeof eventValueObject)
-		connection.emit(eventName, eventValueObject)
-	}
-
-	function listenForEvent() {
-		const eventName = document.getElementById('event-name-to-listen').value
-
-		const eventsTable = document.getElementById('events-to-listen')
-		eventsTable.innerHTML += `<tr><td></td><td>${eventName}</td></tr>`
-
-
-		connection.on(eventName, packet => {
-			const stringifiedPacket = JSON.stringify(packet)
-			console.log(`Received :${eventName}: event. Value: "${stringifiedPacket}"`)
-			const wsTable = document.getElementById('ws-table')
-
-			wsTable.innerHTML += `<tr><td>Address</td><td>Received</td><td>${eventName}</td><td>${stringifiedPacket}</td></tr>`
-		})
-	}
-</script>
-
-<style>
-
-	table {
-		border-style: solid;
-		width: 100%;
-		max-height: 600px;
-		overflow: scroll;
-	}
-
-	tr {
-		border-style: dashed;
-		border-color: silver;
-	}
-
-	td {
-		border-style: dashed;
-		border-color: silver;
-	}
-
-	body {
-		white-space: pre-line
-	}
-</style>
+<script src='webSocketsTester.js'></script>
+<link rel='stylesheet' type='text/css' href='https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css'>
+<link rel='stylesheet' type='text/css' href='webSocketsTester.css'>
 
 
 Run Chrome with following command line, to make it easier to test LokIM:
 
 google-chrome --disable-web-security --no-first-run --allow-insecure-localhost
+<div class='jumbotron'>
+	<h1 class="display-4">LokIM Websockets Testing Tool</h1>
+	<div class='input-group mb-3'>
+		<div class='input-group-prepend'>
+			<span class='input-group-text'>Username</span>
+		</div>
+		<input type='text' class='form-control' id='username' placeholder="Username" value='test_user'>
+	</div>
+	<div class='input-group mb-3'>
+		<div class='input-group-prepend'>
+			<span class='input-group-text'>Password</span>
+		</div>
+		<input type='text' class='form-control' id='password' placeholder="Password" value='test_password'>
+	</div>
+	<button class='btn btn-success' onclick='wst.authorize()'>Authorize user</button>
+
+	Namespace:
+	<select name='namespace' id='address' class='form-control'></select>
+	<button class='btn btn-success' onclick='wst.connect()'>Connect</button>
+
+	Event type:
+	<select name='Event name' id='event-name-to-send' class='form-control'></select>
+
+	Event value:
+	<textarea id='event-value' class='form-control' rows='10'>
+{
+	"roomId": "test_room"
+}
+	</textarea>
+	<button class='btn btn-success' onclick='wst.sendEvent()'>Emit Event</button>
 
 
-Username: <input id='username' value='test_user'>
-Username: <input id='password' value='test_password'>
+	Listening on below events:
+	<table class='table table-striped'>
+		<thead class='thead-light'>
+			<tr>
+				<th>Event Name</th>
+			</tr>
+		</thead>
+		<tbody id='events-to-listen'>
+			
+		</tbody>
+	</table>
 
-<button onclick='login()'>Authorize user</button>
+	Packets traffic:
+	<table class='table table-striped'>
+		<thead class='thead-light'>
+				<tr>
+					<th>Sent/Received</th> <th>Event name</th> <th>Value</th>
+				</tr>
+		</thead>
+		<tbody id='ws-table'>
 
-
-Address: <input id='address' value='/room'/> <button onclick='connect()'>Connect</button>
-
-Event name: <input id='event-name-to-listen' value='listClients'/> <button onclick='listenForEvent()'>Listen for event</button>
-
-Event name: <input id='event-name-to-send' value='list'/> Event value: <input id='event-value' /> <button onclick='emitEvent()'>Emit Event</button>
-
-
-Listening on below events:
-<table id='events-to-listen'>
-	<tr>
-		<td>Address</td> <td>Event Name</td>
-	</tr>
-</table>
-
-Packets traffic:
-<table id='ws-table'>
-	<tr>
-		<td>Address</td> <td>Sent/Received</td> <td>Event name</td> <td>Value</td>
-	</tr>
-</table>
+		</tbody>
+	</table>
+</div>
