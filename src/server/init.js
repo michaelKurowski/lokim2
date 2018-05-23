@@ -5,7 +5,7 @@ const config = require('./config.json')
 const app = express()
 const httpServer = require('http').Server(app)
 const logger = require('./logger')
-const initializeWebSocketRouting = require('./ws-routes/initializeWebSocketRouting')
+const webSocketRouting = require('./ws-routes/webSocketRouting')
 const io = require('socket.io')(httpServer, {path: '/connection'})
 const passport = require('passport')
 const passportSocketIo = require('passport.socketio')
@@ -21,7 +21,6 @@ const passportStrategyUtils = require('./passport/strategyUtils')
 
 const LocalStrategy = require('passport-local').Strategy
 const sessionStore = new MongoSessionStore({ mongooseConnection: dbConnection} )
-const COOKIE_SESSION_VARIABLE = 'connect.sid'
 
 function init({
 	httpPort = config.httpServer.port
@@ -38,7 +37,7 @@ function init({
 	}
 
 	const websocketCookieSession = {
-		key: COOKIE_SESSION_VARIABLE,
+		key: config.session.cookieName,
 		secret: config.session.secret,
 		store: sessionStore,
 		success: (data, accept) => {
@@ -85,7 +84,7 @@ function init({
 
 	//websocket flow
 	io.use(passportSocketIo.authorize(websocketCookieSession))
-	initializeWebSocketRouting(io)
+	webSocketRouting.initializeWebSocketRouting(io)
 
 	return {
 		app,
