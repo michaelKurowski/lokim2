@@ -2,6 +2,11 @@ const namespaceInfo =  require('../../protocol/protocol.json').users
 const EVENT_TYPES = namespaceInfo.eventTypes
 const logger = require('../../logger')
 const _ = require('lodash')
+
+/**
+ * /Users websocket namespace and its events
+ * @namespace
+ */
 class Users {
 	constructor({
 		UserModel = require('../../models/user')
@@ -13,8 +18,8 @@ class Users {
 	 * @name find
 	 * @memberof Users
 	 * @member
-	 * @param {string} queryPhrase Phrase to match with usernames
-	 * @param {string[]} foundUsernames Found usernames beginning with query phrase
+	 * @property {string} queryPhrase Phrase to match with usernames
+	 * @property {string[]} foundUsernames Found usernames beginning with query phrase
 	 */
 	[EVENT_TYPES.FIND](data, socket) {
 		const {queryPhrase} = data
