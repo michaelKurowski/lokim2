@@ -31,6 +31,7 @@ describe('Room websocket namespace', () => {
 		})
 		suite.server.use(suite.middlewareMock)
 		suite.client = {}
+		suite.roomInstance = new RoomProvider(RoomProvider)
 	})
 
 	afterEach(done => {
@@ -41,7 +42,7 @@ describe('Room websocket namespace', () => {
 	describe('#connection', () => {
 		it('should send joined event when connected', done => {
 			//given
-			suite.server.on(CLIENT_EVENTS.CONNECTION, socket => RoomProvider.connection(socket, suite.connectionsMock))
+			suite.server.on(CLIENT_EVENTS.CONNECTION, socket => suite.roomInstance.connection(socket, suite.connectionsMock))
 
 			//when
 			suite.client = socketClient.connect(SOCKET_URL, SOCKET_OPTIONS)
@@ -55,7 +56,7 @@ describe('Room websocket namespace', () => {
 
 		it('should new entry be added with its key as user name to connections repository when connected', done => {
 			//given
-			suite.server.on(CLIENT_EVENTS.CONNECTION, socket => RoomProvider.connection(socket, suite.connectionsMock))
+			suite.server.on(CLIENT_EVENTS.CONNECTION, socket => suite.roomInstance.connection(socket, suite.connectionsMock))
 
 			//when
 			suite.client = socketClient.connect(SOCKET_URL, SOCKET_OPTIONS)
@@ -74,7 +75,7 @@ describe('Room websocket namespace', () => {
 			//given
 			suite.server.on(CLIENT_EVENTS.CONNECTION, socket => {
 				suite.newSocket = socket
-				RoomProvider.connection(socket, suite.connectionsMock)
+				suite.roomInstance.connection(socket, suite.connectionsMock)
 			})
 
 			//when
@@ -99,7 +100,7 @@ describe('Room websocket namespace', () => {
 
 			suite.server.on(CLIENT_EVENTS.CONNECTION, connection => 
 				connection.on(CLIENT_EVENTS.JOIN, data => 
-					RoomProvider.join(data, connection, suite.connectionsMock)
+					suite.roomInstance.join(data, connection, suite.connectionsMock)
 				)
 			)
 			
@@ -124,7 +125,7 @@ describe('Room websocket namespace', () => {
 			suite.server.on(CLIENT_EVENTS.CONNECTION, connection => {
 				suite.roomJoinSpy = sinon.spy(connection, 'join')
 				connection.on(CLIENT_EVENTS.JOIN, data => 
-					RoomProvider.join(data, connection, suite.connectionsMock)
+					suite.roomInstance.join(data, connection, suite.connectionsMock)
 				)
 			})
 			
@@ -150,7 +151,7 @@ describe('Room websocket namespace', () => {
 
 			suite.server.on(CLIENT_EVENTS.CONNECTION, connection => 
 				connection.on(CLIENT_EVENTS.JOIN, data => 
-					RoomProvider.join(data, connection, suite.connectionsMock)
+					suite.roomInstance.join(data, connection, suite.connectionsMock)
 				)
 			)
 			
@@ -180,7 +181,7 @@ describe('Room websocket namespace', () => {
 			suite.server.on(CLIENT_EVENTS.CONNECTION, connection => {
 				suite.emitSpy = sinon.spy(connection, 'emit')
 				connection.on(CLIENT_EVENTS.MESSAGE, data => {
-					RoomProvider.message(data, connection, suite.connectionsMock)
+					suite.roomInstance.message(data, connection, suite.connectionsMock)
 					then()
 				})
 			})
@@ -209,7 +210,7 @@ describe('Room websocket namespace', () => {
 				suite.emitSpy = sinon.spy(connection, 'emit')
 				suite.toSpy = sinon.spy(connection, 'to')
 				connection.on(CLIENT_EVENTS.MESSAGE, data => {
-					RoomProvider.message(data, connection, suite.connectionsMock)
+					suite.roomInstance.message(data, connection, suite.connectionsMock)
 					then()
 				})
 			})
@@ -237,7 +238,7 @@ describe('Room websocket namespace', () => {
 			suite.server.on(CLIENT_EVENTS.CONNECTION, connection => {
 				suite.emitSpy = sinon.spy(connection, 'emit')
 				connection.on(CLIENT_EVENTS.MESSAGE, data => {
-					RoomProvider.message(data, connection, suite.connectionsMock)
+					suite.roomInstance.message(data, connection, suite.connectionsMock)
 					then()
 				})
 			})
@@ -270,7 +271,7 @@ describe('Room websocket namespace', () => {
 			suite.server.on(CLIENT_EVENTS.CONNECTION, connection => {
 				suite.leaveSpy = sinon.spy(connection, 'leave')
 				connection.on(CLIENT_EVENTS.MESSAGE, data => {
-					RoomProvider.leave(data, connection, suite.connectionsMock)
+					suite.roomInstance.leave(data, connection, suite.connectionsMock)
 					then()
 				})
 			})
@@ -299,7 +300,7 @@ describe('Room websocket namespace', () => {
 				suite.emitSpy = sinon.spy(connection, 'emit')
 				suite.toSpy = sinon.spy(connection, 'to')
 				connection.on(CLIENT_EVENTS.LEAVE, data => {
-					RoomProvider.leave(data, connection, suite.connectionsMock)
+					suite.roomInstance.leave(data, connection, suite.connectionsMock)
 					then()
 				})
 			})
@@ -332,7 +333,7 @@ describe('Room websocket namespace', () => {
 				suite.emitSpy = sinon.spy(connection, 'emit')
 				suite.toSpy = sinon.spy(connection, 'to')
 				connection.on(CLIENT_EVENTS.LEAVE, data => {
-					RoomProvider.leave(data, connection, suite.connectionsMock)
+					suite.roomInstance.leave(data, connection, suite.connectionsMock)
 					then()
 				})
 			})
@@ -366,7 +367,7 @@ describe('Room websocket namespace', () => {
 				suite.emitSpy = sinon.spy(connection, 'emit')
 				suite.newSocket = connection
 				connection.on(CLIENT_EVENTS.CREATE, data => {
-					RoomProvider.create(data, connection, suite.connectionsMock)
+					suite.roomInstance.create(data, connection, suite.connectionsMock)
 				})
 			})
 			
@@ -401,7 +402,7 @@ describe('Room websocket namespace', () => {
 				connection.request.user = {}
 				connection.request.user.username = suite.getUsername()
 				suite[connection.request.user.username] = sinon.spy(connection, 'join')
-				RoomProvider.connection(connection, suite.connectionsMock)
+				suite.roomInstance.connection(connection, suite.connectionsMock)
 
 				connection.on(CLIENT_EVENTS.CREATE, data => {
 					Promise.all([
@@ -409,7 +410,7 @@ describe('Room websocket namespace', () => {
 						new Promise(resolve => suite.clientB.on(CLIENT_EVENTS.JOIN, resolve))
 					]).then(then)
 
-					RoomProvider.create(data, connection, suite.connectionsMock)
+					suite.roomInstance.create(data, connection, suite.connectionsMock)
 				})
 			})
 			
@@ -456,11 +457,11 @@ describe('Room websocket namespace', () => {
 
 			suite.server.on(CLIENT_EVENTS.CONNECTION, connection => {
 				connection.on(CLIENT_EVENTS.JOIN, data => 
-					RoomProvider.join(data, connection, suite.connectionsMock)
+					suite.roomInstance.join(data, connection, suite.connectionsMock)
 				)
 
 				connection.on(CLIENT_EVENTS.MESSAGE, data => 
-					RoomProvider.message(data, connection, suite.connectionsMock)
+					suite.roomInstance.message(data, connection, suite.connectionsMock)
 				)
 			})
 			
@@ -513,11 +514,11 @@ describe('Room websocket namespace', () => {
 				connection.request.user = {}
 				connection.request.user.username = suite.getUsername()
 				connection.on(CLIENT_EVENTS.JOIN, data => 
-					RoomProvider.join(data, connection, suite.connectionsMock)
+					suite.roomInstance.join(data, connection, suite.connectionsMock)
 				)
 
 				connection.on(CLIENT_EVENTS.LIST_MEMBERS, data => 
-					RoomProvider[CLIENT_EVENTS.LIST_MEMBERS](data, connection, suite.connectionsMock)
+					suite.roomInstance[CLIENT_EVENTS.LIST_MEMBERS](data, connection, suite.connectionsMock)
 				)
 			})
 			
