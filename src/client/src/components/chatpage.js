@@ -19,7 +19,7 @@ class ChatPage extends React.Component {
 			messages: [],
 			selectedRoom: '',
 			username: _.get(initProps, 'username', null),
-			userRooms: []
+			userRooms: new Map()
 		}
 
 		this.handleUserInput = this.handleUserInput.bind(this)
@@ -50,15 +50,15 @@ class ChatPage extends React.Component {
 		console.log('List users', data)
 		const {roomId, usernames} = data
 		console.log(usernames)
-		this.setState({userRooms: this.state.userRooms.concat({roomId, usernames})})
+		this.setState({userRooms: this.state.userRooms.set(roomId, usernames)})
 	}
 	updateJoinedRooms(data) {
 		const {roomId} = data
 		const usernames = data.username
-		this.setState({userRooms: this.state.userRooms.concat({roomId, usernames})})
+		console.log('Link to LIST OF USERS')
+		this.setState({userRooms: this.state.userRooms.set(roomId, usernames)})
 	}
-	changeSelectedRoom(roomDetails) {
-		const roomId = roomDetails
+	changeSelectedRoom(roomId) {
 		socket.emit(protocols.LIST_MEMBERS, {roomId: this.state.selectedRoom})
 		this.setState({selectedRoom: roomId}, () =>  this.updateMessageState({roomId}))
 	}
@@ -79,10 +79,9 @@ class ChatPage extends React.Component {
 		}
 	}
 	findUsersOfRoom(roomId) {
-		const roomObject = this.state.userRooms.find(room => room.roomId === roomId)
-		const result =  roomObject ? roomObject.usernames : null
-		console.log(roomId, result)
-		return result
+		const usernames = this.state.userRooms.get(roomId)
+		console.log('Find Users:', roomId, usernames)
+		return usernames || 'None'
 	}
 	generateMessages() {
 		if(!this.state.selectedRoom) return <h6>Please join a room before attempting to load messages</h6>
@@ -95,15 +94,28 @@ class ChatPage extends React.Component {
 	}
 	generateRooms() {
 		if(_.isEmpty(this.state.userRooms)) return
-		return this.state.userRooms.map(
-			(e, i) => 
-				<Room 
-					key={i}
-					name={`Room #${i}`}
-					ID={e.roomId}
-					onClick={() => this.changeSelectedRoom(e.roomId)}
-				/>
-		)
+
+		let rooms = []
+		for(let key of this.state.userRooms.keys()){
+			rooms.push(<Room
+							key={key}
+							name={`Room #${rooms.length + 1}`}
+							ID={key}
+							onClick={() => this.changeSelectedRoom(key)}
+					/>
+				)
+		}
+		console.log(rooms)
+		return rooms
+		// return this.state.userRooms.map(
+		// 	(e, i) => 
+		// 		<Room 
+		// 			key={i}
+		// 			name={`Room #${i}`}
+		// 			ID={e.roomId}
+		// 			onClick={() => this.changeSelectedRoom(e.roomId)}
+		// 		/>
+		// )
 	}
 	handleUserInput(event) {
 		this.setState({input: event.target.value})
@@ -148,7 +160,7 @@ class ChatPage extends React.Component {
 						<h4>Room Information/Etc </h4>
 						<ConnectStatus connection={this.state.connected}/>
 						<h6>Current Room: {this.state.selectedRoom}</h6>
-						<h6>Users in current room: {this.state.selectedRoom ? this.state.userRooms.find(room => room.roomId === this.state.selectedRoom).usernames : ''}</h6>
+						<h6>Users in current room: {this.findUsersOfRoom(this.state.selectedRoom)}</h6>
 						<Link className='btn btn-danger' to={HOMEPAGE_PATH}>Logout</Link>
 					</div>
 				</div>
