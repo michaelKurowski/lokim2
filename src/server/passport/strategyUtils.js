@@ -7,7 +7,7 @@ const FIELDS_NAMES = {
 	PASSWORD_FIELD: 'password'
 }
 
-function strategyHandlers(req, res, next) {
+function strategyHandlers(req, res) {
 	const serializeHandler = (err) => {
 		if (err) return responseManager.sendResponse(res, err)
 		
