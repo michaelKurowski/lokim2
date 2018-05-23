@@ -21,15 +21,15 @@ class Utilities {
 		}
 	}
 
-	static createWebsocketRoute(io, namespaceInfo, controllersBundle, connectionsRepository) {
+	static createWebsocketRoute(io, namespaceInfo, ControllerClass, connectionsRepository) {
 		if (!namespaceInfo.name || !namespaceInfo.eventTypes)
 			throw new Error(`${JSON.stringify(namespaceInfo)} is not a valid namespace protcol object`)
 		io.of(namespaceInfo.name)
-			.on('connection', bindEventListenersToSocket(namespaceInfo, controllersBundle, connectionsRepository))
+			.on('connection', bindEventListenersToSocket(namespaceInfo, ControllerClass, connectionsRepository))
 	}
 }
 
-function bindEventListenersToSocket(namespaceInfo, controllersBundle, connectionsRepository) {
+function bindEventListenersToSocket(namespaceInfo, ControllerClass, connectionsRepository) {
 	return socket => {
 		const eventTypes = _.values(namespaceInfo.eventTypes)
 		const serverEventTypes = _.values(namespaceInfo.serverEventTypes)
@@ -41,20 +41,21 @@ function bindEventListenersToSocket(namespaceInfo, controllersBundle, connection
 			|| doesServerEventListContainDuplicates)
 			throw new Error(`Event types of "${namespaceInfo.name}" contain duplicates.`)
 
-		_.forEach(eventTypes, setEventListener(socket, controllersBundle, connectionsRepository, namespaceInfo))
+		const controller = new ControllerClass()
+		_.forEach(eventTypes, setEventListener(socket, controller, connectionsRepository, namespaceInfo))
 	}
 }
 
-function runConnectionEventHandler(socketToPass, controllersBundle, connectionsRepository) {
-	controllersBundle.connection(socketToPass, connectionsRepository)
+function runConnectionEventHandler(socketToPass, controller, connectionsRepository) {
+	controller.connection(socketToPass, connectionsRepository)
 }
 
-function setEventListener(socket, controllersBundle, connectionsRepository, namespaceInfo) {
+function setEventListener(socket, controller, connectionsRepository, namespaceInfo) {
 	return eventType => {
-		if (!controllersBundle[eventType]) throw new Error(`Can't find event "${eventType}" in controller of namespace "${namespaceInfo.name}"`)
+		if (!controller[eventType]) throw new Error(`Can't find event "${eventType}" in controller of namespace "${namespaceInfo.name}"`)
 		if (eventType === 'connection')
-			return runConnectionEventHandler(socket, controllersBundle, connectionsRepository)
-		socket.on(eventType, data => controllersBundle[eventType](data, socket, connectionsRepository))
+			return runConnectionEventHandler(socket, controller, connectionsRepository)
+		socket.on(eventType, data => controller[eventType](data, socket, connectionsRepository))
 	}
 }
 

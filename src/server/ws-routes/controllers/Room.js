@@ -103,7 +103,7 @@ class Room {
 	 * @property {string[]} usernames Users in the probed room (only for server-sourced emits)
 	*/
 
-	async [EVENT_TYPES.LIST_MEMBERS](data, socket) {
+	[EVENT_TYPES.LIST_MEMBERS](data, socket) {
 		const timestamp = new Date().getTime()
 		const roomId = data.roomId
 		const room = socket.nsp.in(roomId)

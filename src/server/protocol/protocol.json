@@ -9,5 +9,11 @@
 			"CONNECTION": "connection",
 			"LIST_MEMBERS": "listMembers"
 		}
+	},
+	"users": {
+		"name": "users",
+		"eventTypes": {
+			"FIND": "find"
+		}
 	}
 }
