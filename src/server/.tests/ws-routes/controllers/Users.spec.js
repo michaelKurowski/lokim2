@@ -1,4 +1,4 @@
-const RoomProvider = require('../../../ws-routes/controllers/Users')
+//const UsersProvider = require('../../../ws-routes/controllers/Users')
 const sinon = require('sinon')
 
 let suite = {}
