@@ -52,12 +52,12 @@ describe('<ChatPage />', () => {
 		it('Should render HomePage when no username is provided', () => {
 			const context = createRouterContext({ location: {pathname: '/chat' }})
 			const wrapper = mount(
-			<BrowserRouter>
-				<Switch>
-					<Route path='/' component={HomePage} />
-					<Route path='/chat' component={ChatPage} /> 
-				</Switch>
-			</BrowserRouter>, context)
+				<BrowserRouter>
+					<Switch>
+						<Route path='/' component={HomePage} />
+						<Route path='/chat' component={ChatPage} /> 
+					</Switch>
+				</BrowserRouter>, context)
 			const EXPECTED_DATA = wrapper.instance().history.location.pathname
 			expect(EXPECTED_DATA).toBe(HOME_PATH)
 		})
