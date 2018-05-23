@@ -33,13 +33,13 @@ class ChatPage extends React.Component {
 		socket.on(protocols.MESSAGE, this.handleMessageEvent)
 		socket.on(protocols.JOIN, this.handleJoinEvent)
 	}
-	handleConnectionEvent(){
+	handleConnectionEvent() {
 		this.setState({connected: true})
 	}
-	handleMessageEvent(data){
+	handleMessageEvent(data) {
 		this.updateMessageState(data)
 	}
-	handleJoinEvent(data){
+	handleJoinEvent(data) {
 		this.updateJoinedRooms(data)
 	}
 	updateJoinedRooms(data) {

@@ -35,13 +35,12 @@ class Register extends React.Component {
 		fetch(REGISTER_URL, {
 			method: POST, headers,
 			body: JSON.stringify({username, password, email})
-		})
-			.then(response => {
-				/* istanbul ignore next */ 
-				if(response.status === SUCCESS_CODE) {
-					this.setState({successfulRegister: true})
-				}
-			}).catch(err => console.log(err))
+		}).then(response => {
+			/* istanbul ignore next */ 
+			if(response.status === SUCCESS_CODE) {
+				this.setState({successfulRegister: true})
+			}
+		}).catch(err => err)
 	}
 	render() {
 		if(this.state.successfulRegister) {
