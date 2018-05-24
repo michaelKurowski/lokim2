@@ -1,4 +1,4 @@
-const logOutUser = require('../../../routes/controllers/logOutUser')
+const logOutUser = require('../../../routes/controllers/logOutUser')()
 const sinon = require('sinon')
 const httpMocks = require('node-mocks-http')
 const assert = require('chai').assert
@@ -8,7 +8,6 @@ let suite = {}
 describe('logOutUser', () => {
 	beforeEach(() => {
 		suite = {}
-		suite.logOutUserMock = logOutUser()
 		suite.responseMock = httpMocks.createResponse({
 			eventEmitter: EventEmitter
 		})
@@ -19,7 +18,7 @@ describe('logOutUser', () => {
 		const requestMock = sinon.stub()
 
 		//when
-		suite.logOutUserMock(requestMock, suite.responseMock)
+		logOutUser(requestMock, suite.responseMock)
 
 		//then
 		const responseBody = suite.responseMock._getData()
@@ -35,17 +34,13 @@ describe('logOutUser', () => {
 	})
 
 	describe('#logout when user has open session', () => {
-		beforeEach(() => {
-			
-		})
-
 		it('should respond logout user success, when Websocket disconnection was successfully finished ', () => {
 			//given
-			const destroySessionFailure = false
-			const requestMock = createRequestMock(destroySessionFailure)
+			const DID_LOGGING_OUT_FAILED = false
+			const requestMock = createRequestMock(DID_LOGGING_OUT_FAILED)
 
 			//when
-			suite.logOutUserMock(requestMock, suite.responseMock)
+			logOutUser(requestMock, suite.responseMock)
 
 			//then
 			const responseBody = suite.responseMock._getData()
@@ -60,13 +55,13 @@ describe('logOutUser', () => {
 			assert.strictEqual(responseStatusCode, expectedStatusCode)
 		})
 		
-		it('should respond bad request, when was error during session destroying', () => {
+		it('should respond bad request, when there was error during session destroying', () => {
 			//given
-			const destroySessionFailure = true
-			const requestMock = createRequestMock(destroySessionFailure)
+			const DID_LOGGING_OUT_FAILED = true
+			const requestMock = createRequestMock(DID_LOGGING_OUT_FAILED)
 	
 			//when
-			suite.logOutUserMock(requestMock, suite.responseMock)
+			logOutUser(requestMock, suite.responseMock)
 	
 			//then
 			const responseBody = suite.responseMock._getData()
@@ -87,7 +82,7 @@ describe('logOutUser', () => {
 function createRequestMock(destroySessionFailure) {
 	return {
 		session: {
-			destroy: (callbackMock) => callbackMock(destroySessionFailure)
+			destroy: (onSessionDestroy) => onSessionDestroy(destroySessionFailure)
 		},
 		user: {
 			username: 'Rick'

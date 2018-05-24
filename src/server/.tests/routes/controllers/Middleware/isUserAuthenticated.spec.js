@@ -1,4 +1,4 @@
-const isUserAuthenticated = require('../../../../routes/controllers/Middleware/isUserAuthenticated')
+const isUserAuthenticated = require('../../../../routes/controllers/Middleware/isUserAuthenticated')()
 const assert = require('chai').assert
 const sinon = require('sinon')
 const httpMocks = require('node-mocks-http')
@@ -9,7 +9,6 @@ let suite = {}
 describe('isUserAuthenticated', () => {
 	beforeEach(() => {
 		suite = {}
-		suite.isUserAuthenticatedMock = isUserAuthenticated(suite.passportMock)
 		suite.nextSpy = sinon.spy()
 		suite.responseMock = httpMocks.createResponse({
 			eventEmitter: EventEmitter
@@ -22,20 +21,20 @@ describe('isUserAuthenticated', () => {
 		}
 
 		//when
-		suite.isUserAuthenticatedMock(requestMock, suite.responseMock, suite.nextSpy)
+		isUserAuthenticated(requestMock, suite.responseMock, suite.nextSpy)
 
 		//then
 		assert.isTrue(suite.nextSpy.calledOnce)
 	})
 
-	it('should respond with user unathorized description and 401 status code ', () => {
+	it('should respond with user unathorized description and 401 status code when user is not authorized ', () => {
 		//given
 		const requestMock = {
 			isAuthenticated: () => false
 		}
 			
 		//when
-		suite.isUserAuthenticatedMock(requestMock, suite.responseMock, suite.nextSpy)
+		isUserAuthenticated(requestMock, suite.responseMock, suite.nextSpy)
 	
 		//then
 		const expectedBody = JSON.stringify({
