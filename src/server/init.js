@@ -12,8 +12,6 @@ const LocalStrategy = require('passport-local').Strategy
 const mongoSanitize = require('express-mongo-sanitize')
 const util = require('util')
 const MongoSessionStore = require('connect-mongo')(expressSession)
-const COOKIE_SESSION_VARIABLE = 'connect.sid'
-const cors = require('cors')
 let logger
 async function init({
 	httpPort
