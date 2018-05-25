@@ -1,2 +1,0 @@
-{"level":"error","message":"Failed to run application:  Database username can't be empty: expected '' not to be empty for details set LOG_LEVEL OS variable to \"debug\"","timestamp":"2018-05-12T19:27:34.741Z"}
-{"level":"error","message":"Failed to connect to database: MongoNetworkError: failed to connect to server [localhost:27017] on first connect [MongoNetworkError: connect ECONNREFUSED 127.0.0.1:27017]","timestamp":"2018-05-12T19:27:34.751Z"}
