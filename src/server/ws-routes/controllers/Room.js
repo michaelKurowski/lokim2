@@ -111,7 +111,7 @@ class Room {
 			.then(clients => {
 				const usernames = _.map(clients, socketId => 
 					getUsername(room.connected[socketId]))
-				socket.to(roomId).emit(EVENT_TYPES.LIST_MEMBERS,
+				socket.emit(EVENT_TYPES.LIST_MEMBERS,
 					{roomId, timestamp, usernames})
 			})
 			.catch(err => logger.error(err))
