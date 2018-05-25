@@ -12,6 +12,7 @@
 		"logLevel": "info"
 	},
 	"session": {
+		"cookieName": "connect.sid",
 		"secret": "default",
 		"resave": false,
 		"saveUninitialized": true,

@@ -1,14 +1,15 @@
 const express = require('express')
 const router = express.Router()
 const registerController = require('./controllers/register')
-const logInUser = require('./controllers/Middlewares/logInUser')
-const responseManager = require('./controllers/utilities/responseManager')
+const logInUser = require('./controllers/logInUser')
+const logOutUser = require('./controllers/logOutUser')
+const isUserAuthenticated = require('./controllers/Middleware/isUserAuthenticated')
 const config = require('../config.json')
 const path = require('path')
 
 router.post('/register', registerController.post())
-router.post('/login', logInUser(), 
-	(req, res) => responseManager.sendResponse(res, responseManager.MESSAGES.successes.OK))
+router.post('/login', logInUser())
+router.post('/logout', isUserAuthenticated(), logOutUser())
 
 router.use('/protocol', express.static(path.join(process.cwd(), '/protocol')))
 if (config.devPropeties.devMode) 

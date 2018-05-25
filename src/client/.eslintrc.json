@@ -7,7 +7,8 @@
 	},
 	
 	"extends": [
-		"eslint:recommended"
+		"eslint:recommended",
+		"plugin:react/recommended"
 	],
 	"rules": {
 		"indent": [
@@ -34,7 +35,8 @@
 		"no-multiple-empty-lines": ["error", { "max": 2}]
 	},
 	"plugins": [
-		"no-only-tests"
+		"no-only-tests",
+		"eslint-plugin-react"
 	],
 	"parserOptions": {
 		"ecmaVersion": 2018,

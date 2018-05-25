@@ -3,6 +3,7 @@ const express = require('express')
 const app = express()
 const httpServer = require('http').Server(app)
 const bodyParser = require('body-parser')
+
 const io = require('socket.io')(httpServer, {path: '/connection'})
 const passport = require('passport')
 const passportSocketIo = require('passport.socketio')
@@ -12,7 +13,7 @@ const mongoSanitize = require('express-mongo-sanitize')
 const util = require('util')
 const MongoSessionStore = require('connect-mongo')(expressSession)
 const COOKIE_SESSION_VARIABLE = 'connect.sid'
-
+const cors = require('cors')
 let logger
 async function init({
 	httpPort
@@ -33,7 +34,7 @@ async function init({
 	const config = require('./config.json')
 	httpPort = httpPort || config.httpServer.port
 	const router = require('./routes/router')
-	const initializeWebSocketRouting = require('./ws-routes/initializeWebSocketRouting')
+	const webSocketRouting = require('./ws-routes/webSocketRouting')
 	const passportStrategies = require('./passport/strategies')
 	const passportStrategyUtils = require('./passport/strategyUtils')
 	const dbConnection = require('./dbConnection')
@@ -50,7 +51,7 @@ async function init({
 	}
 
 	const websocketCookieSession = {
-		key: COOKIE_SESSION_VARIABLE,
+		key: config.session.cookieName,
 		secret: config.session.secret,
 		store: sessionStore,
 		success: (data, accept) => {
@@ -97,7 +98,7 @@ async function init({
 
 	//websocket flow
 	io.use(passportSocketIo.authorize(websocketCookieSession))
-	initializeWebSocketRouting(io)
+	webSocketRouting.initializeWebSocketRouting(io)
 
 	return {
 		app,

@@ -1,5 +1,5 @@
 const React = require('react')
-const {Link} = require('react-router-dom')
+const {Redirect, Link} = require('react-router-dom')
 const _ = require('lodash')
 const ConnectStatus = require('./connectStatus')
 const Room = require('./room')
@@ -12,34 +12,39 @@ const USERNAMES_PLACEHOLDER = ''
 class ChatPage extends React.Component {
 	constructor(props) {
 		super(props)
+		const initProps = this.props.location.state
 		this.state = {
 			connected: false,
 			input: '',
 			messages: [],
 			selectedRoom: '',
-			username: this.props.location.state.username,
+			username: _.get(initProps, 'username', null),
 			userRooms: []
 		}
 
 		this.handleUserInput = this.handleUserInput.bind(this)
 		this.sendMessage = this.sendMessage.bind(this)
+		this.handleConnectionEvent = this.handleConnectionEvent.bind(this)
+		this.handleMessageEvent = this.handleMessageEvent.bind(this)
+		this.handleJoinEvent = this.handleJoinEvent.bind(this)
 	}
 	componentDidMount() {
-		/* istanbul ignore next */
-		socket.on(protocols.CONNECTION, () => this.setState({connected: true}))
-		/* istanbul ignore next */
-		socket.on(protocols.MESSAGE, data => this.updateMessageState(data))
-		/* istanbul ignore next */
-		socket.on(protocols.JOIN, data => this.updateJoinedRooms(data))
-		/* istanbul ignore next */
+		socket.on(protocols.CONNECTION, this.handleConnectionEvent)
+		socket.on(protocols.MESSAGE, this.handleMessageEvent)
+		socket.on(protocols.JOIN, this.handleJoinEvent)
 	}
-	componentWillUnmount() {
-		/* istanbul ignore next */
-		socket.disconnect()
+	handleConnectionEvent() {
+		this.setState({connected: true})
+	}
+	handleMessageEvent(data) {
+		this.updateMessageState(data)
+	}
+	handleJoinEvent(data) {
+		this.updateJoinedRooms(data)
 	}
 	updateJoinedRooms(data) {
 		const {roomId} = data
-		const usernames = data.usernames
+		const usernames = data.username
 		this.setState({userRooms: this.state.userRooms.concat({roomId, usernames})})
 	}
 	changeSelectedRoom(roomDetails) {
@@ -77,13 +82,13 @@ class ChatPage extends React.Component {
 	}
 	generateRooms() {
 		if(_.isEmpty(this.state.userRooms)) return
-		this.state.userRooms.map(
+		return this.state.userRooms.map(
 			(e, i) => 
 				<Room 
 					key={i}
 					name={`Room #${i}`}
 					ID={e.roomId}
-					onClick={() => this.changeSelectedRoom(e)}
+					onClick={this.changeSelectedRoom}
 				/>
 		)
 	}
@@ -102,6 +107,9 @@ class ChatPage extends React.Component {
 		throw new Error('No room selected || input field is empty.')
 	}
 	render() {
+		/* istanbul ignore next */
+		if(!this.state.username) return <Redirect to={HOMEPAGE_PATH}/>
+		
 		return(
 			<div className='container-fluid'>
 				<div className='row'>
