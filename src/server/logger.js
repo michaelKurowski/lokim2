@@ -5,7 +5,7 @@ const path = require('path')
 const fs = require('fs')
 const consoleOutput = winston.transports.Console
 const fileOutput = winston.transports.File
-const logsFilePath = path.resolve(`${__dirname}/logs/${config.logFile}`)
+const logsFilePath = path.resolve(`${__dirname}/logs/${config.logging.fileName}`)
 const logsDirectoryPath = path.resolve(`${__dirname}/logs/`)
 
 
@@ -13,7 +13,7 @@ if (!fs.existsSync(logsDirectoryPath)) fs.mkdirSync( logsDirectoryPath )
 
 module.exports = new Logger({
 	transports: [
-		new consoleOutput(),
+		new consoleOutput({ level: config.logging.logLevel }),
 		new fileOutput({filename: logsFilePath})
 	]
 })
