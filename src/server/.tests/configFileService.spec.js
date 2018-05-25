@@ -139,6 +139,7 @@ describe('Config file service', () => {
 				},
 				session: {
 					secret: 'jetFuelCantMeltSteelBeams',
+					cookieName: 'connection.sid',
 					resave: false,
 					saveUninitialized: true,
 					cookie: {
@@ -191,6 +192,11 @@ describe('Config file service', () => {
 		})
 	
 		describe('Session settings', () => {
+			it('should throw error when cookie name is empty', () => {
+				suite.configMock.session.cookieName = ''
+				assert.throws(suite.invokeValidateFields, ERROR_MESSAGES.SESSION.EMPTY_COOKIE_NAME)
+			})
+
 			it('should throw error when secret is empty', () => {
 				suite.configMock.session.secret = ''
 				assert.throws(suite.invokeValidateFields, ERROR_MESSAGES.SESSION.EMPTY_SECRET)

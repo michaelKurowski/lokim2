@@ -13,6 +13,7 @@
 	},
 	"SESSION": {
 		"EMPTY_SECRET": "Session's secret can't be empty",
+		"EMPTY_COOKIE_NAME": "Session's cookie name can't be empty",
 		"WRONG_RESAVE": "Session's resave option must be boolean",
 		"WRONG_SAVE_UNINITIALIZED": "Session's wrong uninitialized option must be boolean",
 		"COOKIE": {

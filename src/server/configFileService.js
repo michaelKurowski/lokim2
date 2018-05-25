@@ -59,6 +59,7 @@ function validateHttpServerConfig(httpServer) {
 
 function validateSessionConfig(session) {
 	assert.isNotEmpty(session.secret, ERROR_MESSAGES.SESSION.EMPTY_SECRET)
+	assert.isNotEmpty(session.cookieName, ERROR_MESSAGES.SESSION.EMPTY_COOKIE_NAME)
 	assert.isBoolean(session.resave, ERROR_MESSAGES.SESSION.WRONG_RESAVE)
 	assert.isBoolean(session.saveUninitialized, ERROR_MESSAGES.SESSION.WRONG_SAVE_UNINITIALIZED)
 	validateCookieConfig(session.cookie)
