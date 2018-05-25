@@ -1,13 +1,13 @@
 const responseManager = require('./responseManager')
 
-function LogInUtilities(req, res) {
+function initializeLoginHandlers(req, res) {
 	const isSuccessfullyLoggedIn = (err) => {
 		if (err) return responseManager.sendResponse(res, err)
 		
 		return responseManager.sendResponse(res, responseManager.MESSAGES.successes.OK)
 	}
 
-	const proceedLogIn = (err, user) => {
+	const loginHandler = (err, user) => {
 		if (err)
 			return responseManager.sendResponse(res, err)
 
@@ -17,10 +17,7 @@ function LogInUtilities(req, res) {
 			return responseManager.sendResponse(res, responseManager.MESSAGES.errors.BAD_REQUEST)
 	}
 
-	return {
-		isSuccessfullyLoggedIn,
-		proceedLogIn
-	}		
+	return loginHandler		
 }
 
-module.exports = LogInUtilities
+module.exports = initializeLoginHandlers

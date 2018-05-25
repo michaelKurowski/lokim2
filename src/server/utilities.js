@@ -25,8 +25,8 @@ class Utilities {
 	static disconnectWebSockets(res, username, connectionRepository) {
 		const userSocket = connectionRepository.usersToConnectionsMap.get(username)
 		if(userSocket) {
-			const disconnectUser = true
-			userSocket.disconnect(disconnectUser)
+			const DISCONNECT_FROM_ALL_NAMESPACES = true
+			userSocket.disconnect(DISCONNECT_FROM_ALL_NAMESPACES)
 			res.clearCookie(WEBSOCKET_COOKIE_NAME)
 		}
 	}
