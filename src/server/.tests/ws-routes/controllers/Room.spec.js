@@ -537,10 +537,9 @@ describe('Room websocket service', () => {
 			//then
 			Promise.all([clientAJoinedRoom, clientBJoinedRoom])
 				.then(() => {
-					suite.clientA.emit(CLIENT_EVENTS.LIST_MEMBERS, messageMock)}
-				)
-
-			suite.clientA.on(CLIENT_EVENTS.LIST_MEMBERS, then)
+					suite.clientA.on(CLIENT_EVENTS.LIST_MEMBERS, then)
+					suite.clientA.emit(CLIENT_EVENTS.LIST_MEMBERS, messageMock)
+				})
 
 			function then(data) {
 				const EXPECTED_USERNAMES = [USER_A_USERNAME, USER_B_USERNAME]
