@@ -1,5 +1,6 @@
 const crypto = require('crypto')
 const _ = require('lodash')
+const WEBSOCKET_COOKIE_NAME = 'io'
 class Utilities {
 
 	static generateSalt (size) {
@@ -18,6 +19,15 @@ class Utilities {
 	static createMessage(textMessage) {
 		return {
 			description: textMessage
+		}
+	}
+
+	static disconnectWebSockets(res, username, connectionRepository) {
+		const userSocket = connectionRepository.usersToConnectionsMap.get(username)
+		if(userSocket) {
+			const DISCONNECT_FROM_ALL_NAMESPACES = true
+			userSocket.disconnect(DISCONNECT_FROM_ALL_NAMESPACES)
+			res.clearCookie(WEBSOCKET_COOKIE_NAME)
 		}
 	}
 

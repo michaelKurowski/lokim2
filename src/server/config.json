@@ -13,6 +13,7 @@
         "listeningPort": 5001
     },
 	"session": {
+		"cookieName": "connect.sid",
 		"secret": "",
 		"resave": false,
 		"saveUninitialized": true,

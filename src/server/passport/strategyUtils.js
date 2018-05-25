@@ -7,29 +7,6 @@ const FIELDS_NAMES = {
 	PASSWORD_FIELD: 'password'
 }
 
-function strategyHandlers(req, res, next) {
-	const serializeHandler = (err) => {
-		if (err) return responseManager.sendResponse(res, err)
-		
-		next()
-	}
-
-	const loginStrategyHandler = (err, user) => {
-		if (err)
-			return responseManager.sendResponse(res, err)
-
-		if (user)	
-			req.logIn(user, serializeHandler)
-		else
-			return responseManager.sendResponse(res, responseManager.MESSAGES.errors.BAD_REQUEST)
-	}
-
-	return {
-		serializeHandler,
-		loginStrategyHandler
-	}		
-}
-
 function validateUserPassword(user, password) {
 	const hash = Utilities.createSaltedHash(user.salt, password)
 	const hashedPassword = user.password
@@ -40,6 +17,5 @@ function validateUserPassword(user, password) {
 module.exports = {
 	FIELDS_NAMES,
 	STRATEGY_NAME,
-	strategyHandlers,
 	validateUserPassword
 }
