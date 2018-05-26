@@ -9,11 +9,11 @@ const logger = require('../../logger')
  * @namespace
  */
 class Room {
-	static [EVENT_TYPES.CONNECTION](socket, connections) {
+	[EVENT_TYPES.CONNECTION](socket, connections) {
 		const username = socket.request.user.username
 		const roomId = uuidv4()
 		connections.usersToConnectionsMap.set(username, socket)
-		Room.join({roomId}, socket, connections)
+		this.join({roomId}, socket, connections)
 	}
 
 	/**
@@ -26,7 +26,7 @@ class Room {
 	 * @property {module:dataTypes.timestamp} timestamp Timestamp of when server acknowledged that user joined the room (only for server-sourced emits)
 	 */
 
-	static [EVENT_TYPES.JOIN](data, socket) {
+	[EVENT_TYPES.JOIN](data, socket) {
 		const {roomId} = data
 		const username = socket.request.user.username
 		const timestamp = new Date().getTime()
@@ -34,7 +34,7 @@ class Room {
 		socket.join(roomId, () => {
 			socket.emit(EVENT_TYPES.JOIN, {username, roomId, timestamp})
 			socket.to(roomId).emit(EVENT_TYPES.JOIN, {username, roomId, timestamp})
-			Room.listMembers(data, socket)
+			this.listMembers(data, socket)
 		})
 		
 	}
@@ -50,7 +50,7 @@ class Room {
 	 * @property {module:dataTypes.timestamp} timestamp Timestamp of when server acknowledged that message has been send (only for server-sourced emits)
 	 */
 
-	static [EVENT_TYPES.MESSAGE](data, socket) {
+	[EVENT_TYPES.MESSAGE](data, socket) {
 		const {roomId, message} = data
 		const username = socket.request.user.username
 		const timestamp = new Date().getTime()
@@ -68,7 +68,7 @@ class Room {
 	 * @property {module:dataTypes.timestamp} timestamp Timestamp of when server acknowledged that user left the room (only for server-sourced emits)
 	 */
 
-	static [EVENT_TYPES.LEAVE](data, socket) {
+	[EVENT_TYPES.LEAVE](data, socket) {
 		const {roomId} = data
 
 		const timestamp = new Date().getTime()
@@ -85,12 +85,12 @@ class Room {
 	 * @property {string[]} invitedUsersIndexes List of users usernames
 	 */
 
-	static [EVENT_TYPES.CREATE](data, socket, connections) {
+	[EVENT_TYPES.CREATE](data, socket, connections) {
 		const {invitedUsersIndexes} = data
 		const roomId = uuidv4()
 
-		Room.join({roomId}, socket, connections)
-		joinUsersToRoom(invitedUsersIndexes, roomId, connections)
+		this.join({roomId}, socket, connections)
+		joinUsersToRoom(invitedUsersIndexes, roomId, connections, this)
 	}
 
 	/**
@@ -103,7 +103,7 @@ class Room {
 	 * @property {string[]} usernames Users in the probed room (only for server-sourced emits)
 	*/
 
-	static async [EVENT_TYPES.LIST_MEMBERS](data, socket) {
+	[EVENT_TYPES.LIST_MEMBERS](data, socket) {
 		const timestamp = new Date().getTime()
 		const roomId = data.roomId
 		const room = socket.nsp.in(roomId)
@@ -127,10 +127,10 @@ function getUsername(socket) {
 	return socket.request.user.username
 }
 
-function joinUsersToRoom(invitedUsersIndexes, roomId, connections) {
+function joinUsersToRoom(invitedUsersIndexes, roomId, connections, controller) {
 	_.forEach(invitedUsersIndexes, username => {
 		const invitedUserSocket = connections.usersToConnectionsMap.get(username)
-		if (invitedUserSocket) Room.join({roomId}, invitedUserSocket, connections)
+		if (invitedUserSocket) controller.join({roomId}, invitedUserSocket, connections)
 	})
 }
 

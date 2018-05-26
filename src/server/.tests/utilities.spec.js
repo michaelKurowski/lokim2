@@ -148,7 +148,7 @@ describe('utilities.js', () => {
 		it('should not throw error about lack of event type handler when there\'s event type handler for described event type in protocol', () => {
 			//given
 			suite.controllersBundle = class {
-				static coolEventType() {
+				coolEventType() {
 
 				}
 			}
@@ -179,9 +179,10 @@ describe('utilities.js', () => {
 
 		it('should invoke connection event handler with socket and connections map during creating a routing for new incoming connection', () => {
 			//given
-			suite.controllersBundle = {
-				connection: sinon.spy()
-			}
+			const controllerInstanceMock = {connection() {}}
+			suite.controllersBundle = sinon.stub().returns(controllerInstanceMock)
+
+			sinon.spy(controllerInstanceMock, 'connection')
 			suite.protocol = {
 				dummyNamespace: {
 					name: 'dummyNamespace',
@@ -200,7 +201,7 @@ describe('utilities.js', () => {
 			)
 
 			//then
-			sinon.assert.calledWith(suite.controllersBundle.connection, suite.socketMock, suite.connectionsRepository)
+			sinon.assert.calledWith(controllerInstanceMock.connection, suite.socketMock, suite.connectionsRepository)
 		})
 	})
 })
