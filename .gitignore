@@ -1,6 +1,8 @@
 src/server/node_modules
 src/client/node_modules
 src/server/.nyc_output
+src/server/logs/**
 **/.DS_Store
 **/*.log
 src/server/out
+src/server/config.json

@@ -2,19 +2,18 @@
 	"database": {
 		"username": "",
 		"password": "",
-		"host": ""
+		"host": "localhost"
 	},
 	"httpServer": {
 		"port": 5000
 	},
-	"logFile" : "logs.log",
-    "gitIntegration": {
-        "branch": "master",
-        "listeningPort": 5001
-    },
+	"logging" : {
+		"fileName": "logs.log",
+		"logLevel": "info"
+	},
 	"session": {
 		"cookieName": "connect.sid",
-		"secret": "",
+		"secret": "default",
 		"resave": false,
 		"saveUninitialized": true,
 		"cookie": {

@@ -5,13 +5,15 @@ const _ = require('lodash')
 
 const DEFAULT_DATABASE_HOST = 'localhost'
 
-const username = _.trim(config.database.username) ?
-	config.database.username :
+const username = process.env.MONGO_INITDB_ROOT_USERNAME ?
 	process.env.MONGO_INITDB_ROOT_USERNAME
+	: config.database.username
+	
 
-const password = _.trim(config.database.username) ?
-	config.database.password :
+const password = process.env.MONGO_INITDB_ROOT_PASSWORD ?
 	process.env.MONGO_INITDB_ROOT_PASSWORD
+	: config.database.password
+	
 
 const host = _.trim(config.database.username) ?
 	config.database.host :
