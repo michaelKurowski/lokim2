@@ -6,6 +6,7 @@ const Room = require('./room')
 const socket = require('../utils/sockets/ws-routing')
 const protocols = require('../utils/io-protocol')
 const HOMEPAGE_PATH = require('../routes/routes').paths.HOME
+const LOKIM_LOGO = require('../logo.svg')
 const USERNAMES_PLACEHOLDER = ''
 
 
@@ -107,15 +108,6 @@ class ChatPage extends React.Component {
 		}
 		console.log(rooms)
 		return rooms
-		// return this.state.userRooms.map(
-		// 	(e, i) => 
-		// 		<Room 
-		// 			key={i}
-		// 			name={`Room #${i}`}
-		// 			ID={e.roomId}
-		// 			onClick={() => this.changeSelectedRoom(e.roomId)}
-		// 		/>
-		// )
 	}
 	handleUserInput(event) {
 		this.setState({input: event.target.value})
@@ -138,8 +130,31 @@ class ChatPage extends React.Component {
 		return(
 			<div className='container-fluid'>
 				<div className='row'>
+					<div className='col-md-12'>
+					<div className='nav' id='nav'>
+						<Link to={HOMEPAGE_PATH} className='logo'>
+							<img src={LOKIM_LOGO}/>
+						</Link>
+						<div className='wrap'>
+							<div className='links'>
+								<a className='link' href='/'>Home</a>
+								<a className='link' href='/'>Chat</a>
+								<a className='link' href='/'>Profile</a>
+								<a className='link' href='/'>Friends</a>
+								<a className='link' href='/'>Settings</a>
+								<div className='logout'>
+									Logout
+								</div>
+							</div>
+							<div className='user'>
+								{this.state.username}
+							</div>
+						</div>
+					</div>
+					</div>
+				</div>
+				<div className='page-content row'>
 					<div className='sidebar col-md-3'>
-						<h2>User: {this.state.username.toUpperCase()}</h2>
 						<ul className='list-group room-ID-list'>
 							<p>Click The Pinkness for Room Selection</p>
 							{this.generateRooms()}
