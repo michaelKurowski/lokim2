@@ -108,7 +108,6 @@ class ChatPage extends React.Component {
 					/>
 				)
 		}
-		console.log(rooms)
 		return rooms
 	}
 	handleUserInput(event) {
