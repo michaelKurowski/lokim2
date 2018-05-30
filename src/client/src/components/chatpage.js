@@ -6,10 +6,14 @@ const Room = require('./room')
 const socket = require('../utils/sockets/ws-routing')
 const protocols = require('../utils/io-protocol')
 const HOMEPAGE_PATH = require('../routes/routes').paths.HOME
+const LOGOUT_URL = '/logout' //add to routes later
 const LOKIM_LOGO = require('../logo.svg')
 const USERNAMES_PLACEHOLDER = ''
 
-
+function formatTimestamp(timestamp){
+	const date = new Date(timestamp * 1000)
+	return `${date.getHours()}:${date.getMinutes()}`
+}
 class ChatPage extends React.Component {
 	constructor(props) {
 		super(props)
@@ -55,6 +59,9 @@ class ChatPage extends React.Component {
 		console.log(usernames)
 		this.setState({userRooms: this.state.userRooms.set(roomId, usernames)})
 	}
+	logoutHandler(){
+		return fetch(LOGOUT_URL, {method:'POST'}).then(res => res.json()).then(console.log)
+	}
 	updateJoinedRooms(data) {
 		const {roomId} = data
 		const usernames = data.username
@@ -91,7 +98,7 @@ class ChatPage extends React.Component {
 		if(_.isEmpty(this.state.messages)) return
 		return this.state.messages.map((msg, i) => 
 			<li className='message' key={i}>
-				{`${msg.username}:\t ${msg.message} \t ${msg.timestamp}`}
+				{`${msg.username}:\t ${msg.message} \t ${formatTimestamp(msg.timestamp)}`}
 			</li>
 		)
 	}
@@ -149,15 +156,15 @@ class ChatPage extends React.Component {
 							<div className='links'>
 								<a className='link' href='/'>Home</a>
 								<a className='link' href='/'>Chat</a>
-								<a className='link' href='/'>Profile</a>
 								<a className='link' href='/'>Friends</a>
+								<a className='link' href='/'>Profile</a>
 								<a className='link' href='/'>Settings</a>
 								<div className='logout'>
-									Logout
+									<button className='btn btn-danger' onClick={this.logoutHandler}>Logout</button>
 								</div>
 							</div>
 							<div className='user'>
-								{this.state.username}
+								Username: {this.state.username}
 							</div>
 						</div>
 					</div>
