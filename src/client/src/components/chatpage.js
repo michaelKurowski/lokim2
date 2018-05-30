@@ -17,6 +17,7 @@ class ChatPage extends React.Component {
 		this.state = {
 			connected: false,
 			input: '',
+			createInput: '',
 			messages: [],
 			selectedRoom: '',
 			username: _.get(initProps, 'username', null),
@@ -24,6 +25,7 @@ class ChatPage extends React.Component {
 		}
 
 		this.handleUserInput = this.handleUserInput.bind(this)
+		this.handleCreateInput = this.handleCreateInput.bind(this)
 		this.sendMessage = this.sendMessage.bind(this)
 		this.handleConnectionEvent = this.handleConnectionEvent.bind(this)
 		this.handleMessageEvent = this.handleMessageEvent.bind(this)
@@ -112,6 +114,9 @@ class ChatPage extends React.Component {
 	handleUserInput(event) {
 		this.setState({input: event.target.value})
 	}
+	handleCreateInput(event){
+		this.setState({createInput: event.target.value})
+	}
 	sendMessage() {
 		if(!_.isEmpty(this.state.input) && this.state.selectedRoom) {
 			const roomId =  this.state.selectedRoom
@@ -122,6 +127,12 @@ class ChatPage extends React.Component {
 			return this.updateMessageState(localMessage)
 		}
 		throw new Error('No room selected || input field is empty.')
+	}
+	createNewRoom(){
+		if(_.isEmpty(this.state.createInput)) return
+		// if user is not in friend list -> return error
+		//Select user from list of friends that is propagated
+		alert('Would have sent create option with: ' + this.state.createInput)
 	}
 	render() {
 		/* istanbul ignore next */
@@ -159,8 +170,13 @@ class ChatPage extends React.Component {
 							<p>Click The Pinkness for Room Selection</p>
 							{this.generateRooms()}
 						</ul>
-						<h4>Create a Room: </h4>
-						<input type="text" placeholder="Users to invite"/>
+						<div className='row'>
+							<div className='create-room col-md-12'>
+								<h5>Create a Room: </h5>
+								<input className='form-control' placeholder="Users to invite" value={this.state.createInput} onChange={this.handleCreateInput}/>
+								<button className='btn btn-primary' onClick={this.createNewRoom}>Create</button>
+							</div>
+						</div>
 					</div>
 					<div className='col-md-6'>
 						<div className='message-area'>
