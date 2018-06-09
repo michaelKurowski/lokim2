@@ -94,9 +94,9 @@ describe('Config file service', () => {
 				join: sinon.stub().returns('DUMMY_PATH')
 			}
 
-			sandbox.stub(process.env, 'MONGO_INITDB_ROOT_USERNAME', '')
-			sandbox.stub(process.env, 'MONGO_INITDB_ROOT_PASSWORD', '')
-			sandbox.stub(process.env, 'DEFAULT_DATABASE_HOST', '')
+			sandbox.stub(process.env, 'MONGO_INITDB_ROOT_USERNAME').get(() => '')
+			sandbox.stub(process.env, 'MONGO_INITDB_ROOT_PASSWORD').get(() => '')
+			sandbox.stub(process.env, 'DEFAULT_DATABASE_HOST').get(() => '')
 		})
 
 		it('should eventually false when config file is not found', () => {
