@@ -15,7 +15,7 @@ describe('Config file service', () => {
 	})
 
 	afterEach(() => {
-		process.env = env
+		process.env = _.clone(env)
 	})
 
 	describe('#generateConfig()', () => {
