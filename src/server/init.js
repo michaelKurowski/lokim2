@@ -30,7 +30,7 @@ async function init({
 		
 	}
 	const config = require('./config.json')
-	httpPort = httpPort || config.httpServer.port
+	httpPort = process.env.PORT || httpPort || config.httpServer.port
 	const router = require('./routes/router')
 	const webSocketRouting = require('./ws-routes/webSocketRouting')
 	const passportStrategies = require('./passport/strategies')
