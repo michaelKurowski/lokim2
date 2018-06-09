@@ -5,17 +5,17 @@ const chai = require('chai')
 const chaiAsPromised = require('chai-as-promised')
 chai.use(chaiAsPromised)
 const assert = chai.assert
-
+const _ = require('lodash')
 
 let suite = {}
-let sandbox = sinon.sandbox.create()
+let env = _.clone(process.env)
 describe('Config file service', () => {
 	beforeEach(() => {
 		suite = {}
 	})
 
 	afterEach(() => {
-		sandbox.restore()
+		process.env = env
 	})
 
 	describe('#generateConfig()', () => {
@@ -93,10 +93,6 @@ describe('Config file service', () => {
 			suite.pathMock = {
 				join: sinon.stub().returns('DUMMY_PATH')
 			}
-
-			sandbox.stub(process.env, 'MONGO_INITDB_ROOT_USERNAME').get(() => '')
-			sandbox.stub(process.env, 'MONGO_INITDB_ROOT_PASSWORD').get(() => '')
-			sandbox.stub(process.env, 'DEFAULT_DATABASE_HOST').get(() => '')
 		})
 
 		it('should eventually false when config file is not found', () => {
@@ -132,7 +128,7 @@ describe('Config file service', () => {
 
 	describe('#validateFields()', () => {
 		beforeEach(() => {
-			suite.configFileService = configFileServiceProvider()
+			suite.configFileService = configFileServiceProvider({process})
 			suite.configMock = {
 				database: {
 					username: 'Rick',
@@ -163,6 +159,10 @@ describe('Config file service', () => {
 			}
 			suite.invokeValidateFields = 
 				() => suite.configFileService.validateFields(suite.configMock)
+
+			process.env.MONGO_INITDB_ROOT_USERNAME = ''
+			process.env.MONGO_INITDB_ROOT_PASSWORD = ''
+			process.env.DEFAULT_DATABASE_HOST = ''
 		})
 
 		it('should pass when config fullfils requirments', () => {

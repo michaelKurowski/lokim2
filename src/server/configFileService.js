@@ -8,7 +8,8 @@ const ERROR_MESSAGES = require('./miscellaneous/configErrorMessages.json')
 
 module.exports = function ({
 	fs = require('fs'),
-	path = require('path')
+	path = require('path'),
+	process = require('process')
 } = {}) {
 	return {
 		isConfigFileExisting() {
