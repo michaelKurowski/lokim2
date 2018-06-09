@@ -21,6 +21,6 @@ const host =
 
 const db = mongoose.createConnection(`mongodb://${username}:${password}@${host}`)
 db.on('error', err => logger.error(`Failed to connect to database with host "${host}". Error: ${err}`))
-db.once('open', () => logger.info(`Connected to database: ${config.database.host}`))
+db.once('open', () => logger.info(`Connected to database: ${host}`))
 
 module.exports = db
