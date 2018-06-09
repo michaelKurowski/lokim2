@@ -1,6 +1,6 @@
 {
     "scripts": {
-        "postinstall": "cd ./src/server && npm install",
+        "postinstall": "npm install --prefix ./src/server",
         "start": "cd ./src/server && npm start"
     }
 }
