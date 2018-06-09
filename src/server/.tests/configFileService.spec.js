@@ -8,9 +8,14 @@ const assert = chai.assert
 
 
 let suite = {}
+let sandbox = sinon.sandbox.create()
 describe('Config file service', () => {
 	beforeEach(() => {
 		suite = {}
+	})
+
+	afterEach(() => {
+		sandbox.restore()
 	})
 
 	describe('#generateConfig()', () => {
@@ -88,6 +93,10 @@ describe('Config file service', () => {
 			suite.pathMock = {
 				join: sinon.stub().returns('DUMMY_PATH')
 			}
+
+			sandbox.stub(process.env, 'MONGO_INITDB_ROOT_USERNAME', '')
+			sandbox.stub(process.env, 'MONGO_INITDB_ROOT_PASSWORD', '')
+			sandbox.stub(process.env, 'DEFAULT_DATABASE_HOST', '')
 		})
 
 		it('should eventually false when config file is not found', () => {
