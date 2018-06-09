@@ -1,5 +1,6 @@
 {
     "scripts": {
-        "start": "cd ./src/server && npm i && npm start"
+        "postinstall": "cd ./src/server && npm install",
+        "start": "cd ./src/server && npm start"
     }
 }
