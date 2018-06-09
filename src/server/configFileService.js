@@ -48,9 +48,11 @@ module.exports = function ({
 }
 
 function validateDatabaseConfig(database) {
-	assert.isNotEmpty(database.username, ERROR_MESSAGES.DATABASE.EMPTY_USERNAME)
-	assert.isNotEmpty(database.password, ERROR_MESSAGES.DATABASE.EMPTY_PASSWORD)
-	assert.isNotEmpty(database.host, ERROR_MESSAGES.DATABASE.EMPTY_HOSTNAME)
+	if (!process.env.MONGO_INITDB_ROOT_USERNAME)
+		assert.isNotEmpty(database.username, ERROR_MESSAGES.DATABASE.EMPTY_USERNAME)
+	
+	if (!process.env.MONGO_INITDB_ROOT_PASSWORD)
+		assert.isNotEmpty(database.password, ERROR_MESSAGES.DATABASE.EMPTY_PASSWORD)
 }
 
 function validateHttpServerConfig(httpServer) {
