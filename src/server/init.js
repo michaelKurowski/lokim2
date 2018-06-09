@@ -29,6 +29,7 @@ async function init({
 		configFileService.validateFields(require('./config.json'))
 		
 	}
+
 	const config = require('./config.json')
 	httpPort = process.env.PORT || httpPort || config.httpServer.port
 	const router = require('./routes/router')
