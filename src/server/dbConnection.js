@@ -20,7 +20,7 @@ const host = _.trim(config.database.username) ?
 	DEFAULT_DATABASE_HOST
 
 const db = mongoose.createConnection(`mongodb://${username}:${password}@${host}`)
-db.on('error', err => logger.error(`Failed to connect to database: ${err}`))
+db.on('error', err => logger.error(`Failed to connect to database "${host}": ${err}`))
 db.once('open', () => logger.info(`Connected to database: ${config.database.host}`))
 
 module.exports = db
