@@ -53,6 +53,9 @@ function validateDatabaseConfig(database) {
 	
 	if (!process.env.DB_PASSWORD)
 		assert.isNotEmpty(database.password, ERROR_MESSAGES.DATABASE.EMPTY_PASSWORD)
+
+	if (!process.env.DB_HOSTNAME)
+		assert.isNotEmpty(database.host, ERROR_MESSAGES.DATABASE.EMPTY_HOSTNAME)
 }
 
 function validateHttpServerConfig(httpServer) {

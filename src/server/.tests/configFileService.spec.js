@@ -181,8 +181,8 @@ describe('Config file service', () => {
 			})
 
 			it('should throw error when hostname is empty and no env variable is set', () => {
-				suite.configMock.database.password = ''
-				assert.throws(suite.invokeValidateFields, ERROR_MESSAGES.DATABASE.EMPTY_PASSWORD)
+				suite.configMock.database.host = ''
+				assert.throws(suite.invokeValidateFields, ERROR_MESSAGES.DATABASE.EMPTY_HOSTNAME)
 			})
 		})
 	
