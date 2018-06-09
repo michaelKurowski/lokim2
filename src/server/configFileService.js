@@ -1,6 +1,5 @@
 
 const CONFIG_FILE_PATH = 'config.json'
-
 const ERROR_DURING_READING_CONFIG = 'Error during reading config file: '
 const FILE_NOT_EXISTING = 'ENOENT'
 const assert = require('chai').assert
@@ -8,7 +7,8 @@ const ERROR_MESSAGES = require('./miscellaneous/configErrorMessages.json')
 
 module.exports = function ({
 	fs = require('fs'),
-	path = require('path')
+	path = require('path'),
+	process = require('process')
 } = {}) {
 	return {
 		isConfigFileExisting() {
@@ -32,8 +32,8 @@ module.exports = function ({
 			const pathToConfig = path.join(process.cwd(), '/', CONFIG_FILE_PATH)
 			return new Promise((resolve, reject) => {
 				const configTemplate = require('./miscellaneous/templateConfig.json')
-				configTemplate.database.username = process.env.MONGO_INITDB_ROOT_USERNAME || ''
-				configTemplate.database.password = process.env.MONGO_INITDB_ROOT_PASSWORD || ''
+				configTemplate.database.username = process.env.DB_USERNAME || ''
+				configTemplate.database.password = process.env.DB_PASSWORD || ''
 
 				const configToGenerate = JSON.stringify(configTemplate, null, '\t')
 				fs.writeFile(pathToConfig, configToGenerate, fileWriteError => {
@@ -48,9 +48,14 @@ module.exports = function ({
 }
 
 function validateDatabaseConfig(database) {
-	assert.isNotEmpty(database.username, ERROR_MESSAGES.DATABASE.EMPTY_USERNAME)
-	assert.isNotEmpty(database.password, ERROR_MESSAGES.DATABASE.EMPTY_PASSWORD)
-	assert.isNotEmpty(database.host, ERROR_MESSAGES.DATABASE.EMPTY_HOSTNAME)
+	if (!process.env.DB_USERNAME)
+		assert.isNotEmpty(database.username, ERROR_MESSAGES.DATABASE.EMPTY_USERNAME)
+	
+	if (!process.env.DB_PASSWORD)
+		assert.isNotEmpty(database.password, ERROR_MESSAGES.DATABASE.EMPTY_PASSWORD)
+
+	if (!process.env.DB_HOSTNAME)
+		assert.isNotEmpty(database.host, ERROR_MESSAGES.DATABASE.EMPTY_HOSTNAME)
 }
 
 function validateHttpServerConfig(httpServer) {

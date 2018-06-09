@@ -34,6 +34,7 @@
   "homepage": "https://github.com/michaelKurowski/lokim2#readme",
   "dependencies": {
     "body-parser": "^1.18.2",
+    "cors": "^2.8.4",
     "connect-mongo": "^2.0.1",
     "cookie-parser": "^1.4.3",
     "express": "^4.16.2",
@@ -52,7 +53,6 @@
   },
   "devDependencies": {
     "chai-as-promised": "^7.1.1",
-    "cors": "^2.8.4",
     "eslint": "^4.19.0",
     "eslint-config-google": "^0.9.1",
     "eslint-plugin-no-only-tests": "^2.0.0",

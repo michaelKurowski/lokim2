@@ -5,12 +5,17 @@ const chai = require('chai')
 const chaiAsPromised = require('chai-as-promised')
 chai.use(chaiAsPromised)
 const assert = chai.assert
-
+const _ = require('lodash')
 
 let suite = {}
+let env = _.clone(process.env)
 describe('Config file service', () => {
 	beforeEach(() => {
 		suite = {}
+	})
+
+	afterEach(() => {
+		process.env = _.clone(env)
 	})
 
 	describe('#generateConfig()', () => {
@@ -123,7 +128,7 @@ describe('Config file service', () => {
 
 	describe('#validateFields()', () => {
 		beforeEach(() => {
-			suite.configFileService = configFileServiceProvider()
+			suite.configFileService = configFileServiceProvider({process})
 			suite.configMock = {
 				database: {
 					username: 'Rick',
@@ -154,6 +159,10 @@ describe('Config file service', () => {
 			}
 			suite.invokeValidateFields = 
 				() => suite.configFileService.validateFields(suite.configMock)
+
+			process.env.DB_USERNAME = ''
+			process.env.DB_PASSWORD = ''
+			process.env.DB_HOSTNAME = ''
 		})
 
 		it('should pass when config fullfils requirments', () => {
@@ -161,14 +170,19 @@ describe('Config file service', () => {
 		})
 	
 		describe('Database settings', () => {
-			it('should throw error when username is empty', () => {
+			it('should throw error when username is empty and no env variable is set', () => {
 				suite.configMock.database.username = ''
 				assert.throws(suite.invokeValidateFields, ERROR_MESSAGES.DATABASE.EMPTY_USERNAME)
 			})
 
-			it('should throw error when password is empty', () => {
+			it('should throw error when password is empty and no env variable is set', () => {
 				suite.configMock.database.password = ''
 				assert.throws(suite.invokeValidateFields, ERROR_MESSAGES.DATABASE.EMPTY_PASSWORD)
+			})
+
+			it('should throw error when hostname is empty and no env variable is set', () => {
+				suite.configMock.database.host = ''
+				assert.throws(suite.invokeValidateFields, ERROR_MESSAGES.DATABASE.EMPTY_HOSTNAME)
 			})
 		})
 	
