@@ -15,7 +15,7 @@ const password = process.env.MONGO_INITDB_ROOT_PASSWORD ?
 	: config.database.password
 	
 
-const host = _.trim(config.database.username) ?
+const host = _.trim(config.database.host) ?
 	config.database.host :
 	DEFAULT_DATABASE_HOST
 
