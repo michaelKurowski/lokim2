@@ -14,10 +14,10 @@ const password = process.env.MONGO_INITDB_ROOT_PASSWORD ?
 	process.env.MONGO_INITDB_ROOT_PASSWORD
 	: config.database.password
 	
-
-const host = process.env.DEFAULT_DATABASE_HOST ?
-	config.database.host :
-	DEFAULT_DATABASE_HOST
+const host =
+	process.env.DEFAULT_DATABASE_HOST
+	|| config.database.host
+	|| DEFAULT_DATABASE_HOST
 
 const db = mongoose.createConnection(`mongodb://${username}:${password}@${host}`)
 db.on('error', err => logger.error(`Failed to connect to database "${host}": ${err}`))
