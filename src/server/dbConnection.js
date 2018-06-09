@@ -1,7 +1,6 @@
 const mongoose = require('mongoose')
 const config = require('./config.json')
 const logger = require('./logger')
-const _ = require('lodash')
 
 const DEFAULT_DATABASE_HOST = 'localhost'
 
