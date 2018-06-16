@@ -15,5 +15,18 @@
 		"eventTypes": {
 			"FIND": "find"
 		}
+	},
+	"friends": {
+		"name": "friends",
+		"eventTypes": {
+			"CONNECTION": "connection",
+			"LIST_FRIENDS": "listFriends",
+			"CONFIRM_INVITATION": "confirmInvitation",
+			"INVITATION": "invitation",
+			"PENDING_EVENTS": "pendingEvents"
+
+
+		}
+
 	}
 }

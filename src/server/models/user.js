@@ -20,10 +20,15 @@ const userSchema = new Schema({
 	password:{ 
 		type: String,
 		required: true,
-	}, 
+	},
 	salt:{
 		type: String
-	}
+	},
+	friends:[{
+		username: {
+			type: String
+		} 
+	}]
 })
 
 userSchema.plugin(uniqueValidator, { message: DUPLICATE_KEY_ERROR_DESC })
