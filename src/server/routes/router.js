@@ -12,6 +12,7 @@ router.post('/login', logInUser())
 router.post('/logout', isUserAuthenticated(), logOutUser())
 
 router.use('/protocol', express.static(path.join(process.cwd(), '/protocol')))
+router.use('/', express.static(path.join(process.cwd(), '/public')))
 if (config.devPropeties.devMode) 
 	router.use('/test', express.static(path.join(process.cwd(), '/.tests/tools')))
 
