@@ -3,6 +3,8 @@ const app = express()
 const httpServer = require('http').Server(app)
 const expressSession = require('express-session')
 const MongoSessionStore = require('connect-mongo')(expressSession)
+const connectToDb = require('./connectToDb')
+const dbConnectionProvider = require('./dbConnectionProvider')
 
 const initializationUtils = require('./initializationUtils')
 async function init({
@@ -11,13 +13,18 @@ async function init({
 	await initializationUtils.initializeConfig()
 	const config = require('./config.json')
 
-	//Imports that need config file to initialize
-	const router = require('./routes/router')
-	const dbConnection = require('./dbConnection')
+	const dbUsername = process.env.DB_USERNAME || config.database.username
+	const dbPassword = process.env.DB_PASSWORD || config.database.password
+	const dbHostname = process.env.DB_HOSTNAME || config.database.host
+
+	const dbConnection = connectToDb(dbUsername, dbPassword, dbHostname)
+	dbConnectionProvider.setDbConnection(dbConnection)
 
 	const sessionStore = new MongoSessionStore({ mongooseConnection: dbConnection} )
 	const cookieHttpSessionConfig = initializationUtils.createCookiesHttpSessionConfigObject(config, sessionStore)
 	const cookieWebsocketSessionConfig = initializationUtils.createCookiesWebsocketSessionConfigObject(config, sessionStore)
+
+	const router = require('./routes/router')
 
 	initializationUtils.initializeHttpRequestProcessingFlow(app, router, cookieHttpSessionConfig)
 	initializationUtils.initializeWebSocketEventProcessingFlow(httpServer, cookieWebsocketSessionConfig)
