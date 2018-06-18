@@ -65,7 +65,7 @@ jobs:
 
       - run:
           name: Jest tests (frontend)
-          command: cd src/client/ && npm run test-coverage
+          command: cd src/server/frontEnd/ && npm run test-coverage
 
       - run:
           name: Print the Current Time

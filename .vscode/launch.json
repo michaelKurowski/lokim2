@@ -38,7 +38,7 @@
 			],
 			"protocol": "inspector",
 			"port": 9229,
-			"cwd": "${workspaceRoot}/src/client/",
+			"cwd": "${workspaceRoot}/src/server/frontEnd/",
 			"console": "integratedTerminal",
 			"restart": true,
 			"internalConsoleOptions": "neverOpen"
