@@ -16,7 +16,9 @@
   "nyc": {
     "exclude": [
       "**/*.spec.js",
-      "out/"
+      "out/",
+      "frontEnd/",
+      "public/"
     ]
   },
   "repository": {
