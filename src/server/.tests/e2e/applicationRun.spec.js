@@ -12,7 +12,7 @@ describe('application startup', () => {
 			.then(listening => listening.close())
 	})
 
-	it.only('should connect to db without errors', () => {
+	it('should connect to db without errors', () => {
 		return suite.application.dbConnection
 	})
 

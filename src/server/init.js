@@ -6,11 +6,11 @@ const MongoSessionStore = require('connect-mongo')(expressSession)
 const connectToDb = require('./connectToDb')
 const dbConnectionProvider = require('./dbConnectionProvider')
 
-const initializationUtils = require('./initializationUtils')
+const initializationProcedures = require('./initializationProcedures')
 async function init({
 	injectedHttpPort
 } = {}) {
-	await initializationUtils.initializeConfig()
+	await initializationProcedures.initializeConfig()
 	const config = require('./config.json')
 
 	const dbUsername = process.env.DB_USERNAME || config.database.username
@@ -21,17 +21,17 @@ async function init({
 	dbConnectionProvider.setDbConnection(dbConnection)
 
 	const sessionStore = new MongoSessionStore({ mongooseConnection: dbConnection} )
-	const cookieHttpSessionConfig = initializationUtils.createCookiesHttpSessionConfigObject(config, sessionStore)
-	const cookieWebsocketSessionConfig = initializationUtils.createCookiesWebsocketSessionConfigObject(config, sessionStore)
+	const cookieHttpSessionConfig = initializationProcedures.createCookiesHttpSessionConfigObject(config, sessionStore)
+	const cookieWebsocketSessionConfig = initializationProcedures.createCookiesWebsocketSessionConfigObject(config, sessionStore)
 
 	const router = require('./routes/router')
 
-	initializationUtils.initializeHttpRequestProcessingFlow(app, router, cookieHttpSessionConfig)
-	initializationUtils.initializeWebSocketEventProcessingFlow(httpServer, cookieWebsocketSessionConfig)
-	initializationUtils.initializePassport()
+	initializationProcedures.initializeHttpRequestProcessingFlow(app, router, cookieHttpSessionConfig)
+	initializationProcedures.initializeWebSocketEventProcessingFlow(httpServer, cookieWebsocketSessionConfig)
+	initializationProcedures.initializePassport()
 
 	const httpPort = process.env.PORT || injectedHttpPort || config.httpServer.port
-	const httpServerListening = initializationUtils.initializeHttpServer(httpServer, httpPort)
+	const httpServerListening = initializationProcedures.initializeHttpServer(httpServer, httpPort)
 
 	return {
 		httpServerListening,
