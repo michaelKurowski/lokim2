@@ -23,7 +23,7 @@ jobs:
       - restore_cache:
           name: Restore cache (frontend)
           keys:
-          - v1-dependencies-{{ checksum "src/client/package.json" }}
+          - v1-dependencies-{{ checksum "src/server/frontEnd/package.json" }}
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
 
@@ -33,7 +33,7 @@ jobs:
 
       - run: 
           name: Deployment (frontend)
-          command: cd src/client && npm install
+          command: cd src/server/frontEnd && npm install
 
       - save_cache:
           name: Saving cache (backend)
@@ -44,8 +44,8 @@ jobs:
       - save_cache:
           name: Saving cache (frontend)
           paths:
-            - src/client/node_modules
-          key: v1-dependencies-{{ checksum "src/client/package.json" }}
+            - src/server/frontEnd/node_modules
+          key: v1-dependencies-{{ checksum "src/server/frontEnd/package.json" }}
 
       - run:
           name: Static Analysis (backend)
@@ -53,7 +53,7 @@ jobs:
 
       - run:
           name: Static Analysis (frontend)
-          command: cd src/client && npm run eslint
+          command: cd src/server/frontEnd && npm run eslint
 
       - run:
           name: Generate config file (backend)
