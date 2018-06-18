@@ -24,6 +24,14 @@ const userSchema = new Schema({
 	salt:{
 		type: String
 	},
+	invitations:[{
+		username: {
+			type: String
+		},
+		eventType: {
+			type: String
+		}
+	}],
 	friends:[{
 		username: {
 			type: String

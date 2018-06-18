@@ -4,11 +4,9 @@ const logger = require('../../logger')
 const _ = require('lodash')
 class Friends {
 	constructor({
-		PendingEventsModel = require('../../models/pendingEvents'),
 		UserModel = require('../../models/user'),
 		connectionRepository = require('../webSocketRouting').getConnectionRepository()
 	} = {}) {
-		this.PendingEventsModel = PendingEventsModel
 		this.UserModel = UserModel
 		this.usersToConnectionsMap = connectionRepository.usersToConnectionsMap
 	}
@@ -29,39 +27,50 @@ class Friends {
 		const invitatingUsername = socket.request.user.username
 		const removeInvitationEventFromDatabase = false 
 		const emitPayload = {username: invitatingUsername}
-		this.updatePendingEventsInDatabase(invitatingUsername, invitatedUsername, removeInvitationEventFromDatabase, EVENT_TYPES.INVITATION)
+		return this.updatePendingEventsInDatabase(invitatingUsername, invitatedUsername, removeInvitationEventFromDatabase, EVENT_TYPES.INVITATION)
 			.then(() => this.sendMessageToSepcificUser(socket, invitatedUsername, EVENT_TYPES.INVITATION, emitPayload))
 			.catch(err => logger.error(err))
 	}
 
 	[EVENT_TYPES.CONFIRM_INVITATION](data, socket) {
-		const invitatedUsername = socket.request.user.username
+		const invitedUsername = socket.request.user.username
 		const invitatingUsername = data.username
-		const removeInvitationEventFromDatabase = true
-		const removeConfirmationEventFromDatabase = false
-		const searchCondition = {username: invitatedUsername}
-		const emitPayload = {username: invitatedUsername}
-		return this.PendingEventsModel.findOne(searchCondition).exec()
+		const payload = {username: invitedUsername}
+
+		return this.UserModel.findOne(payload).exec()
 			.then(user => {
-				const isInvitationExists = _.some(user.events, {username: invitatingUsername})
-				if(isInvitationExists) {
-					this.updatePendingEventsInDatabase(invitatingUsername, invitatedUsername, removeInvitationEventFromDatabase, EVENT_TYPES.INVITATION)
-						.then(() => {
-							this.addFriends(invitatingUsername, invitatedUsername)
-							const isMessageSent = this.sendMessageToSepcificUser(socket, invitatingUsername, EVENT_TYPES.CONFIRM_INVITATION, emitPayload)
-							if(!isMessageSent)
-								this.updatePendingEventsInDatabase(invitatedUsername, invitatingUsername, removeConfirmationEventFromDatabase, EVENT_TYPES.CONFIRM_INVITATION)
-						})
-						.catch(err => logger.error(err))
+				const isEventExist = _.some(user.invitations, {username: invitatingUsername})
+				if(isEventExist) {
+					const isSentToUser = this.sendMessageToSepcificUser(socket, invitatingUsername, EVENT_TYPES.CONFIRM_INVITATION, payload)
+					if(!isSentToUser) {
+						const removeConfirmationNotification = false
+						this.updatePendingEventsInDatabase(invitatingUsername, invitedUsername, removeConfirmationNotification, EVENT_TYPES.CONFIRM_INVITATION)
+					}
 				}
 			})
+			.catch(err => logger.error(err)) 
+	}
+
+	[EVENT_TYPES.REMOVE_EVENTS](data, socket) {
+		const eventsIds = data.eventsIds
+		const username = socket.request.user.username
+		const query ={	
+			$pull: {
+				invitations: {
+					$elemMatch: [eventsIds]
+				}
+			}
+		}
+		this.UserModel.findOneAndUpdate({username}, query).exec()
+			.then(() => socket.emit(EVENT_TYPES.REMOVE_EVENTS, 'OK'))
+			.catch((err) => logger.error(err))
+		
 	}
 
 	[EVENT_TYPES.PENDING_EVENTS](data, socket) {
 		const username = socket.request.user.username
-		console.log(username)
-		return this.PendingEventsModel.findOne({username}).exec()
-			.then(user => socket.emit(EVENT_TYPES.PENDING_EVENTS, user.events))
+		return this.UserModel.findOne({username}).exec()
+			.then(user => socket.emit(EVENT_TYPES.PENDING_EVENTS, user.invitations))
 			.catch(err => logger.error(err))
 	}
 
@@ -76,9 +85,9 @@ class Friends {
 
 	updatePendingEventsInDatabase(sendingEventUsername, recievingEventUsername, removeEvent, eventType) {
 		const updatedData = {
-			events: {
+			invitations: {
 				username: sendingEventUsername,
-				eventType: eventType
+				eventType
 			}
 		}
 		const searchConditions = {
@@ -89,7 +98,7 @@ class Friends {
 			updateDataQuery = {$pull:updatedData}
 
 		const queryOptions = {upsert: true, new:true}
-		return this.PendingEventsModel.findOneAndUpdate(searchConditions, updateDataQuery, queryOptions).exec()
+		return this.UserModel.findOneAndUpdate(searchConditions, updateDataQuery, queryOptions).exec()
 	}
 
 	addFriends(invitatingUsername, invitatedUsername) {

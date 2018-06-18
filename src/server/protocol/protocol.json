@@ -23,6 +23,7 @@
 			"LIST_FRIENDS": "listFriends",
 			"CONFIRM_INVITATION": "confirmInvitation",
 			"INVITATION": "invitation",
+			"REMOVE_EVENTS": "removeEvents",
 			"PENDING_EVENTS": "pendingEvents"
 
 
