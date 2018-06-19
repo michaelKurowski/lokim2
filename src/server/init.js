@@ -26,7 +26,6 @@ async function init({
 		logger = require('./logger')
 		logger.info('No config file found, new config generated. Please fill it.')
 		configFileService.validateFields(require('./config.json'))
-		
 	}
 
 	const config = require('./config.json')

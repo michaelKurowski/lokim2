@@ -48,12 +48,8 @@ jobs:
           key: v1-dependencies-{{ checksum "src/server/frontEnd/package.json" }}
 
       - run:
-          name: Static Analysis (backend)
+          name: Static Analysis (backend & frontend)
           command: cd src/server && npm run eslint
-
-      - run:
-          name: Static Analysis (frontend)
-          command: cd src/server/frontEnd && npm run eslint
 
       - run:
           name: Generate config file (backend)
