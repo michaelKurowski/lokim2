@@ -14,7 +14,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && mv ./build ../public --no-target-directory -f",
+    "build": "react-scripts build && rm -rf ../public && mv ./build ../public --no-target-directory -f",
     "test": "react-scripts test --env=jsdom",
     "test-debug": "react-scripts --inspect-brk=0.0.0.0:9229 test --env=jsdom --runInBand -i",
     "test-coverage": "npm test -- --coverage",
