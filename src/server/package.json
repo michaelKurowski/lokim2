@@ -11,7 +11,7 @@
     "generate-docs": "node ./node_modules/jsdoc/jsdoc -r ./ws-routes/",
     "test-coverage": "node ./node_modules/nyc/bin/nyc --all --check-coverage npm test",
     "generate-config": "node -e 'require(\"./configFileService\")().generateConfig()'",
-    "generate-client-files": "npm run --prefix frontEnd build && mv ./frontEnd/build ./public"
+    "generate-client-files": "npm run --prefix frontEnd build"
   },
   "nyc": {
     "exclude": [
