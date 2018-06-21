@@ -23,6 +23,7 @@ class Users {
 	 */
 	[EVENT_TYPES.FIND](data, socket) {
 		const {queryPhrase} = data
+		if (!queryPhrase) return socket.emit(EVENT_TYPES.FIND, {foundUsernames: []})
 		const usernameToMatch = `^${queryPhrase}`
 		const USERNAME_DB_FIELD = 'username'
 		const query = {username: new RegExp(usernameToMatch)}

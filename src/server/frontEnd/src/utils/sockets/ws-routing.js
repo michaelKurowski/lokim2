@@ -1,7 +1,11 @@
 const io = require('socket.io-client')
-const IO_CONNECTION_URL = `${document.location.host}/room`
-const socket = io(IO_CONNECTION_URL, {path: '/connection'})
+const ROOM = `room`
+const USERS = `users`
+const HOST = `${document.location.host}/`
 
-module.exports = socket
+module.exports = {
+	room: io(`${HOST}${ROOM}`, {path: '/connection'}),
+	users: io(`${HOST}${USERS}`, {path: '/connection'})
+}
 
 

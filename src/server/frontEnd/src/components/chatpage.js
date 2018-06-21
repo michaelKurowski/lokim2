@@ -20,7 +20,8 @@ class ChatPage extends React.Component {
 			selectedRoom: '',
 			username: _.get(initProps, 'username', null),
 			userRooms: [],
-			roomToJoin: ''
+			roomToJoin: '',
+			usersFound: []
 		}
 
 		this.handleUserInput = this.handleUserInput.bind(this)
@@ -30,16 +31,19 @@ class ChatPage extends React.Component {
 		this.handleJoinEvent = this.handleJoinEvent.bind(this)
 		this.handleRoomJoin = this.handleRoomJoin.bind(this)
 		this.handleRoomToChangeUserInput = this.handleRoomToChangeUserInput.bind(this)
+		this.handleUserToFindInput = this.handleUserToFindInput.bind(this)
+		this.handleUsersFindEvent = this.handleUsersFindEvent.bind(this)
 	}
 
 	componentDidMount() {
-		socket.on(protocols.CONNECTION, this.handleConnectionEvent)
-		socket.on(protocols.MESSAGE, this.handleMessageEvent)
-		socket.on(protocols.JOIN, this.handleJoinEvent)
+		socket.room.on(protocols.CONNECTION, this.handleConnectionEvent)
+		socket.room.on(protocols.MESSAGE, this.handleMessageEvent)
+		socket.room.on(protocols.JOIN, this.handleJoinEvent)
+		socket.users.on(protocols.FIND, this.handleUsersFindEvent)
 	}
 
 	handleRoomJoin() {
-		socket.emit(protocols.JOIN, {roomId: this.state.roomToJoin})
+		socket.room.emit(protocols.JOIN, {roomId: this.state.roomToJoin})
 	}
 
 	handleConnectionEvent() {
@@ -54,10 +58,25 @@ class ChatPage extends React.Component {
 		this.setState({roomToJoin: event.target.value})
 	}
 
+	handleUserToFindInput(event) {
+		const userToFind = event.target.value
+		this.setState({userToFind})
+		socket.users.emit(protocols.FIND, {queryPhrase: userToFind})
+	}
+
 	handleJoinEvent(data) {
 		console.log('JOIN', data)
 		this.updateJoinedRooms(data)
 		this.changeSelectedRoom(data)
+	}
+
+	handleUsersFindEvent(data) {
+		this.updateFoundUsers(data)
+	}
+
+	updateFoundUsers(data) {
+		const {foundUsernames} = data
+		this.setState({usersFound: foundUsernames})
 	}
 
 	updateJoinedRooms(data) {
@@ -92,6 +111,11 @@ class ChatPage extends React.Component {
 	findUsersOfRoom(roomId) {
 		const roomObject = this.state.userRooms.find(room => room.roomId === roomId)
 		return _.get(roomObject, 'usernames', USERNAMES_PLACEHOLDER)
+	}
+
+	generateFoundUsers() {
+		return this.state.usersFound.map(username => 
+			<li className='message list-group-item'>{username}</li>)
 	}
 
 	generateMessages() {
@@ -190,6 +214,11 @@ class ChatPage extends React.Component {
 						<h6>Current Room: {this.state.selectedRoom}</h6>
 						<h6>Users in current room: {this.findUsersOfRoom(this.state.selectedRoom)}</h6>
 						<Link className='btn btn-danger' to={HOMEPAGE_PATH}>Logout</Link>
+						<h4>Find user:</h4>
+						<input className='form-control' palceholder='USer name' value={this.state.userToFind} onChange={this.handleUserToFindInput}/>
+						<ul className='list-group room-ID-list'>
+							{this.generateFoundUsers()}
+						</ul>
 					</div>
 				</div>
 			</div>
