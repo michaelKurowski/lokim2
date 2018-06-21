@@ -9,9 +9,9 @@
     "eslint": "node ./node_modules/eslint/bin/eslint.js --ignore-path ./.eslintignore ./",
     "eslint-auto-fix": "node ./node_modules/eslint/bin/eslint.js --ignore-path ./.eslintignore --fix",
     "generate-docs": "node ./node_modules/jsdoc/jsdoc -r ./ws-routes/",
-    "test-coverage": "node ./node_modules/nyc/bin/nyc --all --check-coverage npm test",
-    "generate-config": "node -e 'require(\"./configFileService\")().generateConfig()'",
-    "generate-client-files": "npm run --prefix frontEnd build"
+    "generate-client-files": "npm run --prefix frontEnd build",
+    "test-coverage": "node ./node_modules/nyc/bin/nyc --all --check-coverage --report-dir ../../coverage npm test",
+    "generate-config": "node -e 'require(\"./configFileService\")().generateConfig()'"
   },
   "nyc": {
     "exclude": [
@@ -19,6 +19,10 @@
       "out/",
       "frontEnd/",
       "public/"
+    ],
+    "reporter": [
+      "text",
+      "lcov"
     ]
   },
   "repository": {

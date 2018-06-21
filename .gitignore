@@ -8,3 +8,4 @@ src/server/out
 src/server/config.json
 ./package-lock.json
 src/server/public
+coverage
