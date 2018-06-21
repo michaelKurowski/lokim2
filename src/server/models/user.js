@@ -1,10 +1,13 @@
 const dbConnection = require('../dbConnectionProvider').getDbConnection()
+const _ = require('lodash')
 const mongoose = require('mongoose')
 const uniqueValidator = require('mongoose-unique-validator')
+const pendingNotificationsSchema = require('./pendingNotifications')
+const friendsSchema = require('./friends')
 const Schema = mongoose.Schema
 
 const DUPLICATE_KEY_ERROR_DESC = 'There was a duplicate key'
-
+const DUPLICATE_FRIEND_DESC = 'You are friends already'
 
 const userSchema = new Schema({
 	username:{ 
@@ -24,19 +27,18 @@ const userSchema = new Schema({
 	salt:{
 		type: String
 	},
-	invitations:[{
-		username: {
-			type: String
-		},
-		eventType: {
-			type: String
+	pendingNotifications:[pendingNotificationsSchema],
+	friends:{
+		type: [friendsSchema],
+		validate: {
+			validator: val => {
+				const usernamesList = _.map(val, user => user.username)
+				return _.uniq(usernamesList).length === usernamesList.length
+			},
+			message: DUPLICATE_FRIEND_DESC
+		
 		}
-	}],
-	friends:[{
-		username: {
-			type: String
-		} 
-	}]
+	}
 })
 
 userSchema.plugin(uniqueValidator, { message: DUPLICATE_KEY_ERROR_DESC })

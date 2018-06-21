@@ -18,7 +18,7 @@ class Friends {
 
 	[EVENT_TYPES.LIST_FRIENDS](data, socket) {
 		const username = socket.request.user.username
-		return this.UserModel.findOne(username).exec()
+		return this.UserModel.findOne({username}).exec()
 			.then(user => socket.emit(EVENT_TYPES.LIST_FRIENDS, user.friends))
 	}
 
@@ -39,38 +39,39 @@ class Friends {
 
 		return this.UserModel.findOne(payload).exec()
 			.then(user => {
-				const isEventExist = _.some(user.invitations, {username: invitatingUsername})
+				const isEventExist = _.some(user.pendingNotifications, {username: invitatingUsername})
 				if(isEventExist) {
+					this.addFriends(invitatingUsername, invitedUsername)
 					const isSentToUser = this.sendMessageToSepcificUser(socket, invitatingUsername, EVENT_TYPES.CONFIRM_INVITATION, payload)
 					if(!isSentToUser) {
 						const removeConfirmationNotification = false
-						this.updatePendingEventsInDatabase(invitatingUsername, invitedUsername, removeConfirmationNotification, EVENT_TYPES.CONFIRM_INVITATION)
+						this.updatePendingEventsInDatabase(invitedUsername, invitatingUsername, removeConfirmationNotification, EVENT_TYPES.CONFIRM_INVITATION)
 					}
 				}
 			})
 			.catch(err => logger.error(err)) 
 	}
 
-	[EVENT_TYPES.REMOVE_EVENTS](data, socket) {
-		const eventsIds = data.eventsIds
+	[EVENT_TYPES.REMOVE_NOTIFICATIONS](data, socket) {
+		const notificationIdList = data.notificationsIds
 		const username = socket.request.user.username
 		const query ={	
 			$pull: {
-				invitations: {
-					$elemMatch: [eventsIds]
+				pendingNotifications: {
+					$elemMatch: [notificationIdList]
 				}
 			}
 		}
 		this.UserModel.findOneAndUpdate({username}, query).exec()
-			.then(() => socket.emit(EVENT_TYPES.REMOVE_EVENTS, 'OK'))
+			.then(() => socket.emit(EVENT_TYPES.REMOVE_NOTIFICATIONS, 'OK'))
 			.catch((err) => logger.error(err))
 		
 	}
 
-	[EVENT_TYPES.PENDING_EVENTS](data, socket) {
+	[EVENT_TYPES.PENDING_NOTIFICATIONS](data, socket) {
 		const username = socket.request.user.username
 		return this.UserModel.findOne({username}).exec()
-			.then(user => socket.emit(EVENT_TYPES.PENDING_EVENTS, user.invitations))
+			.then(user => socket.emit(EVENT_TYPES.PENDING_NOTIFICATIONS, user.pendingNotifications))
 			.catch(err => logger.error(err))
 	}
 
@@ -83,11 +84,11 @@ class Friends {
 		return false
 	}
 
-	updatePendingEventsInDatabase(sendingEventUsername, recievingEventUsername, removeEvent, eventType) {
+	updatePendingEventsInDatabase(sendingEventUsername, recievingEventUsername, removeEvent, notificationType) {
 		const updatedData = {
-			invitations: {
+			pendingNotifications: {
 				username: sendingEventUsername,
-				eventType
+				type: notificationType
 			}
 		}
 		const searchConditions = {
@@ -108,13 +109,17 @@ class Friends {
 				{username: invitatedUsername}
 			]
 		}
+		/*console.log('dupa')
+		const queryOptions = {new:true}
+		this.UserModel.findOneAndUpdate({username: 'Rick'}, updateData, queryOptions).exec()
+		.catch(err => logger.error(err))
+		*/
 		this.UserModel.find(searchConditions).exec()
 			.then(users => {
 				_.forEach(users, user => {
 					let friendData = {username: invitatedUsername}
 					if(user.username == invitatedUsername)
 						friendData.username = invitatingUsername
-
 					user.friends.push(friendData)
 					user.save()
 				})
