@@ -25,9 +25,8 @@ class Friends {
 	[EVENT_TYPES.INVITE](data, socket) {
 		const invitatedUsername = data.username
 		const invitatingUsername = socket.request.user.username
-		const removeInvitationEventFromDatabase = false 
 		const emitPayload = {username: invitatingUsername}
-		return this.updatePendingEventsInDatabase(invitatingUsername, invitatedUsername, removeInvitationEventFromDatabase, EVENT_TYPES.INVITATION)
+		return this.addNotification(invitatingUsername, invitatedUsername, EVENT_TYPES.INVITATION)
 			.then(() => this.sendMessageToSepcificUser(socket, invitatedUsername, EVENT_TYPES.INVITE, emitPayload))
 			.catch(err => logger.error(err))
 	}
@@ -43,26 +42,17 @@ class Friends {
 				if(isEventExist) {
 					this.addFriends(invitatingUsername, invitedUsername)
 					const isSentToUser = this.sendMessageToSepcificUser(socket, invitatingUsername, EVENT_TYPES.CONFIRM_INVITATION, payload)
-					if(!isSentToUser) {
-						const removeConfirmationNotification = false
-						this.updatePendingEventsInDatabase(invitedUsername, invitatingUsername, removeConfirmationNotification, EVENT_TYPES.CONFIRM_INVITATION)
-					}
+					if(!isSentToUser)
+						this.addNotification(invitedUsername, invitatingUsername, EVENT_TYPES.CONFIRM_INVITATION)
 				}
 			})
 			.catch(err => logger.error(err)) 
 	}
 
 	[EVENT_TYPES.REMOVE_NOTIFICATIONS](data, socket) {
-		const notificationIdList = data.notificationsIds
-		const username = socket.request.user.username
-		const query ={	
-			$pull: {
-				pendingNotifications: {
-					$or: notificationIdList
-				}
-			}
-		}
-		this.UserModel.findOneAndUpdate({username}, query).exec()
+		const notificationIdsList = data.notificationIds
+		const requestingUsername = socket.request.user.username
+		this.removeNotification(notificationIdsList, requestingUsername)
 			.then(() => socket.emit(EVENT_TYPES.REMOVE_NOTIFICATIONS, 'OK'))
 			.catch((err) => logger.error(err))
 		
@@ -84,20 +74,29 @@ class Friends {
 		return false
 	}
 
-	updatePendingEventsInDatabase(sendingEventUsername, recievingEventUsername, removeEvent, notificationType) {
+	removeNotification(notificationIdList, requestingUsername) {
+		const query ={	
+			$pull: {
+				pendingNotifications: {
+					$or: notificationIdList
+				}
+			}
+		}
+		const searchingCriteria = {username: requestingUsername}
+		return this.UserModel.findOneAndUpdate(searchingCriteria, query).exec()
+	}
+
+	addNotification(sendingEventUsername, recievingEventUsername, notificationType) {
 		const updatedData = {
 			pendingNotifications: {
 				username: sendingEventUsername,
-				type: notificationType
+				notificationType
 			}
 		}
 		const searchConditions = {
 			username: recievingEventUsername
 		}
 		let updateDataQuery = {$push:updatedData}
-		if(removeEvent)
-			updateDataQuery = {$pull:updatedData}
-
 		const queryOptions = {upsert: true, new:true}
 		return this.UserModel.findOneAndUpdate(searchConditions, updateDataQuery, queryOptions).exec()
 	}
