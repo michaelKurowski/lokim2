@@ -1,4 +1,4 @@
-const dbConnection = require('../dbConnection')
+const dbConnection = require('../dbConnectionProvider').getDbConnection()
 const mongoose = require('mongoose')
 const uniqueValidator = require('mongoose-unique-validator')
 const Schema = mongoose.Schema

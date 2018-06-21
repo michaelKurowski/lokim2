@@ -1,19 +1,15 @@
 const UsersProvider = require('../../../ws-routes/controllers/Users')
 const sinon = require('sinon')
-const UserModel = require('../../../models/user')
 const namespaceInfo =  require('../../../protocol/protocol.json').users
 const EVENT_TYPES = namespaceInfo.eventTypes
 
 let suite = {}
-let sandbox = sinon.sandbox.create()
 describe('Users websocket namespace', () => {
 	beforeEach(() => {
 		suite = {}
-		suite.usersInstance = new UsersProvider()
-	})
-
-	afterEach(() => {
-		sandbox.restore()
+		suite.usersModelMock = {
+			find: sinon.stub()
+		}
 	})
 
 	describe('#find', () => {
@@ -27,8 +23,8 @@ describe('Users websocket namespace', () => {
 
 			const socketMock = {emit: sinon.spy()}
 			const queryResultMock = {exec: sinon.stub().resolves(QUERY_FEEDBACK_MOCK)}
-			sandbox.stub(UserModel, 'find').returns(queryResultMock)
-			suite.usersInstance = new UsersProvider(UserModel)
+			suite.usersModelMock.find.returns(queryResultMock)
+			suite.usersInstance = new UsersProvider({UserModel: suite.usersModelMock})
 			//when
 			return suite.usersInstance.find({queryPhrase: QUERY_PHRASE}, socketMock)
 				.then(() => {
@@ -60,8 +56,8 @@ describe('Users websocket namespace', () => {
 
 			const socketMock = {emit: sinon.spy()}
 			const queryResultMock = {exec: sinon.stub().resolves(QUERY_FEEDBACK_MOCK)}
-			sandbox.stub(UserModel, 'find').returns(queryResultMock)
-			suite.usersInstance = new UsersProvider(UserModel)
+			suite.usersModelMock.find.returns(queryResultMock)
+			suite.usersInstance = new UsersProvider({UserModel: suite.usersModelMock})
 			//when
 			return suite.usersInstance.find({queryPhrase: QUERY_PHRASE}, socketMock)
 				.then(() => {
