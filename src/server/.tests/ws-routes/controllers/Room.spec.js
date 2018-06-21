@@ -40,29 +40,15 @@ describe('Room websocket namespace', () => {
 	})
 
 	describe('#connection', () => {
-		it('should send joined event when connected', done => {
-			//given
-			suite.server.on(CLIENT_EVENTS.CONNECTION, socket => suite.roomInstance.connection(socket, suite.connectionsMock))
-
-			//when
-			suite.client = socketClient.connect(SOCKET_URL, SOCKET_OPTIONS)
-
-			//then
-			suite.client.on(CLIENT_EVENTS.JOIN, then)
-			function then() {
-				done()
-			}
-		})
-
 		it('should new entry be added with its key as user name to connections repository when connected', done => {
 			//given
-			suite.server.on(CLIENT_EVENTS.CONNECTION, socket => suite.roomInstance.connection(socket, suite.connectionsMock))
+			suite.server.on(CLIENT_EVENTS.CONNECTION, socket => {
+				suite.roomInstance.connection(socket, suite.connectionsMock)
+				then()
+			})
 
 			//when
 			suite.client = socketClient.connect(SOCKET_URL, SOCKET_OPTIONS)
-
-			//then
-			suite.client.on(CLIENT_EVENTS.JOIN, then)
 
 			function then() {
 				const hasSessionStored = suite.connectionsMock.usersToConnectionsMap.has(suite.USERNAME_MOCK)
@@ -76,13 +62,13 @@ describe('Room websocket namespace', () => {
 			suite.server.on(CLIENT_EVENTS.CONNECTION, socket => {
 				suite.newSocket = socket
 				suite.roomInstance.connection(socket, suite.connectionsMock)
+				then()
 			})
 
 			//when
 			suite.client = socketClient.connect(SOCKET_URL, SOCKET_OPTIONS)
 
 			//then
-			suite.client.on(CLIENT_EVENTS.JOIN, then)
 			function then() {
 				const storedSession = suite.connectionsMock.usersToConnectionsMap.get(suite.USERNAME_MOCK)
 				assert.strictEqual(storedSession, suite.newSocket)

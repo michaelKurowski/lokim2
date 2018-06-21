@@ -11,9 +11,7 @@ const logger = require('../../logger')
 class Room {
 	[EVENT_TYPES.CONNECTION](socket, connections) {
 		const username = socket.request.user.username
-		const roomId = uuidv4()
 		connections.usersToConnectionsMap.set(username, socket)
-		this.join({roomId}, socket, connections)
 	}
 
 	/**
