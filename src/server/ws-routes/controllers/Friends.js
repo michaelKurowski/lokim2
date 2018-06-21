@@ -58,7 +58,7 @@ class Friends {
 		const query ={	
 			$pull: {
 				pendingNotifications: {
-					$elemMatch: [notificationIdList]
+					$or: notificationIdList
 				}
 			}
 		}
