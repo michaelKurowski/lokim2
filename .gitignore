@@ -1,5 +1,5 @@
+src/server/frontEnd/node_modules
 src/server/node_modules
-src/client/node_modules
 src/server/.nyc_output
 src/server/logs/**
 **/.DS_Store
@@ -7,4 +7,5 @@ src/server/logs/**
 src/server/out
 src/server/config.json
 ./package-lock.json
+src/server/public
 coverage

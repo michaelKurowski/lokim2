@@ -56,13 +56,11 @@ function createCookiesWebsocketSessionConfigObject(globalConfigFile, sessionStor
 }
 
 function initializeHttpRequestProcessingFlow(app, router, cookieHttpSessionConfig, {
-	cors = require('cors'),
 	bodyParser = require('body-parser'),
 	mongoSanitize = require('express-mongo-sanitize'),
 	expressSession = require('express-session'),
 	passport = require('passport')
 } = {}) {
-	app.use(cors({credentials: true, origin: 'http://localhost:3000'}))
 	app.use(bodyParser.json())
 	app.use(mongoSanitize())
 	app.use(expressSession(cookieHttpSessionConfig))

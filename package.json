@@ -1,6 +1,6 @@
 {
     "scripts": {
-        "postinstall": "npm install --prefix ./src/server",
+        "postinstall": "npm install --prefix ./src/server && npm install --prefix ./src/server/frontEnd && npm run --prefix ./src/server generate-client-files",
         "start": "npm start --prefix ./src/server"
     }
 }
