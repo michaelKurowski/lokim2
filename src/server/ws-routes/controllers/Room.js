@@ -12,6 +12,8 @@ class Room {
 	[EVENT_TYPES.CONNECTION](socket, connections) {
 		const username = socket.request.user.username
 		connections.usersToConnectionsMap.set(username, socket)
+		setTimeout(() => console.log(username, socket.rooms), 1000)
+		
 	}
 
 	/**
