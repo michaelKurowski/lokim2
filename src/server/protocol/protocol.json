@@ -20,9 +20,9 @@
 		"name": "friends",
 		"eventTypes": {
 			"CONNECTION": "connection",
-			"LIST_FRIENDS": "listFriends",
+			"FRIENDS_LIST": "friendsList",
 			"CONFIRM_INVITATION": "confirmInvitation",
-			"INVITATION": "invitation",
+			"INVITE": "invite",
 			"REMOVE_NOTIFICATIONS": "removeNotifications",
 			"PENDING_NOTIFICATIONS": "pendingNotifications"
 

@@ -16,19 +16,19 @@ class Friends {
 		connections.usersToConnectionsMap.set(username, socket)
 	}
 
-	[EVENT_TYPES.LIST_FRIENDS](data, socket) {
+	[EVENT_TYPES.FRIENDS_LIST](data, socket) {
 		const username = socket.request.user.username
 		return this.UserModel.findOne({username}).exec()
-			.then(user => socket.emit(EVENT_TYPES.LIST_FRIENDS, user.friends))
+			.then(user => socket.emit(EVENT_TYPES.FRIENDS_LIST, user.friends))
 	}
 
-	[EVENT_TYPES.INVITATION](data, socket) {
+	[EVENT_TYPES.INVITE](data, socket) {
 		const invitatedUsername = data.username
 		const invitatingUsername = socket.request.user.username
 		const removeInvitationEventFromDatabase = false 
 		const emitPayload = {username: invitatingUsername}
 		return this.updatePendingEventsInDatabase(invitatingUsername, invitatedUsername, removeInvitationEventFromDatabase, EVENT_TYPES.INVITATION)
-			.then(() => this.sendMessageToSepcificUser(socket, invitatedUsername, EVENT_TYPES.INVITATION, emitPayload))
+			.then(() => this.sendMessageToSepcificUser(socket, invitatedUsername, EVENT_TYPES.INVITE, emitPayload))
 			.catch(err => logger.error(err))
 	}
 
@@ -109,12 +109,8 @@ class Friends {
 				{username: invitatedUsername}
 			]
 		}
-		/*console.log('dupa')
-		const queryOptions = {new:true}
-		this.UserModel.findOneAndUpdate({username: 'Rick'}, updateData, queryOptions).exec()
-		.catch(err => logger.error(err))
-		*/
-		this.UserModel.find(searchConditions).exec()
+
+		return this.UserModel.find(searchConditions).exec()
 			.then(users => {
 				_.forEach(users, user => {
 					let friendData = {username: invitatedUsername}
