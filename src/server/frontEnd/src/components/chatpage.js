@@ -7,7 +7,7 @@ const socket = require('../utils/sockets/ws-routing')
 const protocols = require('../utils/io-protocol')
 const HOMEPAGE_PATH = require('../routes/routes').paths.HOME
 const USERNAMES_PLACEHOLDER = ''
-
+const dummyAvatar = require('../avatar.svg')
 
 class ChatPage extends React.Component {
 	constructor(props) {
@@ -98,9 +98,24 @@ class ChatPage extends React.Component {
 		if(!this.state.selectedRoom) return <h6>Please join a room before attempting to load messages</h6>
 		if(_.isEmpty(this.state.messages)) return
 		return this.state.messages.map((msg, i) => 
-			<li className='message' key={i}>
-				{`${msg.username}:\t ${msg.message} \t ${msg.timestamp}`}
-			</li>
+			msg.username === this.state.username ?
+				<li className='message list-group-item' key={i}>
+					<p>
+						<span className='font-weight-bold'>{msg.username}</span></p>
+					<p>
+						<span>{msg.message}</span>
+						<span className='text-muted float-right'>{new Date(msg.timestamp).toLocaleTimeString()}</span>
+					</p>
+				</li>
+				:
+				<li className='message list-group-item' key={i}>
+					<p className='mb-5'>
+						<span className='font-weight-bold float-right'>{msg.username}</span></p>
+					<p>
+						<span className='float-right'>{msg.message}</span>
+						<span className='text-muted'>{new Date(msg.timestamp).toLocaleTimeString()}</span>
+					</p>
+				</li>
 		)
 	}
 
@@ -139,27 +154,37 @@ class ChatPage extends React.Component {
 		if(!this.state.username) return <Redirect to={HOMEPAGE_PATH}/>
 		
 		return (
-			<div className='container-fluid'>
-				<div className='row'>
-					<div className='sidebar col-md-3'>
-						<h2>User: {this.state.username.toUpperCase()}</h2>
-						<input palceholder='Room name' value={this.state.roomToJoin} onChange={this.handleRoomToChangeUserInput}/>
-						<button onClick={this.handleRoomJoin}> Join Room </button>
+			<div className='container-fluid h-100'>
+				<div className='row h-100'>
+					<div className='sidebar col-md-3 jumbotron'>
+						<div className='card'>
+							<img className='card-img-top' src={dummyAvatar}></img>
+							<div className='card-body'>
+								<h2 className='card-title'>{this.state.username.toUpperCase()}</h2>
+								<h6 className='card-subtitle mb-2 text-muted'>No description</h6>
+							</div>
+						</div>
+						<div>
+							<input className='form-control' palceholder='Room name' value={this.state.roomToJoin} onChange={this.handleRoomToChangeUserInput}/>
+						</div>
+						<button className='btn btn-primary' onClick={this.handleRoomJoin}> Join Room </button>
 						<ul className='list-group room-ID-list'>
-							<p>Click The Pinkness for Room Selection</p>
+							<h1>Choose a room</h1>
 							{this.generateRooms()}
 						</ul>
 					</div>
-					<div className='col-md-6'>
-						<div className='message-area'>
-							<ul>
+					<div className='col-md-6 h-100 d-flex flex-column-reverse'>
+						<div className='p-2'>
+							<input className='form-control' placeholder='Message...' value={this.state.input} onChange={this.handleUserInput}/>
+							<button className='btn btn-primary' onClick={this.sendMessage}>Send</button>
+						</div>
+						<div className='message-area p-2 y-scroll'>
+							<ul className='list-group room-ID-list'>
 								{this.generateMessages()}
 							</ul>
 						</div>
-						<input className='form-control' placeholder='Message...' value={this.state.input} onChange={this.handleUserInput}/>
-						<button className='btn btn-primary' onClick={this.sendMessage}>Send</button>
 					</div>
-					<div className='col-md-3'>
+					<div className='col-md-3 jumbotron'>
 						<h4>Room Information/Etc </h4>
 						<ConnectStatus connection={this.state.connected}/>
 						<h6>Current Room: {this.state.selectedRoom}</h6>
