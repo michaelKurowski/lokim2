@@ -21,7 +21,7 @@ jobs:
           - v1-dependencies-
 
       - restore_cache:
-          name: Restore cache (frontend)
+          name: Restore cache (frontEnd)
           keys:
           - v1-dependencies-{{ checksum "src/server/frontEnd/package.json" }}
           # fallback to using the latest cache if no exact match is found
@@ -32,7 +32,7 @@ jobs:
           command: cd src/server && npm install
 
       - run: 
-          name: Deployment (frontend)
+          name: Deployment (frontEnd)
           command: cd src/server/frontEnd && npm install
 
       - save_cache:
@@ -42,13 +42,13 @@ jobs:
           key: v1-dependencies-{{ checksum "src/server/package.json" }}
 
       - save_cache:
-          name: Saving cache (frontend)
+          name: Saving cache (frontEnd)
           paths:
             - src/server/frontEnd/node_modules
           key: v1-dependencies-{{ checksum "src/server/frontEnd/package.json" }}
 
       - run:
-          name: Static Analysis (backend & frontend)
+          name: Static Analysis (backend & frontEnd)
           command: cd src/server && npm run eslint
 
       - run:
@@ -60,7 +60,7 @@ jobs:
           command: cd src/server/ && npm run test-coverage
 
       - run:
-          name: Jest tests (frontend)
+          name: Jest tests (frontEnd)
           command: cd src/server/frontEnd/ && npm run test-coverage
 
       - run:
