@@ -3,7 +3,7 @@ const {Redirect, Link} = require('react-router-dom')
 const _ = require('lodash')
 const ConnectStatus = require('./connectStatus')
 const Room = require('./room')
-const socket = require('../utils/sockets/ws-routing')
+let socket
 const protocols = require('../utils/io-protocol')
 const HOMEPAGE_PATH = require('../routes/routes').paths.HOME
 const USERNAMES_PLACEHOLDER = ''
@@ -38,6 +38,7 @@ class ChatPage extends React.Component {
 	}
 
 	componentDidMount() {
+		socket = require('../utils/sockets/ws-routing')()
 		socket.room.on(protocols.CONNECTION, this.handleConnectionEvent)
 		socket.room.on(protocols.MESSAGE, this.handleMessageEvent)
 		socket.room.on(protocols.JOIN, this.handleJoinEvent)
