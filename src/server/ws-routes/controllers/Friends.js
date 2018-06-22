@@ -42,21 +42,17 @@ class Friends {
 				if(isEventExist) return this.addFriends(invitatingUsername, invitedUsername)
 				return Promise.reject()
 			})
-			.then(() => {
-				const isSentToUser = this.sendMessageToSepcificUser(socket, invitatingUsername, EVENT_TYPES.CONFIRM_INVITATION, payload)
-				if(!isSentToUser)
-					this.addNotification(invitedUsername, invitatingUsername, EVENT_TYPES.CONFIRM_INVITATION)
-			})
+			.then(() => this.addNotification(invitedUsername, invitatingUsername, EVENT_TYPES.CONFIRM_INVITATION))
 			.catch(err => logger.error(err)) 
 	}
 
 	[EVENT_TYPES.REMOVE_NOTIFICATIONS](data, socket) {
 		const notificationIdsList = data.notificationIds
 		const requestingUsername = socket.request.user.username
-		this.removeNotifications(notificationIdsList, requestingUsername)
+		this.removeNotificationsfromList(notificationIdsList, requestingUsername)
 			.then(() => socket.emit(EVENT_TYPES.REMOVE_NOTIFICATIONS, 'OK'))
 			.catch((err) => logger.error(err))
-		
+			
 	}
 
 	[EVENT_TYPES.PENDING_NOTIFICATIONS](data, socket) {
@@ -75,7 +71,7 @@ class Friends {
 		return false
 	}
 
-	removeNotifications(notificationIdList, requestingUsername) {
+	removeNotificationsfromList(notificationIdList, requestingUsername) {
 		const query ={	
 			$pull: {
 				pendingNotifications: {
