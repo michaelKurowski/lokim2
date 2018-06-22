@@ -175,9 +175,6 @@ class ChatPage extends React.Component {
 			const roomId =  this.state.selectedRoom
 			const message = this.state.input
 			socket.room.emit(protocols.MESSAGE, {roomId, message})
-
-			const localMessage = {roomId, username: this.state.username, message, timestamp: new Date().getTime()}
-			return this.updateMessageState(localMessage)
 		}
 		throw new Error('No room selected || input field is empty.')
 	}
