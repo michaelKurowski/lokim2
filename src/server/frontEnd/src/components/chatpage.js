@@ -160,7 +160,7 @@ class ChatPage extends React.Component {
 					key={i}
 					name={`Room #${e.roomId}`}
 					ID={e.roomId}
-					onClick={this.changeSelectedRoom}
+					onClick={() => this.changeSelectedRoom({roomId: e.roomId})}
 				/>
 		)
 	}
