@@ -74,6 +74,7 @@ class ChatPage extends React.Component {
 
 	handleJoinEvent(data) {
 		console.log('JOIN', data)
+		if (data.username !== this.state.username) return
 		this.updateJoinedRooms(data)
 		this.changeSelectedRoom(data)
 	}
@@ -123,7 +124,7 @@ class ChatPage extends React.Component {
 
 	generateFoundUsers() {
 		return this.state.usersFound.map((username, key) => 
-			<li key={key} className='message list-group-item'>{username}</li>)
+			<li key={key} className='message list-group-item' onClick={() => this.createRoom([username])}>{username}</li>)
 	}
 
 	generateMessages() {
@@ -183,6 +184,10 @@ class ChatPage extends React.Component {
 
 	printUsersInRoom() {
 		return this.state.usersInRoom.map(user => <li className='list-group-item' key={user}> {user} </li>)
+	}
+
+	createRoom(usernamesToInvite) {
+		socket.room.emit(protocols.CREATE, {invitedUsersIndexes: usernamesToInvite})
 	}
 
 	render() {
