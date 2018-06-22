@@ -98,8 +98,7 @@ class Friends {
 			username: recievingEventUsername
 		}
 		let updateDataQuery = {$push:updatedData}
-		const queryOptions = {upsert: true}
-		return this.UserModel.findOneAndUpdate(searchConditions, updateDataQuery, queryOptions).exec()
+		return this.UserModel.findOneAndUpdate(searchConditions, updateDataQuery).exec()
 	}
 
 	addFriends(invitatingUsername, invitatedUsername) {
