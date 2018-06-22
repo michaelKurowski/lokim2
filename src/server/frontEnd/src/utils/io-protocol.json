@@ -6,5 +6,6 @@
     "CONNECTION": "connect",
     "DISCONNECT": "disconnect",
     "FAILED": "connect_failed",
-    "FIND": "find"
+    "FIND": "find",
+    "LIST_MEMBERS": "listMembers"
 }

@@ -21,7 +21,8 @@ class ChatPage extends React.Component {
 			username: _.get(initProps, 'username', null),
 			userRooms: [],
 			roomToJoin: '',
-			usersFound: []
+			usersFound: [],
+			usersInRoom: []
 		}
 
 		this.handleUserInput = this.handleUserInput.bind(this)
@@ -33,12 +34,14 @@ class ChatPage extends React.Component {
 		this.handleRoomToChangeUserInput = this.handleRoomToChangeUserInput.bind(this)
 		this.handleUserToFindInput = this.handleUserToFindInput.bind(this)
 		this.handleUsersFindEvent = this.handleUsersFindEvent.bind(this)
+		this.handleListMembersEvent = this.handleListMembersEvent.bind(this)
 	}
 
 	componentDidMount() {
 		socket.room.on(protocols.CONNECTION, this.handleConnectionEvent)
 		socket.room.on(protocols.MESSAGE, this.handleMessageEvent)
 		socket.room.on(protocols.JOIN, this.handleJoinEvent)
+		socket.room.on(protocols.LIST_MEMBERS, this.handleListMembersEvent)
 		socket.users.on(protocols.FIND, this.handleUsersFindEvent)
 	}
 
@@ -52,6 +55,11 @@ class ChatPage extends React.Component {
 
 	handleMessageEvent(data) {
 		this.updateMessageState(data)
+	}
+
+	handleListMembersEvent(data) {
+		console.log('LIST MEMBERS')
+		this.setState({usersInRoom: data.usernames})
 	}
 
 	handleRoomToChangeUserInput(event) {
@@ -173,6 +181,10 @@ class ChatPage extends React.Component {
 		throw new Error('No room selected || input field is empty.')
 	}
 
+	printUsersInRoom() {
+		return this.state.usersInRoom.map(user => <li className='list-group-item' key={user}> {user} </li>)
+	}
+
 	render() {
 		/* istanbul ignore next */
 		if(!this.state.username) return <Redirect to={HOMEPAGE_PATH}/>
@@ -212,13 +224,14 @@ class ChatPage extends React.Component {
 						<h4>Room Information/Etc </h4>
 						<ConnectStatus connection={this.state.connected}/>
 						<h6>Current Room: {this.state.selectedRoom}</h6>
-						<h6>Users in current room: {this.findUsersOfRoom(this.state.selectedRoom)}</h6>
-						<Link className='btn btn-danger' to={HOMEPAGE_PATH}>Logout</Link>
+						<h6>Users in current room:</h6>
+						<ul className='list-group room-ID-list'>{this.printUsersInRoom()}</ul>
 						<h4>Find user:</h4>
 						<input className='form-control' palceholder='USer name' value={this.state.userToFind} onChange={this.handleUserToFindInput}/>
 						<ul className='list-group room-ID-list'>
 							{this.generateFoundUsers()}
 						</ul>
+						<Link className='btn btn-danger' to={HOMEPAGE_PATH}>Logout</Link>
 					</div>
 				</div>
 			</div>
