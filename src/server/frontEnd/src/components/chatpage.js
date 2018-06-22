@@ -74,7 +74,7 @@ class ChatPage extends React.Component {
 	}
 
 	handleJoinEvent(data) {
-		console.log('JOIN', data)
+		console.log('JOIN', data.username, this.state.username, 'Is this event applicable to me: ',data.username !== this.state.username)
 		if (data.username !== this.state.username) return
 		this.updateJoinedRooms(data)
 		this.changeSelectedRoom(data)
@@ -105,6 +105,8 @@ class ChatPage extends React.Component {
 		const roomMessages = store.getItem(roomId) ? JSON.parse(store.getItem(roomId)) : []
 		const updatedRoomMessages = _.concat(roomMessages, newMessage)
 		store.setItem(roomId, JSON.stringify(updatedRoomMessages))
+		this.setState({messages: JSON.parse(window.sessionStorage.getItem(roomId))}, this.generateMessages)
+		console.log(this.state.messages)
 	}
 
 	updateMessageState(messageData) {
@@ -176,6 +178,8 @@ class ChatPage extends React.Component {
 			const roomId =  this.state.selectedRoom
 			const message = this.state.input
 			socket.room.emit(protocols.MESSAGE, {roomId, message})
+			this.storeMessage(roomId, {roomId, message})
+			return
 		}
 		throw new Error('No room selected || input field is empty.')
 	}
