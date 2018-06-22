@@ -114,8 +114,8 @@ class ChatPage extends React.Component {
 	}
 
 	generateFoundUsers() {
-		return this.state.usersFound.map(username => 
-			<li className='message list-group-item'>{username}</li>)
+		return this.state.usersFound.map((username, key) => 
+			<li key={key} className='message list-group-item'>{username}</li>)
 	}
 
 	generateMessages() {
@@ -165,7 +165,7 @@ class ChatPage extends React.Component {
 		if(!_.isEmpty(this.state.input) && this.state.selectedRoom) {
 			const roomId =  this.state.selectedRoom
 			const message = this.state.input
-			socket.emit(protocols.MESSAGE, {roomId, message})
+			socket.room.emit(protocols.MESSAGE, {roomId, message})
 
 			const localMessage = {roomId, username: this.state.username, message, timestamp: new Date().getTime()}
 			return this.updateMessageState(localMessage)
