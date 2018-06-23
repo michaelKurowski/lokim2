@@ -42,7 +42,7 @@ class Friends {
 				return Promise.reject()
 			})
 			.then(() => this.addNotification(invitedUsername, invitatingUsername, EVENT_TYPES.CONFIRM_INVITATION))
-			.catch(err => logger.error(err)) 
+			.catch(err => logger.error(err))
 	}
 
 	[EVENT_TYPES.REMOVE_NOTIFICATIONS](data, socket) {
