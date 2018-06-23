@@ -4,11 +4,9 @@ const logger = require('../../logger')
 const _ = require('lodash')
 class Friends {
 	constructor({
-		UserModel = require('../../models/user'),
-		connectionRepository = require('../webSocketRouting').getConnectionRepository()
+		UserModel = require('../../models/user')
 	} = {}) {
 		this.UserModel = UserModel
-		this.usersToConnectionsMap = connectionRepository.usersToConnectionsMap
 	}
 
 	[EVENT_TYPES.CONNECTION](socket, connections) {
@@ -17,17 +15,18 @@ class Friends {
 	}
 
 	[EVENT_TYPES.FRIENDS_LIST](data, socket) {
-		const username = socket.request.user.username
+		const {username} = socket.request.user
 		return this.UserModel.findOne({username}).exec()
 			.then(user => socket.emit(EVENT_TYPES.FRIENDS_LIST, user.friends))
+			.catch(err => logger.error(err))
 	}
 
-	[EVENT_TYPES.INVITE](data, socket) {
+	[EVENT_TYPES.INVITE](data, socket, connections) {
 		const invitatedUsername = data.username
 		const invitatingUsername = socket.request.user.username
 		const emitPayload = {username: invitatingUsername}
 		return this.addNotification(invitatingUsername, invitatedUsername, EVENT_TYPES.INVITE)
-			.then(() => this.sendMessageToSepcificUser(socket, invitatedUsername, EVENT_TYPES.INVITE, emitPayload))
+			.then(() => this.sendMessageToSepcificUser(socket, connections, invitatedUsername, EVENT_TYPES.INVITE, emitPayload))
 			.catch(err => logger.error(err))
 	}
 
@@ -62,9 +61,9 @@ class Friends {
 			.catch(err => logger.error(err))
 	}
 
-	sendMessageToSepcificUser(socket, recieverUsername, eventType, payload) {
-		if (this.usersToConnectionsMap.has(recieverUsername)) {
-			const invitatedUserSocketId = this.usersToConnectionsMap.get(recieverUsername).id
+	sendMessageToSepcificUser(socket, connetcions, recieverUsername, eventType, payload) {
+		if (connetcions.usersToConnectionsMap.has(recieverUsername)) {
+			const invitatedUserSocketId = connetcions.usersToConnectionsMap.get(recieverUsername).id
 			socket.to(invitatedUserSocketId).emit(eventType, payload)
 			return true
 		}
