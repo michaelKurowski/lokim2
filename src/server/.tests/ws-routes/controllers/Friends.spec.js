@@ -33,7 +33,7 @@ describe('Friends websocket namespace', () => {
 		if(_.isFunction(suite.client.disconnect)) suite.client.disconnect()
 	})
 
-	describe('#Friends list', () => {
+	describe.only('#Friends list', () => {
 		beforeEach(() => {
 			suite.userModelMock = {
 				findOne: sinon.stub()
@@ -43,25 +43,49 @@ describe('Friends websocket namespace', () => {
 			})
 		})
 
-		it('should emit message with friends list to user', done => {
+		it('should sent event to client who requested for it', done => {
 			//given
-			const DUMMY_FRIENDS_ARRAY = [
-				{
-					$id: 'dummyId1',
-					username: 'dummyFriend1'
-				},
-				{
-					$id: 'dummyId2',
-					username: 'dummyFriend2'
-				}
-			]
-			const DUMMY_DATABASE_DOCUMENT = {
+			const QUERY_FEEDBACK_MOCK = []
+			const queryResultMock = {
+				exec: sinon.stub().resolves(QUERY_FEEDBACK_MOCK)
+			}
+			suite.userModelMock.findOne.returns(queryResultMock)
+
+			suite.server.on(CLIENT_EVENTS.CONNECTION, connection => {
+				connection.on(CLIENT_EVENTS.FRIENDS_LIST, data => {
+					suite.emitSpy = sinon.spy(connection, 'emit')
+					return suite.friendsInstance.friendsList(data, connection)
+						.then(() => {
+							//then
+							sinon.assert.calledOnce(suite.emitSpy)
+							done()
+						})
+				})
+			})
+
+			//when
+			suite.client = socketClient.connect(SERVER_URL, SOCKET_OPTIONS)
+			suite.client.emit(CLIENT_EVENTS.FRIENDS_LIST)
+		})
+
+		it('should emit friendsList event type with friends list attached to it', done => {
+			//given
+			const QUERY_FEEDBACK_MOCK = {
 				username: suite.DUMMY_USERNAME,
-				friends: DUMMY_FRIENDS_ARRAY
+				friends: [
+					{
+						$id: 'dummyId1',
+						username: 'dummyFriend1'
+					},
+					{
+						$id: 'dummyId2',
+						username: 'dummyFriend2'
+					}
+				]
 			}
 
 			const queryResultMock = {
-				exec: sinon.stub().resolves(DUMMY_DATABASE_DOCUMENT)
+				exec: sinon.stub().resolves(QUERY_FEEDBACK_MOCK)
 			}
 
 			suite.userModelMock.findOne.returns(queryResultMock)
@@ -73,7 +97,8 @@ describe('Friends websocket namespace', () => {
 						.then(() => {
 
 							//then
-							sinon.assert.calledWith(suite.emitSpy, CLIENT_EVENTS.FRIENDS_LIST, DUMMY_FRIENDS_ARRAY)
+							const expectedPayload = QUERY_FEEDBACK_MOCK.friends
+							sinon.assert.calledWith(suite.emitSpy, CLIENT_EVENTS.FRIENDS_LIST, expectedPayload)
 							done()
 						})
 				})
