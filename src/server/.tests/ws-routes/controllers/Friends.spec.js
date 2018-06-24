@@ -5,6 +5,8 @@ const socketClient = require('socket.io-client')
 const io = require('socket.io')
 const _ = require('lodash')
 const sinon = require('sinon')
+const assert = require('chai').assert
+
 const CLIENT_EVENTS = namespaceInfo.eventTypes
 const SERVER_PORT = config.devPropeties.httpTestPort
 const SERVER_URL = `http://localhost:${SERVER_PORT}`
@@ -33,7 +35,38 @@ describe('Friends websocket namespace', () => {
 		if(_.isFunction(suite.client.disconnect)) suite.client.disconnect()
 	})
 
-	describe.only('#Friends list', () => {
+	describe('#Connection', () => {
+		beforeEach(() => {
+			suite.connectionsMock = {
+				usersToConnectionsMap: new Map()
+			} 
+
+			suite.friendsInstance = new FriendsProvider({
+				UserModel: sinon.stub()
+			})
+		})
+
+		it('should add new element to user-socket map', done => {
+			//given
+			suite.server.on(CLIENT_EVENTS.CONNECTION, socket => {
+				suite.friendsInstance.connection(socket, suite.connectionsMock)
+				then()
+			})
+
+			//when
+			suite.client = socketClient.connect(SERVER_URL, SOCKET_OPTIONS)
+
+			//then
+			function then() {
+				const hasSocketStored = suite.connectionsMock.usersToConnectionsMap.has(suite.DUMMY_USERNAME)
+				assert.isTrue(hasSocketStored)
+				done()
+			}
+		})
+
+	})
+
+	describe('#Friends list', () => {
 		beforeEach(() => {
 			suite.userModelMock = {
 				findOne: sinon.stub()
