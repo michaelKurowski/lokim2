@@ -48,7 +48,7 @@ class Friends {
 	[EVENT_TYPES.REMOVE_NOTIFICATIONS](data, socket) {
 		const notificationIdsList = data.notificationIds
 		const requestingUsername = socket.request.user.username
-		this.removeNotificationsfromList(notificationIdsList, requestingUsername)
+		return this.removeNotificationsfromList(notificationIdsList, requestingUsername)
 			.then(() => socket.emit(EVENT_TYPES.REMOVE_NOTIFICATIONS, 'OK'))
 			.catch((err) => logger.error(err))
 			
