@@ -303,6 +303,39 @@ describe('Friends websocket namespace', () => {
 				suite.client.emit(CLIENT_EVENTS.PENDING_NOTIFICATIONS)
 			})
 		})
+
+		describe('#removeNotificationsFromList', () => {
+			it('should remove notification from db', () => {
+				//given
+				suite.userModelMock.findOneAndUpdate.returns({
+					exec: sinon.stub()
+				})
+				const requestingUsername = suite.DUMMY_USERNAME
+				const NOTIFICATION_ID_LIST =  [
+					{
+						_id: 'dummyId1'
+					},
+					{
+						_id: 'dummyId2'
+					}
+				]
+
+				//when
+				suite.friendsInstance.removeNotificationsfromList(NOTIFICATION_ID_LIST, requestingUsername)
+
+				//then
+				const expectedSearchingCirteria = {username: suite.DUMMY_USERNAME}
+				const expectedQuery = {
+					$pull: {
+						pendingNotifications: {
+							$or: NOTIFICATION_ID_LIST
+						}
+					}
+				}
+
+				sinon.assert.calledWith(suite.userModelMock.findOneAndUpdate.firstCall, expectedSearchingCirteria, expectedQuery)
+			})
+		})
 	})
 	
 })
