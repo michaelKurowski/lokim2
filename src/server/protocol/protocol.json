@@ -21,7 +21,7 @@
 		"eventTypes": {
 			"CONNECTION": "connection",
 			"FRIENDS_LIST": "friendsList",
-			"CONFIRM_INVITATION": "confirmInvitation",
+			"INVITATION_CONFIRMATION": "invitaitonConfirmation",
 			"INVITE": "invite",
 			"REMOVE_NOTIFICATIONS": "removeNotifications",
 			"PENDING_NOTIFICATIONS": "pendingNotifications"

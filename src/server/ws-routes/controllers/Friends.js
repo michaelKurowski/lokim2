@@ -30,7 +30,7 @@ class Friends {
 			.catch(err => logger.error(err))
 	}
 
-	[EVENT_TYPES.CONFIRM_INVITATION](data, socket) {
+	[EVENT_TYPES.INVITATION_CONFIRMATION](data, socket) {
 		const invitedUsername = socket.request.user.username
 		const invitatingUsername = data.username
 		const payload = {username: invitedUsername}
@@ -41,7 +41,7 @@ class Friends {
 				if(isEventExist) return this.addFriends(invitatingUsername, invitedUsername)
 				return Promise.reject()
 			})
-			.then(() => this.addNotification(invitedUsername, invitatingUsername, EVENT_TYPES.CONFIRM_INVITATION))
+			.then(() => this.addNotification(invitedUsername, invitatingUsername, EVENT_TYPES.INVITATION_CONFIRMATION))
 			.catch(err => logger.error(err))
 	}
 
