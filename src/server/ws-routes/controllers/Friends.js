@@ -82,18 +82,18 @@ class Friends {
 		return this.UserModel.findOneAndUpdate(searchingCriteria, query).exec()
 	}
 
-	addNotification(sendingEventUsername, recievingEventUsername, notificationType) {
-		const updatedData = {
+	addNotification(sendingNotificationUsername, recievingNotificationUsername, notificationType) {
+		const data = {
 			pendingNotifications: {
-				username: sendingEventUsername,
+				username: sendingNotificationUsername,
 				notificationType
 			}
 		}
-		const searchConditions = {
-			username: recievingEventUsername
+		const searchingCriteria = {
+			username: recievingNotificationUsername
 		}
-		let updateDataQuery = {$push:updatedData}
-		return this.UserModel.findOneAndUpdate(searchConditions, updateDataQuery).exec()
+		let updateDataQuery = {$push:data}
+		return this.UserModel.findOneAndUpdate(searchingCriteria, updateDataQuery).exec()
 	}
 
 	addFriends(invitatingUsername, invitatedUsername) {
