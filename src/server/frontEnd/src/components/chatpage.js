@@ -106,7 +106,6 @@ class ChatPage extends React.Component {
 		const updatedRoomMessages = _.concat(roomMessages, newMessage)
 		store.setItem(roomId, JSON.stringify(updatedRoomMessages))
 		this.setState({messages: JSON.parse(window.sessionStorage.getItem(roomId))}, this.generateMessages)
-		console.log(this.state.messages)
 	}
 
 	updateMessageState(messageData) {
@@ -177,8 +176,9 @@ class ChatPage extends React.Component {
 		if(!_.isEmpty(this.state.input) && this.state.selectedRoom) {
 			const roomId =  this.state.selectedRoom
 			const message = this.state.input
+			const timestamp = new Date().getTime()
 			socket.room.emit(protocols.MESSAGE, {roomId, message})
-			this.storeMessage(roomId, {roomId, message})
+			this.storeMessage(roomId, {roomId, message, timestamp})
 			return
 		}
 		throw new Error('No room selected || input field is empty.')
@@ -234,7 +234,7 @@ class ChatPage extends React.Component {
 						<h6>Users in current room:</h6>
 						<ul className='list-group room-ID-list'>{this.printUsersInRoom()}</ul>
 						<h4>Find user:</h4>
-						<input className='form-control' palceholder='USer name' value={this.state.userToFind} onChange={this.handleUserToFindInput}/>
+						<input className='form-control' palceholder='Username' value={this.state.userToFind} onChange={this.handleUserToFindInput}/>
 						<ul className='list-group room-ID-list'>
 							{this.generateFoundUsers()}
 						</ul>
