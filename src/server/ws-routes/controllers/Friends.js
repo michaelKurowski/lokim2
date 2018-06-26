@@ -63,8 +63,8 @@ class Friends {
 
 	sendMessageToSepcificUser(socket, connetcions, recieverUsername, eventType, payload) {
 		if (connetcions.usersToConnectionsMap.has(recieverUsername)) {
-			const invitatedUserSocketId = connetcions.usersToConnectionsMap.get(recieverUsername).id
-			socket.to(invitatedUserSocketId).emit(eventType, payload)
+			const receivingUserSocketId = connetcions.usersToConnectionsMap.get(recieverUsername).id
+			socket.to(receivingUserSocketId).emit(eventType, payload)
 			return true
 		}
 		return false

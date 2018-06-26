@@ -493,5 +493,152 @@ describe('Friends websocket namespace', () => {
 
 		})
 	})
+
+	describe('#sendMessageToSpecyficUser', () => {
+		beforeEach(() => {
+			suite.DUMMY_EVENT_TYPE = 'DUMMY_EVENT_TYPE'
+			suite.DUMMY_PAYLOAD = 'DUMMY_PAYLOAD'
+			suite.RECIEVING_DUMMY_USERNAME = 'DUMMY_USERNAME_2'
+			suite.RECIEVING_SOCKET_ID = 'recievingSocketId'
+		})
+		
+		it('should call to with recievingUserSocket as argument', () => {
+			//given
+			suite.friendsInstance = new FriendsProvider({
+				UserModel: suite.userModelMock
+			})
+			suite.recievingSocketMock = {
+				id: suite.RECIEVING_SOCKET_ID
+			}
+
+			suite.sendingSocketMock = {
+				to: sinon.stub().returns({
+					emit: sinon.stub()
+				})
+			}
+			suite.connectionsMock.usersToConnectionsMap.set(suite.RECIEVING_DUMMY_USERNAME, suite.recievingSocketMock)
+
+			//when
+			suite.friendsInstance.sendMessageToSepcificUser(suite.sendingSocketMock, suite.connectionsMock, suite.RECIEVING_DUMMY_USERNAME, suite.DUMMY_EVENT_TYPE, suite.DUMMY_PAYLOAD)
+
+			//then
+			assert.isTrue(suite.sendingSocketMock.to.calledWith(suite.RECIEVING_SOCKET_ID))
+		})
+
+		it('should call emit with expected event type and payload attatched to message', () => {
+			//given
+			suite.friendsInstance = new FriendsProvider({
+				UserModel: suite.userModelMock
+			})
+			suite.recievingSocketMock = {
+				id: suite.RECIEVING_SOCKET_ID
+			}
+
+			suite.sendingSocketMock = {
+				to: sinon.stub().returns({
+					emit: sinon.stub()
+				})
+			}
+					
+			
+			suite.connectionsMock.usersToConnectionsMap.set(suite.RECIEVING_DUMMY_USERNAME, suite.recievingSocketMock)
+
+			//when
+			suite.friendsInstance.sendMessageToSepcificUser(suite.sendingSocketMock, suite.connectionsMock, suite.RECIEVING_DUMMY_USERNAME, suite.DUMMY_EVENT_TYPE, suite.DUMMY_PAYLOAD)
+
+			//then
+			assert.isTrue(suite.sendingSocketMock.to().emit.calledWith(suite.DUMMY_EVENT_TYPE, suite.DUMMY_PAYLOAD))
+
+		})
+	})
+
+	describe('#addFriends', () => {
+		it('should push firend username to firends array', done => {
+			//given
+			const DUMMY_USERNAME_2 = 'DUMMY_USERNAME_2'
+			const COLLECTION_MOCK = [
+				{
+					save: sinon.stub(),
+					username: suite.DUMMY_USERNAME,
+					friends: []
+				},
+				{
+					save: sinon.stub(),
+					username: DUMMY_USERNAME_2,
+					friends: []
+				},
+			]
+			suite.usersCollectionMock = _.cloneDeep(COLLECTION_MOCK)
+			suite.userModelMock = {
+				find: sinon.stub()
+			}
+			const queryResultMock = {
+				exec: sinon.stub().resolves(suite.usersCollectionMock)
+			}
+			suite.userModelMock.find.returns(queryResultMock)
+			suite.friendsInstance = new FriendsProvider({
+				UserModel: suite.userModelMock
+			})
+
+			//when
+			const invitatingUsername = suite.DUMMY_USERNAME
+			const invitatedUSername = DUMMY_USERNAME_2
+			suite.friendsInstance.addFriends(invitatingUsername, invitatedUSername)
+				.then(() => then())
+
+			//then
+			function then() {
+				let expectedUserCollectionMock = _.cloneDeep(COLLECTION_MOCK)
+				expectedUserCollectionMock[0].friends.push({username: DUMMY_USERNAME_2})
+				expectedUserCollectionMock[1].friends.push({username: suite.DUMMY_USERNAME})
+
+				assert.deepEqual(suite.usersCollectionMock, expectedUserCollectionMock)
+				done()
+			}
+
+		})
+
+		it('should call save to mongo db twice to each users', done => {
+			//given
+			const DUMMY_USERNAME_2 = 'DUMMY_USERNAME_2'
+			suite.userModelMock = {
+				find: sinon.stub()
+			}
+			const saveStub = sinon.stub()
+			let QUERY_FEEDBACK_MOCK = [
+				{
+					username: suite.DUMMY_USERNAME,
+					friends: [],
+					save: saveStub
+				},
+				{
+					username: DUMMY_USERNAME_2,
+					friends: [],
+					save: saveStub
+				},
+			]
+
+			const queryResultMock = {
+				exec: sinon.stub().resolves(QUERY_FEEDBACK_MOCK)
+			}
+			suite.userModelMock.find.returns(queryResultMock)
+			suite.friendsInstance = new FriendsProvider({
+				UserModel: suite.userModelMock
+			})
+
+			//when
+			const invitatingUsername = suite.DUMMY_USERNAME
+			const invitatedUSername = DUMMY_USERNAME_2
+			suite.friendsInstance.addFriends(invitatingUsername, invitatedUSername)
+				.then(() => then())
+			
+			//then
+			function then() {
+				assert.isTrue(saveStub.calledTwice)
+				done()
+			}
+
+		})
+	})
 	
 })
