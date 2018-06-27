@@ -150,7 +150,6 @@ class ChatPage extends React.Component {
 
 	generateRooms() {
 		if(_.isEmpty(this.state.userRooms)) return
-		console.log(this.state.userRooms)
 		return this.state.userRooms.map(
 			(e, i) => 
 				<Room 

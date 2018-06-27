@@ -48,11 +48,6 @@ describe('<ChatPage />', () => {
 		window.sessionStorage.clear()
 
 	})
-	describe('Methods', () => {
-		describe('handleUserToFindInput', ()=> {
-			it('')
-		})
-	})
 
 	describe('<ChatPage /> Render Tests', () => {
 		it('Should render HomePage when no username is provided', () => {
