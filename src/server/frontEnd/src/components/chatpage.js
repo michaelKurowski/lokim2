@@ -33,7 +33,6 @@ class ChatPage extends React.Component {
 		this.handleRoomJoin = this.handleRoomJoin.bind(this)
 		this.handleRoomToChangeUserInput = this.handleRoomToChangeUserInput.bind(this)
 		this.handleUserToFindInput = this.handleUserToFindInput.bind(this)
-		this.handleUsersFindEvent = this.handleUsersFindEvent.bind(this)
 		this.handleListMembersEvent = this.handleListMembersEvent.bind(this)
 	}
 
@@ -43,7 +42,7 @@ class ChatPage extends React.Component {
 		socket.room.on(protocols.MESSAGE, this.handleMessageEvent)
 		socket.room.on(protocols.JOIN, this.handleJoinEvent)
 		socket.room.on(protocols.LIST_MEMBERS, this.handleListMembersEvent)
-		socket.users.on(protocols.FIND, this.handleUsersFindEvent)
+		socket.users.on(protocols.FIND, this.updateFoundUsers.bind(this))
 	}
 
 	handleRoomJoin() {
@@ -59,7 +58,6 @@ class ChatPage extends React.Component {
 	}
 
 	handleListMembersEvent(data) {
-		console.log('LIST MEMBERS')
 		this.setState({usersInRoom: data.usernames})
 	}
 
@@ -73,15 +71,9 @@ class ChatPage extends React.Component {
 		socket.users.emit(protocols.FIND, {queryPhrase: userToFind})
 	}
 
-	handleJoinEvent(data) {
-		console.log('JOIN', data.username, this.state.username, 'Is this event applicable to me: ',data.username !== this.state.username)
-		if (data.username !== this.state.username) return
+	handleJoinEvent(data) {		if (data.username !== this.state.username) return
 		this.updateJoinedRooms(data)
 		this.changeSelectedRoom(data)
-	}
-
-	handleUsersFindEvent(data) {
-		this.updateFoundUsers(data)
 	}
 
 	updateFoundUsers(data) {
@@ -105,7 +97,9 @@ class ChatPage extends React.Component {
 		const roomMessages = store.getItem(roomId) ? JSON.parse(store.getItem(roomId)) : []
 		const updatedRoomMessages = _.concat(roomMessages, newMessage)
 		store.setItem(roomId, JSON.stringify(updatedRoomMessages))
-		this.setState({messages: JSON.parse(window.sessionStorage.getItem(roomId))}, this.generateMessages)
+		if(roomId === this.state.selectedRoom) {
+			this.setState({messages: JSON.parse(window.sessionStorage.getItem(roomId))}, this.generateMessages)
+		}
 	}
 
 	updateMessageState(messageData) {
