@@ -14,18 +14,14 @@
     "react-dom": "^16.3.2",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
-    "react-scripts": "1.1.4",
     "socket.io-client": "^2.1.0",
     "svg-inline-loader": "^0.8.0",
     "webpack": "^4.14.0"
   },
   "scripts": {
-    "build": "webpack --config ./prod.webpack.config.js && cp ./src/theme/index.html ../public/ && cp ./src/theme/assets ../public/",
-    "build-dev": "webpack --config ./dev.webpack.config.js && cp ./src/theme/index.html ../public/ && cp ./src/theme/assets ../public/",
     "test": "jest --env=jsdom",
     "test-debug": "react-scripts --inspect-brk=0.0.0.0:9229 test --env=jsdom --runInBand -i",
     "test-coverage": "npm test -- --coverage",
-    "eject": "react-scripts eject",
     "eslint": "node ./node_modules/eslint/bin/eslint.js  --ignore-path ./.eslintignore ./",
     "eslint-auto-fix": "node ./node_modules/eslint/bin/eslint.js --ignore-path ./.eslintignore ./ --fix"
   },
