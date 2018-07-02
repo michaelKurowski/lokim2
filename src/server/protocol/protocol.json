@@ -21,7 +21,7 @@
 		"name": "notifications",
 		"eventTypes": {
 			"REMOVE_NOTIFICATIONS": "removeNotifications",
-			"PENDING_NOTIFICATIONS": "pendingNotifications"
+			"GET_PENDING_NOTIFICATIONS": "getPendingNotifications"
 		}
 	},
 	
@@ -29,7 +29,7 @@
 		"name": "friends",
 		"eventTypes": {
 			"CONNECTION": "connection",
-			"FRIENDS_LIST": "friendsList",
+			"GET_FRIENDS_LIST": "getFriendsList",
 			"INVITATION_CONFIRMATION": "invitaitonConfirmation",
 			"INVITE": "invite"
 			}

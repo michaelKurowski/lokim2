@@ -86,23 +86,25 @@ describe('Friends websocket namespace', () => {
 			suite.userModelMock.findOne.returns(queryResultMock)
 
 			suite.server.on(CLIENT_EVENTS.CONNECTION, connection => {
-				connection.on(CLIENT_EVENTS.FRIENDS_LIST, data => {
+				connection.on(CLIENT_EVENTS.GET_FRIENDS_LIST, data => {
 					suite.emitSpy = sinon.spy(connection, 'emit')
-					return suite.friendsInstance.friendsList(data, connection)
-						.then(() => {
-							//then
-							sinon.assert.calledOnce(suite.emitSpy)
-							done()
-						})
+					return suite.friendsInstance.getFriendsList(data, connection)
+						.then(asserations)
 				})
 			})
 
 			//when
 			suite.client = socketClient.connect(SERVER_URL, SOCKET_OPTIONS)
-			suite.client.emit(CLIENT_EVENTS.FRIENDS_LIST)
+			suite.client.emit(CLIENT_EVENTS.GET_FRIENDS_LIST)
+
+			//then
+			function asserations() {
+				sinon.assert.calledOnce(suite.emitSpy)
+				done()
+			}
 		})
 
-		it('should emit friendsList event type with friends list attached to it', done => {
+		it('should emit getFriendsList event type with friends list attached to it', done => {
 			//given
 			const QUERY_FEEDBACK_MOCK = {
 				username: suite.DUMMY_USERNAME,
@@ -126,21 +128,22 @@ describe('Friends websocket namespace', () => {
 
 			suite.server.on(CLIENT_EVENTS.CONNECTION, connection => {
 				suite.emitSpy = sinon.spy(connection, 'emit')
-				connection.on(CLIENT_EVENTS.FRIENDS_LIST, data => {
-					return suite.friendsInstance.friendsList(data, connection)
-						.then(() => {
-
-							//then
-							const expectedPayload = QUERY_FEEDBACK_MOCK.friends
-							sinon.assert.calledWith(suite.emitSpy, CLIENT_EVENTS.FRIENDS_LIST, expectedPayload)
-							done()
-						})
+				connection.on(CLIENT_EVENTS.GET_FRIENDS_LIST, data => {
+					return suite.friendsInstance.getFriendsList(data, connection)
+						.then(asserations)
 				})
 			})
 
 			//when
 			suite.client = socketClient.connect(SERVER_URL, SOCKET_OPTIONS)
-			suite.client.emit(CLIENT_EVENTS.FRIENDS_LIST)
+			suite.client.emit(CLIENT_EVENTS.GET_FRIENDS_LIST)
+
+			//then
+			function asserations() {
+				const expectedPayload = QUERY_FEEDBACK_MOCK.friends
+				sinon.assert.calledWith(suite.emitSpy, CLIENT_EVENTS.GET_FRIENDS_LIST, expectedPayload)
+				done()
+			}
 		})
 	})
 
@@ -187,19 +190,22 @@ describe('Friends websocket namespace', () => {
 			suite.server.on(CLIENT_EVENTS.CONNECTION, socket => {
 				socket.on(CLIENT_EVENTS.INVITE, data => {
 					suite.friendsInstance.invite(data, socket, suite.connectionsMock)
-						.then(() => {
-							const epxectedReciveingUsername = suite.DUMMY_INVITATED_USERNAME
-							const expectedEventType = CLIENT_EVENTS.INVITE
-							const expectedPayload = {username: suite.DUMMY_USERNAME}
-							sinon.assert.calledWith(suite.sendMessageToSpecyficUserSpy, socket, suite.connectionsMock, epxectedReciveingUsername, expectedEventType, expectedPayload)
-							done()
-						})
+						.then(() => asserations(socket))
 				})
 			})
 
 			//when
 			suite.client = socketClient.connect(SERVER_URL, SOCKET_OPTIONS)
 			suite.client.emit(CLIENT_EVENTS.INVITE, REQUEST_MOCK)
+
+			//then
+			function asserations(socket) {
+				const epxectedReciveingUsername = suite.DUMMY_INVITATED_USERNAME
+				const expectedEventType = CLIENT_EVENTS.INVITE
+				const expectedPayload = {username: suite.DUMMY_USERNAME}
+				sinon.assert.calledWith(suite.sendMessageToSpecyficUserSpy, socket, suite.connectionsMock, epxectedReciveingUsername, expectedEventType, expectedPayload)
+				done()
+			}
 
 		})
 	})
@@ -444,15 +450,13 @@ describe('Friends websocket namespace', () => {
 			const invitatingUsername = suite.DUMMY_USERNAME
 			const invitatedUSername = DUMMY_USERNAME_2
 			suite.friendsInstance.addFriends(invitatingUsername, invitatedUSername)
-				.then(() => then())
+				.then(asserations)
 			
 			//then
-			function then() {
+			function asserations() {
 				assert.isTrue(saveStub.calledTwice)
 				done()
 			}
-
 		})
-	})
-	
+	})	
 })

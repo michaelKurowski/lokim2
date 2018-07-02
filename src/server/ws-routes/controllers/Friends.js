@@ -16,10 +16,10 @@ class Friends {
 		connections.usersToConnectionsMap.set(username, socket)
 	}
 
-	[EVENT_TYPES.FRIENDS_LIST](data, socket) {
+	[EVENT_TYPES.GET_FRIENDS_LIST](data, socket) {
 		const {username} = socket.request.user
 		return this.UserModel.findOne({username}).exec()
-			.then(user => socket.emit(EVENT_TYPES.FRIENDS_LIST, user.friends))
+			.then(user => socket.emit(EVENT_TYPES.GET_FRIENDS_LIST, user.friends))
 			.catch(err => logger.error(err))
 	}
 

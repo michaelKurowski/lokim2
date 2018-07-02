@@ -6,8 +6,10 @@ const pendingNotificationsSchema = require('./pendingNotificationsSchema')
 const friendsSchema = require('./friendsSchema')
 const Schema = mongoose.Schema
 
-const DUPLICATE_KEY_ERROR_DESC = 'There was a duplicate key'
-const DUPLICATE_FRIEND_DESC = 'You are friends already'
+const MESSAGES = {
+	DUPLICATE_KEY_ERROR: 'There was a duplicate key',
+	DUPLICATE_FRIEND : 'You are friends already'
+}
 
 const userSchema = new Schema({
 	username:{ 
@@ -35,13 +37,13 @@ const userSchema = new Schema({
 				const usernamesList = _.map(val, user => user.username)
 				return _.uniq(usernamesList).length === usernamesList.length
 			},
-			message: DUPLICATE_FRIEND_DESC
+			message: MESSAGES.DUPLICATE_FRIEND
 		
 		}
 	}
 })
 
-userSchema.plugin(uniqueValidator, { message: DUPLICATE_KEY_ERROR_DESC })
+userSchema.plugin(uniqueValidator, { message: MESSAGES.DUPLICATE_KEY_ERROR })
 const UserModel = dbConnection.model('users', userSchema)
 
 module.exports = UserModel

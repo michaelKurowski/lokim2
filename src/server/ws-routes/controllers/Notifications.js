@@ -18,10 +18,10 @@ class Notifications {
 			
 	}
 
-	[EVENT_TYPES.PENDING_NOTIFICATIONS](data, socket) {
+	[EVENT_TYPES.GET_PENDING_NOTIFICATIONS](data, socket) {
 		const username = socket.request.user.username
 		return this.UserModel.findOne({username}).exec()
-			.then(user => socket.emit(EVENT_TYPES.PENDING_NOTIFICATIONS, user.pendingNotifications))
+			.then(user => socket.emit(EVENT_TYPES.GET_PENDING_NOTIFICATIONS, user.pendingNotifications))
 			.catch(err => logger.error(err))
 	}
 

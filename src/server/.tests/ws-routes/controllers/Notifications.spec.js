@@ -143,13 +143,13 @@ describe('Notifications websocket namespace', () => {
 			suite.userModelMock.findOne.returns(queryResultMock)
 
 			//when
-			suite.notificationsInstance.pendingNotifications(DUMMY_DATA, suite.socketMock)
+			suite.notificationsInstance.getPendingNotifications(DUMMY_DATA, suite.socketMock)
 				.then(asserations)
 			
 			//then
 			function asserations() {
 				const expectedAttachment = QUERY_FEEDBACK_MOCK.pendingNotifications
-				sinon.assert.calledWith(suite.socketMock.emit.firstCall, CLIENT_EVENTS.PENDING_NOTIFICATIONS, expectedAttachment)
+				sinon.assert.calledWith(suite.socketMock.emit.firstCall, CLIENT_EVENTS.GET_PENDING_NOTIFICATIONS, expectedAttachment)
 				done()
 			}
 		})
