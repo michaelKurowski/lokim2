@@ -64,7 +64,6 @@ const wst = (socketIo => {// eslint-disable-line no-unused-vars
 		const namespace = getNamespace()
 		const eventTypes = protocol.get(namespace)
 		eventTypes.forEach(listenForEvent)
-		eventTypes.forEach(pushEventOptionToSend)
 	}
 
 	function listenForEvent(eventName) {
@@ -106,12 +105,6 @@ const wst = (socketIo => {// eslint-disable-line no-unused-vars
 	function pushNamespace(namespaceName) {
 		getNamespaceSelect().innerHTML += 
 			`<option value='${namespaceName}'>${namespaceName}</option>`
-	}
-
-	function pushEventOptionToSend(eventName) {
-		const select = document.getElementById('event-name-to-send')
-		select.innerHTML +=
-			`<option value='${eventName}'>${eventName}</option>`
 	}
 
 	function pushEventType(eventType) {
