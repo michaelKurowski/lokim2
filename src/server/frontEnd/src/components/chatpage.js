@@ -71,7 +71,8 @@ class ChatPage extends React.Component {
 		socket.users.emit(protocols.FIND, {queryPhrase: userToFind})
 	}
 
-	handleJoinEvent(data) {		if (data.username !== this.state.username) return
+	handleJoinEvent(data) {
+		if (data.username !== this.state.username) return
 		this.updateJoinedRooms(data)
 		this.changeSelectedRoom(data)
 	}
@@ -151,12 +152,12 @@ class ChatPage extends React.Component {
 	generateRooms() {
 		if(_.isEmpty(this.state.userRooms)) return
 		return this.state.userRooms.map(
-			(e, i) => 
+			(room, roomIndex) => 
 				<Room 
-					key={i}
-					name={`Room #${e.roomId}`}
-					ID={e.roomId}
-					onClick={() => this.changeSelectedRoom({roomId: e.roomId})}
+					key={roomIndex}
+					name={`Room #${room.roomId}`}
+					ID={room.roomId}
+					onClick={() => this.changeSelectedRoom({roomId: room.roomId})}
 				/>
 		)
 	}
@@ -186,7 +187,6 @@ class ChatPage extends React.Component {
 	}
 
 	render() {
-		/* istanbul ignore next */
 		if(!this.state.username) return <Redirect to={HOMEPAGE_PATH}/>
 		
 		return (
