@@ -7,7 +7,7 @@ let socket
 const protocols = require('../utils/io-protocol')
 const HOMEPAGE_PATH = require('../routes/routes').paths.HOME
 const USERNAMES_PLACEHOLDER = ''
-const dummyAvatar = require('../avatar.svg')
+const dummyAvatar = require('../theme/assets/avatar.svg')
 
 class ChatPage extends React.Component {
 	constructor(props) {
