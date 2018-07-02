@@ -153,14 +153,14 @@ describe('<ChatPage />', () => {
 			const roomId = DUMMY_ROOM
 			const EXPECTED_MESSAGE_COUNT = 0
 			const EXPECTED_DATA = {roomId, username: DUMMY_USER, message: DUMMY_MESSAGE, timestamp: DUMMY_TIMESTAMP}
-			suite.Component.instance().updateMessageState({roomId, ...EXPECTED_DATA})
+			suite.Component.instance().updateMessageState(EXPECTED_DATA)
 			expect(suite.Component.state(MESSAGES).length).toBe(EXPECTED_MESSAGE_COUNT)
 		})
 		it('Should update messages to state if the selectedroom is the same as the roomId of the message', () => {
 			const roomId = DUMMY_ROOM
-			const fakeData = {username: DUMMY_USER, message: DUMMY_MESSAGE, timestamp: DUMMY_TIMESTAMP}
+			const fakeData = {roomId, username: DUMMY_USER, message: DUMMY_MESSAGE, timestamp: DUMMY_TIMESTAMP}
 			suite.Component.instance().changeSelectedRoom({roomId})
-			suite.Component.instance().updateMessageState({roomId, ...fakeData})
+			suite.Component.instance().updateMessageState(fakeData)
 			expect(suite.Component.state(MESSAGES).length).toBe(EXPECTED_ELEMENTS_COUNT)
 		})
 		it('Should return no users of room, when there are no users in room', () => {
@@ -183,8 +183,8 @@ describe('<ChatPage />', () => {
 		it('Should generate a message if a room is specified and there are messages to render', () => {
 			const roomId = DUMMY_ROOM
 			suite.Component.instance().changeSelectedRoom({roomId})
-			const msg = {username: DUMMY_USER, message: DUMMY_MESSAGE, timestamp: new Date().getTime()}
-			suite.Component.instance().updateMessageState({roomId, ...msg})
+			const msg = {roomId, username: DUMMY_USER, message: DUMMY_MESSAGE, timestamp: new Date().getTime()}
+			suite.Component.instance().updateMessageState(msg)
 			expect(suite.Component.instance().generateMessages().length).toBe(EXPECTED_ELEMENTS_COUNT)
 		})
 		it('Should throw an error if the input is empty', () => {

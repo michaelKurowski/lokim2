@@ -22,7 +22,7 @@
   "scripts": {
     "build": "webpack --config ./prod.webpack.config.js && cp ./src/theme/index.html ../public/ && cp ./src/theme/assets ../public/",
     "build-dev": "webpack --config ./dev.webpack.config.js && cp ./src/theme/index.html ../public/ && cp ./src/theme/assets ../public/",
-    "test": "react-scripts test --env=jsdom",
+    "test": "jest --env=jsdom",
     "test-debug": "react-scripts --inspect-brk=0.0.0.0:9229 test --env=jsdom --runInBand -i",
     "test-coverage": "npm test -- --coverage",
     "eject": "react-scripts eject",
@@ -43,7 +43,11 @@
     "coverageReporters": [
       "text",
       "lcov"
-    ]
+    ],
+    "moduleNameMapper": { 
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/assetsTransformer.js",
+      "\\.(css|less)$": "<rootDir>/assetsTransformer.js" 
+    }
   },
   "devDependencies": {
     "enzyme": "^3.3.0",
