@@ -4,9 +4,11 @@ const logger = require('../../logger')
 const _ = require('lodash')
 class Friends {
 	constructor({
-		UserModel = require('../../models/user')
+		UserModel = require('../../models/user'),
+		Notifications = require('./Notifications')
 	} = {}) {
 		this.UserModel = UserModel
+		this.Notifications = Notifications
 	}
 
 	[EVENT_TYPES.CONNECTION](socket, connections) {
@@ -25,7 +27,7 @@ class Friends {
 		const invitatedUsername = data.username
 		const invitatingUsername = socket.request.user.username
 		const emitPayload = {username: invitatingUsername}
-		return this.addNotification(invitatingUsername, invitatedUsername, EVENT_TYPES.INVITE)
+		return this.Notifications.addNotification(this.UserModel, invitatingUsername, invitatedUsername, EVENT_TYPES.INVITE)
 			.then(() => this.sendMessageToSepcificUser(socket, connections, invitatedUsername, EVENT_TYPES.INVITE, emitPayload))
 			.catch(err => logger.error(err))
 	}
@@ -41,23 +43,7 @@ class Friends {
 				if(isEventExist) return this.addFriends(invitatingUsername, invitedUsername)
 				return Promise.reject()
 			})
-			.then(() => this.addNotification(invitedUsername, invitatingUsername, EVENT_TYPES.INVITATION_CONFIRMATION))
-			.catch(err => logger.error(err))
-	}
-
-	[EVENT_TYPES.REMOVE_NOTIFICATIONS](data, socket) {
-		const notificationIdsList = data.notificationIds
-		const requestingUsername = socket.request.user.username
-		return this.removeNotificationsfromList(notificationIdsList, requestingUsername)
-			.then(() => socket.emit(EVENT_TYPES.REMOVE_NOTIFICATIONS, 'OK'))
-			.catch((err) => logger.error(err))
-			
-	}
-
-	[EVENT_TYPES.PENDING_NOTIFICATIONS](data, socket) {
-		const username = socket.request.user.username
-		return this.UserModel.findOne({username}).exec()
-			.then(user => socket.emit(EVENT_TYPES.PENDING_NOTIFICATIONS, user.pendingNotifications))
+			.then(() => this.Notifications.addNotification(this.UserModel, invitedUsername, invitatingUsername, EVENT_TYPES.INVITATION_CONFIRMATION))
 			.catch(err => logger.error(err))
 	}
 
@@ -68,32 +54,6 @@ class Friends {
 			return true
 		}
 		return false
-	}
-
-	removeNotificationsfromList(notificationIdList, requestingUsername) {
-		const query ={	
-			$pull: {
-				pendingNotifications: {
-					$or: notificationIdList
-				}
-			}
-		}
-		const searchingCriteria = {username: requestingUsername}
-		return this.UserModel.findOneAndUpdate(searchingCriteria, query).exec()
-	}
-
-	addNotification(sendingNotificationUsername, recievingNotificationUsername, notificationType) {
-		const data = {
-			pendingNotifications: {
-				username: sendingNotificationUsername,
-				notificationType
-			}
-		}
-		const searchingCriteria = {
-			username: recievingNotificationUsername
-		}
-		let updateDataQuery = {$push:data}
-		return this.UserModel.findOneAndUpdate(searchingCriteria, updateDataQuery).exec()
 	}
 
 	addFriends(invitatingUsername, invitatedUsername) {

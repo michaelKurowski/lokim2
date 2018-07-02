@@ -16,18 +16,22 @@
 			"FIND": "find"
 		}
 	},
+	
+	"notifications": {
+		"name": "notifications",
+		"eventTypes": {
+			"REMOVE_NOTIFICATIONS": "removeNotifications",
+			"PENDING_NOTIFICATIONS": "pendingNotifications"
+		}
+	},
+	
 	"friends": {
 		"name": "friends",
 		"eventTypes": {
 			"CONNECTION": "connection",
 			"FRIENDS_LIST": "friendsList",
 			"INVITATION_CONFIRMATION": "invitaitonConfirmation",
-			"INVITE": "invite",
-			"REMOVE_NOTIFICATIONS": "removeNotifications",
-			"PENDING_NOTIFICATIONS": "pendingNotifications"
-
-
-		}
-
+			"INVITE": "invite"
+			}
 	}
 }

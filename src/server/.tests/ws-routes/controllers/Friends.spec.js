@@ -144,210 +144,18 @@ describe('Friends websocket namespace', () => {
 		})
 	})
 
-	describe('#Notifications', () => {
-		beforeEach(() => {
-			suite.userModelMock = {
-				findOneAndUpdate: sinon.stub()
-			}
-
-			suite.friendsInstance = new FriendsProvider({
-				UserModel: suite.userModelMock
-			})
-		})
-
-		describe('#RemoveNotifications', () => {
-
-			it('should call emit with remove notifications event type when notifications was removed', done => {
-				//given
-				const DUMMY_REQUEST = []
-				const queryResultMock = {
-					exec: sinon.stub().resolves()
-				}
-				suite.userModelMock.findOneAndUpdate.returns(queryResultMock)
-	
-				suite.server.on(CLIENT_EVENTS.CONNECTION, socket => {
-					socket.on(CLIENT_EVENTS.REMOVE_NOTIFICATIONS, data => {
-						suite.emitSpy = sinon.spy(socket, 'emit')
-						suite.friendsInstance.removeNotifications(data, socket)
-							.then(() => {
-								//then
-								sinon.assert.calledWith(suite.emitSpy.firstCall, CLIENT_EVENTS.REMOVE_NOTIFICATIONS)
-								done()
-							})
-					})
-				})
-	
-				//when
-				suite.client = socketClient.connect(SERVER_URL, SOCKET_OPTIONS)
-				suite.client.emit(CLIENT_EVENTS.REMOVE_NOTIFICATIONS, DUMMY_REQUEST)
-			})
-		
-	
-			it('should remove notification records from db by id ', done => {
-				//given
-				const DUMMY_ID_1 = 'dummyId1'
-				const DUMMY_ID_2 = 'dummyId2'
-				const REQUEST_MOCK = {
-					notificationIds : [
-						{
-							_id: DUMMY_ID_1
-						},
-						{
-							_id: DUMMY_ID_2
-						}
-					]
-				}
-	
-				const queryResultMock = {
-					exec: sinon.stub().resolves()
-				}
-				suite.userModelMock.findOneAndUpdate.returns(queryResultMock)
-	
-	
-				suite.server.on(CLIENT_EVENTS.CONNECTION, socket => {
-					socket.on(CLIENT_EVENTS.REMOVE_NOTIFICATIONS, data => {
-						suite.friendsInstance.removeNotifications(data, socket)
-						then()
-					})
-				})
-	
-				//when
-				suite.client = socketClient.connect(SERVER_URL, SOCKET_OPTIONS)
-				suite.client.emit(CLIENT_EVENTS.REMOVE_NOTIFICATIONS, REQUEST_MOCK)
-			
-				//then
-				function then() {
-					const expectedSearchingCriteria = {username: suite.DUMMY_USERNAME}
-					const expectedQuery = {
-						$pull: {
-							pendingNotifications: {
-								$or: REQUEST_MOCK.notificationIds
-							}
-						}
-					}
-					
-					sinon.assert.calledWith(suite.userModelMock.findOneAndUpdate, expectedSearchingCriteria, expectedQuery)
-					done()
-				}
-			})
-		})
-
-		describe('#addNotification', () => {
-			it('should add notification to pendingNotifications array in user document', () => {
-				//given
-				const SENDING_NOTIFICATION_USERNAME = suite.DUMMY_USERNAME
-				const RECIEVING_NOTIFICATION_USERNAME = 'DUMMY USERNAME 2'
-				const NOTIFICATION_TYPE = CLIENT_EVENTS.INVITE
-
-				const queryResultMock = {
-					exec: sinon.stub().resolves()
-				}
-				suite.userModelMock.findOneAndUpdate.returns(queryResultMock)
-	
-
-				//when
-				suite.friendsInstance.addNotification(SENDING_NOTIFICATION_USERNAME, RECIEVING_NOTIFICATION_USERNAME, NOTIFICATION_TYPE)
-			
-				//then
-				const expectedSearchingCriteria = {username: RECIEVING_NOTIFICATION_USERNAME}
-				const expectedQuery = {
-					$push: {
-						pendingNotifications : {
-							username: SENDING_NOTIFICATION_USERNAME,
-							notificationType: NOTIFICATION_TYPE
-						}
-					}
-				}
-
-				sinon.assert.calledWith(suite.userModelMock.findOneAndUpdate.firstCall, expectedSearchingCriteria, expectedQuery)
-			})
-		})
-
-		describe('#PendingNotifications', () => {
-			beforeEach(() => {
-				suite.userModelMock.findOne = sinon.stub()
-			})
-
-			it('should call emit with pending notifications event type and attached array with notifications to response', done => {
-				//given
-				const QUERY_FEEDBACK_MOCK = {
-					username: suite.DUMMY_USERNAME,
-					pendingNotifications: [
-						{
-							username: 'DUMMY_USERNAME_2',
-							notificationType: CLIENT_EVENTS.INVITE
-						},
-						{
-							username: 'DUMMY_USERNAME_3',
-							notificationType: CLIENT_EVENTS.CONFIRM_INVITATION
-						}
-					]
-				}
-				const queryResultMock = {exec: sinon.stub().resolves(QUERY_FEEDBACK_MOCK)}
-				suite.userModelMock.findOne.returns(queryResultMock)
-
-				suite.server.on(CLIENT_EVENTS.CONNECTION, socket => {
-					socket.on(CLIENT_EVENTS.PENDING_NOTIFICATIONS, data => {
-						suite.emitSpy = sinon.spy(socket, 'emit')
-						return suite.friendsInstance.pendingNotifications(data, socket)
-							.then(() => {
-								//then
-								const expectedAttachment = QUERY_FEEDBACK_MOCK.pendingNotifications
-								sinon.assert.calledWith(suite.emitSpy.firstCall, CLIENT_EVENTS.PENDING_NOTIFICATIONS, expectedAttachment)
-								done()
-							})
-					})
-				})
-
-				//when
-				suite.client = socketClient.connect(SERVER_URL, SOCKET_OPTIONS)
-				suite.client.emit(CLIENT_EVENTS.PENDING_NOTIFICATIONS)
-			})
-		})
-
-		describe('#removeNotificationsFromList', () => {
-			it('should remove notification from db', () => {
-				//given
-				suite.userModelMock.findOneAndUpdate.returns({
-					exec: sinon.stub()
-				})
-				const requestingUsername = suite.DUMMY_USERNAME
-				const NOTIFICATION_ID_LIST =  [
-					{
-						_id: 'dummyId1'
-					},
-					{
-						_id: 'dummyId2'
-					}
-				]
-
-				//when
-				suite.friendsInstance.removeNotificationsfromList(NOTIFICATION_ID_LIST, requestingUsername)
-
-				//then
-				const expectedSearchingCirteria = {username: suite.DUMMY_USERNAME}
-				const expectedQuery = {
-					$pull: {
-						pendingNotifications: {
-							$or: NOTIFICATION_ID_LIST
-						}
-					}
-				}
-
-				sinon.assert.calledWith(suite.userModelMock.findOneAndUpdate.firstCall, expectedSearchingCirteria, expectedQuery)
-			})
-		})
-	})
-
 	describe('#Invite', () => {
 		beforeEach(() => {
 			suite.DUMMY_INVITATED_USERNAME = 'DUMMY_USERNAME_2'
+			suite.notificationsProviderMock = {
+				addNotification: sinon.stub().resolves()
+			}
 			suite.friendsInstance = new FriendsProvider({
-				UserModel: suite.userModelMock
+				UserModel: suite.userModelMock,
+				Notifications: suite.notificationsProviderMock
 			})
-			suite.addNotificationStub = sinon.stub(suite.friendsInstance, 'addNotification').resolves()
 		})
-		it('should save notification with invitation in pendingNotificaiton array in invitated user document ', done => {
+		it('should call addNotification from Notifications class to push invite notification to pending Notifications array', done => {
 			//given
 			const REQUEST_MOCK = {username: suite.DUMMY_INVITATED_USERNAME}
 			
@@ -367,7 +175,7 @@ describe('Friends websocket namespace', () => {
 				const expectedInvitatingUsername = suite.DUMMY_USERNAME
 				const expectedInvitatedUsername = suite.DUMMY_INVITATED_USERNAME
 				const expectedEventType = CLIENT_EVENTS.INVITE
-				sinon.assert.calledWith(suite.addNotificationStub.firstCall, expectedInvitatingUsername, expectedInvitatedUsername, expectedEventType)
+				sinon.assert.calledWith(suite.notificationsProviderMock.addNotification.firstCall, suite.userModelMock, expectedInvitatingUsername, expectedInvitatedUsername, expectedEventType)
 				done()
 			}
 		})
@@ -401,9 +209,13 @@ describe('Friends websocket namespace', () => {
 			suite.userModelMock = {
 				findOne: sinon.stub()
 			}
+			suite.notificationsProviderMock = {
+				addNotification: sinon.spy()
+			}
 
 			suite.friendsInstance = new FriendsProvider({
-				UserModel: suite.userModelMock
+				UserModel: suite.userModelMock,
+				Notifications: suite.notificationsProviderMock
 			})
 			suite.DUMMY_INVITATING_USERNAME = 'DUMMY_INVITATING_USERNAME'
 			suite.REQUEST_MOCK = {username: suite.DUMMY_INVITATING_USERNAME}
@@ -430,17 +242,19 @@ describe('Friends websocket namespace', () => {
 			suite.server.on(CLIENT_EVENTS.CONNECTION, socket => {
 				socket.on(CLIENT_EVENTS.INVITATION_CONFIRMATION, data => {
 					return suite.friendsInstance.invitaitonConfirmation(data, socket)
-						.then(() => {
-							//then
-							sinon.assert.calledOnce(suite.addFriendsStub)
-							done()
-						})
+						.then(asserations)
 				})
 			})
 
 			//when
 			suite.client = socketClient.connect(SERVER_URL, SOCKET_OPTIONS)
 			suite.client.emit(CLIENT_EVENTS.INVITATION_CONFIRMATION, suite.REQUEST_MOCK)
+		
+			//then
+			function asserations() {
+				sinon.assert.calledOnce(suite.addFriendsStub)
+				done()
+			}
 		})
 
 		it('should add friends when invitation exists in database', done => {
@@ -451,13 +265,7 @@ describe('Friends websocket namespace', () => {
 			suite.server.on(CLIENT_EVENTS.CONNECTION, socket => {
 				socket.on(CLIENT_EVENTS.INVITATION_CONFIRMATION, data => {
 					return suite.friendsInstance.invitaitonConfirmation(data, socket)
-						.then(() => {
-							//then
-							const expectedInvitatingUsername = suite.DUMMY_INVITATING_USERNAME
-							const expectedInvitatedUsername = suite.DUMMY_USERNAME
-							sinon.assert.calledWith(suite.addFriendsStub, expectedInvitatingUsername, expectedInvitatedUsername)
-							done()
-						})
+						.then(asserations)
 				})
 			})
 
@@ -465,24 +273,23 @@ describe('Friends websocket namespace', () => {
 			suite.client = socketClient.connect(SERVER_URL, SOCKET_OPTIONS)
 			suite.client.emit(CLIENT_EVENTS.INVITATION_CONFIRMATION, suite.REQUEST_MOCK)
 
+			//then
+			function asserations() {
+				const expectedInvitatingUsername = suite.DUMMY_INVITATING_USERNAME
+				const expectedInvitatedUsername = suite.DUMMY_USERNAME
+				sinon.assert.calledWith(suite.addFriendsStub, expectedInvitatingUsername, expectedInvitatedUsername)
+				done()
+			}
 		})
 
-		it('should add notification to pendingNotifications array with "invitation confirmation" event type in user document who sent invitation', done => {
+		it('should call addNotification from Notifications class to add new notification to pendingNotifications', done => {
 			//given
 			suite.userModelMock.findOne.returns(suite.queryResultMock)
-			suite.addNotificationStub = sinon.stub(suite.friendsInstance, 'addNotification').resolves()
 			suite.friendsInstance.addFriends = sinon.stub()
 			suite.server.on(CLIENT_EVENTS.CONNECTION, socket => {
 				socket.on(CLIENT_EVENTS.INVITATION_CONFIRMATION, data => {
 					return suite.friendsInstance.invitaitonConfirmation(data, socket)
-						.then(() => {
-							//then
-							const expectedInvitatingUsername = suite.DUMMY_INVITATING_USERNAME
-							const expectedInvitatedUsername = suite.DUMMY_USERNAME
-							const expectedNotificationType = CLIENT_EVENTS.INVITATION_CONFIRMATION
-							sinon.assert.calledWith(suite.addNotificationStub, expectedInvitatedUsername, expectedInvitatingUsername, expectedNotificationType)
-							done()
-						})
+						.then(asserations)
 				})
 			})
 
@@ -490,7 +297,14 @@ describe('Friends websocket namespace', () => {
 			suite.client = socketClient.connect(SERVER_URL, SOCKET_OPTIONS)
 			suite.client.emit(CLIENT_EVENTS.INVITATION_CONFIRMATION, suite.REQUEST_MOCK)
 
-
+			//then
+			function asserations() {
+				const expectedInvitatingUsername = suite.DUMMY_INVITATING_USERNAME
+				const expectedInvitatedUsername = suite.DUMMY_USERNAME
+				const expectedNotificationType = CLIENT_EVENTS.INVITATION_CONFIRMATION
+				sinon.assert.calledWith(suite.notificationsProviderMock.addNotification, suite.userModelMock, expectedInvitatedUsername, expectedInvitatingUsername, expectedNotificationType)
+				done()
+			}
 		})
 	})
 
