@@ -20,7 +20,7 @@
   },
   "scripts": {
     "test": "jest",
-    "test-debug": "react-scripts --inspect-brk=0.0.0.0:9229 test --env=jsdom --runInBand -i",
+    "test-debug": "jest --env=jsdom --runInBand -i",
     "test-coverage": "npm test -- --coverage",
     "eslint": "node ./node_modules/eslint/bin/eslint.js  --ignore-path ./.eslintignore ./",
     "eslint-auto-fix": "node ./node_modules/eslint/bin/eslint.js --ignore-path ./.eslintignore ./ --fix"
