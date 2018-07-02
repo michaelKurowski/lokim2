@@ -3,6 +3,9 @@
   margin: 0;
 }
 
+.max-screen-height {
+  height: 100vh;
+}
 
 hr {
   display: block;
@@ -90,10 +93,6 @@ hr {
   list-style-type: none;
 }
 
-.room-ID {
-  background-color: pink;
-}
-
 .room-ID li {
   font-size: 24px;
 }
@@ -104,4 +103,8 @@ hr {
 
 .disconnect {
   color: red;
+}
+
+.y-scroll {
+  overflow-y: scroll;
 }

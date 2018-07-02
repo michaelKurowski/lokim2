@@ -3,7 +3,7 @@ const app = express()
 const httpServer = require('http').Server(app)
 const expressSession = require('express-session')
 const MongoSessionStore = require('connect-mongo')(expressSession)
-const connectToDb = require('./connectToDb')
+
 const dbConnectionProvider = require('./dbConnectionProvider')
 
 const initializationProcedures = require('./initializationProcedures')
@@ -17,6 +17,7 @@ async function init({
 	const dbPassword = process.env.DB_PASSWORD || config.database.password
 	const dbHostname = process.env.DB_HOSTNAME || config.database.host
 
+	const connectToDb = require('./connectToDb')
 	const dbConnection = connectToDb(dbUsername, dbPassword, dbHostname)
 	dbConnectionProvider.setDbConnection(dbConnection)
 

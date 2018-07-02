@@ -48,6 +48,7 @@ describe('<ChatPage />', () => {
 		window.sessionStorage.clear()
 
 	})
+
 	describe('<ChatPage /> Render Tests', () => {
 		it('Should render HomePage when no username is provided', () => {
 			const context = createRouterContext({ location: {pathname: '/chat' }})
@@ -151,7 +152,7 @@ describe('<ChatPage />', () => {
 		it('Should not update messages to state if the selected room is not the same', () => {
 			const roomId = DUMMY_ROOM
 			const EXPECTED_MESSAGE_COUNT = 0
-			const EXPECTED_DATA = {username: DUMMY_USER, message: DUMMY_MESSAGE, timestamp: DUMMY_TIMESTAMP}
+			const EXPECTED_DATA = {roomId, username: DUMMY_USER, message: DUMMY_MESSAGE, timestamp: DUMMY_TIMESTAMP}
 			suite.Component.instance().updateMessageState({roomId, ...EXPECTED_DATA})
 			expect(suite.Component.state(MESSAGES).length).toBe(EXPECTED_MESSAGE_COUNT)
 		})

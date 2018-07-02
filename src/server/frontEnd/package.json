@@ -30,12 +30,13 @@
     ],
     "coverageThreshold": {
       "global": {
-        "branches": 90,
-        "functions": 90,
-        "lines": 90,
-        "statements": 90
+        "lines": 80
       }
-    }
+    },
+    "coverageReporters": [
+      "text",
+      "lcov"
+    ]
   },
   "devDependencies": {
     "enzyme": "^3.3.0",
