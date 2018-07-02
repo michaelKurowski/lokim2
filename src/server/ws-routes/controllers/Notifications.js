@@ -2,6 +2,10 @@ const namespaceInfo = require('../../protocol/protocol.json').notifications
 const EVENT_TYPES = namespaceInfo.eventTypes
 const errorWrapper = require('../../utilities').errorWrapper
 
+/**
+ *  /Notifications websocket namespace
+ * @namespace
+ */
 class Notifications {
 	constructor({
 		UserModel = require('../../models/user')
@@ -9,6 +13,14 @@ class Notifications {
 		this.UserModel = UserModel
 	}
 
+	/**
+	 * Remove notifications
+	 * @name removeNotifications
+	 * @memberof Notifications
+	 * @member
+	 * @property {object[]} notificationIds Array of all ids of notifications you want to remove
+	 * @property {string} _id Id of notification in array object
+	 */
 	[EVENT_TYPES.REMOVE_NOTIFICATIONS](data, socket) {
 		const notificationIdsList = data.notificationIds
 		const requestingUsername = socket.request.user.username
@@ -18,10 +30,18 @@ class Notifications {
 			
 	}
 
+	/**
+	 * User gets list of pending notifications
+	 * @name getPendingNotifications
+	 * @memberof Notifications
+	 */
 	[EVENT_TYPES.GET_PENDING_NOTIFICATIONS](data, socket) {
-		const username = socket.request.user.username
+		const {username} = socket.request.user
 		return this.UserModel.find({username}).exec()
-			.then(user => socket.emit(EVENT_TYPES.GET_PENDING_NOTIFICATIONS, user.pendingNotifications))
+			.then(users => {
+				const pendingNotificationsArray = users[0].pendingNotifications
+				socket.emit(EVENT_TYPES.GET_PENDING_NOTIFICATIONS, pendingNotificationsArray)
+			})
 			.catch(err => errorWrapper(EVENT_TYPES.GET_PENDING_NOTIFICATIONS, err))
 	}
 

@@ -136,7 +136,7 @@ describe('Notifications websocket namespace', () => {
 					}
 				]
 			}
-			const queryResultMock = {exec: sinon.stub().resolves(QUERY_FEEDBACK_MOCK)}
+			const queryResultMock = {exec: sinon.stub().resolves([QUERY_FEEDBACK_MOCK])}
 			suite.userModelMock.find.returns(queryResultMock)
 
 			//when

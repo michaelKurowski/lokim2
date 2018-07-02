@@ -236,18 +236,18 @@ describe('Friends websocket namespace', () => {
 				]
 			}
 			suite.queryResultMock = {
-				exec: sinon.stub().resolves(suite.QUERY_FEEDBACK_MOCK)
+				exec: sinon.stub().resolves([suite.QUERY_FEEDBACK_MOCK])
 			}
 		})
 
-		it('should find requesting user in database and check in pending Notifications existing of invitation', done => {
+		it('should send query to db for checking if invitation exsists in pendingNotification array', done => {
 			//given  
 			suite.userModelMock.find.returns(suite.queryResultMock)
 			suite.addFriendsStub = sinon.stub(suite.friendsInstance, 'addFriends').resolves()
 			suite.friendsInstance.addNotification = sinon.stub()
 			suite.server.on(CLIENT_EVENTS.CONNECTION, socket => {
 				socket.on(CLIENT_EVENTS.INVITATION_CONFIRMATION, data => {
-					return suite.friendsInstance.invitaitonConfirmation(data, socket)
+					return suite.friendsInstance.invitaitonConfirmation(data, socket, suite.connectionsMock)
 						.then(asserations)
 				})
 			})
@@ -270,7 +270,7 @@ describe('Friends websocket namespace', () => {
 			suite.friendsInstance.addNotification = sinon.stub()
 			suite.server.on(CLIENT_EVENTS.CONNECTION, socket => {
 				socket.on(CLIENT_EVENTS.INVITATION_CONFIRMATION, data => {
-					return suite.friendsInstance.invitaitonConfirmation(data, socket)
+					return suite.friendsInstance.invitaitonConfirmation(data, socket, suite.connectionsMock)
 						.then(asserations)
 				})
 			})
@@ -288,13 +288,39 @@ describe('Friends websocket namespace', () => {
 			}
 		})
 
-		it('should call addNotification from Notifications class to add new notification to pendingNotifications', done => {
+		it('should call sendMessageToSpecificUser and send confirmation message to invitataing user', done => {
+			//given
+			suite.userModelMock.find.returns(suite.queryResultMock)
+			suite.friendsInstance.addFriends = sinon.stub()
+			suite.sendMessageToSpecyficUserSpy = sinon.spy(suite.friendsInstance, 'sendMessageToSepcificUser')
+			suite.server.on(CLIENT_EVENTS.CONNECTION, socket => {
+				socket.on(CLIENT_EVENTS.INVITATION_CONFIRMATION, data => {
+					return suite.friendsInstance.invitaitonConfirmation(data, socket, suite.connectionsMock)
+						.then(() => asserations(socket))
+				})
+			})
+
+			//when
+			suite.client = socketClient.connect(SERVER_URL, SOCKET_OPTIONS)
+			suite.client.emit(CLIENT_EVENTS.INVITATION_CONFIRMATION, suite.REQUEST_MOCK)
+
+			//then
+			function asserations(socket) {
+				const expectedEventType = CLIENT_EVENTS.INVITATION_CONFIRMATION
+				const expectedRecievingUsername = suite.DUMMY_INVITATING_USERNAME
+				const expectedPayload = {username: suite.DUMMY_USERNAME}
+				sinon.assert.calledWith(suite.sendMessageToSpecyficUserSpy, socket, suite.connectionsMock, expectedRecievingUsername, expectedEventType, expectedPayload)
+				done()
+			}
+		})
+
+		it('should call addNotification from Notifications class to add new notification to pendingNotifications when recieving user is not connected to namespace', done => {
 			//given
 			suite.userModelMock.find.returns(suite.queryResultMock)
 			suite.friendsInstance.addFriends = sinon.stub()
 			suite.server.on(CLIENT_EVENTS.CONNECTION, socket => {
 				socket.on(CLIENT_EVENTS.INVITATION_CONFIRMATION, data => {
-					return suite.friendsInstance.invitaitonConfirmation(data, socket)
+					return suite.friendsInstance.invitaitonConfirmation(data, socket, suite.connectionsMock)
 						.then(asserations)
 				})
 			})
