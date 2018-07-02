@@ -19,7 +19,7 @@
     "webpack": "^4.14.0"
   },
   "scripts": {
-    "test": "jest --env=jsdom",
+    "test": "jest",
     "test-debug": "react-scripts --inspect-brk=0.0.0.0:9229 test --env=jsdom --runInBand -i",
     "test-coverage": "npm test -- --coverage",
     "eslint": "node ./node_modules/eslint/bin/eslint.js  --ignore-path ./.eslintignore ./",
@@ -31,6 +31,7 @@
       "!<rootDir>/node_modules/",
       "!<rootDir>/registerServiceWorker.js"
     ],
+    "notify": true,
     "coverageThreshold": {
       "global": {
         "lines": 80
