@@ -70,7 +70,7 @@ describe('Friends websocket namespace', () => {
 	describe('#Friends list', () => {
 		beforeEach(() => {
 			suite.userModelMock = {
-				findOne: sinon.stub()
+				find: sinon.stub()
 			}
 			suite.friendsInstance = new FriendsProvider({
 				UserModel: suite.userModelMock
@@ -83,7 +83,7 @@ describe('Friends websocket namespace', () => {
 			const queryResultMock = {
 				exec: sinon.stub().resolves(QUERY_FEEDBACK_MOCK)
 			}
-			suite.userModelMock.findOne.returns(queryResultMock)
+			suite.userModelMock.find.returns(queryResultMock)
 
 			suite.server.on(CLIENT_EVENTS.CONNECTION, connection => {
 				connection.on(CLIENT_EVENTS.GET_FRIENDS_LIST, data => {
@@ -124,7 +124,7 @@ describe('Friends websocket namespace', () => {
 				exec: sinon.stub().resolves(QUERY_FEEDBACK_MOCK)
 			}
 
-			suite.userModelMock.findOne.returns(queryResultMock)
+			suite.userModelMock.find.returns(queryResultMock)
 
 			suite.server.on(CLIENT_EVENTS.CONNECTION, connection => {
 				suite.emitSpy = sinon.spy(connection, 'emit')
@@ -213,7 +213,7 @@ describe('Friends websocket namespace', () => {
 	describe('#InvitationConfirmation', () => {
 		beforeEach(() => {
 			suite.userModelMock = {
-				findOne: sinon.stub()
+				find: sinon.stub()
 			}
 			suite.notificationsProviderMock = {
 				addNotification: sinon.spy()
@@ -242,7 +242,7 @@ describe('Friends websocket namespace', () => {
 
 		it('should find requesting user in database and check in pending Notifications existing of invitation', done => {
 			//given  
-			suite.userModelMock.findOne.returns(suite.queryResultMock)
+			suite.userModelMock.find.returns(suite.queryResultMock)
 			suite.addFriendsStub = sinon.stub(suite.friendsInstance, 'addFriends').resolves()
 			suite.friendsInstance.addNotification = sinon.stub()
 			suite.server.on(CLIENT_EVENTS.CONNECTION, socket => {
@@ -265,7 +265,7 @@ describe('Friends websocket namespace', () => {
 
 		it('should add friends when invitation exists in database', done => {
 			//given
-			suite.userModelMock.findOne.returns(suite.queryResultMock)
+			suite.userModelMock.find.returns(suite.queryResultMock)
 			suite.addFriendsStub = sinon.stub(suite.friendsInstance, 'addFriends').resolves()
 			suite.friendsInstance.addNotification = sinon.stub()
 			suite.server.on(CLIENT_EVENTS.CONNECTION, socket => {
@@ -290,7 +290,7 @@ describe('Friends websocket namespace', () => {
 
 		it('should call addNotification from Notifications class to add new notification to pendingNotifications', done => {
 			//given
-			suite.userModelMock.findOne.returns(suite.queryResultMock)
+			suite.userModelMock.find.returns(suite.queryResultMock)
 			suite.friendsInstance.addFriends = sinon.stub()
 			suite.server.on(CLIENT_EVENTS.CONNECTION, socket => {
 				socket.on(CLIENT_EVENTS.INVITATION_CONFIRMATION, data => {

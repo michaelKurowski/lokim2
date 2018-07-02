@@ -18,7 +18,7 @@ class Friends {
 
 	[EVENT_TYPES.GET_FRIENDS_LIST](data, socket) {
 		const {username} = socket.request.user
-		return this.UserModel.findOne({username}).exec()
+		return this.UserModel.find({username}).exec()
 			.then(user => socket.emit(EVENT_TYPES.GET_FRIENDS_LIST, user.friends))
 			.catch(err => errorWrapper(EVENT_TYPES.GET_FRIENDS_LIST, err))
 	}
@@ -37,7 +37,7 @@ class Friends {
 		const invitatingUsername = data.username
 		const payload = {username: invitedUsername}
 
-		return this.UserModel.findOne(payload).exec()
+		return this.UserModel.find(payload).exec()
 			.then(user => {
 				const isEventExist = _.some(user.pendingNotifications, {username: invitatingUsername})
 				if(isEventExist) return this.addFriends(invitatingUsername, invitedUsername)

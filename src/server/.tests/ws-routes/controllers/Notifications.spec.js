@@ -10,7 +10,7 @@ describe('Notifications websocket namespace', () => {
 		suite.DUMMY_USERNAME = 'DUMMY_USERNAME'
 		suite.userModelMock = {
 			findOneAndUpdate: sinon.stub(),
-			findOne: sinon.stub()
+			find: sinon.stub()
 		}
 		suite.notificationsInstance = new NotificationsProvider({
 			UserModel: suite.userModelMock
@@ -119,9 +119,6 @@ describe('Notifications websocket namespace', () => {
 	})
 
 	describe('#PendingNotifications', () => {
-		beforeEach(() => {
-			suite.userModelMock.findOne = sinon.stub()
-		})
 
 		it('should call emit with pending notifications event type and attached array with notifications to response', done => {
 			//given
@@ -140,7 +137,7 @@ describe('Notifications websocket namespace', () => {
 				]
 			}
 			const queryResultMock = {exec: sinon.stub().resolves(QUERY_FEEDBACK_MOCK)}
-			suite.userModelMock.findOne.returns(queryResultMock)
+			suite.userModelMock.find.returns(queryResultMock)
 
 			//when
 			suite.notificationsInstance.getPendingNotifications(DUMMY_DATA, suite.socketMock)
