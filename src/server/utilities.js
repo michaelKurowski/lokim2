@@ -1,7 +1,12 @@
 const crypto = require('crypto')
 const _ = require('lodash')
+const logger = require('./logger')
 const WEBSOCKET_COOKIE_NAME = 'io'
 class Utilities {
+
+	static errorWrapper(event, err) {
+		logger.error(`${event}: ${err}`)
+	}
 
 	static generateSalt (size) {
 		if (!size) return null

@@ -1,6 +1,6 @@
 const namespaceInfo = require('../../protocol/protocol.json').notifications
 const EVENT_TYPES = namespaceInfo.eventTypes
-const logger = require('../../logger')
+const errorWrapper = require('../../utilities').errorWrapper
 
 class Notifications {
 	constructor({
@@ -14,7 +14,7 @@ class Notifications {
 		const requestingUsername = socket.request.user.username
 		return this.removeNotificationsfromArray(notificationIdsList, requestingUsername)
 			.then(() => socket.emit(EVENT_TYPES.REMOVE_NOTIFICATIONS))
-			.catch((err) => logger.error(err))
+			.catch(err => errorWrapper(EVENT_TYPES.REMOVE_NOTIFICATIONS, err))
 			
 	}
 
@@ -22,7 +22,7 @@ class Notifications {
 		const username = socket.request.user.username
 		return this.UserModel.findOne({username}).exec()
 			.then(user => socket.emit(EVENT_TYPES.GET_PENDING_NOTIFICATIONS, user.pendingNotifications))
-			.catch(err => logger.error(err))
+			.catch(err => errorWrapper(EVENT_TYPES.GET_PENDING_NOTIFICATIONS, err))
 	}
 
 	removeNotificationsfromArray(notificationIdList, requestingUsername) {

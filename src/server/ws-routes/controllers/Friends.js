@@ -1,6 +1,6 @@
 const namespaceInfo = require('../../protocol/protocol.json').friends
 const EVENT_TYPES = namespaceInfo.eventTypes
-const logger = require('../../logger')
+const errorWrapper = require('../../utilities').errorWrapper
 const _ = require('lodash')
 class Friends {
 	constructor({
@@ -20,7 +20,7 @@ class Friends {
 		const {username} = socket.request.user
 		return this.UserModel.findOne({username}).exec()
 			.then(user => socket.emit(EVENT_TYPES.GET_FRIENDS_LIST, user.friends))
-			.catch(err => logger.error(err))
+			.catch(err => errorWrapper(EVENT_TYPES.GET_FRIENDS_LIST, err))
 	}
 
 	[EVENT_TYPES.INVITE](data, socket, connections) {
@@ -29,7 +29,7 @@ class Friends {
 		const emitPayload = {username: invitatingUsername}
 		return this.Notifications.addNotification(this.UserModel, invitatingUsername, invitatedUsername, EVENT_TYPES.INVITE)
 			.then(() => this.sendMessageToSepcificUser(socket, connections, invitatedUsername, EVENT_TYPES.INVITE, emitPayload))
-			.catch(err => logger.error(err))
+			.catch(err => errorWrapper(EVENT_TYPES.INVITE, err))
 	}
 
 	[EVENT_TYPES.INVITATION_CONFIRMATION](data, socket) {
@@ -44,7 +44,7 @@ class Friends {
 				return Promise.reject()
 			})
 			.then(() => this.Notifications.addNotification(this.UserModel, invitedUsername, invitatingUsername, EVENT_TYPES.INVITATION_CONFIRMATION))
-			.catch(err => logger.error(err))
+			.catch(err => errorWrapper(EVENT_TYPES.INVITATION_CONFIRMATION, err))
 	}
 
 	sendMessageToSepcificUser(socket, connetcions, recieverUsername, eventType, payload) {
