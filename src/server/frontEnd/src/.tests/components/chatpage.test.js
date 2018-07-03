@@ -51,15 +51,16 @@ describe('<ChatPage />', () => {
 
 	describe('<ChatPage /> Render Tests', () => {
 		it('Should render HomePage when no username is provided', () => {
-			const context = createRouterContext({ location: {pathname: '/chat' }})
+			const context = <div></div>
 			const wrapper = mount(
-				<BrowserRouter>
+				<BrowserRouter exact path="/">
 					<Switch>
 						<Route path='/' component={HomePage} />
 						<Route path='/chat' component={ChatPage} /> 
 					</Switch>
-				</BrowserRouter>, context)
-			const EXPECTED_DATA = wrapper.instance().history.location.pathname
+				</BrowserRouter>)
+			
+			const EXPECTED_DATA = wrapper.instance().history.pathname
 			expect(EXPECTED_DATA).toBe(HOME_PATH)
 		})
 		it('Should render without crashing', () => {

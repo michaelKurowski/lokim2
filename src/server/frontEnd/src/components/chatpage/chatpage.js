@@ -1,13 +1,14 @@
 const React = require('react')
 const {Redirect, Link} = require('react-router-dom')
 const _ = require('lodash')
-const ConnectStatus = require('./connectStatus')
-const Room = require('./room')
+const ConnectStatus = require('../connectStatus')
+const Room = require('../room')
 let socket
-const protocols = require('../utils/io-protocol')
-const HOMEPAGE_PATH = require('../routes/routes').paths.HOME
+const protocols = require('../../utils/io-protocol')
+const HOMEPAGE_PATH = require('../../routes/routes').paths.HOME
 const USERNAMES_PLACEHOLDER = ''
-const dummyAvatar = require('../theme/assets/avatar.svg')
+const dummyAvatar = require('../../theme/assets/avatar.svg')
+require('./chatpage.css')
 
 class ChatPage extends React.Component {
 	constructor(props) {
@@ -37,7 +38,7 @@ class ChatPage extends React.Component {
 	}
 
 	componentDidMount() {
-		socket = require('../utils/sockets/ws-routing')()
+		socket = require('../../utils/sockets/ws-routing')()
 		socket.room.on(protocols.CONNECTION, this.handleConnectionEvent)
 		socket.room.on(protocols.MESSAGE, this.handleMessageEvent)
 		socket.room.on(protocols.JOIN, this.handleJoinEvent)
@@ -190,7 +191,7 @@ class ChatPage extends React.Component {
 		if(!this.state.username) return <Redirect to={HOMEPAGE_PATH}/>
 		
 		return (
-			<div className='container-fluid h-100'>
+			<div className='container-fluid h-100 my-chat-page'>
 				<div className='row h-100'>
 					<div className='sidebar col-md-3 jumbotron'>
 						<div className='card'>
