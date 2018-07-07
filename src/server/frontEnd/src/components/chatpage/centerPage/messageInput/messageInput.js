@@ -5,6 +5,10 @@ class MessageInput extends React.Component {
 		super()
 	}
 
+	sendMessage() {
+		
+	}
+
 	render() {
 		return (
 			<div className='p-2'>

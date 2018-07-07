@@ -6,10 +6,14 @@ class ChatHistory extends React.Component {
 		super()
 	}
 
+	generateMessages() {
+		return <ChatMessage />
+	}
+
 	render() {
 		return (
 			<div className='p-2'>
-				<ChatMessage />
+				{this.generateMessages()}
 			</div>
 		)
 	}
