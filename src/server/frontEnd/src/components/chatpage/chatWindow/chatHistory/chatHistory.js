@@ -7,8 +7,13 @@ class ChatHistory extends React.Component {
 	}
 
 	generateMessages() {
-		return this.props.messages.map((message, index) => 
-			(<ChatMessage key={index} text={message.text} date={message.date} author={message.author} />))
+		return this.props.messages.map(message => 
+			(<ChatMessage
+				key={message.text+message.date+message.author}
+				text={message.text}
+				date={message.date}
+				author={message.author}
+			/>))
 	}
 
 	render() {

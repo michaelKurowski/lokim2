@@ -7,10 +7,11 @@ class MessageInput extends React.Component {
 			input: ''
 		}
 		this.handleUserInput = this.handleUserInput.bind(this)
+		this.sendMessage = this.sendMessage.bind(this)
 	}
 
 	sendMessage() {
-		
+		this.props.addMessage({date: new Date().getTime(), text: this.state.input, author: 'Mike'})
 	}
 
 	handleUserInput(event) {
@@ -20,7 +21,7 @@ class MessageInput extends React.Component {
 	render() {
 		return (
 			<div className='p-2'>
-				<input className='form-control' placeholder='Message...' value={this.state.input} onChange={this.handleUserInput}/>
+				<input className='form-control' placeholder='Message...' onChange={this.handleUserInput}/>
 				<button className='btn btn-primary' onClick={this.sendMessage}>Send</button>
 			</div>
 		)

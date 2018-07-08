@@ -11,13 +11,19 @@ class ChatWindow extends React.Component {
 				{author: 'Mike2', date: new Date().getTime() + 10000, text: 'Me as well'}
 			]
 		}
+
+		this.addMessage = this.addMessage.bind(this)
+	}
+
+	addMessage(message) {
+		this.setState({messages: [...this.state.messages, message]})
 	}
 
 	render() {
 		return (
 			<div>
 				<ChatHistory messages={this.state.messages}/>
-				<MessageInput/>
+				<MessageInput addMessage={this.addMessage}/>
 			</div>
 		)
 	}
