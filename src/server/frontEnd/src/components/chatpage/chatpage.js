@@ -211,7 +211,9 @@ class ChatPage extends React.Component {
 							{this.generateRooms()}
 						</ul>
 					</div>
-					<ChatWindow />
+					<div className='col-md-6 h-100 d-flex flex-column-reverse'>
+						<ChatWindow />
+					</div>
 					<div className='col-md-3 jumbotron'>
 						<h4>Room Information/Etc </h4>
 						<ConnectStatus connection={this.state.connected}/>
