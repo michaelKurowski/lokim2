@@ -13,7 +13,7 @@ class ChatMessage extends React.Component {
 		return (
 			<li className='message list-group-item'>
 				<p>
-					<img height='50px' src={`http://robohash.org/${this.props.author}`}></img>
+					<img src={`http://robohash.org/${this.props.author}?size=50x50`}></img>
 					<span className='font-weight-bold'>{this.props.author}</span></p>
 				<p>
 					<span>{this.props.text}</span>
