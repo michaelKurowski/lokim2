@@ -3,10 +3,18 @@ const React = require('react')
 class MessageInput extends React.Component {
 	constructor() {
 		super()
+		this.state = {
+			input: ''
+		}
+		this.handleUserInput = this.handleUserInput.bind(this)
 	}
 
 	sendMessage() {
 		
+	}
+
+	handleUserInput(event) {
+		this.setState({input: event.target.value})
 	}
 
 	render() {

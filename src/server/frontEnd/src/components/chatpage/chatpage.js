@@ -8,6 +8,7 @@ const protocols = require('../../utils/io-protocol')
 const HOMEPAGE_PATH = require('../../routes/routes').paths.HOME
 const USERNAMES_PLACEHOLDER = ''
 const dummyAvatar = require('../../theme/assets/avatar.svg')
+const ChatWindow = require('./chatWindow/chatWindow')
 require('./chatpage.css')
 
 class ChatPage extends React.Component {
@@ -210,17 +211,7 @@ class ChatPage extends React.Component {
 							{this.generateRooms()}
 						</ul>
 					</div>
-					<div className='col-md-6 h-100 d-flex flex-column-reverse'>
-						<div className='p-2'>
-							<input className='form-control' placeholder='Message...' value={this.state.input} onChange={this.handleUserInput}/>
-							<button className='btn btn-primary' onClick={this.sendMessage}>Send</button>
-						</div>
-						<div className='message-area p-2 y-scroll'>
-							<ul className='list-group room-ID-list'>
-								{this.generateMessages()}
-							</ul>
-						</div>
-					</div>
+					<ChatWindow />
 					<div className='col-md-3 jumbotron'>
 						<h4>Room Information/Etc </h4>
 						<ConnectStatus connection={this.state.connected}/>
