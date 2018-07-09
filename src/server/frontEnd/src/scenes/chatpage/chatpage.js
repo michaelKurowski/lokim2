@@ -1,8 +1,8 @@
 const React = require('react')
 const {Redirect, Link} = require('react-router-dom')
 const _ = require('lodash')
-const ConnectStatus = require('../connectStatus')
-const Room = require('../room')
+const ConnectStatus = require('../../components/connectStatus')
+const Room = require('../../components/room')
 let socket
 const protocols = require('../../utils/io-protocol')
 const HOMEPAGE_PATH = require('../../routes/routes').paths.HOME
