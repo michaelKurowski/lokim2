@@ -11,7 +11,10 @@ class UsersListElement extends React.Component {
 
 	render() {
 		return (
-			<li className='list-group-item' onClick={this.returnUsername}> {this.props.username} </li>
+			<li className='list-group-item' onClick={this.returnUsername}>
+				<img src={`http://robohash.org/${this.props.username}?size=50x50`}></img>
+				<span>{this.props.username}</span>
+			</li>
 		)
 	}
 }
