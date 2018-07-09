@@ -1,5 +1,5 @@
 const React = require('react')
-const UsersListElement = require('../usersListElement/usersListElement')
+const UsersList = require('../usersList/usersList')
 const _ = require('lodash')
 class RoomMembersList extends React.Component {
 	constructor() {
@@ -10,9 +10,7 @@ class RoomMembersList extends React.Component {
 			<div>
 				<h6>Current Room: {this.props.roomName}</h6>
 				<h6>Users in current room:</h6>
-				<ul>
-					{this.props.usernames.map(username => <UsersListElement username={username} key={username} onClick={_.noop}/>)}
-				</ul>
+				<UsersList usernames={this.props.usernames} />
 			</div>
 		)
 	}

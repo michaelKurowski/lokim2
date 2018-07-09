@@ -2,7 +2,11 @@ const React = require('react')
 class UserFinder extends React.Component {
 	constructor() {
 		super()
-	}
+    }
+    
+    generateFoundUsers() {
+        
+    }
 
 	render() {
 		return (
