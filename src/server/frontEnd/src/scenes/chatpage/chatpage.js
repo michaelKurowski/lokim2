@@ -10,6 +10,7 @@ const USERNAMES_PLACEHOLDER = ''
 const dummyAvatar = require('../../theme/assets/avatar.svg')
 const ChatWindow = require('./components/chatWindow/chatWindow')
 const SidePanel = require('../../components/sidePanel/sidePanel')
+const RoomMembersList = require('./components/roomMembersList/roomMembersList')
 const SIDE_PANEL_DIRECTIONS = require('../../components/sidePanel/sidePanelDirections')
 require('./chatpage.css')
 
@@ -177,10 +178,6 @@ class ChatPage extends React.Component {
 		throw new Error('No room selected || input field is empty.')
 	}
 
-	printUsersInRoom() {
-		return this.state.usersInRoom.map(user => <li className='list-group-item' key={user}> {user} </li>)
-	}
-
 	createRoom(usernamesToInvite) {
 		socket.room.emit(protocols.CREATE, {invitedUsersIndexes: usernamesToInvite})
 	}
@@ -214,9 +211,7 @@ class ChatPage extends React.Component {
 					<SidePanel direction={SIDE_PANEL_DIRECTIONS.RIGHT}>
 						<h4>Room Information/Etc </h4>
 						<ConnectStatus connection={this.state.connected}/>
-						<h6>Current Room: {this.state.selectedRoom}</h6>
-						<h6>Users in current room:</h6>
-						<ul className='list-group room-ID-list'>{this.printUsersInRoom()}</ul>
+						<RoomMembersList usernames={this.state.usersInRoom} roomName={this.state.selectedRoom}/>
 						<h4>Find user:</h4>
 						<input className='form-control' palceholder='Username' value={this.state.userToFind} onChange={this.handleUserToFindInput}/>
 						<ul className='list-group room-ID-list'>
