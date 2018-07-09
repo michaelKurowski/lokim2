@@ -26,8 +26,6 @@ class ChatPage extends React.Component {
 			usersFound: [],
 			usersInRoom: []
 		}
-
-		this.handleUserInput = this.handleUserInput.bind(this)
 		this.sendMessage = this.sendMessage.bind(this)
 		this.handleConnectionEvent = this.handleConnectionEvent.bind(this)
 		this.handleMessageEvent = this.handleMessageEvent.bind(this)
@@ -164,17 +162,14 @@ class ChatPage extends React.Component {
 		)
 	}
 
-	handleUserInput(event) {
-		this.setState({input: event.target.value})
-	}
-
-	sendMessage() {
-		if(!_.isEmpty(this.state.input) && this.state.selectedRoom) {
+	sendMessage(text) {
+		if(!_.isEmpty(text) && this.state.selectedRoom) {
 			const roomId =  this.state.selectedRoom
-			const message = this.state.input
+			const message = text
 			const timestamp = new Date().getTime()
+			const username = this.state.username
 			socket.room.emit(protocols.MESSAGE, {roomId, message})
-			this.storeMessage(roomId, {roomId, message, timestamp})
+			this.storeMessage(roomId, {roomId, message, timestamp, username})
 			return
 		}
 		throw new Error('No room selected || input field is empty.')
@@ -212,7 +207,7 @@ class ChatPage extends React.Component {
 						</ul>
 					</div>
 					<div className='col-md-6 h-100 d-flex flex-column-reverse'>
-						<ChatWindow />
+						<ChatWindow messages={this.state.messages} sendMessage={this.sendMessage}/>
 					</div>
 					<div className='col-md-3 jumbotron'>
 						<h4>Room Information/Etc </h4>
