@@ -12,6 +12,7 @@ const ChatWindow = require('./components/chatWindow/chatWindow')
 const SidePanel = require('../../components/sidePanel/sidePanel')
 const RoomMembersList = require('./components/roomMembersList/roomMembersList')
 const UserFinder = require('./components/userFinder/userFinder')
+const MiniProfile = require('./components/miniProfile/miniProfile')
 const SIDE_PANEL_DIRECTIONS = require('../../components/sidePanel/sidePanelDirections')
 require('./chatpage.css')
 
@@ -160,13 +161,7 @@ class ChatPage extends React.Component {
 			<div className='container-fluid h-100 my-chat-page'>
 				<div className='row h-100'>
 					<SidePanel direction={SIDE_PANEL_DIRECTIONS.LEFT}>
-						<div className='card'>
-							<img className='card-img-top' src={dummyAvatar}></img>
-							<div className='card-body'>
-								<h2 className='card-title'>{this.state.username.toUpperCase()}</h2>
-								<h6 className='card-subtitle mb-2 text-muted'>No description</h6>
-							</div>
-						</div>
+						<MiniProfile username={this.state.username} />
 						<div>
 							<input className='form-control' palceholder='Room name' value={this.state.roomToJoin} onChange={this.handleRoomToChangeUserInput}/>
 						</div>

@@ -1,5 +1,5 @@
 const React = require('react')
-const ChatPage = require('../../components/chatpage')
+const ChatPage = require('../../components/chatpage/chatpage')
 const ConnectStatus = require('../../components/connectStatus')
 const Room = require('../../components/room')
 const HomePage = require('../../components/homepage')

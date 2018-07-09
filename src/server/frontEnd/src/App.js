@@ -1,7 +1,7 @@
 const React = require('react')
 const HomePage = require('./components/homepage')
 const Register = require('./components/register')
-const ChatPage = require('./scenes/chatpage/chatpage.js')
+const ChatPage = require('./scenes/chatpage/chatpage')
 const {BrowserRouter, Route} = require('react-router-dom')
 const {paths} = require('./routes/routes')
 const LOGIN_URL = paths.HOME
