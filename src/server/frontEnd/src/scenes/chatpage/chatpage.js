@@ -9,6 +9,8 @@ const HOMEPAGE_PATH = require('../../routes/routes').paths.HOME
 const USERNAMES_PLACEHOLDER = ''
 const dummyAvatar = require('../../theme/assets/avatar.svg')
 const ChatWindow = require('./components/chatWindow/chatWindow')
+const SidePanel = require('../../components/sidePanel/sidePanel')
+const SIDE_PANEL_DIRECTIONS = require('../../components/sidePanel/sidePanelDirections')
 require('./chatpage.css')
 
 class ChatPage extends React.Component {
@@ -189,7 +191,7 @@ class ChatPage extends React.Component {
 		return (
 			<div className='container-fluid h-100 my-chat-page'>
 				<div className='row h-100'>
-					<div className='sidebar col-md-3 jumbotron'>
+					<SidePanel direction={SIDE_PANEL_DIRECTIONS.LEFT}>
 						<div className='card'>
 							<img className='card-img-top' src={dummyAvatar}></img>
 							<div className='card-body'>
@@ -205,11 +207,11 @@ class ChatPage extends React.Component {
 							<h1>Choose a room</h1>
 							{this.generateRooms()}
 						</ul>
-					</div>
+					</SidePanel>
 					<div className='col-md-6 h-100 d-flex flex-column-reverse'>
 						<ChatWindow messages={this.state.messages} sendMessage={this.sendMessage}/>
 					</div>
-					<div className='col-md-3 jumbotron'>
+					<SidePanel direction={SIDE_PANEL_DIRECTIONS.RIGHT}>
 						<h4>Room Information/Etc </h4>
 						<ConnectStatus connection={this.state.connected}/>
 						<h6>Current Room: {this.state.selectedRoom}</h6>
@@ -221,7 +223,7 @@ class ChatPage extends React.Component {
 							{this.generateFoundUsers()}
 						</ul>
 						<Link className='btn btn-danger' to={HOMEPAGE_PATH}>Logout</Link>
-					</div>
+					</SidePanel>
 				</div>
 			</div>
 		)
