@@ -11,6 +11,7 @@ const dummyAvatar = require('../../theme/assets/avatar.svg')
 const ChatWindow = require('./components/chatWindow/chatWindow')
 const SidePanel = require('../../components/sidePanel/sidePanel')
 const RoomMembersList = require('./components/roomMembersList/roomMembersList')
+const UserFinder = require('./components/userFinder/userFinder')
 const SIDE_PANEL_DIRECTIONS = require('../../components/sidePanel/sidePanelDirections')
 require('./chatpage.css')
 
@@ -35,8 +36,9 @@ class ChatPage extends React.Component {
 		this.handleJoinEvent = this.handleJoinEvent.bind(this)
 		this.handleRoomJoin = this.handleRoomJoin.bind(this)
 		this.handleRoomToChangeUserInput = this.handleRoomToChangeUserInput.bind(this)
-		this.handleUserToFindInput = this.handleUserToFindInput.bind(this)
+		this.findUserByUsername = this.findUserByUsername.bind(this)
 		this.handleListMembersEvent = this.handleListMembersEvent.bind(this)
+		this.createRoom = this.createRoom.bind(this)
 	}
 
 	componentDidMount() {
@@ -68,10 +70,9 @@ class ChatPage extends React.Component {
 		this.setState({roomToJoin: event.target.value})
 	}
 
-	handleUserToFindInput(event) {
-		const userToFind = event.target.value
-		this.setState({userToFind})
-		socket.users.emit(protocols.FIND, {queryPhrase: userToFind})
+	findUserByUsername(username) {
+		this.setState({userToFind: username})
+		socket.users.emit(protocols.FIND, {queryPhrase: username})
 	}
 
 	handleJoinEvent(data) {
@@ -124,7 +125,7 @@ class ChatPage extends React.Component {
 
 	generateFoundUsers() {
 		return this.state.usersFound.map((username, key) => 
-			<li key={key} className='message list-group-item' onClick={() => this.createRoom([username])}>{username}</li>)
+			<li key={key} className='message list-group-item' onUserClick={() => this.createRoom([username])}>{username}</li>)
 	}
 
 	generateMessages() {
@@ -212,11 +213,7 @@ class ChatPage extends React.Component {
 						<h4>Room Information/Etc </h4>
 						<ConnectStatus connection={this.state.connected}/>
 						<RoomMembersList usernames={this.state.usersInRoom} roomName={this.state.selectedRoom}/>
-						<h4>Find user:</h4>
-						<input className='form-control' palceholder='Username' value={this.state.userToFind} onChange={this.handleUserToFindInput}/>
-						<ul className='list-group room-ID-list'>
-							{this.generateFoundUsers()}
-						</ul>
+						<UserFinder foundUsers={this.state.usersFound} createRoom={this.createRoom} findUser={this.findUserByUsername}/>
 						<Link className='btn btn-danger' to={HOMEPAGE_PATH}>Logout</Link>
 					</SidePanel>
 				</div>
