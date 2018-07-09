@@ -103,7 +103,7 @@ class ChatPage extends React.Component {
 		const updatedRoomMessages = _.concat(roomMessages, newMessage)
 		store.setItem(roomId, JSON.stringify(updatedRoomMessages))
 		if(roomId === this.state.selectedRoom) {
-			this.setState({messages: JSON.parse(window.sessionStorage.getItem(roomId))}, this.generateMessages)
+			this.setState({messages: JSON.parse(window.sessionStorage.getItem(roomId))})
 		}
 	}
 
@@ -114,43 +114,13 @@ class ChatPage extends React.Component {
 			this.storeMessage(roomId, {username, message, timestamp})
 		}
 		if(roomId === this.state.selectedRoom) {
-			this.setState({messages: JSON.parse(window.sessionStorage.getItem(roomId))}, this.generateMessages)
+			this.setState({messages: JSON.parse(window.sessionStorage.getItem(roomId))})
 		}
 	}
 
 	findUsersOfRoom(roomId) {
 		const roomObject = this.state.userRooms.find(room => room.roomId === roomId)
 		return _.get(roomObject, 'usernames', USERNAMES_PLACEHOLDER)
-	}
-
-	generateFoundUsers() {
-		return this.state.usersFound.map((username, key) => 
-			<li key={key} className='message list-group-item' onUserClick={() => this.createRoom([username])}>{username}</li>)
-	}
-
-	generateMessages() {
-		if(!this.state.selectedRoom) return <h6>Please join a room before attempting to load messages</h6>
-		if(_.isEmpty(this.state.messages)) return
-		return this.state.messages.map((msg, i) => 
-			msg.username === this.state.username ?
-				<li className='message list-group-item' key={i}>
-					<p>
-						<span className='font-weight-bold'>{msg.username}</span></p>
-					<p>
-						<span>{msg.message}</span>
-						<span className='text-muted float-right'>{new Date(msg.timestamp).toLocaleTimeString()}</span>
-					</p>
-				</li>
-				:
-				<li className='message list-group-item' key={i}>
-					<p className='mb-5'>
-						<span className='font-weight-bold float-right'>{msg.username}</span></p>
-					<p>
-						<span className='float-right'>{msg.message}</span>
-						<span className='text-muted'>{new Date(msg.timestamp).toLocaleTimeString()}</span>
-					</p>
-				</li>
-		)
 	}
 
 	generateRooms() {
