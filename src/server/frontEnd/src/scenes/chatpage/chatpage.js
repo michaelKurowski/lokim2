@@ -7,7 +7,6 @@ let socket
 const protocols = require('../../utils/io-protocol')
 const HOMEPAGE_PATH = require('../../routes/routes').paths.HOME
 const USERNAMES_PLACEHOLDER = ''
-const dummyAvatar = require('../../theme/assets/avatar.svg')
 const ChatWindow = require('./components/chatWindow/chatWindow')
 const SidePanel = require('../../components/sidePanel/sidePanel')
 const RoomMembersList = require('./components/roomMembersList/roomMembersList')
