@@ -127,16 +127,18 @@ class ChatPage extends React.Component {
 	}
 
 	sendMessage(text) {
-		if(!_.isEmpty(text) && this.state.selectedRoom) {
-			const roomId =  this.state.selectedRoom
-			const message = text
-			const timestamp = new Date().getTime()
-			const username = this.state.username
-			socket.room.emit(protocols.MESSAGE, {roomId, message})
-			this.storeMessage(roomId, {roomId, message, timestamp, username})
-			return
+		if (_.isEmpty(text) || !this.state.selectedRoom)
+			throw new Error(`No room selected || input field is empty. Text: ${text}, selected room: ${this.state.selectedRoom}`)
+
+		const newMessage = {
+			roomId: this.state.selectedRoom,
+			message: text,
+			timestamp: new Date().getTime(),
+			username: this.state.username
 		}
-		throw new Error('No room selected || input field is empty.')
+
+		socket.room.emit(protocols.MESSAGE, {roomId: newMessage.roomId, message: newMessage.message})
+		this.storeMessage(newMessage.roomId, newMessage)
 	}
 
 	createRoom(usernamesToInvite) {

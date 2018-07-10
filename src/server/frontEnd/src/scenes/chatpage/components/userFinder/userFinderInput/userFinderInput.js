@@ -14,9 +14,18 @@ class UserFinderInput extends React.Component {
 		this.props.onChange(username)
 	}
 
+	didCeasedToQuery(previousProps) {
+		return previousProps.isQuerrying && !this.props.isQuerrying
+	}
+
 	render() {
 		return (
-			<input className='form-control' palceholder='Username' value={this.state.username} onChange={this.setUsername}/>
+			<input
+				className='form-control'
+				palceholder='Username'
+				value={this.props.isQuerrying ? this.state.username : ''}
+				onChange={this.setUsername}
+			/>
 		)
 	}
 }

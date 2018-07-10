@@ -7,12 +7,12 @@ class MessageInput extends React.Component {
 			input: ''
 		}
 		this.handleUserInput = this.handleUserInput.bind(this)
-		this.sendMessage = this.sendMessage.bind(this)
 		this.onSubmit = this.onSubmit.bind(this)
 	}
 
 	sendMessage() {
 		this.props.sendMessage(this.state.input)
+		this.setState({input: ''})
 	}
 
 	handleUserInput(event) {
@@ -21,13 +21,14 @@ class MessageInput extends React.Component {
 
 	onSubmit(event) {
 		event.preventDefault()
+		this.sendMessage()
 	}
 
 	render() {
 		return (
 			<form className='p-2' onSubmit={this.onSubmit}>
-				<input className='form-control' placeholder='Message...' onChange={this.handleUserInput}/>
-				<button className='btn btn-primary' value={this.state.input} onClick={this.sendMessage}>Send</button>
+				<input className='form-control' placeholder='Message...' value={this.state.input} onChange={this.handleUserInput}/>
+				<button className='btn btn-primary'>Send</button>
 			</form>
 		)
 	}
