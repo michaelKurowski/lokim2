@@ -1,8 +1,7 @@
 const React = require('react')
 const {Redirect, Link} = require('react-router-dom')
 const _ = require('lodash')
-const ConnectStatus = require('../../components/connectStatus')
-const Room = require('../../components/room')
+const ConnectStatus = require('./components/connectStatus/connectStatus')
 let socket
 const protocols = require('../../utils/io-protocol')
 const HOMEPAGE_PATH = require('../../routes/routes').paths.HOME
@@ -156,9 +155,7 @@ class ChatPage extends React.Component {
 						<RoomJoiner joinRoom={this.handleRoomJoin} />
 						<RoomsDialer rooms={this.state.userRooms} selectRoom={this.changeSelectedRoom} />
 					</SidePanel>
-					<div className='col-md-6 h-100 d-flex flex-column-reverse'>
-						<ChatWindow messages={this.state.messages} sendMessage={this.sendMessage}/>
-					</div>
+					 <ChatWindow messages={this.state.messages} sendMessage={this.sendMessage}/>
 					<SidePanel direction={SIDE_PANEL_DIRECTIONS.RIGHT}>
 						<h4>Room Information/Etc </h4>
 						<ConnectStatus connection={this.state.connected}/>
