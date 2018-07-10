@@ -1,6 +1,6 @@
 const React = require('react')
-const HomePage = require('./components/homepage')
-const Register = require('./components/register')
+const HomePage = require('./scenes/homepage/homepage')
+const Register = require('./scenes/register/register')
 const ChatPage = require('./scenes/chatpage/chatpage')
 const {BrowserRouter, Route} = require('react-router-dom')
 const {paths} = require('./routes/routes')

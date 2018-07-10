@@ -1,8 +1,8 @@
 const React = require('react')
 const {Link, Redirect} = require('react-router-dom')
-const logo = require('../theme/assets/logo.svg')
+const logo = require('../../theme/assets/logo.svg')
 const _fetch = require('node-fetch')
-const {urls, paths} = require('../routes/routes')
+const {urls, paths} = require('../../routes/routes.json')
 const LOGIN_URL = urls.LOGIN
 const POST = 'POST'
 const credentials = 'same-origin'

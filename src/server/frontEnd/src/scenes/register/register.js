@@ -1,7 +1,7 @@
 const React = require('react')
 const {Link, Redirect} = require('react-router-dom')
 const _fetch = require('node-fetch')
-const {urls, paths} = require('../routes/routes')
+const {urls, paths} = require('../../routes/routes.json')
 const SUCCESS_CODE = 200
 const REGISTER_URL = urls.REGISTER
 const HOMEPAGE_PATH = paths.HOME
