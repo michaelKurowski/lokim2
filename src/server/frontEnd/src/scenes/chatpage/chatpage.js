@@ -12,6 +12,8 @@ const SidePanel = require('../../components/sidePanel/sidePanel')
 const RoomMembersList = require('./components/roomMembersList/roomMembersList')
 const UserFinder = require('./components/userFinder/userFinder')
 const MiniProfile = require('./components/miniProfile/miniProfile')
+const RoomsDialer = require('./components/roomsDialer/roomsDialer')
+const RoomJoiner = require('./components/roomJoiner/roomJoiner')
 const SIDE_PANEL_DIRECTIONS = require('../../components/sidePanel/sidePanelDirections')
 require('./chatpage.css')
 
@@ -39,6 +41,7 @@ class ChatPage extends React.Component {
 		this.findUserByUsername = this.findUserByUsername.bind(this)
 		this.handleListMembersEvent = this.handleListMembersEvent.bind(this)
 		this.createRoom = this.createRoom.bind(this)
+		this.changeSelectedRoom = this.changeSelectedRoom.bind(this)
 	}
 
 	componentDidMount() {
@@ -50,8 +53,8 @@ class ChatPage extends React.Component {
 		socket.users.on(protocols.FIND, this.updateFoundUsers.bind(this))
 	}
 
-	handleRoomJoin() {
-		socket.room.emit(protocols.JOIN, {roomId: this.state.roomToJoin})
+	handleRoomJoin(roomId) {
+		socket.room.emit(protocols.JOIN, {roomId})
 	}
 
 	handleConnectionEvent() {
@@ -123,19 +126,6 @@ class ChatPage extends React.Component {
 		return _.get(roomObject, 'usernames', USERNAMES_PLACEHOLDER)
 	}
 
-	generateRooms() {
-		if(_.isEmpty(this.state.userRooms)) return
-		return this.state.userRooms.map(
-			(room, roomIndex) => 
-				<Room 
-					key={roomIndex}
-					name={`Room #${room.roomId}`}
-					ID={room.roomId}
-					onClick={() => this.changeSelectedRoom({roomId: room.roomId})}
-				/>
-		)
-	}
-
 	sendMessage(text) {
 		if(!_.isEmpty(text) && this.state.selectedRoom) {
 			const roomId =  this.state.selectedRoom
@@ -161,14 +151,8 @@ class ChatPage extends React.Component {
 				<div className='row h-100'>
 					<SidePanel direction={SIDE_PANEL_DIRECTIONS.LEFT}>
 						<MiniProfile username={this.state.username} />
-						<div>
-							<input className='form-control' palceholder='Room name' value={this.state.roomToJoin} onChange={this.handleRoomToChangeUserInput}/>
-						</div>
-						<button className='btn btn-primary' onClick={this.handleRoomJoin}> Join Room </button>
-						<ul className='list-group room-ID-list'>
-							<h1>Choose a room</h1>
-							{this.generateRooms()}
-						</ul>
+						<RoomJoiner joinRoom={this.handleRoomJoin} />
+						<RoomsDialer rooms={this.state.userRooms} selectRoom={this.changeSelectedRoom} />
 					</SidePanel>
 					<div className='col-md-6 h-100 d-flex flex-column-reverse'>
 						<ChatWindow messages={this.state.messages} sendMessage={this.sendMessage}/>
