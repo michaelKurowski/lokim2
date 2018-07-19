@@ -10,6 +10,8 @@ const headers = { 'Content-Type': 'application/json' }
 
 const CHAT_PATH = paths.CHAT
 const REGISTER_PATH = paths.REGISTER
+const LOG_IN_SUCCESS = 200
+const LOG_IN_FAIL = 401
 
 class HomePage extends React.Component {
 	constructor(props) {
@@ -32,10 +34,10 @@ class HomePage extends React.Component {
 			body: JSON.stringify({username, password})
 		}).then(response => {
 			switch (response.status) {
-				case 200:
+				case LOG_IN_SUCCESS:
 					this.setState({successfulLogin: true})
 					break
-				case 401:
+				case LOG_IN_FAIL:
 					alert('Login failed')
 					break
 				default:
