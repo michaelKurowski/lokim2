@@ -148,7 +148,7 @@ class ChatPage extends React.Component {
 		if(!this.state.username) return <Redirect to={HOMEPAGE_PATH}/>
 		
 		return (
-			<div className='container-fluid h-100 my-chat-page'>
+			<div className='container-fluid h-100-vh my-chat-page'>
 				<div className='row h-100'>
 					<SidePanel direction={SIDE_PANEL_DIRECTIONS.LEFT}>
 						<MiniProfile username={this.state.username} />
