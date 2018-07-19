@@ -26,15 +26,23 @@ class HomePage extends React.Component {
 	}
 
 	loginHandler(username, password, fetch) {
-		fetch = fetch || /* istanbul ignore next */ _fetch
+		fetch = fetch || _fetch
 		fetch(LOGIN_URL, {
 			method: POST, headers, credentials,
 			body: JSON.stringify({username, password})
 		}).then(response => {
-			if(response.status === 200) {
-				this.setState({successfulLogin: true})
+			switch (response.status) {
+				case 200:
+					this.setState({successfulLogin: true})
+					break
+				case 401:
+					alert('Login failed')
+					break
+				default:
+					console.error(new Error(`Unexpected response to authorization request: ${response.status}`))
 			}
-		}).catch(err => new Error(err))
+			
+		}).catch(err => {console.error(new Error(err))})
 	}
 
 	handleChange(event) {
