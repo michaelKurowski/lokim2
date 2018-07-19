@@ -10,13 +10,15 @@
     "css-loader": "^0.28.11",
     "lodash": "^4.17.10",
     "node-fetch": "^2.1.2",
-    "react": "^16.3.2",
+    "react": "^16.4.1",
     "react-dom": "^16.3.2",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
     "socket.io-client": "^2.1.0",
     "svg-inline-loader": "^0.8.0",
-    "webpack": "^4.14.0"
+    "webpack": "^4.14.0",
+    "react-redux": "^5.0.7",
+    "redux": "^4.0.0"
   },
   "scripts": {
     "test": "jest",
@@ -41,9 +43,9 @@
       "text",
       "lcov"
     ],
-    "moduleNameMapper": { 
+    "moduleNameMapper": {
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/assetsTransformer.js",
-      "\\.(css|less)$": "<rootDir>/assetsTransformer.js" 
+      "\\.(css|less)$": "<rootDir>/assetsTransformer.js"
     },
     "verbose": true
   },
