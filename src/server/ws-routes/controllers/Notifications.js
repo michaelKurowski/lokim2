@@ -1,6 +1,5 @@
 const namespaceInfo = require('../../protocol/protocol.json').notifications
 const EVENT_TYPES = namespaceInfo.eventTypes
-const errorWrapper = require('../../utilities').errorWrapper
 
 /**
  *  /Notifications websocket namespace
@@ -8,9 +7,11 @@ const errorWrapper = require('../../utilities').errorWrapper
  */
 class Notifications {
 	constructor({
-		UserModel = require('../../models/user')
+		UserModel = require('../../models/user'),
+		utils = require('../utilities')
 	} = {}) {
 		this.UserModel = UserModel
+		this.utils = utils
 	}
 
 	/**
@@ -24,9 +25,18 @@ class Notifications {
 	[EVENT_TYPES.REMOVE_NOTIFICATIONS](data, socket) {
 		const notificationIdsList = data.notificationIds
 		const requestingUsername = socket.request.user.username
-		return this.removeNotificationsfromArray(notificationIdsList, requestingUsername)
+		const searchingCriteria = {username: requestingUsername}
+		const query = {	
+			$pull: {
+				pendingNotifications: {
+					$or: notificationIdsList
+				}
+			}
+		}
+		
+		return this.UserModel.findOneAndUpdate(searchingCriteria, query).exec()
 			.then(() => socket.emit(EVENT_TYPES.REMOVE_NOTIFICATIONS))
-			.catch(err => errorWrapper(EVENT_TYPES.REMOVE_NOTIFICATIONS, err))
+			.catch(err => this.utils.errorWrapper(EVENT_TYPES.REMOVE_NOTIFICATIONS, err))
 			
 	}
 
@@ -42,33 +52,7 @@ class Notifications {
 				const pendingNotificationsArray = users[0].pendingNotifications
 				socket.emit(EVENT_TYPES.GET_PENDING_NOTIFICATIONS, pendingNotificationsArray)
 			})
-			.catch(err => errorWrapper(EVENT_TYPES.GET_PENDING_NOTIFICATIONS, err))
-	}
-
-	removeNotificationsfromArray(notificationIdList, requestingUsername) {
-		const query ={	
-			$pull: {
-				pendingNotifications: {
-					$or: notificationIdList
-				}
-			}
-		}
-		const searchingCriteria = {username: requestingUsername}
-		return this.UserModel.findOneAndUpdate(searchingCriteria, query).exec()
-	}
-
-	static addNotification(userModel, sendingNotificationUsername, recievingNotificationUsername, notificationType) {
-		const data = {
-			pendingNotifications: {
-				username: sendingNotificationUsername,
-				notificationType
-			}
-		}
-		const searchingCriteria = {
-			username: recievingNotificationUsername
-		}
-		let updateDataQuery = {$push:data}
-		return userModel.findOneAndUpdate(searchingCriteria, updateDataQuery).exec()
+			.catch(err => this.utils.errorWrapper(EVENT_TYPES.GET_PENDING_NOTIFICATIONS, err))
 	}
 }
 

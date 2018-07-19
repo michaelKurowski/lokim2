@@ -2,7 +2,7 @@ const dbConnection = require('../dbConnectionProvider').getDbConnection()
 const _ = require('lodash')
 const mongoose = require('mongoose')
 const uniqueValidator = require('mongoose-unique-validator')
-const pendingNotificationsSchema = require('./pendingNotificationsSchema')
+const NotificationModel = require('./notification')
 const friendsSchema = require('./friendsSchema')
 const Schema = mongoose.Schema
 
@@ -29,7 +29,7 @@ const userSchema = new Schema({
 	salt:{
 		type: String
 	},
-	pendingNotifications:[pendingNotificationsSchema],
+	pendingNotifications:[NotificationModel.schema],
 	friends:{
 		type: [friendsSchema],
 		validate: {

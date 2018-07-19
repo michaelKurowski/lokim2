@@ -12,8 +12,13 @@ describe('Notifications websocket namespace', () => {
 			findOneAndUpdate: sinon.stub(),
 			find: sinon.stub()
 		}
+
+		suite.utilsMock = {
+			removeNotifications: sinon.stub()
+		}
 		suite.notificationsInstance = new NotificationsProvider({
-			UserModel: suite.userModelMock
+			UserModel: suite.userModelMock,
+			utils: suite.utilsMock
 		})
 		suite.socketMock = {
 			emit: sinon.spy()
@@ -84,37 +89,6 @@ describe('Notifications websocket namespace', () => {
 				sinon.assert.calledWith(suite.userModelMock.findOneAndUpdate, expectedSearchingCriteria, expectedQuery)
 				done()
 			}
-		})
-	})
-
-	describe('#addNotification', () => {
-		it('should add notification to pendingNotifications array in user document', () => {
-			//given
-			const SENDING_NOTIFICATION_USERNAME = suite.DUMMY_USERNAME
-			const RECIEVING_NOTIFICATION_USERNAME = 'DUMMY USERNAME 2'
-			const NOTIFICATION_TYPE = CLIENT_EVENTS.INVITE
-
-			const queryResultMock = {
-				exec: sinon.stub().resolves()
-			}
-			suite.userModelMock.findOneAndUpdate.returns(queryResultMock)
-
-
-			//when
-			NotificationsProvider.addNotification(suite.userModelMock, SENDING_NOTIFICATION_USERNAME, RECIEVING_NOTIFICATION_USERNAME, NOTIFICATION_TYPE)
-		
-			//then
-			const expectedSearchingCriteria = {username: RECIEVING_NOTIFICATION_USERNAME}
-			const expectedQuery = {
-				$push: {
-					pendingNotifications : {
-						username: SENDING_NOTIFICATION_USERNAME,
-						notificationType: NOTIFICATION_TYPE
-					}
-				}
-			}
-
-			sinon.assert.calledWith(suite.userModelMock.findOneAndUpdate.firstCall, expectedSearchingCriteria, expectedQuery)
 		})
 	})
 

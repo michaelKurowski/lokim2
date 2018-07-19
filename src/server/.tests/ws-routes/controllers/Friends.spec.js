@@ -32,6 +32,9 @@ describe('Friends websocket namespace', () => {
 		} 
 		suite.client = {}
 		suite.userModelMock = {}
+		suite.namespaceUtils = {
+			notification: sinon.stub()
+		}
 
 	})
 
@@ -43,7 +46,7 @@ describe('Friends websocket namespace', () => {
 	describe('#Connection', () => {
 		beforeEach(() => {
 			suite.friendsInstance = new FriendsProvider({
-				UserModel: sinon.stub()
+				UserModel: suite.userModelMock
 			})
 		})
 
@@ -150,18 +153,21 @@ describe('Friends websocket namespace', () => {
 	describe('#Invite', () => {
 		beforeEach(() => {
 			suite.DUMMY_INVITATED_USERNAME = 'DUMMY_USERNAME_2'
-			suite.notificationsProviderMock = {
-				addNotification: sinon.stub().resolves()
+			suite.utilsMock = {
+				addNotification : sinon.stub(),
+				sendMessageToSepcificUser: sinon.stub()
 			}
+			suite.notificationModelMock = {}
 			suite.friendsInstance = new FriendsProvider({
 				UserModel: suite.userModelMock,
-				Notifications: suite.notificationsProviderMock
+				NotificationModel: suite.notificationModelMock,
+				utils: suite.utilsMock
 			})
 		})
 		it('should call addNotification from Notifications class to push invite notification to pending Notifications array', done => {
 			//given
 			const REQUEST_MOCK = {username: suite.DUMMY_INVITATED_USERNAME}
-			
+			suite.utilsMock.addNotification.resolves()
 			suite.server.on(CLIENT_EVENTS.CONNECTION, socket => {
 				socket.on(CLIENT_EVENTS.INVITE, data => {
 					suite.friendsInstance.invite(data, socket, suite.connectionsMock)
@@ -178,15 +184,22 @@ describe('Friends websocket namespace', () => {
 				const expectedInvitatingUsername = suite.DUMMY_USERNAME
 				const expectedInvitatedUsername = suite.DUMMY_INVITATED_USERNAME
 				const expectedEventType = CLIENT_EVENTS.INVITE
-				sinon.assert.calledWith(suite.notificationsProviderMock.addNotification.firstCall, suite.userModelMock, expectedInvitatingUsername, expectedInvitatedUsername, expectedEventType)
+				sinon.assert.calledWith(suite.utilsMock.addNotification.firstCall, 
+					suite.notificationModelMock, suite.userModelMock, expectedInvitatingUsername, expectedInvitatedUsername, expectedEventType)
 				done()
 			}
 		})
 		
 		it('should send message to invited user with invite event type and attached payload with invitating username', done => {
 			//given
+			const DUMMY_NOTIFICATION = {
+				_id: 0,
+				username: suite.DUMMY_USERNAME,
+				notificationType: CLIENT_EVENTS.INVITE
+
+			}
 			const REQUEST_MOCK = {username: suite.DUMMY_INVITATED_USERNAME}
-			suite.sendMessageToSpecyficUserSpy = sinon.spy(suite.friendsInstance, 'sendMessageToSepcificUser')
+			suite.utilsMock.addNotification.resolves(DUMMY_NOTIFICATION)
 			suite.server.on(CLIENT_EVENTS.CONNECTION, socket => {
 				socket.on(CLIENT_EVENTS.INVITE, data => {
 					suite.friendsInstance.invite(data, socket, suite.connectionsMock)
@@ -202,8 +215,8 @@ describe('Friends websocket namespace', () => {
 			function asserations(socket) {
 				const epxectedReciveingUsername = suite.DUMMY_INVITATED_USERNAME
 				const expectedEventType = CLIENT_EVENTS.INVITE
-				const expectedPayload = {username: suite.DUMMY_USERNAME}
-				sinon.assert.calledWith(suite.sendMessageToSpecyficUserSpy, socket, suite.connectionsMock, epxectedReciveingUsername, expectedEventType, expectedPayload)
+				const expectedPayload = DUMMY_NOTIFICATION
+				sinon.assert.calledWith(suite.utilsMock.sendMessageToSepcificUser, socket, suite.connectionsMock, epxectedReciveingUsername, expectedEventType, expectedPayload)
 				done()
 			}
 
@@ -215,13 +228,16 @@ describe('Friends websocket namespace', () => {
 			suite.userModelMock = {
 				find: sinon.stub()
 			}
-			suite.notificationsProviderMock = {
-				addNotification: sinon.spy()
+			suite.notificationModelMock = {}
+			suite.utilsMock = {
+				sendMessageToSepcificUser: sinon.stub(),
+				addNotification: sinon.stub()
 			}
 
 			suite.friendsInstance = new FriendsProvider({
 				UserModel: suite.userModelMock,
-				Notifications: suite.notificationsProviderMock
+				NotificationModel: suite.notificationModelMock,
+				utils: suite.utilsMock
 			})
 			suite.DUMMY_INVITATING_USERNAME = 'DUMMY_INVITATING_USERNAME'
 			suite.REQUEST_MOCK = {username: suite.DUMMY_INVITATING_USERNAME}
@@ -291,8 +307,8 @@ describe('Friends websocket namespace', () => {
 		it('should call sendMessageToSpecificUser and send confirmation message to invitataing user', done => {
 			//given
 			suite.userModelMock.find.returns(suite.queryResultMock)
-			suite.friendsInstance.addFriends = sinon.stub()
-			suite.sendMessageToSpecyficUserSpy = sinon.spy(suite.friendsInstance, 'sendMessageToSepcificUser')
+			suite.friendsInstance.addFriends = sinon.stub().resolves()
+			suite.utilsMock.addNotification.resolves()
 			suite.server.on(CLIENT_EVENTS.CONNECTION, socket => {
 				socket.on(CLIENT_EVENTS.INVITATION_CONFIRMATION, data => {
 					return suite.friendsInstance.invitaitonConfirmation(data, socket, suite.connectionsMock)
@@ -309,15 +325,16 @@ describe('Friends websocket namespace', () => {
 				const expectedEventType = CLIENT_EVENTS.INVITATION_CONFIRMATION
 				const expectedRecievingUsername = suite.DUMMY_INVITATING_USERNAME
 				const expectedPayload = {username: suite.DUMMY_USERNAME}
-				sinon.assert.calledWith(suite.sendMessageToSpecyficUserSpy, socket, suite.connectionsMock, expectedRecievingUsername, expectedEventType, expectedPayload)
+				sinon.assert.calledWith(suite.utilsMock.sendMessageToSepcificUser, socket, suite.connectionsMock, expectedRecievingUsername, expectedEventType, expectedPayload)
 				done()
 			}
 		})
 
 		it('should call addNotification from Notifications class to add new notification to pendingNotifications when recieving user is not connected to namespace', done => {
 			//given
+			suite.utilsMock.addNotification.resolves()
 			suite.userModelMock.find.returns(suite.queryResultMock)
-			suite.friendsInstance.addFriends = sinon.stub()
+			suite.friendsInstance.addFriends = sinon.stub().resolves()
 			suite.server.on(CLIENT_EVENTS.CONNECTION, socket => {
 				socket.on(CLIENT_EVENTS.INVITATION_CONFIRMATION, data => {
 					return suite.friendsInstance.invitaitonConfirmation(data, socket, suite.connectionsMock)
@@ -334,67 +351,9 @@ describe('Friends websocket namespace', () => {
 				const expectedInvitatingUsername = suite.DUMMY_INVITATING_USERNAME
 				const expectedInvitatedUsername = suite.DUMMY_USERNAME
 				const expectedNotificationType = CLIENT_EVENTS.INVITATION_CONFIRMATION
-				sinon.assert.calledWith(suite.notificationsProviderMock.addNotification, suite.userModelMock, expectedInvitatedUsername, expectedInvitatingUsername, expectedNotificationType)
+				sinon.assert.calledWith(suite.utilsMock.addNotification, suite.notificationModelMock, suite.userModelMock, expectedInvitatedUsername, expectedInvitatingUsername, expectedNotificationType)
 				done()
 			}
-		})
-	})
-
-	describe('#sendMessageToSpecyficUser', () => {
-		beforeEach(() => {
-			suite.DUMMY_EVENT_TYPE = 'DUMMY_EVENT_TYPE'
-			suite.DUMMY_PAYLOAD = 'DUMMY_PAYLOAD'
-			suite.RECIEVING_DUMMY_USERNAME = 'DUMMY_USERNAME_2'
-			suite.RECIEVING_SOCKET_ID = 'recievingSocketId'
-		})
-		
-		it('should call to with recievingUserSocket as argument', () => {
-			//given
-			suite.friendsInstance = new FriendsProvider({
-				UserModel: suite.userModelMock
-			})
-			suite.recievingSocketMock = {
-				id: suite.RECIEVING_SOCKET_ID
-			}
-
-			suite.sendingSocketMock = {
-				to: sinon.stub().returns({
-					emit: sinon.stub()
-				})
-			}
-			suite.connectionsMock.usersToConnectionsMap.set(suite.RECIEVING_DUMMY_USERNAME, suite.recievingSocketMock)
-
-			//when
-			suite.friendsInstance.sendMessageToSepcificUser(suite.sendingSocketMock, suite.connectionsMock, suite.RECIEVING_DUMMY_USERNAME, suite.DUMMY_EVENT_TYPE, suite.DUMMY_PAYLOAD)
-
-			//then
-			assert.isTrue(suite.sendingSocketMock.to.calledWith(suite.RECIEVING_SOCKET_ID))
-		})
-
-		it('should call emit with expected event type and payload attatched to message', () => {
-			//given
-			suite.friendsInstance = new FriendsProvider({
-				UserModel: suite.userModelMock
-			})
-			suite.recievingSocketMock = {
-				id: suite.RECIEVING_SOCKET_ID
-			}
-
-			suite.sendingSocketMock = {
-				to: sinon.stub().returns({
-					emit: sinon.stub()
-				})
-			}
-					
-			
-			suite.connectionsMock.usersToConnectionsMap.set(suite.RECIEVING_DUMMY_USERNAME, suite.recievingSocketMock)
-
-			//when
-			suite.friendsInstance.sendMessageToSepcificUser(suite.sendingSocketMock, suite.connectionsMock, suite.RECIEVING_DUMMY_USERNAME, suite.DUMMY_EVENT_TYPE, suite.DUMMY_PAYLOAD)
-
-			//then
-			assert.isTrue(suite.sendingSocketMock.to().emit.calledWith(suite.DUMMY_EVENT_TYPE, suite.DUMMY_PAYLOAD))
-
 		})
 	})
 

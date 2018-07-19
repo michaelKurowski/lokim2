@@ -1,6 +1,5 @@
 const namespaceInfo = require('../../protocol/protocol.json').friends
 const EVENT_TYPES = namespaceInfo.eventTypes
-const errorWrapper = require('../../utilities').errorWrapper
 const _ = require('lodash')
 
 /**
@@ -11,10 +10,12 @@ const _ = require('lodash')
 class Friends {
 	constructor({
 		UserModel = require('../../models/user'),
-		Notifications = require('./Notifications')
+		NotificationModel = require('../../models/notification'),
+		utils = require('../utilities')
 	} = {}) {
 		this.UserModel = UserModel
-		this.Notifications = Notifications
+		this.NotificationModel = NotificationModel
+		this.utils = utils
 	}
 
 	[EVENT_TYPES.CONNECTION](socket, connections) {
@@ -32,7 +33,7 @@ class Friends {
 		const {username} = socket.request.user
 		return this.UserModel.find({username}).exec()
 			.then(user => socket.emit(EVENT_TYPES.GET_FRIENDS_LIST, user.friends))
-			.catch(err => errorWrapper(EVENT_TYPES.GET_FRIENDS_LIST, err))
+			.catch(err => this.utils.errorWrapper(EVENT_TYPES.GET_FRIENDS_LIST, err))
 	}
 
 	/**
@@ -45,10 +46,9 @@ class Friends {
 	[EVENT_TYPES.INVITE](data, socket, connections) {
 		const invitatedUsername = data.username
 		const invitatingUsername = socket.request.user.username
-		const emitPayload = {username: invitatingUsername}
-		return this.Notifications.addNotification(this.UserModel, invitatingUsername, invitatedUsername, EVENT_TYPES.INVITE)
-			.then(() => this.sendMessageToSepcificUser(socket, connections, invitatedUsername, EVENT_TYPES.INVITE, emitPayload))
-			.catch(err => errorWrapper(EVENT_TYPES.INVITE, err))
+		return this.utils.addNotification(this.NotificationModel, this.UserModel, invitatingUsername, invitatedUsername, EVENT_TYPES.INVITE)
+			.then((notificationPayload) => this.utils.sendMessageToSepcificUser(socket, connections, invitatedUsername, EVENT_TYPES.INVITE, notificationPayload))
+			.catch(err => this.utils.errorWrapper(EVENT_TYPES.INVITE, err))
 	}
 
 	/**
@@ -61,7 +61,7 @@ class Friends {
 		const invitedUsername = socket.request.user.username
 		const invitatingUsername = data.username
 		const payload = {username: invitedUsername}
-
+		
 		return this.UserModel.find(payload).exec()
 			.then(user => {
 				const pendingNotificationsArray = user[0].pendingNotifications
@@ -70,20 +70,11 @@ class Friends {
 				return Promise.reject()
 			})
 			.then(() => {
-				const isMessageSent = this.sendMessageToSepcificUser(socket, connections, invitatingUsername, EVENT_TYPES.INVITATION_CONFIRMATION, payload)
+				const isMessageSent = this.utils.sendMessageToSepcificUser(socket, connections, invitatingUsername, EVENT_TYPES.INVITATION_CONFIRMATION, payload)
 				if(!isMessageSent)
-					this.Notifications.addNotification(this.UserModel, invitedUsername, invitatingUsername, EVENT_TYPES.INVITATION_CONFIRMATION)
+					this.utils.addNotification(this.NotificationModel, this.UserModel, invitedUsername, invitatingUsername, EVENT_TYPES.INVITATION_CONFIRMATION)
 			})
-			.catch(err => errorWrapper(EVENT_TYPES.INVITATION_CONFIRMATION, err))
-	}
-
-	sendMessageToSepcificUser(socket, connetcions, recieverUsername, eventType, payload) {
-		if (connetcions.usersToConnectionsMap.has(recieverUsername)) {
-			const receivingUserSocketId = connetcions.usersToConnectionsMap.get(recieverUsername).id
-			socket.to(receivingUserSocketId).emit(eventType, payload)
-			return true
-		}
-		return false
+			.catch(err => this.utils.errorWrapper(EVENT_TYPES.INVITATION_CONFIRMATION, err))
 	}
 
 	addFriends(invitatingUsername, invitatedUsername) {
