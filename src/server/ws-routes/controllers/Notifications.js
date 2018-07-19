@@ -33,9 +33,8 @@ class Notifications {
 				}
 			}
 		}
-		
 		return this.UserModel.findOneAndUpdate(searchingCriteria, query).exec()
-			.then(() => socket.emit(EVENT_TYPES.REMOVE_NOTIFICATIONS))
+			.then(() => socket.emit(EVENT_TYPES.REMOVE_NOTIFICATIONS, notificationIdsList))
 			.catch(err => this.utils.errorWrapper(EVENT_TYPES.REMOVE_NOTIFICATIONS, err))
 			
 	}

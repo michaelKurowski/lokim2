@@ -32,10 +32,6 @@ describe('Friends websocket namespace', () => {
 		} 
 		suite.client = {}
 		suite.userModelMock = {}
-		suite.namespaceUtils = {
-			notification: sinon.stub()
-		}
-
 	})
 
 	afterEach(done => {
@@ -163,15 +159,17 @@ describe('Friends websocket namespace', () => {
 				NotificationModel: suite.notificationModelMock,
 				utils: suite.utilsMock
 			})
+			suite.friendsInstance.isNotFriendsAlready = sinon.stub().resolves()
 		})
 		it('should call addNotification from Notifications class to push invite notification to pending Notifications array', done => {
 			//given
 			const REQUEST_MOCK = {username: suite.DUMMY_INVITATED_USERNAME}
 			suite.utilsMock.addNotification.resolves()
+			
 			suite.server.on(CLIENT_EVENTS.CONNECTION, socket => {
 				socket.on(CLIENT_EVENTS.INVITE, data => {
 					suite.friendsInstance.invite(data, socket, suite.connectionsMock)
-					then()
+						.then(asserations)
 				})
 			})
 
@@ -180,7 +178,7 @@ describe('Friends websocket namespace', () => {
 			suite.client.emit(CLIENT_EVENTS.INVITE, REQUEST_MOCK)
 
 			//then
-			function then() {
+			function asserations() {
 				const expectedInvitatingUsername = suite.DUMMY_USERNAME
 				const expectedInvitatedUsername = suite.DUMMY_INVITATED_USERNAME
 				const expectedEventType = CLIENT_EVENTS.INVITE
@@ -354,6 +352,43 @@ describe('Friends websocket namespace', () => {
 				sinon.assert.calledWith(suite.utilsMock.addNotification, suite.notificationModelMock, suite.userModelMock, expectedInvitatedUsername, expectedInvitatingUsername, expectedNotificationType)
 				done()
 			}
+		})
+	})
+
+	describe('#isNotFriendsAlready', () => {
+		beforeEach(() => {
+			suite.userModelMock = {
+				findOne: sinon.stub()
+			}
+			suite.friendsInstance = new FriendsProvider({
+				UserModel: suite.userModelMock
+			})
+		})
+
+		it('should reject promise when invitating username is on invitated username friends list', done => {
+			//given
+			const INVITATING_USERNAME = suite.DUMMY_USERNAME
+			const INVITATED_USERNAME = 'INVITATED_USERNAME'
+
+			const QUERY_FEEDBACK_MOCK = {
+				friends: [
+					{
+						username: INVITATING_USERNAME
+					}
+				]
+			}
+
+			suite.queryResult = {
+				exec: sinon.stub().resolves(QUERY_FEEDBACK_MOCK)
+			}
+
+			suite.userModelMock.findOne.returns(suite.queryResult)
+
+			//when
+			suite.friendsInstance.isNotFriendsAlready(INVITATING_USERNAME, INVITATED_USERNAME)
+				//then
+				.catch(done)
+
 		})
 	})
 

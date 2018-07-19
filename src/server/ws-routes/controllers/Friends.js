@@ -46,7 +46,9 @@ class Friends {
 	[EVENT_TYPES.INVITE](data, socket, connections) {
 		const invitatedUsername = data.username
 		const invitatingUsername = socket.request.user.username
-		return this.utils.addNotification(this.NotificationModel, this.UserModel, invitatingUsername, invitatedUsername, EVENT_TYPES.INVITE)
+		return this.isNotFriendsAlready(invitatingUsername, invitatedUsername)	
+			.then(() => this.utils.addNotification(this.NotificationModel, this.UserModel, invitatingUsername, invitatedUsername, EVENT_TYPES.INVITE))
+			.catch(() => socket.emit(EVENT_TYPES.INVITE, 'You are friends already.'))
 			.then((notificationPayload) => this.utils.sendMessageToSepcificUser(socket, connections, invitatedUsername, EVENT_TYPES.INVITE, notificationPayload))
 			.catch(err => this.utils.errorWrapper(EVENT_TYPES.INVITE, err))
 	}
@@ -75,6 +77,16 @@ class Friends {
 					this.utils.addNotification(this.NotificationModel, this.UserModel, invitedUsername, invitatingUsername, EVENT_TYPES.INVITATION_CONFIRMATION)
 			})
 			.catch(err => this.utils.errorWrapper(EVENT_TYPES.INVITATION_CONFIRMATION, err))
+	}
+
+	isNotFriendsAlready(invitatingUsername, invitatedUsername) {
+		const searchingCriteria = {username: invitatedUsername}
+		return this.UserModel.findOne(searchingCriteria).exec()
+			.then(user => {
+				const friendsUsernameList = _.map( user.friends, friend => friend.username)
+				if (_.includes(friendsUsernameList, invitatingUsername))
+					return Promise.reject()
+			})
 	}
 
 	addFriends(invitatingUsername, invitatedUsername) {
