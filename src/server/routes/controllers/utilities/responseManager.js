@@ -1,12 +1,12 @@
 
 const MESSAGES = {
-	successes : {
+	SUCCESSES : {
 		OK : {
 			code: 200, 
 			description: 'OK'
 		}
 	},
-	errors : {
+	ERRORS : {
 		BAD_REQUEST : {
 			code: 400, 
 			description: 'BAD_REQUEST'

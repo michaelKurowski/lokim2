@@ -1,7 +1,7 @@
 const registerController = require('../../../routes/controllers/register')
 const assert = require('chai').assert
 const httpMocks = require('node-mocks-http')
-const responseMessages = require('../../../routes/controllers/utilities/responseMessages')
+const responseManager = require('../../../routes/controllers/utilities/responseManager')
 const EventEmitter = require('events').EventEmitter
 let suite = {}
 
@@ -48,7 +48,7 @@ describe('register controller', () => {
 				function then() {
 					const responseBody = suite.responseMock._getData()
 					const expectedResponseBody = JSON.stringify({
-						description: responseMessages.errors.FAILED_TO_CREATE_USER
+						description: responseManager.MESSAGES.ERRORS.BAD_REQUEST.description
 					})
 					assert.strictEqual(responseBody, expectedResponseBody)
 					done()
@@ -77,7 +77,7 @@ describe('register controller', () => {
 				function then() {
 					const responseBody = suite.responseMock._getData()
 					const expectedResponseBody = JSON.stringify({
-						description: responseMessages.successes.USER_HAS_BEEN_CREATED
+						description: responseManager.MESSAGES.SUCCESSES.OK.description
 					})
 					assert.strictEqual(responseBody, expectedResponseBody)
 					done()

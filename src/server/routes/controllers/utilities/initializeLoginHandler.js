@@ -4,7 +4,7 @@ function initializeLoginHandlers(req, res) {
 	const isSuccessfullyLoggedIn = (err) => {
 		if (err) return responseManager.sendResponse(res, err)
 		
-		return responseManager.sendResponse(res, responseManager.MESSAGES.successes.OK)
+		return responseManager.sendResponse(res, responseManager.MESSAGES.SUCCESSES.OK)
 	}
 
 	const loginHandler = (err, user) => {
@@ -14,7 +14,7 @@ function initializeLoginHandlers(req, res) {
 		if (user)	
 			req.logIn(user, isSuccessfullyLoggedIn)
 		else
-			return responseManager.sendResponse(res, responseManager.MESSAGES.errors.BAD_REQUEST)
+			return responseManager.sendResponse(res, responseManager.MESSAGES.ERRORS.BAD_REQUEST)
 	}
 
 	return loginHandler		

@@ -21,7 +21,7 @@ describe('passport strategies', () => {
 				const USERNAME = 'dummyUsername'
 				const PASSWORD = 'dummyPassword'
 				const doneCallback = sinon.spy()
-				const PASSWORD_VALIDATION_RESULT = responseManager.MESSAGES.errors.UNAUTHORIZED
+				const PASSWORD_VALIDATION_RESULT = responseManager.MESSAGES.ERRORS.UNAUTHORIZED
 				const mongooseQuery = {
 					exec: sinon.stub().returns(Promise.resolve(suite.FAKE_FIND_BY_ID_RESULT))
 				}
@@ -46,7 +46,7 @@ describe('passport strategies', () => {
 				const USERNAME = 'dummyUsername'
 				const PASSWORD = 'dummyPassword'
 				const doneCallback = sinon.spy()
-				const PASSWORD_VALIDATION_RESULT = responseManager.MESSAGES.errors.UNAUTHORIZED
+				const PASSWORD_VALIDATION_RESULT = responseManager.MESSAGES.ERRORS.UNAUTHORIZED
 				const EXPECTED_FOUND_USER = null
 				const mongooseQuery = {
 					exec: sinon.stub().returns(Promise.resolve(suite.FAKE_FIND_BY_ID_RESULT))
