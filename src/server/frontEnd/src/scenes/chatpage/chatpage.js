@@ -188,9 +188,9 @@ class ChatPage extends React.Component {
 					</SidePanel>
 					<ChatWindow messages={this.state.messages} sendMessage={this.sendMessage}/>
 					<SidePanel direction={SIDE_PANEL_DIRECTIONS.RIGHT}>
-						<h4>Room Information/Etc </h4>
+						<h4>Room: {this.state.selectedRoom ? this.state.selectedRoom : 'none'}</h4>
+						{this.props.room ? <RoomMembersList usernames={this.props.room.members}/> : <div></div>}
 						<ConnectStatus connection={this.isConnected()}/>
-						{this.props.room ? <RoomMembersList usernames={this.props.room.members} roomName={this.state.selectedRoom}/> : <div></div>}
 						<UserFinder foundUsers={this.state.usersFound} createRoom={this.createRoom} findUser={this.findUserByUsername}/>
 						<Link className='btn btn-danger' to={HOMEPAGE_PATH}>Logout</Link>
 					</SidePanel>

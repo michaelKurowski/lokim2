@@ -8,7 +8,6 @@ class RoomMembersList extends React.Component {
 	render() {
 		return (
 			<div>
-				<h6>Current Room: {this.props.roomName}</h6>
 				<h6>Users in current room:</h6>
 				<UsersList usernames={this.props.usernames} />
 			</div>
