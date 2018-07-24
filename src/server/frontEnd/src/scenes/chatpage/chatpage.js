@@ -28,7 +28,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
 	return {
-		handleListMembers: (usernames, roomId) => {
+		addRoomMembers: (usernames, roomId) => {
 			usernames.forEach(username => {
 				dispatch(roomActions.actions.addMember(username, roomId))
 			})
@@ -47,7 +47,6 @@ class ChatPage extends React.Component {
 			userRooms: [],
 			roomToJoin: '',
 			usersFound: [],
-			usersInRoom: [],
 			namespacesConnectionStatus: {
 				users: false,
 				room: false
@@ -97,8 +96,7 @@ class ChatPage extends React.Component {
 	}
 
 	handleListMembersEvent(data) {
-		this.setState({usersInRoom: data.usernames})
-		this.props.handleListMembers(data.usernames, this.state.selectedRoom)
+		this.props.addRoomMembers(data.usernames, this.state.selectedRoom)
 	}
 
 	handleRoomToChangeUserInput(event) {
