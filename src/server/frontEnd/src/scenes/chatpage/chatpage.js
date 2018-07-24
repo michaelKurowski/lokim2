@@ -35,12 +35,10 @@ function mapDispatchToProps(dispatch) {
 class ChatPage extends React.Component {
 	constructor(props) {
 		super(props)
-		const initProps = this.props.location.state
 		this.state = {
 			input: '',
 			messages: [],
 			selectedRoom: '',
-			//username: _.get(initProps, 'username', null),
 			userRooms: [],
 			roomToJoin: '',
 			usersFound: [],
