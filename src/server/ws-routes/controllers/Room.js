@@ -15,7 +15,6 @@ class Room {
 	}
 
 	[EVENT_TYPES.DISCONNECT](socket, connections) {
-		console.log('disconnecting')
 		const username = socket.request.user.username
 		connections.usersToConnectionsMap.delete(username)
 	}
