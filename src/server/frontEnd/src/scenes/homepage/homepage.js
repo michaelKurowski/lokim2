@@ -29,8 +29,7 @@ class HomePage extends React.Component {
 
 		this.state = {
 			username: '',
-			password: '',
-			successfulLogin: false
+			password: ''
 		}
 
 		this.updateCredentials = this.updateCredentials.bind(this)
@@ -46,13 +45,12 @@ class HomePage extends React.Component {
 		event.preventDefault()
 	}
 
-	componentDidUpdate() {
-		if(this.props.logInStatus === SESSION_STATES.SUCCEDED)
-			this.setState({successfulLogin: true})
+	isLoggedIn() {
+		return this.props.logInStatus === SESSION_STATES.SUCCEDED
 	}
 
 	render() {
-		if (this.state.successfulLogin)
+		if (this.isLoggedIn())
 			return <Redirect to={{pathname: CHAT_PATH, state: {username: this.state.username}}}/>
 
 		return (
