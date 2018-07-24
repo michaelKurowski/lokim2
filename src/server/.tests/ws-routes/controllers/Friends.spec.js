@@ -58,8 +58,8 @@ describe('Friends websocket namespace', () => {
 
 			//then
 			function then() {
-				const hasSocketStored = suite.connectionsMock.usersToConnectionsMap.has(suite.DUMMY_USERNAME)
-				assert.isTrue(hasSocketStored)
+				const hasSocketBeenSaved = suite.connectionsMock.usersToConnectionsMap.has(suite.DUMMY_USERNAME)
+				assert.isTrue(hasSocketBeenSaved)
 				done()
 			}
 		})
@@ -76,7 +76,7 @@ describe('Friends websocket namespace', () => {
 			})
 		})
 
-		it('should sent event to client who requested for it', done => {
+		it('should send event to client who requested for it', done => {
 			//given
 			const QUERY_FEEDBACK_MOCK = []
 			const queryResultMock = {
