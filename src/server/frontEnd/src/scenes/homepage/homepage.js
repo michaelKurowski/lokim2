@@ -1,17 +1,27 @@
 const React = require('react')
 const {Link, Redirect} = require('react-router-dom')
 const logo = require('../../theme/assets/logo.svg')
-const _fetch = require('node-fetch')
-const {urls, paths} = require('../../routes/routes.json')
-const LOGIN_URL = urls.LOGIN
-const POST = 'POST'
-const credentials = 'same-origin'
-const headers = { 'Content-Type': 'application/json' }
+const {paths} = require('../../routes/routes.json')
+const {connect} = require('react-redux')
+const {actions} = require('../../services/session/session.actions')
+const SESSION_STATES = require('../../services/session/sessionStates')
 
 const CHAT_PATH = paths.CHAT
 const REGISTER_PATH = paths.REGISTER
-const LOG_IN_SUCCESS = 200
-const LOG_IN_FAIL = 401
+
+
+function mapStateToProps(store) {
+	return {
+		logInStatus: store.sessionReducer.status,
+		error: store.sessionReducer.errorMessage
+	}
+}
+
+function mapDispatchToProps(dispatch) {
+	return {
+		logIn: credentials => dispatch(actions.logIn(credentials))
+	}
+}
 
 class HomePage extends React.Component {
 	constructor(props) {
@@ -27,35 +37,22 @@ class HomePage extends React.Component {
 		this.logIn = this.logIn.bind(this)
 	}
 
-	loginHandler(username, password, fetch) {
-		fetch = fetch || _fetch
-		fetch(LOGIN_URL, {
-			method: POST, headers, credentials,
-			body: JSON.stringify({username, password})
-		}).then(response => {
-			switch (response.status) {
-				case LOG_IN_SUCCESS:
-					this.setState({successfulLogin: true})
-					break
-				case LOG_IN_FAIL:
-					alert('Login failed')
-					break
-				default:
-					console.error(new Error(`Unexpected response to authorization request: ${response.status}`))
-			}
-			
-		}).catch(err => console.error(new Error(err)))
-	}
-
 	updateCredentials(event) {
 		this.setState({ [event.target.name] : event.target.value})
 	}
+
 	logIn(event) {
-		this.loginHandler(this.state.username, this.state.password)
+		this.props.logIn({username: this.state.username, password: this.state.password})
 		event.preventDefault()
 	}
+
+	componentDidUpdate() {
+		if(this.props.logInStatus === SESSION_STATES.SUCCEDED)
+			this.setState({successfulLogin: true})
+	}
+
 	render() {
-		if(this.state.successfulLogin)
+		if (this.state.successfulLogin)
 			return <Redirect to={{pathname: CHAT_PATH, state: {username: this.state.username}}}/>
 
 		return (
@@ -77,4 +74,4 @@ class HomePage extends React.Component {
 	}   
 }
 
-module.exports = HomePage
+module.exports = connect(mapStateToProps, mapDispatchToProps)(HomePage)

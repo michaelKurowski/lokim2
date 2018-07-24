@@ -3,9 +3,8 @@ const {Redirect, Link} = require('react-router-dom')
 const _ = require('lodash')
 const ConnectStatus = require('./components/connectStatus/connectStatus')
 let socket
-const protocols = require('../../utils/io-protocol')
+const protocols = require('../../utils/io-protocol.json')
 const HOMEPAGE_PATH = require('../../routes/routes').paths.HOME
-const USERNAMES_PLACEHOLDER = ''
 const ChatWindow = require('./components/chatWindow/chatWindow')
 const SidePanel = require('../../components/sidePanel/sidePanel')
 const RoomMembersList = require('./components/roomMembersList/roomMembersList')
@@ -14,14 +13,29 @@ const MiniProfile = require('./components/miniProfile/miniProfile')
 const RoomsDialer = require('./components/roomsDialer/roomsDialer')
 const RoomJoiner = require('./components/roomJoiner/roomJoiner')
 const SIDE_PANEL_DIRECTIONS = require('../../components/sidePanel/sidePanelDirections')
+const roomActions = require('../../services/room/room.actions')
+const { connect } = require('react-redux')
 require('./chatpage.css')
+
+
+function mapStateToProps(state) {
+	return {
+		messagesA: state.roomReducer.messages,
+		membersA: state.roomReducer.members
+	}
+}
+
+function mapDispatchToProps(dispatch) {
+	return {
+		handleJoinEventA: data => dispatch(roomActions.actions.addMember(data.username))
+	}
+}
 
 class ChatPage extends React.Component {
 	constructor(props) {
 		super(props)
 		const initProps = this.props.location.state
 		this.state = {
-			connected: false,
 			input: '',
 			messages: [],
 			selectedRoom: '',
@@ -29,10 +43,15 @@ class ChatPage extends React.Component {
 			userRooms: [],
 			roomToJoin: '',
 			usersFound: [],
-			usersInRoom: []
+			usersInRoom: [],
+			namespacesConnectionStatus: {
+				users: false,
+				room: false
+			}
 		}
 		this.sendMessage = this.sendMessage.bind(this)
-		this.handleConnectionEvent = this.handleConnectionEvent.bind(this)
+		this.handleUsersConnectionEvent = this.handleUsersConnectionEvent.bind(this)
+		this.handleRoomConnectionEvent = this.handleRoomConnectionEvent.bind(this)
 		this.handleMessageEvent = this.handleMessageEvent.bind(this)
 		this.handleJoinEvent = this.handleJoinEvent.bind(this)
 		this.handleRoomJoin = this.handleRoomJoin.bind(this)
@@ -45,19 +64,33 @@ class ChatPage extends React.Component {
 
 	componentDidMount() {
 		socket = require('../../utils/sockets/ws-routing')()
-		socket.room.on(protocols.CONNECTION, this.handleConnectionEvent)
+		socket.room.on(protocols.CONNECTION, this.handleRoomConnectionEvent)
+		socket.users.on(protocols.CONNECTION, this.handleUsersConnectionEvent)
 		socket.room.on(protocols.MESSAGE, this.handleMessageEvent)
 		socket.room.on(protocols.JOIN, this.handleJoinEvent)
 		socket.room.on(protocols.LIST_MEMBERS, this.handleListMembersEvent)
 		socket.users.on(protocols.FIND, this.updateFoundUsers.bind(this))
+		
+
 	}
 
 	handleRoomJoin(roomId) {
 		socket.room.emit(protocols.JOIN, {roomId})
 	}
 
-	handleConnectionEvent() {
-		this.setState({connected: true})
+	isConnected() {
+		console.log(this.state)
+		return this.state.namespacesConnectionStatus.room && this.state.namespacesConnectionStatus.users
+	}
+
+	handleRoomConnectionEvent() {
+		console.log('room')
+		this.setState({namespacesConnectionStatus: {room: true, users: this.state.namespacesConnectionStatus.users}})
+	}
+
+	handleUsersConnectionEvent() {
+		console.log('users')
+		this.setState({namespacesConnectionStatus: {users: true, room: this.state.namespacesConnectionStatus.room}})
 	}
 
 	handleMessageEvent(data) {
@@ -81,6 +114,7 @@ class ChatPage extends React.Component {
 		if (data.username !== this.state.username) return
 		this.updateJoinedRooms(data)
 		this.changeSelectedRoom(data)
+		this.props.handleJoinEventA(data)
 	}
 
 	updateFoundUsers(data) {
@@ -120,14 +154,12 @@ class ChatPage extends React.Component {
 		}
 	}
 
-	findUsersOfRoom(roomId) {
-		const roomObject = this.state.userRooms.find(room => room.roomId === roomId)
-		return _.get(roomObject, 'usernames', USERNAMES_PLACEHOLDER)
-	}
-
 	sendMessage(text) {
-		if (_.isEmpty(text) || !this.state.selectedRoom)
-			throw new Error(`No room selected || input field is empty. Text: ${text}, selected room: ${this.state.selectedRoom}`)
+		if (_.isEmpty(text) || !this.state.selectedRoom) {
+			alert('No error selected')
+			console.warn(new Error(`No room selected || input field is empty. Text: ${text}, selected room: ${this.state.selectedRoom}`))
+			return
+		}
 
 		const newMessage = {
 			roomId: this.state.selectedRoom,
@@ -146,7 +178,6 @@ class ChatPage extends React.Component {
 
 	render() {
 		if(!this.state.username) return <Redirect to={HOMEPAGE_PATH}/>
-		
 		return (
 			<div className='container-fluid h-100-vh my-chat-page'>
 				<div className='row h-100'>
@@ -155,10 +186,10 @@ class ChatPage extends React.Component {
 						<RoomJoiner joinRoom={this.handleRoomJoin} />
 						<RoomsDialer rooms={this.state.userRooms} selectRoom={this.changeSelectedRoom} />
 					</SidePanel>
-					 <ChatWindow messages={this.state.messages} sendMessage={this.sendMessage}/>
+					<ChatWindow messages={this.state.messages} sendMessage={this.sendMessage}/>
 					<SidePanel direction={SIDE_PANEL_DIRECTIONS.RIGHT}>
 						<h4>Room Information/Etc </h4>
-						<ConnectStatus connection={this.state.connected}/>
+						<ConnectStatus connection={this.isConnected()}/>
 						<RoomMembersList usernames={this.state.usersInRoom} roomName={this.state.selectedRoom}/>
 						<UserFinder foundUsers={this.state.usersFound} createRoom={this.createRoom} findUser={this.findUserByUsername}/>
 						<Link className='btn btn-danger' to={HOMEPAGE_PATH}>Logout</Link>
@@ -169,4 +200,4 @@ class ChatPage extends React.Component {
 	}
 }
 
-module.exports = ChatPage
+module.exports = connect(mapStateToProps, mapDispatchToProps)(ChatPage)

@@ -6,7 +6,6 @@ const initialState = {
 }
 
 const handleActions = (state = initialState, action = {}) => {
-    console.log(action)
     switch (action.type) {
         case ACTION_CODES.LOG_IN_PENDING:
             return Object.assign({}, state, {status: STATES.PENDING, errorMessage: ''})
