@@ -13,22 +13,27 @@ const MiniProfile = require('./components/miniProfile/miniProfile')
 const RoomsDialer = require('./components/roomsDialer/roomsDialer')
 const RoomJoiner = require('./components/roomJoiner/roomJoiner')
 const SIDE_PANEL_DIRECTIONS = require('../../components/sidePanel/sidePanelDirections')
-const roomActions = require('../../services/room/room.actions')
+const roomActions = require('../../services/roomsManagement/room.actions')
+const roomsManagementActions = require('../../services/roomsManagement/roomsManagement.actions')
 const { connect } = require('react-redux')
 require('./chatpage.css')
 
 
 function mapStateToProps(state) {
 	return {
-		messagesA: state.roomReducer.messages,
-		membersA: state.roomReducer.members,
+		room: state.roomsManagementReducer.rooms[state.roomsManagementReducer.selectedRoom],
 		username: state.sessionReducer.username
 	}
 }
 
 function mapDispatchToProps(dispatch) {
 	return {
-		handleJoinEventA: data => dispatch(roomActions.actions.addMember(data.username))
+		handleListMembers: (usernames, roomId) => {
+			usernames.forEach(username => {
+				dispatch(roomActions.actions.addMember(username, roomId))
+			})
+		},
+		selectRoom: roomId => dispatch(roomsManagementActions.actions.selectRoom(roomId))
 	}
 }
 
@@ -69,8 +74,6 @@ class ChatPage extends React.Component {
 		socket.room.on(protocols.JOIN, this.handleJoinEvent)
 		socket.room.on(protocols.LIST_MEMBERS, this.handleListMembersEvent)
 		socket.users.on(protocols.FIND, this.updateFoundUsers.bind(this))
-		
-
 	}
 
 	handleRoomJoin(roomId) {
@@ -95,6 +98,7 @@ class ChatPage extends React.Component {
 
 	handleListMembersEvent(data) {
 		this.setState({usersInRoom: data.usernames})
+		this.props.handleListMembers(data.usernames, this.state.selectedRoom)
 	}
 
 	handleRoomToChangeUserInput(event) {
@@ -110,7 +114,6 @@ class ChatPage extends React.Component {
 		if (data.username !== this.props.username) return
 		this.updateJoinedRooms(data)
 		this.changeSelectedRoom(data)
-		this.props.handleJoinEventA(data)
 	}
 
 	updateFoundUsers(data) {
@@ -127,6 +130,7 @@ class ChatPage extends React.Component {
 	changeSelectedRoom(roomDetails) {
 		const {roomId} = roomDetails
 		this.setState({selectedRoom: roomId}, () =>  this.updateMessageState({roomId}))
+		this.props.selectRoom(roomId)
 	}
 
 	storeMessage(roomId, newMessage) {
@@ -186,7 +190,7 @@ class ChatPage extends React.Component {
 					<SidePanel direction={SIDE_PANEL_DIRECTIONS.RIGHT}>
 						<h4>Room Information/Etc </h4>
 						<ConnectStatus connection={this.isConnected()}/>
-						<RoomMembersList usernames={this.state.usersInRoom} roomName={this.state.selectedRoom}/>
+						{this.props.room ? <RoomMembersList usernames={this.props.room.members} roomName={this.state.selectedRoom}/> : <div></div>}
 						<UserFinder foundUsers={this.state.usersFound} createRoom={this.createRoom} findUser={this.findUserByUsername}/>
 						<Link className='btn btn-danger' to={HOMEPAGE_PATH}>Logout</Link>
 					</SidePanel>
