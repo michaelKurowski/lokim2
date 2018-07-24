@@ -30,15 +30,16 @@ const actions = {
         .then(response => {
 			switch (response.status) {
                 case LOG_IN_SUCCESS:
-                    dispatch({type: CODES.LOG_IN_SUCCESS, payload: {response: LOG_IN_RESPONSES.SUCCESS}})
+                    dispatch({type: CODES.LOG_IN_SUCCESS, payload: {response: LOG_IN_RESPONSES.SUCCESS, username: credentials.username}})
 					break
 				case LOG_IN_FAIL:
-                    dispatch({type: CODES.LOG_IN_FAILED, payload: {response: LOG_IN_RESPONSES.WRONG_CREDENTIALS}})
+                    dispatch({type: CODES.LOG_IN_FAILED, payload: {response: LOG_IN_RESPONSES.WRONG_CREDENTIALS, username: credentials.username}})
 					break
                 default:
                     dispatch({type: CODES.LOG_IN_FAILED, payload: {
                         response: LOG_IN_RESPONSES.UNEXPECTED_SERVER_ERROR,
-                        error: `Unpexpected http request code: ${response.status}`
+                        error: `Unpexpected http request code: ${response.status}`,
+                        username: credentials.username
                     }})
 			}
         }).catch(error => {

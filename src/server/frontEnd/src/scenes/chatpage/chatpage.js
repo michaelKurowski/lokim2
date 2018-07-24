@@ -21,7 +21,8 @@ require('./chatpage.css')
 function mapStateToProps(state) {
 	return {
 		messagesA: state.roomReducer.messages,
-		membersA: state.roomReducer.members
+		membersA: state.roomReducer.members,
+		username: state.sessionReducer.username
 	}
 }
 
@@ -39,7 +40,7 @@ class ChatPage extends React.Component {
 			input: '',
 			messages: [],
 			selectedRoom: '',
-			username: _.get(initProps, 'username', null),
+			//username: _.get(initProps, 'username', null),
 			userRooms: [],
 			roomToJoin: '',
 			usersFound: [],
@@ -111,7 +112,7 @@ class ChatPage extends React.Component {
 	}
 
 	handleJoinEvent(data) {
-		if (data.username !== this.state.username) return
+		if (data.username !== this.props.username) return
 		this.updateJoinedRooms(data)
 		this.changeSelectedRoom(data)
 		this.props.handleJoinEventA(data)
@@ -165,7 +166,7 @@ class ChatPage extends React.Component {
 			roomId: this.state.selectedRoom,
 			message: text,
 			timestamp: new Date().getTime(),
-			username: this.state.username
+			username: this.props.username
 		}
 
 		socket.room.emit(protocols.MESSAGE, {roomId: newMessage.roomId, message: newMessage.message})
@@ -177,12 +178,12 @@ class ChatPage extends React.Component {
 	}
 
 	render() {
-		if(!this.state.username) return <Redirect to={HOMEPAGE_PATH}/>
+		if(!this.props.username) return <Redirect to={HOMEPAGE_PATH}/>
 		return (
 			<div className='container-fluid h-100-vh my-chat-page'>
 				<div className='row h-100'>
 					<SidePanel direction={SIDE_PANEL_DIRECTIONS.LEFT}>
-						<MiniProfile username={this.state.username} />
+						<MiniProfile username={this.props.username} />
 						<RoomJoiner joinRoom={this.handleRoomJoin} />
 						<RoomsDialer rooms={this.state.userRooms} selectRoom={this.changeSelectedRoom} />
 					</SidePanel>
