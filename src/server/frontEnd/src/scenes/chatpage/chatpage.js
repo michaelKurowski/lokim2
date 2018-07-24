@@ -155,7 +155,7 @@ class ChatPage extends React.Component {
 
 	sendMessage(text) {
 		if (_.isEmpty(text) || !this.state.selectedRoom) {
-			alert('No error selected')
+			alert('No room selected')
 			console.warn(new Error(`No room selected || input field is empty. Text: ${text}, selected room: ${this.state.selectedRoom}`))
 			return
 		}
