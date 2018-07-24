@@ -78,17 +78,14 @@ class ChatPage extends React.Component {
 	}
 
 	isConnected() {
-		console.log(this.state)
 		return this.state.namespacesConnectionStatus.room && this.state.namespacesConnectionStatus.users
 	}
 
 	handleRoomConnectionEvent() {
-		console.log('room')
 		this.setState({namespacesConnectionStatus: {room: true, users: this.state.namespacesConnectionStatus.users}})
 	}
 
 	handleUsersConnectionEvent() {
-		console.log('users')
 		this.setState({namespacesConnectionStatus: {users: true, room: this.state.namespacesConnectionStatus.room}})
 	}
 
