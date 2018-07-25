@@ -29,7 +29,6 @@ let socket
 
 function mapStateToProps(state) {
 	return {
-		//room: state.roomsManagementReducer.rooms[state.roomsManagementReducer.selectedRoom],
 		rooms: state.roomsManagementReducer.rooms,
 		joinedRooms: Object.keys(state.roomsManagementReducer.rooms),
 		username: state.sessionReducer.username
