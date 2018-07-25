@@ -37,9 +37,6 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
 	return {
-		setMembers: (usernames, roomId) => dispatch(roomActions.actions.setMembers(usernames, roomId)),
-		addRoomMember: (username, roomId) => dispatch(roomActions.actions.addMember(username, roomId)),
-		addMessage: (message, roomId) => dispatch(roomActions.actions.addMessage(message, roomId)),
 		sendMessage: (message, roomId) => dispatch(roomActions.actions.sendMessage(message, roomId)),
 		selectRoom: roomId => dispatch(roomsManagementActions.actions.selectRoom(roomId))
 	}
@@ -61,11 +58,9 @@ class ChatPage extends React.Component {
 		this.sendMessage = this.sendMessage.bind(this)
 		this.setUsersNamespaceAsConnected = this.setUsersNamespaceAsConnected.bind(this)
 		this.setRoomNamespaceAsConnected = this.setRoomNamespaceAsConnected.bind(this)
-		this.addMessageToStore = this.addMessageToStore.bind(this)
 		this.handleJoinEvent = this.handleJoinEvent.bind(this)
 		this.joinToRoom = this.joinToRoom.bind(this)
 		this.findUserByUsername = this.findUserByUsername.bind(this)
-		this.setRoomMembers = this.setRoomMembers.bind(this)
 		this.createRoom = this.createRoom.bind(this)
 		this.changeSelectedRoom = this.changeSelectedRoom.bind(this)
 	}
@@ -74,11 +69,6 @@ class ChatPage extends React.Component {
 		socket = webSocketProvider.get()
 
 		socket.room.on(protocols.CONNECTION, this.setRoomNamespaceAsConnected)
-		/*
-		socket.room.on(protocols.MESSAGE, this.addMessageToStore)
-		
-		socket.room.on(protocols.LIST_MEMBERS, this.setRoomMembers)
-		*/
 		socket.room.on(protocols.JOIN, this.handleJoinEvent)
 		socket.users.on(protocols.CONNECTION, this.setUsersNamespaceAsConnected)
 		socket.users.on(protocols.FIND, this.updateFoundUsers.bind(this))
@@ -98,14 +88,6 @@ class ChatPage extends React.Component {
 
 	setUsersNamespaceAsConnected() {
 		this.setState({namespacesConnectionStatus: {users: true, room: this.state.namespacesConnectionStatus.room}})
-	}
-
-	addMessageToStore(data) {
-		this.props.addMessage(data, data.roomId)
-	}
-
-	setRoomMembers(data) {
-		this.props.setMembers(data.usernames, this.state.selectedRoom)
 	}
 
 	findUserByUsername(username) {
