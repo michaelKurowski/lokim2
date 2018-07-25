@@ -2,7 +2,10 @@ const path = require('path')
 require('webpack')
 module.exports = {
 	mode: 'production',
-	entry: './frontEnd/src/index.js',
+	entry: {
+		js: ['babel-polyfill', './frontEnd/src/index.js'],
+		vendor: ['react']
+	},
 	output: {
 		path: path.resolve(__dirname, 'public'),
 		filename: 'bundle.js'
