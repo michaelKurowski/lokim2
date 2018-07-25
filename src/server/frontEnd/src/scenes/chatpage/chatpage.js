@@ -46,12 +46,13 @@ class ChatPage extends React.Component {
 			namespacesConnectionStatus: {
 				users: false,
 				room: false
-			}
+			},
+			userToFind: ''
 		}
 		this.sendMessage = this.sendMessage.bind(this)
-		this.handleUsersConnectionEvent = this.handleUsersConnectionEvent.bind(this)
-		this.handleRoomConnectionEvent = this.handleRoomConnectionEvent.bind(this)
-		this.handleMessageEvent = this.handleMessageEvent.bind(this)
+		this.setUsersNamespaceAsConnected = this.setUsersNamespaceAsConnected.bind(this)
+		this.setRoomNamespaceAsConnected = this.setRoomNamespaceAsConnected.bind(this)
+		this.addMessageToStore = this.addMessageToStore.bind(this)
 		this.handleJoinEvent = this.handleJoinEvent.bind(this)
 		this.joinToRoom = this.joinToRoom.bind(this)
 		this.findUserByUsername = this.findUserByUsername.bind(this)
@@ -62,11 +63,13 @@ class ChatPage extends React.Component {
 
 	componentDidMount() {
 		socket = require('../../utils/sockets/ws-routing')()
-		socket.room.on(protocols.CONNECTION, this.handleRoomConnectionEvent)
-		socket.users.on(protocols.CONNECTION, this.handleUsersConnectionEvent)
-		socket.room.on(protocols.MESSAGE, this.handleMessageEvent)
+
+		socket.room.on(protocols.CONNECTION, this.setRoomNamespaceAsConnected)
+		socket.room.on(protocols.MESSAGE, this.addMessageToStore)
 		socket.room.on(protocols.JOIN, this.handleJoinEvent)
 		socket.room.on(protocols.LIST_MEMBERS, this.handleListMembersEvent)
+
+		socket.users.on(protocols.CONNECTION, this.setUsersNamespaceAsConnected)
 		socket.users.on(protocols.FIND, this.updateFoundUsers.bind(this))
 	}
 
@@ -78,15 +81,15 @@ class ChatPage extends React.Component {
 		return this.state.namespacesConnectionStatus.room && this.state.namespacesConnectionStatus.users
 	}
 
-	handleRoomConnectionEvent() {
+	setRoomNamespaceAsConnected() {
 		this.setState({namespacesConnectionStatus: {room: true, users: this.state.namespacesConnectionStatus.users}})
 	}
 
-	handleUsersConnectionEvent() {
+	setUsersNamespaceAsConnected() {
 		this.setState({namespacesConnectionStatus: {users: true, room: this.state.namespacesConnectionStatus.room}})
 	}
 
-	handleMessageEvent(data) {
+	addMessageToStore(data) {
 		this.props.addMessage(data, data.roomId)
 	}
 
