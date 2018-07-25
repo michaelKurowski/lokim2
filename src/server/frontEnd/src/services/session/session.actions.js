@@ -4,8 +4,6 @@ const CODES = {
     DENY_AUTHORISATION: 'DENY_AUTHORISATION'
 }
 
-
-
 const actions = {
     logIn: credentials => {
         return {type: CODES.LOG_IN_PENDING, payload: credentials}
