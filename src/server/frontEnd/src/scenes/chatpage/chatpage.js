@@ -29,7 +29,8 @@ let socket
 
 function mapStateToProps(state) {
 	return {
-		room: state.roomsManagementReducer.rooms[state.roomsManagementReducer.selectedRoom],
+		//room: state.roomsManagementReducer.rooms[state.roomsManagementReducer.selectedRoom],
+		rooms: state.roomsManagementReducer.rooms,
 		joinedRooms: Object.keys(state.roomsManagementReducer.rooms),
 		username: state.sessionReducer.username
 	}
@@ -72,6 +73,10 @@ class ChatPage extends React.Component {
 		socket.room.on(protocols.JOIN, this.handleJoinEvent)
 		socket.users.on(protocols.CONNECTION, this.setUsersNamespaceAsConnected)
 		socket.users.on(protocols.FIND, this.updateFoundUsers.bind(this))
+	}
+
+	getSelectedRoom() {
+		return this.props.rooms[this.state.selectedRoom]
 	}
 
 	joinToRoom(roomId) {
@@ -138,13 +143,13 @@ class ChatPage extends React.Component {
 						<RoomsDialer rooms={this.props.joinedRooms} selectRoom={this.changeSelectedRoom} />
 					</SidePanel>
 					{
-						this.props.room ?
-							<ChatWindow messages={this.props.room.messages} sendMessage={this.sendMessage}/> :
+						this.getSelectedRoom() ?
+							<ChatWindow messages={this.getSelectedRoom().messages} sendMessage={this.sendMessage}/> :
 							<div className='col-md-6 h-100-vh d-flex flex-column'></div>
 					}
 					<SidePanel direction={SIDE_PANEL_DIRECTIONS.RIGHT}>
 						<h4>Room: {this.state.selectedRoom ? this.state.selectedRoom : 'none'}</h4>
-						{this.props.room ? <RoomMembersList usernames={this.props.room.members}/> : <div></div>}
+						{this.getSelectedRoom() ? <RoomMembersList usernames={this.getSelectedRoom().members}/> : <div></div>}
 						<ConnectStatus connection={this.isConnected()}/>
 						<UserFinder foundUsers={this.state.usersFound} createRoom={this.createRoom} findUser={this.findUserByUsername}/>
 						<Link className='btn btn-danger' to={HOMEPAGE_PATH}>Logout</Link>
