@@ -43,17 +43,7 @@ function selectRoom(state, payload) {
 }
 
 function joinRoom(state, payload) {
-    const newRoom = payload.message
-
-    const currentRooms = state.rooms
-    const currentRoom = currentRooms[payload.roomId] || roomSchema
-    const currentMessages = currentRoom.messages
-
-    const newMessages = [...currentMessages, newMessage]
-    //const newRoom = Object.assign({}, currentRoom, {messages: newMessages})
-    const newRooms = Object.assign({}, currentRooms, {[payload.roomId]: newRoom})
-
-    return Object.assign({}, state, {rooms: newRooms})
+    return 
 }
 
 function addMessage(state, payload) {
