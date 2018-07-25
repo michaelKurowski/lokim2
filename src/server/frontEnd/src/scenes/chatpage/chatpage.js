@@ -74,10 +74,12 @@ class ChatPage extends React.Component {
 		socket = webSocketProvider.get()
 
 		socket.room.on(protocols.CONNECTION, this.setRoomNamespaceAsConnected)
+		/*
 		socket.room.on(protocols.MESSAGE, this.addMessageToStore)
-		socket.room.on(protocols.JOIN, this.handleJoinEvent)
+		
 		socket.room.on(protocols.LIST_MEMBERS, this.setRoomMembers)
-
+		*/
+		socket.room.on(protocols.JOIN, this.handleJoinEvent)
 		socket.users.on(protocols.CONNECTION, this.setUsersNamespaceAsConnected)
 		socket.users.on(protocols.FIND, this.updateFoundUsers.bind(this))
 	}
@@ -112,9 +114,9 @@ class ChatPage extends React.Component {
 	}
 
 	handleJoinEvent(data) {
-		this.props.addRoomMember(data.username, data.roomId)
-		if (data.username !== this.props.username) return
-		this.changeSelectedRoom(data)
+		if (data.username === this.props.username)
+			this.changeSelectedRoom(data)
+		
 	}
 
 	updateFoundUsers(data) {

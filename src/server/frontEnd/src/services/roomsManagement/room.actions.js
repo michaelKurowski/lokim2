@@ -6,7 +6,7 @@ const CODES = {
     ADD_MEMBER: 'ADD_MEMBER',
     SEND_MESSAGE: 'SEND_MESSAGE',
     SET_MEMBERS: 'SET_MEMBERS',
-    INCORRECT_MESSAGE: 'INCOREECT_MESSAGE'
+    INCORRECT_MESSAGE: 'INCORRECT_MESSAGE'
 }
 
 const webSocketProvider = require('../../utils/sockets/ws-routing')
