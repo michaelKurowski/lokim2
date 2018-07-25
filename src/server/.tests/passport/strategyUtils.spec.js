@@ -31,7 +31,7 @@ describe('StrategyUtils', () => {
 
 		it('should return error UNAUTHORIZED, when password from request and from userInstance is NOT the same', () => {
 			//given
-			const exceptedError = responseManager.MESSAGES.errors.UNAUTHORIZED
+			const exceptedError = responseManager.MESSAGES.ERRORS.UNAUTHORIZED
 			const requestPassword = 'ImNotPickleRick'
 
 			//when

@@ -20,8 +20,8 @@ describe('responseManager', () => {
 		it('Should send response with given status code and description. Message status and description was taken from MESSAGES dictionary', () => {
 			//given
 			const message = {
-				code: 401,
-				description: 'UNAUTHORIZED'
+				CODE: 401,
+				DESCRIPTION: 'UNAUTHORIZED'
 			}
 
 			//when
@@ -30,9 +30,9 @@ describe('responseManager', () => {
 			//then
 			const statusCode = suite.responeMock._getStatusCode()
 			const payload = suite.responeMock._getData()
-			const excpectedStatusCode = message.code
+			const excpectedStatusCode = message.CODE
 			const expectedPayload = JSON.stringify({
-				description: message.description
+				DESCRIPTION: message.DESCRIPTION
 			})
 
 			assert.strictEqual(statusCode, excpectedStatusCode)
