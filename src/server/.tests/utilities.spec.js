@@ -90,24 +90,7 @@ describe('utilities.js', () => {
 			assert.notStrictEqual(generatedSalt1, generatedSalt2)
 		})
 	})
-
-	describe('#createMessage()', () => {
-		beforeEach(() => {
-			suite.DUMMY_MESSAGE = 'Im a happy error'
-		})
-
-		it('should return an object with all required properties', () => {
-			//given
-			const message = suite.DUMMY_MESSAGE
-
-			//when
-			const createdError = Utilities.createMessage(message)
-
-			//then
-			assert.exists(createdError.description)
-		})
-	})
-
+	
 	describe('#createWebsocketRoute()', () => {
 		beforeEach(() => {
 			suite.socketMock = {on: sinon.stub()}

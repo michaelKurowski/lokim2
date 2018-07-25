@@ -48,7 +48,7 @@ describe('register controller', () => {
 				function then() {
 					const responseBody = suite.responseMock._getData()
 					const expectedResponseBody = JSON.stringify({
-						description: responseManager.MESSAGES.ERRORS.BAD_REQUEST.description
+						DESCRIPTION: responseManager.MESSAGES.ERRORS.BAD_REQUEST.DESCRIPTION
 					})
 					assert.strictEqual(responseBody, expectedResponseBody)
 					done()
@@ -77,7 +77,7 @@ describe('register controller', () => {
 				function then() {
 					const responseBody = suite.responseMock._getData()
 					const expectedResponseBody = JSON.stringify({
-						description: responseManager.MESSAGES.SUCCESSES.OK.description
+						DESCRIPTION: responseManager.MESSAGES.SUCCESSES.OK.DESCRIPTION
 					})
 					assert.strictEqual(responseBody, expectedResponseBody)
 					done()

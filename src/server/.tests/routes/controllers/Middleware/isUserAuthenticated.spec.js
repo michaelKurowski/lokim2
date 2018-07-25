@@ -38,7 +38,7 @@ describe('isUserAuthenticated', () => {
 	
 		//then
 		const expectedBody = JSON.stringify({
-			description: 'UNAUTHORIZED'
+			DESCRIPTION: 'UNAUTHORIZED'
 		})
 		const expectedStatusCode = 401
 
