@@ -1,6 +1,5 @@
 const {call, takeEvery, put} = require('redux-saga/effects')
 const {CODES, actions} = require('../session/session.actions')
-const storeProvider = require('../../storeProvider')
 const ENDPOINTS = require('../../routes/routes.json').urls
 const LOG_IN_SUCCESS = 200
 const LOG_IN_FAIL = 401
@@ -19,7 +18,6 @@ function* watchLogIn() {
 }
 
 function* logIn(action) {
-    const {dispatch} = storeProvider.get()
     const credentials = action.payload
     const authorisationResponse = yield call(
         fetch,
@@ -34,13 +32,13 @@ function* logIn(action) {
 
     switch (authorisationResponse.status) {
         case LOG_IN_SUCCESS:
-            put(dispatch(actions.authorise(credentials.username)))
+            yield put(actions.authorise(credentials.username))
             break
         case LOG_IN_FAIL:
-            put(dispatch(actions.denyAuthorisation(credentials.username, AUTHORISATION_DENY_REASONS.WRONG_CREDENTIALS, authorisationResponse)))
+            yield put(actions.denyAuthorisation(credentials.username, AUTHORISATION_DENY_REASONS.WRONG_CREDENTIALS, authorisationResponse))
             break
         default:
-            put(dispatch(actions.denyAuthorisation(credentials.username, AUTHORISATION_DENY_REASONS.UNEXPECTED_SERVER_ERROR, authorisationResponse)))
+            yield put(actions.denyAuthorisation(credentials.username, AUTHORISATION_DENY_REASONS.UNEXPECTED_SERVER_ERROR, authorisationResponse))
     }
 }
 
