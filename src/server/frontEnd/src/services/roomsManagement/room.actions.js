@@ -13,9 +13,17 @@ const webSocketProvider = require('../../utils/sockets/ws-routing')
 
 const actions = {
     addMessage,
-    setMembers: (members, roomId) => ({type: CODES.SET_MEMBERS, payload: {members, roomId}}),
-    addMember: (username, roomId) => ({type: CODES.ADD_MEMBER, payload: {username, roomId}}),
+    setMembers,
+    addMember,
     sendMessage 
+}
+
+function addMember(username, roomId) {
+    return {type: CODES.ADD_MEMBER, payload: {username, roomId}}
+}
+
+function setMembers(members, roomId) {
+    return {type: CODES.SET_MEMBERS, payload: {members, roomId}}
 }
 
 function addMessage(messageObject, roomId) {
