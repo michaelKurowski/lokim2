@@ -11,9 +11,9 @@ class RoomsDialer extends React.Component {
 			(room, roomIndex) => 
 				<RoomsListElement 
 					key={roomIndex}
-					name={`Room #${room.roomId}`}
-					ID={room.roomId}
-					onClick={() => this.props.selectRoom({roomId: room.roomId})}
+					name={`Room #${room}`}
+					ID={room}
+					onClick={() => this.props.selectRoom({roomId: room})}
 				/>
 		)
 	}

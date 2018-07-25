@@ -22,17 +22,16 @@ require('./chatpage.css')
 function mapStateToProps(state) {
 	return {
 		room: state.roomsManagementReducer.rooms[state.roomsManagementReducer.selectedRoom],
+		joinedRooms: Object.keys(state.roomsManagementReducer.rooms),
 		username: state.sessionReducer.username
 	}
 }
 
 function mapDispatchToProps(dispatch) {
 	return {
-		addRoomMembers: (usernames, roomId) => {
-			usernames.forEach(username => {
-				dispatch(roomActions.actions.addMember(username, roomId))
-			})
-		},
+		setMembers: (usernames, roomId) => dispatch(roomActions.actions.setMembers(usernames, roomId)),
+		addRoomMember: (username, roomId) => dispatch(roomActions.actions.addMember(username, roomId)),
+		addMessage: (message, roomId) => dispatch(roomActions.actions.addMessage(message, roomId)),
 		selectRoom: roomId => dispatch(roomsManagementActions.actions.selectRoom(roomId))
 	}
 }
@@ -42,7 +41,6 @@ class ChatPage extends React.Component {
 		super(props)
 		this.state = {
 			input: '',
-			messages: [],
 			selectedRoom: '',
 			userRooms: [],
 			roomToJoin: '',
@@ -92,11 +90,11 @@ class ChatPage extends React.Component {
 	}
 
 	handleMessageEvent(data) {
-		this.updateMessageState(data)
+		this.props.addMessage(data, data.roomId)
 	}
 
 	handleListMembersEvent(data) {
-		this.props.addRoomMembers(data.usernames, this.state.selectedRoom)
+		this.props.setMembers(data.usernames, this.state.selectedRoom)
 	}
 
 	handleRoomToChangeUserInput(event) {
@@ -109,8 +107,8 @@ class ChatPage extends React.Component {
 	}
 
 	handleJoinEvent(data) {
+		this.props.addRoomMember(data.username, data.roomId)
 		if (data.username !== this.props.username) return
-		this.updateJoinedRooms(data)
 		this.changeSelectedRoom(data)
 	}
 
@@ -119,42 +117,15 @@ class ChatPage extends React.Component {
 		this.setState({usersFound: foundUsernames})
 	}
 
-	updateJoinedRooms(data) {
-		const {roomId} = data
-		const usernames = data.username
-		this.setState({userRooms: this.state.userRooms.concat({roomId, usernames})})
-	}
-
 	changeSelectedRoom(roomDetails) {
 		const {roomId} = roomDetails
-		this.setState({selectedRoom: roomId}, () =>  this.updateMessageState({roomId}))
+		this.setState({selectedRoom: roomId})
 		this.props.selectRoom(roomId)
 	}
 
-	storeMessage(roomId, newMessage) {
-		const store = window.sessionStorage
-		const roomMessages = store.getItem(roomId) ? JSON.parse(store.getItem(roomId)) : []
-		const updatedRoomMessages = _.concat(roomMessages, newMessage)
-		store.setItem(roomId, JSON.stringify(updatedRoomMessages))
-		if(roomId === this.state.selectedRoom) {
-			this.setState({messages: JSON.parse(window.sessionStorage.getItem(roomId))})
-		}
-	}
-
-	updateMessageState(messageData) {
-		const {roomId, username, message, timestamp} = messageData
-
-		if(!_.isEmpty(message)) {
-			this.storeMessage(roomId, {username, message, timestamp})
-		}
-		if(roomId === this.state.selectedRoom) {
-			this.setState({messages: JSON.parse(window.sessionStorage.getItem(roomId))})
-		}
-	}
-
 	sendMessage(text) {
-		if (_.isEmpty(text) || !this.state.selectedRoom) {
-			alert('No room selected')
+		if (_.isEmpty(text) || !this.props.room) {
+			alert('No room selected, or the message is empty')
 			console.warn(new Error(`No room selected || input field is empty. Text: ${text}, selected room: ${this.state.selectedRoom}`))
 			return
 		}
@@ -167,7 +138,7 @@ class ChatPage extends React.Component {
 		}
 
 		socket.room.emit(protocols.MESSAGE, {roomId: newMessage.roomId, message: newMessage.message})
-		this.storeMessage(newMessage.roomId, newMessage)
+		this.props.addMessage(newMessage, newMessage.roomId)
 	}
 
 	createRoom(usernamesToInvite) {
@@ -176,15 +147,20 @@ class ChatPage extends React.Component {
 
 	render() {
 		if(!this.props.username) return <Redirect to={HOMEPAGE_PATH}/>
+		console.log(this.props.joinedRooms)
 		return (
 			<div className='container-fluid h-100-vh my-chat-page'>
 				<div className='row h-100'>
 					<SidePanel direction={SIDE_PANEL_DIRECTIONS.LEFT}>
 						<MiniProfile username={this.props.username} />
 						<RoomJoiner joinRoom={this.handleRoomJoin} />
-						<RoomsDialer rooms={this.state.userRooms} selectRoom={this.changeSelectedRoom} />
+						<RoomsDialer rooms={this.props.joinedRooms} selectRoom={this.changeSelectedRoom} />
 					</SidePanel>
-					<ChatWindow messages={this.state.messages} sendMessage={this.sendMessage}/>
+					{
+						this.props.room ?
+							<ChatWindow messages={this.props.room.messages} sendMessage={this.sendMessage}/> :
+							<div className='col-md-6 h-100-vh d-flex flex-column'></div>
+					}
 					<SidePanel direction={SIDE_PANEL_DIRECTIONS.RIGHT}>
 						<h4>Room: {this.state.selectedRoom ? this.state.selectedRoom : 'none'}</h4>
 						{this.props.room ? <RoomMembersList usernames={this.props.room.members}/> : <div></div>}
