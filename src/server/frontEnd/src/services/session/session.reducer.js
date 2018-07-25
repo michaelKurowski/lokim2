@@ -1,7 +1,7 @@
 const ACTION_CODES = require('./session.actions').CODES
 const STATES = require('./sessionStates')
 const initialState = {
-    status: '',
+    status: STATES.INITIAL,
     errorMessage: '',
     username: '',
     reason: ''
