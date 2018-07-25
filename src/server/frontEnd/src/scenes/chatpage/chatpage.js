@@ -42,8 +42,6 @@ class ChatPage extends React.Component {
 		this.state = {
 			input: '',
 			selectedRoom: '',
-			userRooms: [],
-			roomToJoin: '',
 			usersFound: [],
 			namespacesConnectionStatus: {
 				users: false,
@@ -55,8 +53,7 @@ class ChatPage extends React.Component {
 		this.handleRoomConnectionEvent = this.handleRoomConnectionEvent.bind(this)
 		this.handleMessageEvent = this.handleMessageEvent.bind(this)
 		this.handleJoinEvent = this.handleJoinEvent.bind(this)
-		this.handleRoomJoin = this.handleRoomJoin.bind(this)
-		this.handleRoomToChangeUserInput = this.handleRoomToChangeUserInput.bind(this)
+		this.joinToRoom = this.joinToRoom.bind(this)
 		this.findUserByUsername = this.findUserByUsername.bind(this)
 		this.handleListMembersEvent = this.handleListMembersEvent.bind(this)
 		this.createRoom = this.createRoom.bind(this)
@@ -73,7 +70,7 @@ class ChatPage extends React.Component {
 		socket.users.on(protocols.FIND, this.updateFoundUsers.bind(this))
 	}
 
-	handleRoomJoin(roomId) {
+	joinToRoom(roomId) {
 		socket.room.emit(protocols.JOIN, {roomId})
 	}
 
@@ -95,10 +92,6 @@ class ChatPage extends React.Component {
 
 	handleListMembersEvent(data) {
 		this.props.setMembers(data.usernames, this.state.selectedRoom)
-	}
-
-	handleRoomToChangeUserInput(event) {
-		this.setState({roomToJoin: event.target.value})
 	}
 
 	findUserByUsername(username) {
@@ -153,7 +146,7 @@ class ChatPage extends React.Component {
 				<div className='row h-100'>
 					<SidePanel direction={SIDE_PANEL_DIRECTIONS.LEFT}>
 						<MiniProfile username={this.props.username} />
-						<RoomJoiner joinRoom={this.handleRoomJoin} />
+						<RoomJoiner joinRoom={this.joinToRoom} />
 						<RoomsDialer rooms={this.props.joinedRooms} selectRoom={this.changeSelectedRoom} />
 					</SidePanel>
 					{
