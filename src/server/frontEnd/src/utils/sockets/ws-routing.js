@@ -34,13 +34,13 @@ function get() {
 }
 
 function setupListeners() {
-	socket.room.on(protocols.CONNECTION, () => dispatch(actions.room.connected()))
-	socket.room.on(protocols.MESSAGE, () => dispatch(actions.room.messageReceived()))
-	socket.room.on(protocols.JOIN, () => dispatch(actions.room.userJoined()))
-	socket.room.on(protocols.LIST_MEMBERS, () => dispatch(actions.room.membersListed()))
+	socket.room.on(protocols.CONNECTION, event => dispatch(actions.room.connected(event)))
+	socket.room.on(protocols.MESSAGE, event => dispatch(actions.room.messageReceived(event)))
+	socket.room.on(protocols.JOIN, event => dispatch(actions.room.userJoined(event)))
+	socket.room.on(protocols.LIST_MEMBERS, event => dispatch(actions.room.membersListed(event)))
 
-	socket.users.on(protocols.CONNECTION, () => dispatch(actions.users.connected()))
-	socket.users.on(protocols.FIND, () => dispatch(actions.users.usersFound()))
+	socket.users.on(protocols.CONNECTION, event => dispatch(actions.users.connected(event)))
+	socket.users.on(protocols.FIND, event => dispatch(actions.users.usersFound(event)))
 }
 
 

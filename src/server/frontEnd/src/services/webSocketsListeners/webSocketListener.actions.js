@@ -13,8 +13,6 @@ const CODES = {
     }
 }
 
-const webSocketProvider = require('../../utils/sockets/ws-routing')
-
 const actions = {
     room: {
         connected: roomConnected,
@@ -32,24 +30,24 @@ function roomConnected() {
     return {type: CODES.ROOM.CONNECTED, payload: {}}
 }
 
-function messageReceived(message) {
-    return {type: CODES.ROOM.MESSAGE_RECEIVED, payload: message}
+function messageReceived(event) {
+    return {type: CODES.ROOM.MESSAGE_RECEIVED, payload: event}
 }
 
-function userJoined(username) {
-    return {type: CODES.ROOM.USER_JOINED, payload: username}
+function userJoined(event) {
+    return {type: CODES.ROOM.USER_JOINED, payload: event}
 }
 
-function membersListed(usernames, roomId) {
-    return {type: CODES.ROOM.MEMBERS_LISTED, payload: {usernames, roomId}}
+function membersListed(event) {
+    return {type: CODES.ROOM.MEMBERS_LISTED, payload: event}
 }
 
-function usersConnected() {
-    return {type: CODES.USERS.CONNECTED, payload: {}}
+function usersConnected(event) {
+    return {type: CODES.USERS.CONNECTED, payload: event}
 }
 
-function usersFound(usernames) {
-    return {type: CODES.USERS.USERS_FOUND, payload: usernames}
+function usersFound(event) {
+    return {type: CODES.USERS.USERS_FOUND, payload: event}
 }
 
 
