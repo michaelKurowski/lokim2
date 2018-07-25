@@ -49,6 +49,10 @@ class HomePage extends React.Component {
 		return this.props.logInStatus === SESSION_STATES.SUCCEDED
 	}
 
+	componentDidUpdate() {
+		if (this.isLoggedIn() && !webSocketProvider.get()) webSocketProvider.create()
+	}
+
 	render() {
 		if (this.isLoggedIn())
 			return <Redirect to={{pathname: CHAT_PATH, state: {username: this.state.username}}}/>

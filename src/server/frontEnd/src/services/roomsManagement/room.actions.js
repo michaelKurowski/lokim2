@@ -1,15 +1,33 @@
+const _ = require('lodash')
+const protocols = require('../../utils/io-protocol.json')
+
 const CODES = {
     ADD_MESSAGE: 'ADD_MESSAGE',
     ADD_MEMBER: 'ADD_MEMBER',
     SEND_MESSAGE: 'SEND_MESSAGE',
-    SET_MEMBERS: 'SET_MEMBERS'
+    SET_MEMBERS: 'SET_MEMBERS',
+    INCORRECT_MESSAGE: 'INCOREECT_MESSAGE'
 }
 
+const webSocketProvider = require('../../utils/sockets/ws-routing')
+
 const actions = {
-    addMessage: (message, roomId) => ({type: CODES.ADD_MESSAGE, payload: {message, roomId}}),
+    addMessage,
     setMembers: (members, roomId) => ({type: CODES.SET_MEMBERS, payload: {members, roomId}}),
     addMember: (username, roomId) => ({type: CODES.ADD_MEMBER, payload: {username, roomId}}),
-    sendMessage: (message, roomId) => ({type: CODES.SEND_MESSAGE, payload: {message, roomId}})
+    sendMessage 
+}
+
+function addMessage(messageObject, roomId) {
+    if (_.isEmpty(messageObject.message) || !roomId) return {type: CODES.INCORRECT_MESSAGE, payload: {message: messageObject, roomId}}
+    return {type: CODES.ADD_MESSAGE, payload: {message: messageObject, roomId}}
+}
+
+function sendMessage(messageObject, roomId, socket = webSocketProvider.get()) {
+    return dispatch => {
+        socket.room.emit(protocols.MESSAGE, messageObject)
+        return dispatch(addMessage(messageObject, roomId))
+    }
 }
 
 module.exports = {CODES, actions}
