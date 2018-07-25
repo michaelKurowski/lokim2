@@ -26,7 +26,7 @@ const handleActions = (state = initialState, action = {}) => {
         case ACTION_CODES.ADD_MEMBER:
             return addMember(state, action.payload)
         case ACTION_CODES.SELECT_ROOM: 
-            return Object.assign({}, state, {selectedRoom: action.payload.roomId})
+            return selectRoom(state, action.payload)
         case ACTION_CODES.ADD_MESSAGE: 
             return addMessage(state, action.payload)
         case ACTION_CODES.JOIN_ROOM:
@@ -36,6 +36,10 @@ const handleActions = (state = initialState, action = {}) => {
         default:
             return state
     }
+}
+
+function selectRoom(state, payload) {
+    return Object.assign({}, state, {selectedRoom: payload.roomId})
 }
 
 function joinRoom(state, payload) {
