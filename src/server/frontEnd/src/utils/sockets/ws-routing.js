@@ -3,9 +3,22 @@ const ROOM = `room`
 const USERS = `users`
 const HOST = `${document.location.host}/`
 
-module.exports = () => ({
-	room: io(`${HOST}${ROOM}`, {path: '/connection'}),
-	users: io(`${HOST}${USERS}`, {path: '/connection'})
-})
+
+let socket
+module.exports = {
+	create,
+	get
+}
+function create() {
+	socket = {
+		room: io(`${HOST}${ROOM}`, {path: '/connection'}),
+		users: io(`${HOST}${USERS}`, {path: '/connection'})
+	}
+	return socket
+}
+
+function get() {
+	return socket
+}
 
 

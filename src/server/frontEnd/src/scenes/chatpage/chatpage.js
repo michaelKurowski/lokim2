@@ -16,6 +16,7 @@ const SIDE_PANEL_DIRECTIONS = require('../../components/sidePanel/sidePanelDirec
 const roomActions = require('../../services/roomsManagement/room.actions')
 const roomsManagementActions = require('../../services/roomsManagement/roomsManagement.actions')
 const { connect } = require('react-redux')
+const webSocketProvider = require('../../utils/sockets/ws-routing')
 require('./chatpage.css')
 
 
@@ -62,7 +63,7 @@ class ChatPage extends React.Component {
 	}
 
 	componentDidMount() {
-		socket = require('../../utils/sockets/ws-routing')()
+		socket = webSocketProvider.get()
 
 		socket.room.on(protocols.CONNECTION, this.setRoomNamespaceAsConnected)
 		socket.room.on(protocols.MESSAGE, this.addMessageToStore)

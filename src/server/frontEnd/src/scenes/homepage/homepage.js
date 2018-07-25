@@ -5,7 +5,7 @@ const {paths} = require('../../routes/routes.json')
 const {connect} = require('react-redux')
 const {actions} = require('../../services/session/session.actions')
 const SESSION_STATES = require('../../services/session/sessionStates')
-
+const webSocketProvider = require('../../utils/sockets/ws-routing')
 const CHAT_PATH = paths.CHAT
 const REGISTER_PATH = paths.REGISTER
 
