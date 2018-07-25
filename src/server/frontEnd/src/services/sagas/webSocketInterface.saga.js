@@ -4,7 +4,13 @@ const WEBSOCKET_EVENTS = require('../webSocketsListeners/webSocketListener.actio
 const roomActions = require('../roomsManagement/room.actions').actions
 
 function* watch() {
-    yield takeEvery([...Object.values(WEBSOCKET_EVENTS.ROOM), ...Object.values(WEBSOCKET_EVENTS.USERS)], mapWebsocketEventsToActions)
+    yield takeEvery(
+        [
+            ...Object.values(WEBSOCKET_EVENTS.ROOM),
+            ...Object.values(WEBSOCKET_EVENTS.USERS)
+        ],
+        mapWebsocketEventsToActions
+    )
 }
 
 function* mapWebsocketEventsToActions(action) {
