@@ -6,6 +6,7 @@ const {connect} = require('react-redux')
 const {actions} = require('../../services/session/session.actions')
 const SESSION_STATES = require('../../services/session/sessionStates')
 const webSocketProvider = require('../../utils/sockets/ws-routing')
+const webSocketActions = require('../../services/webSocket/webSocket.actions').actions
 const CHAT_PATH = paths.CHAT
 const REGISTER_PATH = paths.REGISTER
 
@@ -19,7 +20,8 @@ function mapStateToProps(store) {
 
 function mapDispatchToProps(dispatch) {
 	return {
-		logIn: credentials => dispatch(actions.logIn(credentials))
+		logIn: credentials => dispatch(actions.logIn(credentials)),
+		connectToWebSocket: () => dispatch(webSocketActions.webSocketConnectionRequest())
 	}
 }
 
@@ -50,7 +52,7 @@ class HomePage extends React.Component {
 	}
 
 	componentDidUpdate() {
-		if (this.isLoggedIn() && !webSocketProvider.get()) webSocketProvider.create()
+		if (this.isLoggedIn() && !webSocketProvider.get()) this.props.connectToWebSocket()
 	}
 
 	render() {

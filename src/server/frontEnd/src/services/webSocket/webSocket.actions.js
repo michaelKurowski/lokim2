@@ -10,7 +10,10 @@ const CODES = {
     USERS: {
         CONNECTED: 'WEBSOCKET_MESSAGE_USERS_CONNECTED',
         USERS_FOUND: 'WEBSOCKET_MESSAGE_USERS_FOUND'
-    }
+    },
+    WEBSOCKET_EVENT: 'WEBSOCKET_EVENT',
+    WEBSOCKET_CONNECTION_REQUEST: 'WEBSOCKET_CONNECTION_REQUEST',
+    WEBSOCKET_CONNECTION_ESTABILISHED: 'WEBSOCKET_CONNECTION_ESTABILISHED'
 }
 
 const actions = {
@@ -23,7 +26,22 @@ const actions = {
     users: {
         connected: usersConnected,
         usersFound
-    }
+    },
+    webSocketEvent,
+    webSocketConnectionRequest,
+    webSocketConnectionEstabilished
+}
+
+function webSocketConnectionEstabilished(namespace) {
+    return {type: CODES.WEBSOCKET_CONNECTION_ESTABILISHED, payload: {namespace}}
+}
+
+function webSocketConnectionRequest() {
+    return {type: CODES.WEBSOCKET_CONNECTION_REQUEST, payload: {}}
+}
+
+function webSocketEvent({event, type}) {
+    return {type: CODES.WEBSOCKET_EVENT, payload: {event, type}}
 }
 
 function roomConnected() {

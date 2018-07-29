@@ -14,8 +14,8 @@ const isDevMode = require('../../config.json').devPropeties.devMode
 const thunkMiddleware = require('redux-thunk').default
 const createSagaMiddleware = require('redux-saga').default
 const watchLogIn = require('./services/sagas/logIn.saga').watchLogIn
-const watchWebSocket = require('./services/sagas/webSocketInterface.saga').watch
 const webSocketProvider = require('./utils/sockets/ws-routing')
+const webSocketListener = require('./services/sagas/webSocketListener.saga').watch
 const sagaMiddleware = createSagaMiddleware()
 //const exampleMiddleware = store => next => action => next(action)
 const initialMiddleware = [thunkMiddleware, sagaMiddleware]
@@ -24,8 +24,8 @@ const middleware = isDevMode ? composeWithDevTools(applyMiddleware(...initialMid
 const rootReducer = combineReducers({roomsManagementReducer, sessionReducer})
 const store = createStore(rootReducer, middleware)
 webSocketProvider.inject(store.dispatch)
+sagaMiddleware.run(webSocketListener)
 sagaMiddleware.run(watchLogIn)
-sagaMiddleware.run(watchWebSocket)
 ReactDOM.render(
     <Provider store={store} >
         <App/>

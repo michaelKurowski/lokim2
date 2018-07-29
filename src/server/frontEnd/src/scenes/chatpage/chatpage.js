@@ -31,7 +31,9 @@ function mapStateToProps(state) {
 	return {
 		rooms: state.roomsManagementReducer.rooms,
 		joinedRooms: Object.keys(state.roomsManagementReducer.rooms),
-		username: state.sessionReducer.username
+		username: state.sessionReducer.username,
+		isWebSocketRoomConenctionEstabilished: state.sessionReducer.isConnectedToRoom,
+		isWebSocketUsersConenctionEstabilished: state.sessionReducer.isConnectedToUsers
 	}
 }
 
@@ -65,13 +67,20 @@ class ChatPage extends React.Component {
 		this.changeSelectedRoom = this.changeSelectedRoom.bind(this)
 	}
 
-	componentDidMount() {
+	componentDidUpdate() {
+		if (this.isConnected()) {
+			socket = webSocketProvider.get()
+			socket.users.on(protocols.FIND, this.updateFoundUsers.bind(this))
+			socket.room.on(protocols.JOIN, this.handleJoinEvent)
+		}
+		/*
 		socket = webSocketProvider.get()
 
 		socket.room.on(protocols.CONNECTION, this.setRoomNamespaceAsConnected)
 		socket.room.on(protocols.JOIN, this.handleJoinEvent)
 		socket.users.on(protocols.CONNECTION, this.setUsersNamespaceAsConnected)
 		socket.users.on(protocols.FIND, this.updateFoundUsers.bind(this))
+		*/
 	}
 
 	getSelectedRoom() {
@@ -83,7 +92,8 @@ class ChatPage extends React.Component {
 	}
 
 	isConnected() {
-		return this.state.namespacesConnectionStatus.room && this.state.namespacesConnectionStatus.users
+		return this.props.isWebSocketRoomConenctionEstabilished && this.props.isWebSocketUsersConenctionEstabilished
+		//return this.state.namespacesConnectionStatus.room && this.state.namespacesConnectionStatus.users
 	}
 
 	setRoomNamespaceAsConnected() {
@@ -102,7 +112,6 @@ class ChatPage extends React.Component {
 	handleJoinEvent(data) {
 		if (data.username === this.props.username)
 			this.changeSelectedRoom(data)
-		
 	}
 
 	updateFoundUsers(data) {

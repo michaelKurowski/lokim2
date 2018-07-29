@@ -1,6 +1,7 @@
 const io = require('socket.io-client')
-
-const actions = require('../../services/webSocketsListeners/webSocketListener.actions').actions
+const _ = require('lodash')
+const serverProvidedProtocols = require('../../../../protocol/protocol.json')
+const actions = require('../../services/webSocket/webSocket.actions').actions
 
 const ROOM = `room`
 const USERS = `users`
@@ -25,7 +26,7 @@ function create() {
 		room: io(`${HOST}${ROOM}`, {path: '/connection'}),
 		users: io(`${HOST}${USERS}`, {path: '/connection'})
 	}
-	setupListeners()
+	//setupListeners()
 	return socket
 }
 
@@ -34,6 +35,14 @@ function get() {
 }
 
 function setupListeners() {
+	_.forEach(serverProvidedProtocols, namespace => 
+		_.forEach(namespace.eventTypes, eventType => 
+			socket[namespace.name].on(eventType, event => 
+				dispatch(actions.webSocketEvent({event, type: eventType}))
+			)
+		)
+	)
+	
 	socket.room.on(protocols.CONNECTION, event => dispatch(actions.room.connected(event)))
 	socket.room.on(protocols.MESSAGE, event => dispatch(actions.room.messageReceived(event)))
 	socket.room.on(protocols.JOIN, event => dispatch(actions.room.userJoined(event)))
