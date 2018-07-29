@@ -2,6 +2,7 @@ const {takeEvery, put, call} = require('redux-saga/effects')
 const {eventChannel} = require('redux-saga')
 const WEBSOCKET_EVENTS = require('../webSocket/webSocket.actions').CODES
 const webSocketActions = require('../webSocket/webSocket.actions').actions
+const CLIENT_SPECIFIC_WEBSOCKET_EVENTS = require('../webSocket/clientSpecificWebSocketEvents.json')
 const PROTOCOL = require('../../../../protocol/protocol.json')
 const roomActions = require('../roomsManagement/room.actions').actions
 const webSocketProvider = require('../../utils/sockets/ws-routing')
@@ -18,7 +19,7 @@ function webSocketIncommingTrafficChannel() {
 function setupWebSocketListeners(socket, emitter, protocol) {
     
     _.forEach(protocol, namespace => {
-        socket[namespace.name].on('connect', () => 
+        socket[namespace.name].on(CLIENT_SPECIFIC_WEBSOCKET_EVENTS.CONNECT, () => 
             emitter(webSocketConnectionEstabilishedEvent(namespace.name)))
 
         _.forEach(namespace.eventTypes, eventType => {
