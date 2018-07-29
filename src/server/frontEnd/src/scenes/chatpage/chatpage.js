@@ -124,7 +124,6 @@ class ChatPage extends React.Component {
 		const newMessage = {
 			roomId: this.state.selectedRoom,
 			message: text,
-			timestamp: new Date().getTime(),
 			username: this.props.username
 		}
 		this.props.sendMessage(newMessage)
