@@ -40,7 +40,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
 	return {
 		sendMessage: message => dispatch(roomActions.actions.sendMessage(message)),
-		selectRoom: roomId => dispatch(roomsManagementActions.actions.selectRoom(roomId))
+		selectRoom: roomId => dispatch(roomsManagementActions.actions.selectRoom(roomId)),
+		joinRoom: roomId => dispatch(roomsManagementActions.actions.joinRoom(roomId))
 	}
 }
 
@@ -82,7 +83,8 @@ class ChatPage extends React.Component {
 	}
 
 	joinToRoom(roomId) {
-		socket.room.emit(protocols.JOIN, {roomId})
+		this.props.joinRoom(roomId)
+		//socket.room.emit(protocols.JOIN, {roomId})
 	}
 
 	isConnected() {

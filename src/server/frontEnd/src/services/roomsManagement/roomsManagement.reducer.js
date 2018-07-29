@@ -29,8 +29,6 @@ const handleActions = (state = initialState, action = {}) => {
             return selectRoom(state, action.payload)
         case ACTION_CODES.ADD_MESSAGE: 
             return addMessage(state, action.payload)
-        case ACTION_CODES.JOIN_ROOM:
-            return joinRoom(state, action.payload)
         case ACTION_CODES.SET_MEMBERS:
             return setMembers(state, action.payload)
         default:
@@ -40,10 +38,6 @@ const handleActions = (state = initialState, action = {}) => {
 
 function selectRoom(state, payload) {
     return Object.assign({}, state, {selectedRoom: payload.roomId})
-}
-
-function joinRoom(state, payload) {
-    return 
 }
 
 function addMessage(state, payload) {
