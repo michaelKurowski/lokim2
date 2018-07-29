@@ -31,7 +31,7 @@ function addMessage(messageObject, roomId) {
     return {type: CODES.ADD_MESSAGE, payload: {message: messageObject, roomId}}
 }
 
-function sendMessage(messageObject, roomId, socket = webSocketProvider.get()) {
+function sendMessage(messageObject) {
     return {type: CODES.SEND_MESSAGE, payload: {messageObject}}
 }
 

@@ -39,7 +39,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
 	return {
-		sendMessage: (message, roomId) => dispatch(roomActions.actions.sendMessage(message, roomId)),
+		sendMessage: message => dispatch(roomActions.actions.sendMessage(message)),
 		selectRoom: roomId => dispatch(roomsManagementActions.actions.selectRoom(roomId))
 	}
 }
@@ -123,7 +123,7 @@ class ChatPage extends React.Component {
 			timestamp: new Date().getTime(),
 			username: this.props.username
 		}
-		this.props.sendMessage(newMessage, newMessage.roomId)
+		this.props.sendMessage(newMessage)
 	}
 
 	createRoom(usernamesToInvite) {
