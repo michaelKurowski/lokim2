@@ -73,14 +73,6 @@ class ChatPage extends React.Component {
 			socket.users.on(protocols.FIND, this.updateFoundUsers.bind(this))
 			socket.room.on(protocols.JOIN, this.handleJoinEvent)
 		}
-		/*
-		socket = webSocketProvider.get()
-
-		socket.room.on(protocols.CONNECTION, this.setRoomNamespaceAsConnected)
-		socket.room.on(protocols.JOIN, this.handleJoinEvent)
-		socket.users.on(protocols.CONNECTION, this.setUsersNamespaceAsConnected)
-		socket.users.on(protocols.FIND, this.updateFoundUsers.bind(this))
-		*/
 	}
 
 	getSelectedRoom() {
@@ -93,7 +85,6 @@ class ChatPage extends React.Component {
 
 	isConnected() {
 		return this.props.isWebSocketRoomConenctionEstabilished && this.props.isWebSocketUsersConenctionEstabilished
-		//return this.state.namespacesConnectionStatus.room && this.state.namespacesConnectionStatus.users
 	}
 
 	setRoomNamespaceAsConnected() {
@@ -141,7 +132,6 @@ class ChatPage extends React.Component {
 
 	render() {
 		if(!this.props.username) return <Redirect to={HOMEPAGE_PATH}/>
-		console.log(this.props.joinedRooms)
 		return (
 			<div className='container-fluid h-100-vh my-chat-page'>
 				<div className='row h-100'>
