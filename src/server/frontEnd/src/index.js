@@ -16,6 +16,7 @@ const createSagaMiddleware = require('redux-saga').default
 const watchLogIn = require('./services/sagas/logIn.saga').watchLogIn
 const webSocketProvider = require('./utils/sockets/ws-routing')
 const webSocketListener = require('./services/sagas/webSocketListener.saga').watch
+const webSocketEmitter = require('./services/sagas/webSocketEmitters.saga').watch
 const sagaMiddleware = createSagaMiddleware()
 //const exampleMiddleware = store => next => action => next(action)
 const initialMiddleware = [thunkMiddleware, sagaMiddleware]
@@ -26,6 +27,7 @@ const store = createStore(rootReducer, middleware)
 webSocketProvider.inject(store.dispatch)
 sagaMiddleware.run(webSocketListener)
 sagaMiddleware.run(watchLogIn)
+sagaMiddleware.run(webSocketEmitter)
 ReactDOM.render(
     <Provider store={store} >
         <App/>

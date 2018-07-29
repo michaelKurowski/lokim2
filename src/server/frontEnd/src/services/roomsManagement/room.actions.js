@@ -32,10 +32,7 @@ function addMessage(messageObject, roomId) {
 }
 
 function sendMessage(messageObject, roomId, socket = webSocketProvider.get()) {
-    return dispatch => {
-        socket.room.emit(protocols.MESSAGE, messageObject)
-        return dispatch(addMessage(messageObject, roomId))
-    }
+    return {type: CODES.SEND_MESSAGE, payload: {messageObject}}
 }
 
 module.exports = {CODES, actions}
