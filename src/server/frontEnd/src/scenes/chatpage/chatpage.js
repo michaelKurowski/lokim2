@@ -65,13 +65,15 @@ class ChatPage extends React.Component {
 		this.findUserByUsername = this.findUserByUsername.bind(this)
 		this.createRoom = this.createRoom.bind(this)
 		this.changeSelectedRoom = this.changeSelectedRoom.bind(this)
+		this.listensToWebsocket = false
 	}
 
 	componentDidUpdate() {
-		if (this.isConnected()) {
+		if (this.isConnected() && !this.listensToWebsocket) {
 			socket = webSocketProvider.get()
 			socket.users.on(protocols.FIND, this.updateFoundUsers.bind(this))
 			socket.room.on(protocols.JOIN, this.handleJoinEvent)
+			this.listensToWebsocket = true
 		}
 	}
 
