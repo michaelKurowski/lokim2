@@ -85,12 +85,10 @@ class ChatPage extends React.Component {
 
 	joinToRoom(roomId) {
 		this.props.joinRoom(roomId)
-		//socket.room.emit(protocols.JOIN, {roomId})
 	}
 
 	createRoom(usernamesToInvite) {
 		this.props.createRoom(usernamesToInvite)
-		//socket.room.emit(protocols.CREATE, {invitedUsersIndexes: usernamesToInvite})
 	}
 
 	isConnected() {
