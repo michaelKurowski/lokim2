@@ -26,6 +26,7 @@ class Room {
 
 	[EVENT_TYPES.JOIN](data, socket) {
 		const {roomId} = data
+		if (_.isEmpty(roomId)) return
 		const username = socket.request.user.username
 		const timestamp = new Date().getTime()
 		

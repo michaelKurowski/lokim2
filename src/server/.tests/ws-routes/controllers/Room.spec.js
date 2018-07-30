@@ -102,6 +102,33 @@ describe('Room websocket namespace', () => {
 			}
 		})
 
+		it('should ignore event when receiving "join" request with empty roomId', done => {
+			const MAXIMUM_WAITING_TIME = 1000
+			//given
+			const requestMock = {
+				roomId: ''
+			}
+
+			suite.server.on(CLIENT_EVENTS.CONNECTION, connection => 
+				connection.on(CLIENT_EVENTS.JOIN, data => 
+					suite.roomInstance.join(data, connection, suite.connectionsMock)
+				)
+			)
+			
+			suite.client = socketClient.connect(SOCKET_URL, SOCKET_OPTIONS)
+
+			//when
+			suite.client.emit(CLIENT_EVENTS.JOIN, requestMock)
+
+			//then
+			suite.client.on(CLIENT_EVENTS.JOIN, then)
+
+			setTimeout(done, MAXIMUM_WAITING_TIME)
+			function then() {
+				done(new Error('Unintended behaviour'))
+			}
+		})
+
 		it('should call #join on socket in order to join the room when receiving a request', done => {
 			//given
 			const requestMock = {
