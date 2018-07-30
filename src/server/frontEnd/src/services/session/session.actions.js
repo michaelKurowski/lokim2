@@ -1,7 +1,8 @@
 const CODES = {
     LOG_IN_PENDING: 'LOG_IN_PENDING',
     AUTHORISE: 'AUTHORISE',
-    DENY_AUTHORISATION: 'DENY_AUTHORISATION'
+    DENY_AUTHORISATION: 'DENY_AUTHORISATION',
+    LOG_OUT: 'LOG_OUT'
 }
 
 const actions = {
@@ -20,6 +21,9 @@ const actions = {
                 username
             }
         }
+    },
+    logOut() {
+        return {type: CODES.LOG_OUT, payload: {}}
     }
 }
 

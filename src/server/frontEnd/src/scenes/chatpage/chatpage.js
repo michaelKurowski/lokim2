@@ -24,6 +24,7 @@ const SIDE_PANEL_DIRECTIONS = require('../../components/sidePanel/sidePanelDirec
 //ACTIONS
 const roomActions = require('../../services/roomsManagement/room.actions')
 const roomsManagementActions = require('../../services/roomsManagement/roomsManagement.actions')
+const sessionActions = require('../../services/session/session.actions')
 
 let socket
 
@@ -42,7 +43,8 @@ function mapDispatchToProps(dispatch) {
 		sendMessage: message => dispatch(roomActions.actions.sendMessage(message)),
 		selectRoom: roomId => dispatch(roomsManagementActions.actions.selectRoom(roomId)),
 		joinRoom: roomId => dispatch(roomsManagementActions.actions.joinRoom(roomId)),
-		createRoom: invitedUsers => dispatch(roomsManagementActions.actions.createRoom(invitedUsers))
+		createRoom: invitedUsers => dispatch(roomsManagementActions.actions.createRoom(invitedUsers)),
+		logOut: () => dispatch(sessionActions.actions.logOut())
 	}
 }
 
@@ -133,6 +135,10 @@ class ChatPage extends React.Component {
 		this.props.sendMessage(newMessage)
 	}
 
+	logOut() {
+
+	}
+
 	render() {
 		if(!this.props.username) return <Redirect to={HOMEPAGE_PATH}/>
 		return (
@@ -153,7 +159,7 @@ class ChatPage extends React.Component {
 						{this.getSelectedRoom() ? <RoomMembersList usernames={this.getSelectedRoom().members}/> : <div></div>}
 						<ConnectStatus connection={this.isConnected()}/>
 						<UserFinder foundUsers={this.state.usersFound} createRoom={this.createRoom} findUser={this.findUserByUsername}/>
-						<Link className='btn btn-danger' to={HOMEPAGE_PATH}>Logout</Link>
+						<Link className='btn btn-danger' onClick={this.props.logOut} to={HOMEPAGE_PATH} >Logout</Link>
 					</SidePanel>
 				</div>
 			</div>

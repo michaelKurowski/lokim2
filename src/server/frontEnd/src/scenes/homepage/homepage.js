@@ -52,7 +52,12 @@ class HomePage extends React.Component {
 	}
 
 	componentDidUpdate() {
-		if (this.isLoggedIn() && !webSocketProvider.get()) this.props.connectToWebSocket()
+		if (this.isLoggedIn() && this.isWebSocketNotOperating()) this.props.connectToWebSocket()
+	}
+
+	isWebSocketNotOperating() {
+		const socket = webSocketProvider.get()
+		return !socket || (socket.room.disconnected && socket.users.disconnected)
 	}
 
 	render() {

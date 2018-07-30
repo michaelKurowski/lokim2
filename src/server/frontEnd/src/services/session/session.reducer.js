@@ -23,6 +23,8 @@ const handleActions = (state = initialState, action = {}) => {
             return Object.assign({}, state, {status: STATES.SUCCEDED, errorMessage: '', username: action.payload.username, reason: ''})
         case SESSION_ACTION_CODES.DENY_AUTHORISATION:
             return Object.assign({}, state, {status: STATES.FAILED, errorMessage: action.payload.error, username: action.payload.username, reason: action.payload.reason})
+        case SESSION_ACTION_CODES.LOG_OUT:
+            return initialState
         default:
             return state
     }

@@ -40,7 +40,6 @@ function* watchWebsocketConnectionRequest() {
 }
 
 function* mapWebsocketEventsToActions(event) {
-    console.log('Emitter', event.type, event)
     switch (event.type) {
         case PROTOCOL.room.eventTypes.CONNECTION:
             yield put(webSocketActions.webSocketConnectionEstabilished(event.payload.namespace))
