@@ -9,10 +9,6 @@ const REGISTER_URL = paths.REGISTER
 const CHAT_URL = paths.CHAT
 
 class App extends React.Component {
-
-	componentDidMount(){
-		console.log('app props', this.props.store)
-	}
 	render() {
 		return (
 			<BrowserRouter>
