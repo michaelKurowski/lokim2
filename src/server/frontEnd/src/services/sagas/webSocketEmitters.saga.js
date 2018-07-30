@@ -12,6 +12,12 @@ function* watch() {
 function* watchSendMessage() {
     yield takeEvery(ROOM_ACTION_CODES.SEND_MESSAGE, sendMessage)
     yield takeEvery(ROOM_MANAGEMENT_CODES.JOIN_ROOM, joinRoom)
+    yield takeEvery(ROOM_MANAGEMENT_CODES.CREATE_ROOM, createRoom)
+}
+
+function* createRoom(action) {
+    const socket = webSocketProvider.get()
+    yield call(emitCreateRoom, socket, action.payload)
 }
 
 function* joinRoom(action) {
@@ -22,6 +28,10 @@ function* joinRoom(action) {
 function* sendMessage(action) {
     const socket = webSocketProvider.get()
     yield call(emitMessage, socket, action.payload.messageObject)
+}
+
+function emitCreateRoom(socket, eventObject) {
+    socket.room.emit(protocols.CREATE, {invitedUsersIndexes: eventObject.invitedUsers})
 }
 
 function emitJoinRoom(socket, eventObject) {

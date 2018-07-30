@@ -41,7 +41,8 @@ function mapDispatchToProps(dispatch) {
 	return {
 		sendMessage: message => dispatch(roomActions.actions.sendMessage(message)),
 		selectRoom: roomId => dispatch(roomsManagementActions.actions.selectRoom(roomId)),
-		joinRoom: roomId => dispatch(roomsManagementActions.actions.joinRoom(roomId))
+		joinRoom: roomId => dispatch(roomsManagementActions.actions.joinRoom(roomId)),
+		createRoom: invitedUsers => dispatch(roomsManagementActions.actions.createRoom(invitedUsers))
 	}
 }
 
@@ -87,6 +88,11 @@ class ChatPage extends React.Component {
 		//socket.room.emit(protocols.JOIN, {roomId})
 	}
 
+	createRoom(usernamesToInvite) {
+		this.props.createRoom(usernamesToInvite)
+		//socket.room.emit(protocols.CREATE, {invitedUsersIndexes: usernamesToInvite})
+	}
+
 	isConnected() {
 		return this.props.isWebSocketRoomConenctionEstabilished && this.props.isWebSocketUsersConenctionEstabilished
 	}
@@ -127,10 +133,6 @@ class ChatPage extends React.Component {
 			username: this.props.username
 		}
 		this.props.sendMessage(newMessage)
-	}
-
-	createRoom(usernamesToInvite) {
-		socket.room.emit(protocols.CREATE, {invitedUsersIndexes: usernamesToInvite})
 	}
 
 	render() {
