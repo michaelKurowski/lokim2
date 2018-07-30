@@ -23,7 +23,6 @@ const initialMiddleware = [sagaMiddleware]
 const middleware = isDevMode ? composeWithDevTools(applyMiddleware(...initialMiddleware)) : applyMiddleware(...initialMiddleware)
 const rootReducer = combineReducers({roomsManagementReducer, sessionReducer})
 const store = createStore(rootReducer, middleware)
-webSocketProvider.inject(store.dispatch)
 sagaMiddleware.run(webSocketListener)
 sagaMiddleware.run(watchLogIn)
 sagaMiddleware.run(webSocketEmitter)

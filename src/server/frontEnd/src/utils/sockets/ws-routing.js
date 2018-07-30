@@ -13,10 +13,6 @@ module.exports = {
 	get
 }
 
-function inject(injectedDispatch) {
-	dispatch = injectedDispatch
-}
-
 function create() {
 	socket = {
 		room: io(`${HOST}${ROOM}`, {path: WEBSOCKET_ENDPOINT}),
