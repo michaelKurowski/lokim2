@@ -22,7 +22,7 @@ class UserFinderInput extends React.Component {
 		return (
 			<input
 				className='form-control'
-				palceholder='Username'
+				placeholder='Username'
 				value={this.props.isQuerrying ? this.state.username : ''}
 				onChange={this.setUsername}
 			/>
