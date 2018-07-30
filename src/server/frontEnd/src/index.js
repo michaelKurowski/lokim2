@@ -11,7 +11,6 @@ const roomsManagementReducer = require('./services/roomsManagement/roomsManageme
 const sessionReducer = require('./services/session/session.reducer')
 const {composeWithDevTools} = require('redux-devtools-extension')
 const isDevMode = require('../../config.json').devPropeties.devMode
-const thunkMiddleware = require('redux-thunk').default
 const createSagaMiddleware = require('redux-saga').default
 const watchLogIn = require('./services/sagas/logIn.saga').watchLogIn
 const webSocketProvider = require('./utils/sockets/ws-routing')
@@ -19,7 +18,7 @@ const webSocketListener = require('./services/sagas/webSocketListener.saga').wat
 const webSocketEmitter = require('./services/sagas/webSocketEmitters.saga').watch
 const sagaMiddleware = createSagaMiddleware()
 //const exampleMiddleware = store => next => action => next(action)
-const initialMiddleware = [thunkMiddleware, sagaMiddleware]
+const initialMiddleware = [sagaMiddleware]
 
 const middleware = isDevMode ? composeWithDevTools(applyMiddleware(...initialMiddleware)) : applyMiddleware(...initialMiddleware)
 const rootReducer = combineReducers({roomsManagementReducer, sessionReducer})
