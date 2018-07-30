@@ -86,6 +86,8 @@ class ChatPage extends React.Component {
 	}
 
 	joinToRoom(roomId) {
+		const isRoomAlreadyJoined = _.includes(Object.keys(this.props.rooms), roomId) 
+		if (isRoomAlreadyJoined) return
 		this.props.joinRoom(roomId)
 	}
 
