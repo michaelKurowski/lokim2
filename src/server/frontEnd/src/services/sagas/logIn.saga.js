@@ -15,6 +15,20 @@ const AUTHORISATION_DENY_REASONS = {
 
 function* watchLogIn() {
     yield takeEvery(CODES.LOG_IN_PENDING, logIn)
+    yield takeEvery(CODES.LOG_OUT, logOut)
+}
+
+function* logOut() {
+    yield call(
+        fetch,
+        ENDPOINTS.LOGOUT,
+        {
+            method: POST_HTTP_METHOD,
+            headers,
+            credentials: HTTP_CREDENTIALS,
+			body: ''
+        }
+    )
 }
 
 function* logIn(action) {
