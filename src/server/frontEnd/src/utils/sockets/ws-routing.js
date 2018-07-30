@@ -9,7 +9,6 @@ let socket
 
 module.exports = {
 	create,
-	inject,
 	get
 }
 
