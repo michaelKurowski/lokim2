@@ -7,22 +7,22 @@ class UserFinder extends React.Component {
 		this.runQuery = this.runQuery.bind(this)
 		this.inviteUser = this.inviteUser.bind(this)
 		this.state = {
-			isQuerrying: false
+			isQuerying: false
 		}
 	}
 	
 	runQuery(username) {
 		this.props.findUser(username)
-		this.setState({isQuerrying: true})
+		this.setState({isQuerying: true})
 	}
 
 	inviteUser(username) {
 		this.props.createRoom([username])
-		this.setState({isQuerrying: false})
+		this.setState({isQuerying: false})
 	}
 
 	showQuerryingResults() {
-		if (this.state.isQuerrying)
+		if (this.state.isQuerying)
 			return <UsersList usernames={this.props.foundUsers} onUserClick={this.inviteUser}/>
 	}
 
@@ -30,7 +30,7 @@ class UserFinder extends React.Component {
 		return (
 			<div>
 				<h4>Find user:</h4>
-				<UserFinderInput onChange={this.runQuery} isQuerrying={this.state.isQuerrying}/>
+				<UserFinderInput onChange={this.runQuery} isQuerying={this.state.isQuerying}/>
 				{this.showQuerryingResults()}
 			</div>
 		)
