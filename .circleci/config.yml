@@ -63,6 +63,10 @@ jobs:
           command: cd src/server && npm run generate-config
 
       - run:
+          name: Build LokIM
+          command: cd src/server/ && npm run build-dev
+
+      - run:
           name: Mocha tests (backend)
           command: cd src/server/ && npm run test-coverage
 
@@ -71,12 +75,8 @@ jobs:
           command: cd src/server/frontEnd/ && npm run test-coverage
 
       - run:
-          name: Build LokIM
-          command: cd src/server/ && npm run build-dev
-
-      - run:
           name: E2E tests
-          command: cd src/server/ && npm run test-cypress
+          command: cd src/server/ && npm start & cd src/server/ && npx cypress run
 
       - store_artifacts:
           path: cypress/videos
