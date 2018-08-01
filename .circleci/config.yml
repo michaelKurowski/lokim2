@@ -30,7 +30,8 @@ jobs:
 
       - run:
           name: Cypress Dependencies
-          command: sudo apt-get install autoconf libtool nasm libvorbis0a libgtk-vnc-2.0-0 --fix-missing
+          command: sudo apt-get update && sudo apt-get install autoconf libtool nasm libvorbis0a libgtk-vnc-2.0-0 --fix-missing
+
       - run: 
           name: Deployment (backend)
           command: cd src/server && npm install
