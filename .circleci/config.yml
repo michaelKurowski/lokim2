@@ -75,8 +75,6 @@ jobs:
           command: cd src/server/ && npm start
           background: true
 
-      - sleep: 5
-
       - run:
           name: E2E tests
           command: cd src/server/ && npx cypress run
