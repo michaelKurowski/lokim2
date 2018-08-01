@@ -54,7 +54,7 @@ class Register extends React.Component {
 			return <Redirect to={HOMEPAGE_PATH}/>
 		}
 		return (
-			<div className='container-fluid register-div'>
+			<div className='container-fluid register-div' id='register'>
 				<h2> Register for a new LokIM Account </h2>
 				<form onSubmit={this.registerUser}>
 					<input type='text' className='user-input' placeholder='Username' value={this.state.username} onChange={this.updateCredentials} name='username' required/><br/>

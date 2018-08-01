@@ -65,7 +65,7 @@ class HomePage extends React.Component {
 			return <Redirect to={{pathname: CHAT_PATH, state: {username: this.state.username}}}/>
 
 		return (
-			<div className="App">
+			<div className="App" id='homepage'>
 				<div className="App-header">
 					<img src={logo} className="App-logo" alt="logo" />
 					<h2>Welcome to Loki Instant Messenger</h2>

@@ -7,6 +7,8 @@ const {paths} = require('routing-config')
 const LOGIN_URL = paths.HOME
 const REGISTER_URL = paths.REGISTER
 const CHAT_URL = paths.CHAT
+import './index.css'
+import './App.css'
 
 class App extends React.Component {
 	render() {
