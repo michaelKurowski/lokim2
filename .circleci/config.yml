@@ -28,6 +28,9 @@ jobs:
           # fallback to using the latest cache if no exact match is found
           - v2-dependencies-
 
+      - run:
+          name: Cypress Dependencies
+          command: sudo apt-get install autoconf libtool nasm
       - run: 
           name: Deployment (backend)
           command: cd src/server && npm install
