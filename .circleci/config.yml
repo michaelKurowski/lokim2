@@ -76,7 +76,7 @@ jobs:
 
       - run:
           name: E2E tests
-          command: cd src/server/ && npm start & npm run test-cypress
+          command: cd src/server/ && npm run test-cypress
 
       - store_artifacts:
           path: cypress/videos
