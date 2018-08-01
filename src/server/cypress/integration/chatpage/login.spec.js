@@ -1,12 +1,9 @@
 /// <reference types="Cypress" />
 
 context('Login', () => {
-	beforeEach(done => {
-		require('../../../init')()
-			.then(() => {
-				cy.visit('http://localhost:5000')
-				done()
-			})
+	beforeEach(() => {
+		cy.visit('http://localhost:5000')
+
 	})
 
 	it('can login', () => {
