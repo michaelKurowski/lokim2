@@ -11,6 +11,7 @@ jobs:
           MONGO_INITDB_ROOT_USERNAME: mongousradmin
           MONGO_INITDB_ROOT_PASSWORD: mongopassadmin
           MONGO_INITDB_DATABASE: container
+      - image: cypress/base:8
     steps:
       - checkout
       - restore_cache:
@@ -65,7 +66,12 @@ jobs:
 
       - run:
           name: E2E tests
-          command: cd src/server/ && npm run test-cypress
+          command: cd src/server/frontEnd/ && npm run test-cypress
+
+      - store_artifacts:
+          path: cypress/videos
+      - store_artifacts:
+          path: cypress/screenshots
 
       - run:
           name: Print the Current Time
