@@ -40,6 +40,10 @@ jobs:
           name: Deployment (frontEnd)
           command: cd src/server/frontEnd && npm install && npm run build-dev
 
+      - run: 
+          name: Deployment (frontEnd) - Webpack
+          command: cd src/server/ && npm run build-dev
+          
       - save_cache:
           name: Saving cache (backend)
           paths:
