@@ -1,11 +1,11 @@
 const React = require('react')
-const ChatPage = require('../../components/chatpage/chatpage')
-const ConnectStatus = require('../../components/connectStatus')
-const Room = require('../../components/room')
-const HomePage = require('../../components/homepage')
-const {configure, mount, shallow } = require('enzyme')
+const ChatPage = require('theme/scenes/chatpage/chatpage')
+const ConnectStatus = require('theme/scenes/chatpage/components/connectStatus/connectStatus')
+const HomePage = require('theme/scenes/homepage/homepage')
+const {configure, mount, shallow, render } = require('enzyme')
 const createRouterContext = require('react-router-test-context').default
-const {BrowserRouter, Switch, Route} = require('react-router-dom')
+const {BrowserRouter, MemoryRouter, Switch, Route, Redirect} = require('react-router-dom')
+const {Provider} = require('react-redux')
 const Adapter = require('enzyme-adapter-react-16')
 const DUMMY_ROOM = 'dummyRoom'
 const DUMMY_USER = 'dummyUser'
@@ -22,33 +22,57 @@ const DUMMY_INPUT = 'dummyInput'
 const CONNECTED = 'connected'
 const ERROR_MESSAGE = 'No room selected || input field is empty.'
 const INPUT = 'input'
-const HOME_PATH = require('../../routes/routes').paths.HOME
+const HOME_URL = require('routing-config').paths.HOME
+const CHAT_URL = require('routing-config').paths.CHAT
 const EXPECTED_ELEMENTS_COUNT = 1
 const FIRST_INDEX = 0
 const NO_ROOM_SELECTED = ''
 const NO_INPUT = ''
-
-/* eslint-disable no-unused-vars */
-const sessionStorage = require('mock-local-storage')
-/* eslint-enable no-unused-vars */
+const initializeRedux = require('../../../initializeRedux')
+const DUMMY_USERNAME = 'dummyUsername'
 let suite = {}
 
-global.window = {}
 
 configure({adapter: new Adapter()})
 describe('<ChatPage />', () => {
 	beforeEach(() => {
-		const CHATPAGE_COMPONENT = <BrowserRouter><ChatPage location={{state: {username: DUMMY_USER}}}/></BrowserRouter>
-		suite.wrapper = mount(CHATPAGE_COMPONENT)
-		suite.Component = shallow(CHATPAGE_COMPONENT).find(ChatPage).dive()
-		window.sessionStorage = global.sessionStorage
-	})
-	afterEach(() => {
 		suite = {}
-		window.sessionStorage.clear()
+		const store = initializeRedux()
+		const HomeMock = () => (<div className='dummy'></div>)
 
+		const CHATPAGE_COMPONENT = 
+			<Provider store={store}>
+				<MemoryRouter initialEntries={[CHAT_URL]}>
+					<div>
+						<Route path={HOME_URL} component={HomeMock} />
+						<Route path={CHAT_URL} render={() => <ChatPage store={store}/>} />
+					</div>
+				</MemoryRouter>
+			</Provider>
+
+		suite = {
+			wrapper: CHATPAGE_COMPONENT,
+			store: store,
+			HomeMock: HomeMock
+		}
 	})
+	describe('Healthcheck', () => {
+		it('redirects to homepage when user is not logged in', () => {
+			const EXPECTED_ELEMENTS_COUNT = 1
+			const renderedTree = mount(suite.wrapper)
+			const elementsCount = renderedTree.find(suite.HomeMock).length
+			expect(elementsCount).toBe(EXPECTED_ELEMENTS_COUNT)
+		})
 
+		it('redirects to homepage when user is logged in', () => {
+			const EXPECTED_ELEMENTS_COUNT = 1
+			suite.store.dispatch({type: 'AUTHORISE', payload: {username: DUMMY_USERNAME}})
+			const renderedTree = mount(suite.wrapper)
+			const elementsCount = renderedTree.find(ChatPage).length
+			expect(elementsCount).toBe(EXPECTED_ELEMENTS_COUNT)
+		})
+	})
+/*
 	describe('<ChatPage /> Render Tests', () => {
 		it('Should render HomePage when no username is provided', () => {
 			const context = <div></div>
@@ -228,5 +252,5 @@ describe('<ChatPage />', () => {
 			expect(USERROOM_USERNAMES).toBe(JOIN_DATA.username)
 			expect(RETURN_VALUE).toBeUndefined()
 		})
-	})
+	})*/
 })

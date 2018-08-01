@@ -1,5 +1,6 @@
 const React = require('react')
 const RoomsListElement = require('./roomsListElement/roomsListElement')
+const _= require('lodash')
 class RoomsDialer extends React.Component {
 	constructor() {
 		super()
