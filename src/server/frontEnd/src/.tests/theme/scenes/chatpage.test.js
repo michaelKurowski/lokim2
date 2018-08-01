@@ -45,7 +45,7 @@ describe('<ChatPage />', () => {
 				<MemoryRouter initialEntries={[CHAT_URL]}>
 					<div>
 						<Route path={HOME_URL} component={HomeMock} />
-						<Route path={CHAT_URL} render={() => <ChatPage store={store}/>} />
+						<Route path={CHAT_URL} component={ChatPage} />
 					</div>
 				</MemoryRouter>
 			</Provider>
@@ -70,6 +70,33 @@ describe('<ChatPage />', () => {
 			const renderedTree = mount(suite.wrapper)
 			const elementsCount = renderedTree.find(ChatPage).length
 			expect(elementsCount).toBe(EXPECTED_ELEMENTS_COUNT)
+		})
+	})
+
+	describe('In it\'s initial state' , () => {
+		it('have no room selected', () => {
+
+		})
+
+		it('have no messages loaded', () => {
+
+		})
+
+		it('have username displayed', () => {
+
+		})
+	})
+
+	describe('Functionality', () => {
+		describe('Mesaging', () => {
+
+		})
+		describe('Inviting users', () => {
+
+		})
+
+		describe('Joining rooms', () => {
+
 		})
 	})
 /*
