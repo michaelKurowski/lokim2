@@ -1,12 +1,12 @@
 const React = require('react')
 const {Link, Redirect} = require('react-router-dom')
-const logo = require('../../theme/assets/logo.svg')
-const {paths} = require('../../routes/routes.json')
+const logo = require('theme/assets/logo.svg')
+const {paths} = require('routing-config')
 const {connect} = require('react-redux')
-const {actions} = require('../../services/session/session.actions')
-const SESSION_STATES = require('../../services/session/sessionStates')
-const webSocketProvider = require('../../utils/sockets/ws-routing')
-const webSocketActions = require('../../services/webSocket/webSocket.actions').actions
+const {actions} = require('services/session/session.actions')
+const SESSION_STATES = require('services/session/sessionStates')
+const webSocketProvider = require('../../../utils/sockets/ws-routing')
+const webSocketActions = require('services/webSocket/webSocket.actions').actions
 const CHAT_PATH = paths.CHAT
 const REGISTER_PATH = paths.REGISTER
 

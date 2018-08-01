@@ -3,8 +3,14 @@ require('webpack')
 module.exports = {
 	mode: 'production',
 	entry: {
-		js: ['babel-polyfill', './frontEnd/src/index.js'],
-		vendor: ['react']
+		js: ['babel-polyfill', './frontEnd/src/index.js']
+	},
+	resolve: {
+		alias: {
+			'theme': path.resolve(__dirname, 'frontEnd/src/theme'),
+			'services': path.resolve(__dirname, 'frontEnd/src/services'),
+			'routing-config': path.resolve(__dirname, 'frontEnd/src/routes/routes.json')
+		}
 	},
 	output: {
 		path: path.resolve(__dirname, 'public'),
@@ -21,8 +27,8 @@ module.exports = {
 				}
 			},
 			{
-				test: /.svg?$/,
-				loader: 'svg-inline-loader'
+				test: /\.(gif|png|jpe?g|svg)$/i,
+				loader: 'url-loader',
 			},
 			{
 				test: /\.css$/,
@@ -30,6 +36,5 @@ module.exports = {
 			}
 		]
 	},
-	resolve: {},
 	target: 'web'
 }

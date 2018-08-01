@@ -3,7 +3,7 @@ import './App.css'
 import registerServiceWorker from './registerServiceWorker'
 const React  = require('react')
 const ReactDOM = require('react-dom')
-const App = require('./App')
+const App = require('./theme/App')
 
 const {createStore, applyMiddleware, combineReducers} = require('redux')
 const {Provider} = require('react-redux')

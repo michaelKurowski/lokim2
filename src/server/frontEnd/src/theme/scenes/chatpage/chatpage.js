@@ -6,25 +6,25 @@ const _ = require('lodash')
 const { connect } = require('react-redux')
 
 //LOGIC DEPENDENCIES
-const protocols = require('../../utils/io-protocol.json')
-const HOMEPAGE_PATH = require('../../routes/routes').paths.HOME
-const webSocketProvider = require('../../utils/sockets/ws-routing')
+const protocols = require('../../../utils/io-protocol.json')
+const HOMEPAGE_PATH = require('routing-config').paths.HOME
+const webSocketProvider = require('../../../utils/sockets/ws-routing')
 
 //COMPONENTS
 const ConnectStatus = require('./components/connectStatus/connectStatus')
 const ChatWindow = require('./components/chatWindow/chatWindow')
-const SidePanel = require('../../components/sidePanel/sidePanel')
+const SidePanel = require('theme/components/sidePanel/sidePanel')
 const RoomMembersList = require('./components/roomMembersList/roomMembersList')
 const UserFinder = require('./components/userFinder/userFinder')
 const MiniProfile = require('./components/miniProfile/miniProfile')
 const RoomsDialer = require('./components/roomsDialer/roomsDialer')
 const RoomJoiner = require('./components/roomJoiner/roomJoiner')
-const SIDE_PANEL_DIRECTIONS = require('../../components/sidePanel/sidePanelDirections')
+const SIDE_PANEL_DIRECTIONS = require('theme/components/sidePanel/sidePanelDirections')
 
 //ACTIONS
-const roomActions = require('../../services/roomsManagement/room.actions')
-const roomsManagementActions = require('../../services/roomsManagement/roomsManagement.actions')
-const sessionActions = require('../../services/session/session.actions')
+const roomActions = require('services/roomsManagement/room.actions')
+const roomsManagementActions = require('services/roomsManagement/roomsManagement.actions')
+const sessionActions = require('services/session/session.actions')
 
 let socket
 
