@@ -38,7 +38,7 @@ jobs:
 
       - run: 
           name: Deployment (frontEnd)
-          command: cd src/server/frontEnd && npm install && npm run build-dev
+          command: cd src/server/frontEnd && npm install
 
       - run: 
           name: Deployment (frontEnd) - Webpack
