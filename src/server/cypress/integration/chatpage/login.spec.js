@@ -2,7 +2,7 @@
 
 context('Login', () => {
 	beforeEach(done => {
-		require('../../../init')
+		require('../../../init')()
 			.then(() => {
 				cy.visit('http://localhost:5000')
 				done()
