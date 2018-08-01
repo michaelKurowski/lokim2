@@ -40,6 +40,7 @@ jobs:
           name: Saving cache (backend)
           paths:
             - src/server/node_modules
+            - /home/circleci/.cache/Cypress
           key: v1-dependencies-{{ checksum "src/server/package.json" }}
 
       - save_cache:
