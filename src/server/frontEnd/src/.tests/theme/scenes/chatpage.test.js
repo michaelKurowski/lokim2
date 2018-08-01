@@ -88,9 +88,12 @@ describe('<ChatPage />', () => {
 	})
 
 	describe('Functionality', () => {
-		describe('Mesaging', () => {
+		describe('Messaging', () => {
+			it('sends ', () => {
 
+			})
 		})
+
 		describe('Inviting users', () => {
 
 		})
