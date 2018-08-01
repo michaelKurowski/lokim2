@@ -64,6 +64,10 @@ jobs:
           command: cd src/server/frontEnd/ && npm run test-coverage
 
       - run:
+          name: E2E tests
+          command: cd src/server/ && npm run test-cypress
+
+      - run:
           name: Print the Current Time
           command: date
 
