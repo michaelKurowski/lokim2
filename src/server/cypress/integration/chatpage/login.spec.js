@@ -3,7 +3,6 @@
 context('Login', () => {
 	beforeEach(() => {
 		cy.visit('http://localhost:5000')
-
 	})
 
 	it('can login', () => {
