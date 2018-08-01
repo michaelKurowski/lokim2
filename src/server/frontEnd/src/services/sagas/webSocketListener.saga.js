@@ -42,22 +42,22 @@ function* watchWebsocketConnectionRequest() {
 
 function* mapWebsocketEventsToActions(event) {
 	switch (event.type) {
-	case PROTOCOL.room.eventTypes.CONNECTION:
-		yield put(webSocketActions.webSocketConnectionEstabilished(event.payload.namespace))
-		break
-	case PROTOCOL.room.eventTypes.LIST_MEMBERS:
-		yield put(roomActions.setMembers(event.payload.usernames, event.payload.roomId))
-		break
-	case PROTOCOL.room.eventTypes.MESSAGE:
-		yield put(roomActions.addMessage(event.payload, event.payload.roomId))
-		break
-	case PROTOCOL.room.eventTypes.JOIN:
-		yield put(roomActions.addMember(event.payload.username, event.payload.roomId))
-		break
-	case PROTOCOL.users.eventTypes.FIND:
-		return
-	default:
-		return
+		case PROTOCOL.room.eventTypes.CONNECTION:
+			yield put(webSocketActions.webSocketConnectionEstabilished(event.payload.namespace))
+			break
+		case PROTOCOL.room.eventTypes.LIST_MEMBERS:
+			yield put(roomActions.setMembers(event.payload.usernames, event.payload.roomId))
+			break
+		case PROTOCOL.room.eventTypes.MESSAGE:
+			yield put(roomActions.addMessage(event.payload, event.payload.roomId))
+			break
+		case PROTOCOL.room.eventTypes.JOIN:
+			yield put(roomActions.addMember(event.payload.username, event.payload.roomId))
+			break
+		case PROTOCOL.users.eventTypes.FIND:
+			return
+		default:
+			return
 	}
 }
 

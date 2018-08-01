@@ -51,6 +51,10 @@ class HomePage extends React.Component {
 		return this.props.logInStatus === SESSION_STATES.SUCCEDED
 	}
 
+	didLoggingFailed() {
+		return this.props.logInStatus === SESSION_STATES.FAILED
+	}
+
 	componentDidUpdate() {
 		if (this.isLoggedIn() && this.isWebSocketNotOperating()) this.props.connectToWebSocket()
 	}
@@ -63,7 +67,7 @@ class HomePage extends React.Component {
 	render() {
 		if (this.isLoggedIn())
 			return <Redirect to={{pathname: CHAT_PATH, state: {username: this.state.username}}}/>
-
+		if (this.didLoggingFailed()) alert('Log in failed')
 		return (
 			<div className="App" id='homepage'>
 				<div className="App-header">

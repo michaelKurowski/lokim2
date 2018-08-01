@@ -23,6 +23,14 @@ context('Login', () => {
 		cy.get('.success')
 	})
 
+	it('can see message when login fails', () => {
+		cy.get('[name="username"]').type('test_user222')
+		cy.get('[name="password"]').type('test_password')
+		cy.get('input[value="Login"]').click()
+		cy.url().should('include', '/chat')
+		cy.get('.success')
+	})
+
 	it('can logout', () => {
 		cy.get('[name="username"]').type('test_user')
 		cy.get('[name="password"]').type('test_password')
