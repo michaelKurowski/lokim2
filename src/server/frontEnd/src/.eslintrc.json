@@ -6,7 +6,7 @@
 	
 	"extends": [],
 	"rules": {
-		"no-console": { "allow": ["log", "warn", "error"] },
+		"no-console": 0,
 		"react/prop-types": 0
 	}
 }
