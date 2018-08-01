@@ -2,6 +2,7 @@ const React = require('react')
 const ChatPage = require('theme/scenes/chatpage/chatpage')
 const {configure, mount, } = require('enzyme')
 const {Provider} = require('react-redux')
+const {MemoryRouter, Route} = require('react-router-dom')
 const Adapter = require('enzyme-adapter-react-16')
 const HOME_URL = require('routing-config').paths.HOME
 const CHAT_URL = require('routing-config').paths.CHAT

@@ -7,6 +7,7 @@ const PROTOCOL = require('../../../../protocol/protocol.json')
 const roomActions = require('../roomsManagement/room.actions').actions
 const webSocketProvider = require('services/webSocket/webSocketProvider')
 const serverProvidedProtocols = require('../../../../protocol/protocol.json')
+const _ = require('lodash')
 
 function webSocketIncommingTrafficChannel() {
 	return eventChannel(emitter => {

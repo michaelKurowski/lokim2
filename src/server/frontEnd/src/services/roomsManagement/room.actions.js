@@ -1,5 +1,4 @@
 const _ = require('lodash')
-const protocols = require('../../utils/io-protocol.json')
 
 const CODES = {
 	ADD_MESSAGE: 'ADD_MESSAGE',

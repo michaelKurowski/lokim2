@@ -1,6 +1,5 @@
 const React = require('react')
 const UsersList = require('../usersList/usersList')
-const _ = require('lodash')
 class RoomMembersList extends React.Component {
 	constructor() {
 		super()

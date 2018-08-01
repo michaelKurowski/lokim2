@@ -15,24 +15,18 @@ const roomSchema = {
 	messages: []
 }
 
-const messageSchema = {
-	date: null,
-	author: '',
-	text: ''
-}
-
 const handleActions = (state = initialState, action = {}) => {
 	switch (action.type) {
-	case ACTION_CODES.ADD_MEMBER:
-		return addMember(state, action.payload)
-	case ACTION_CODES.SELECT_ROOM: 
-		return selectRoom(state, action.payload)
-	case ACTION_CODES.ADD_MESSAGE: 
-		return addMessage(state, action.payload)
-	case ACTION_CODES.SET_MEMBERS:
-		return setMembers(state, action.payload)
-	default:
-		return state
+		case ACTION_CODES.ADD_MEMBER:
+			return addMember(state, action.payload)
+		case ACTION_CODES.SELECT_ROOM: 
+			return selectRoom(state, action.payload)
+		case ACTION_CODES.ADD_MESSAGE: 
+			return addMessage(state, action.payload)
+		case ACTION_CODES.SET_MEMBERS:
+			return setMembers(state, action.payload)
+		default:
+			return state
 	}
 }
 

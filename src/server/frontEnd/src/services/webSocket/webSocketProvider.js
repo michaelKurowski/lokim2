@@ -1,5 +1,4 @@
 const io = require('socket.io-client')
-const _ = require('lodash')
 
 const ROOM = `room`
 const USERS = `users`
