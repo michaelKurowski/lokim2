@@ -30,7 +30,7 @@ jobs:
 
       - run:
           name: Cypress Dependencies
-          command: sudo apt-get install autoconf libtool nasm
+          command: sudo apt-get install autoconf libtool nasm libgtk-vnc-2.0-0
       - run: 
           name: Deployment (backend)
           command: cd src/server && npm install
