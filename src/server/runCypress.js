@@ -1,3 +1,6 @@
 const spawn = require('child_process').spawn
-const initLokIM = require('./init')
-initLokIM().then(() => spawn('npx', ['cypress', 'run'], {cwd: __dirname}))
+const lokIMInitialization = require('./init')()
+Promise.all([
+	lokIMInitialization.dbConnection,
+	lokIMInitialization.httpServerListening
+]).then(() => spawn('npx', ['cypress', 'run'], {cwd: __dirname}))
