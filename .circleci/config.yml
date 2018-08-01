@@ -71,7 +71,7 @@ jobs:
           command: cd src/server/frontEnd/ && npm run test-coverage
 
       - run:
-          name: E2E tests
+          name: Start NodeJS
           command: cd src/server/ && npm start
           background: true
 
