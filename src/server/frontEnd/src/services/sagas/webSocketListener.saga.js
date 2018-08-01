@@ -5,7 +5,7 @@ const webSocketActions = require('../webSocket/webSocket.actions').actions
 const CLIENT_SPECIFIC_WEBSOCKET_EVENTS = require('../webSocket/clientSpecificWebSocketEvents.json')
 const PROTOCOL = require('../../../../protocol/protocol.json')
 const roomActions = require('../roomsManagement/room.actions').actions
-const webSocketProvider = require('../../utils/sockets/ws-routing')
+const webSocketProvider = require('services/webSocket/webSocketProvider')
 const serverProvidedProtocols = require('../../../../protocol/protocol.json')
 
 function webSocketIncommingTrafficChannel() {

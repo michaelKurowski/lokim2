@@ -8,7 +8,7 @@ const { connect } = require('react-redux')
 //LOGIC DEPENDENCIES
 const protocols = require('../../../utils/io-protocol.json')
 const HOMEPAGE_PATH = require('routing-config').paths.HOME
-const webSocketProvider = require('../../../utils/sockets/ws-routing')
+const webSocketProvider = require('services/webSocket/webSocketProvider')
 
 //COMPONENTS
 const ConnectStatus = require('./components/connectStatus/connectStatus')

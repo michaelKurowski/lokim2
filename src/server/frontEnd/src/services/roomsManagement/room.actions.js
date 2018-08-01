@@ -8,9 +8,6 @@ const CODES = {
     SET_MEMBERS: 'SET_MEMBERS',
     INCORRECT_MESSAGE: 'INCORRECT_MESSAGE'
 }
-
-const webSocketProvider = require('../../utils/sockets/ws-routing')
-
 const actions = {
     addMessage,
     setMembers,

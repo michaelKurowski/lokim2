@@ -4,7 +4,7 @@ const ROOM_ACTION_CODES = require('../roomsManagement/room.actions').CODES
 const ROOM_MANAGEMENT_CODES = require('../roomsManagement/roomsManagement.actions').CODES
 const SESSION_ACTION_CODES = require('../session/session.actions').CODES
 const protocols = require('../../utils/io-protocol.json')
-const webSocketProvider = require('../../utils/sockets/ws-routing')
+const webSocketProvider = require('services/webSocket/webSocketProvider')
 
 function* watch() {
     yield takeLatest(WEBSOCKET_EVENTS.WEBSOCKET_CONNECTION_ESTABILISHED, watchSendMessage)
