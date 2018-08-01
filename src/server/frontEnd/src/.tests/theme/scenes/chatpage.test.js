@@ -50,7 +50,7 @@ describe('<ChatPage />', () => {
 		})
 	})
 
-	describe('In it\'s initial state' , () => {
+	describe('In it\'s initial state', () => {
 		it('have no room selected', () => {
 
 		})

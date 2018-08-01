@@ -38,14 +38,14 @@ class Register extends React.Component {
 			body: JSON.stringify({username, password, email})
 		}).then(response => {
 			switch(response.status) {
-				case SUCCESS_CODE:
-					this.setState({successfulRegister: true})
-					break
-				case USER_ALREADY_EXIST:
-					alert('User already exist')
-					break
-				default:
-					console.error(new Error(`Unexpected answer to registration request: ${response.status}`))
+			case SUCCESS_CODE:
+				this.setState({successfulRegister: true})
+				break
+			case USER_ALREADY_EXIST:
+				alert('User already exist')
+				break
+			default:
+				console.error(new Error(`Unexpected answer to registration request: ${response.status}`))
 			}
 		}).catch(err => console.error(err))
 	}
