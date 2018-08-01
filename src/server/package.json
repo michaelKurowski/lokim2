@@ -21,7 +21,9 @@
       "**/*.spec.js",
       "out/",
       "frontEnd/",
-      "public/"
+      "public/",
+      "runCypress.js",
+      "cypress/"
     ],
     "reporter": [
       "text",
