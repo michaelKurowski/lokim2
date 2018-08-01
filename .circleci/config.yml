@@ -38,7 +38,7 @@ jobs:
 
       - run: 
           name: Deployment (frontEnd)
-          command: cd src/server/frontEnd && npm install
+          command: cd src/server/frontEnd && npm install && npm run build-dev
 
       - save_cache:
           name: Saving cache (backend)
@@ -63,10 +63,6 @@ jobs:
           command: cd src/server && npm run generate-config
 
       - run:
-          name: Build LokIM
-          command: cd src/server/ && npm run build-dev
-
-      - run:
           name: Mocha tests (backend)
           command: cd src/server/ && npm run test-coverage
 
@@ -76,7 +72,14 @@ jobs:
 
       - run:
           name: E2E tests
-          command: cd src/server/ && npm start & cd src/server/ && npx cypress run
+          command: cd src/server/ && npm start
+          background: true
+
+      - sleep: 5
+
+      - run:
+          name: E2E tests
+          command: cd src/server/ && npx cypress run
 
       - store_artifacts:
           path: cypress/videos
