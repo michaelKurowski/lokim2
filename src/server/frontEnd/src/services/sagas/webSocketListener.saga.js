@@ -1,10 +1,11 @@
-const {takeEvery, put, call} = require('redux-saga/effects')
+const {takeEvery, put, call, select} = require('redux-saga/effects')
 const {eventChannel} = require('redux-saga')
 const WEBSOCKET_EVENTS = require('../webSocket/webSocket.actions').CODES
 const webSocketActions = require('../webSocket/webSocket.actions').actions
 const CLIENT_SPECIFIC_WEBSOCKET_EVENTS = require('../webSocket/clientSpecificWebSocketEvents.json')
 const PROTOCOL = require('../../../../protocol/protocol.json')
 const roomActions = require('../roomsManagement/room.actions').actions
+const roomsManagementActions = require('../roomsManagement/roomsManagement.actions').actions
 const findUserActions = require('../findUsers/findUsers.actions').actions
 const webSocketProvider = require('services/webSocket/webSocketProvider')
 const serverProvidedProtocols = require('../../../../protocol/protocol.json')
@@ -53,7 +54,7 @@ function* mapWebsocketEventsToActions(event) {
 			yield put(roomActions.addMessage(event.payload, event.payload.roomId))
 			break
 		case PROTOCOL.room.eventTypes.JOIN:
-			yield put(roomActions.addMember(event.payload.username, event.payload.roomId))
+			yield* handleJoinEvent(event)
 			break
 		case PROTOCOL.users.eventTypes.FIND:
 			yield put(findUserActions.usersFound(event.payload.foundUsernames))
@@ -62,6 +63,13 @@ function* mapWebsocketEventsToActions(event) {
 			return
 	}
 }
+
+function* handleJoinEvent(event) {
+	const loggedUserUsername = yield select(store => store.sessionReducer.username)
+	if (loggedUserUsername === event.payload.username) 
+		yield put(roomsManagementActions.selectRoom(event.payload.roomId))
+	yield put(roomActions.addMember(event.payload.username, event.payload.roomId))
+} 
 
 function webSocketMessageReceivedEvent(eventType, event) {
 	return {type: eventType, payload: event}

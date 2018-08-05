@@ -27,7 +27,6 @@ const roomsManagementActions = require('services/roomsManagement/roomsManagement
 const sessionActions = require('services/session/session.actions')
 const findUsersActions = require('services/findUsers/findUsers.actions')
 
-let socket
 
 function mapStateToProps(state) {
 	return {
@@ -36,7 +35,8 @@ function mapStateToProps(state) {
 		username: state.sessionReducer.username,
 		isWebSocketRoomConenctionEstabilished: state.sessionReducer.isConnectedToRoom,
 		isWebSocketUsersConenctionEstabilished: state.sessionReducer.isConnectedToUsers,
-		usersFound: state.findUsersReducer.usersFound
+		usersFound: state.findUsersReducer.usersFound,
+		selectedRoom: state.roomsManagementReducer.selectedRoom
 	}
 }
 
@@ -56,7 +56,6 @@ class ChatPage extends React.Component {
 		super(props)
 		this.state = {
 			input: '',
-			selectedRoom: '',
 			namespacesConnectionStatus: {
 				users: false,
 				room: false
@@ -65,7 +64,6 @@ class ChatPage extends React.Component {
 		this.sendMessage = this.sendMessage.bind(this)
 		this.setUsersNamespaceAsConnected = this.setUsersNamespaceAsConnected.bind(this)
 		this.setRoomNamespaceAsConnected = this.setRoomNamespaceAsConnected.bind(this)
-		this.handleJoinEvent = this.handleJoinEvent.bind(this)
 		this.joinToRoom = this.joinToRoom.bind(this)
 		this.createRoom = this.createRoom.bind(this)
 		this.changeSelectedRoom = this.changeSelectedRoom.bind(this)
@@ -74,14 +72,12 @@ class ChatPage extends React.Component {
 
 	componentDidUpdate() {
 		if (this.isConnected() && !this.listensToWebsocket) {
-			socket = webSocketProvider.get()
-			socket.room.on(protocols.JOIN, this.handleJoinEvent)
 			this.listensToWebsocket = true
 		}
 	}
 
 	getSelectedRoom() {
-		return this.props.rooms[this.state.selectedRoom]
+		return this.props.rooms[this.props.selectedRoom]
 	}
 
 	joinToRoom(roomId) {
@@ -107,20 +103,14 @@ class ChatPage extends React.Component {
 		this.setState({namespacesConnectionStatus: {users: true, room: this.state.namespacesConnectionStatus.room}})
 	}
 
-	handleJoinEvent(data) {
-		if (data.username === this.props.username)
-			this.changeSelectedRoom(data)
-	}
-
 	changeSelectedRoom(roomDetails) {
 		const {roomId} = roomDetails
-		this.setState({selectedRoom: roomId})
 		this.props.selectRoom(roomId)
 	}
 
 	sendMessage(text) {
 		const newMessage = {
-			roomId: this.state.selectedRoom,
+			roomId: this.props.selectedRoom,
 			message: text,
 			username: this.props.username
 		}
@@ -143,7 +133,7 @@ class ChatPage extends React.Component {
 							<div className='col-md-6 h-100-vh d-flex flex-column'></div>
 					}
 					<SidePanel direction={SIDE_PANEL_DIRECTIONS.RIGHT}>
-						<h4>Room: {this.state.selectedRoom ? this.state.selectedRoom : 'none'}</h4>
+						<h4>Room: {this.props.selectedRoom ? this.props.selectedRoom : 'none'}</h4>
 						{this.getSelectedRoom() ? <RoomMembersList usernames={this.getSelectedRoom().members}/> : <div></div>}
 						<ConnectStatus connection={this.isConnected()}/>
 						<UserFinder foundUsers={this.props.usersFound} createRoom={this.createRoom} findUser={this.props.findUsersByUsername}/>
