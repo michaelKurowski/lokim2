@@ -6,9 +6,7 @@ const _ = require('lodash')
 const { connect } = require('react-redux')
 
 //LOGIC DEPENDENCIES
-const protocols = require('../../../utils/io-protocol.json')
 const HOMEPAGE_PATH = require('routing-config').paths.HOME
-const webSocketProvider = require('services/webSocket/webSocketProvider')
 
 //COMPONENTS
 const ConnectStatus = require('./components/connectStatus/connectStatus')
@@ -67,13 +65,6 @@ class ChatPage extends React.Component {
 		this.joinToRoom = this.joinToRoom.bind(this)
 		this.createRoom = this.createRoom.bind(this)
 		this.changeSelectedRoom = this.changeSelectedRoom.bind(this)
-		this.listensToWebsocket = false
-	}
-
-	componentDidUpdate() {
-		if (this.isConnected() && !this.listensToWebsocket) {
-			this.listensToWebsocket = true
-		}
 	}
 
 	getSelectedRoom() {
