@@ -89,6 +89,7 @@ class ChatPage extends React.Component {
 		const isRoomAlreadyJoined = _.includes(Object.keys(this.props.rooms), roomId) 
 		if (isRoomAlreadyJoined) return
 		this.props.joinRoom(roomId)
+		this.changeSelectedRoom({roomId})
 	}
 
 	createRoom(usernamesToInvite) {
@@ -113,6 +114,7 @@ class ChatPage extends React.Component {
 	}
 
 	handleJoinEvent(data) {
+		console.log('handleJoinEvent', data.username, this.props.username)
 		if (data.username === this.props.username)
 			this.changeSelectedRoom(data)
 	}
