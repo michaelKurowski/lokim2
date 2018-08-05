@@ -10,6 +10,14 @@ context('Login', () => {
 		cy.visit('http://localhost:5000')
 	})
 
+	afterEach(done => {
+		cy.request({
+			method: 'POST',
+			url: 'http://localhost:5000/logout',
+			failOnStatusCode: false
+		}).then(() => done())
+	})
+
 	it('can register', () => {
 		cy.get('.home-button.btn.btn-secondary a').click()
 		cy.url().should('include', '/register')
