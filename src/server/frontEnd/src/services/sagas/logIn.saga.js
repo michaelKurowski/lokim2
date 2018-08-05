@@ -45,14 +45,14 @@ function* logIn(action) {
 	)
 
 	switch (authorisationResponse.status) {
-	case LOG_IN_SUCCESS:
-		yield put(actions.authorise(credentials.username))
-		break
-	case LOG_IN_FAIL:
-		yield put(actions.denyAuthorisation(credentials.username, AUTHORISATION_DENY_REASONS.WRONG_CREDENTIALS, authorisationResponse))
-		break
-	default:
-		yield put(actions.denyAuthorisation(credentials.username, AUTHORISATION_DENY_REASONS.UNEXPECTED_SERVER_ERROR, authorisationResponse))
+		case LOG_IN_SUCCESS:
+			yield put(actions.authorise(credentials.username))
+			break
+		case LOG_IN_FAIL:
+			yield put(actions.denyAuthorisation(credentials.username, AUTHORISATION_DENY_REASONS.WRONG_CREDENTIALS, authorisationResponse))
+			break
+		default:
+			yield put(actions.denyAuthorisation(credentials.username, AUTHORISATION_DENY_REASONS.UNEXPECTED_SERVER_ERROR, authorisationResponse))
 	}
 }
 
