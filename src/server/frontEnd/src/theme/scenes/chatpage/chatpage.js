@@ -57,19 +57,16 @@ class ChatPage extends React.Component {
 		this.state = {
 			input: '',
 			selectedRoom: '',
-			usersFound: [],
 			namespacesConnectionStatus: {
 				users: false,
 				room: false
-			},
-			userToFind: ''
+			}
 		}
 		this.sendMessage = this.sendMessage.bind(this)
 		this.setUsersNamespaceAsConnected = this.setUsersNamespaceAsConnected.bind(this)
 		this.setRoomNamespaceAsConnected = this.setRoomNamespaceAsConnected.bind(this)
 		this.handleJoinEvent = this.handleJoinEvent.bind(this)
 		this.joinToRoom = this.joinToRoom.bind(this)
-		this.findUserByUsername = this.findUserByUsername.bind(this)
 		this.createRoom = this.createRoom.bind(this)
 		this.changeSelectedRoom = this.changeSelectedRoom.bind(this)
 		this.listensToWebsocket = false
@@ -78,7 +75,6 @@ class ChatPage extends React.Component {
 	componentDidUpdate() {
 		if (this.isConnected() && !this.listensToWebsocket) {
 			socket = webSocketProvider.get()
-			socket.users.on(protocols.FIND, this.updateFoundUsers.bind(this))
 			socket.room.on(protocols.JOIN, this.handleJoinEvent)
 			this.listensToWebsocket = true
 		}
@@ -111,19 +107,9 @@ class ChatPage extends React.Component {
 		this.setState({namespacesConnectionStatus: {users: true, room: this.state.namespacesConnectionStatus.room}})
 	}
 
-	findUserByUsername(username) {
-		this.setState({userToFind: username})
-		socket.users.emit(protocols.FIND, {queryPhrase: username})
-	}
-
 	handleJoinEvent(data) {
 		if (data.username === this.props.username)
 			this.changeSelectedRoom(data)
-	}
-
-	updateFoundUsers(data) {
-		const {foundUsernames} = data
-		this.setState({usersFound: foundUsernames})
 	}
 
 	changeSelectedRoom(roomDetails) {
