@@ -3,9 +3,9 @@ const _ = require('lodash')
 const sinon = require('sinon')
 const socketClient = require('socket.io-client')
 const io = require('socket.io')
-const RoomProvider = require('../../../ws-routes/controllers/Room')
-const config = require('../../../config.json')
-const namespaceInfo = require('../../../protocol/protocol.json').room
+const RoomProvider = require('../../../../ws-routes/controllers/Room')
+const config = require('../../../../config.json')
+const namespaceInfo = require('../../../../protocol/protocol.json').room
 
 
 const CLIENT_EVENTS = namespaceInfo.eventTypes

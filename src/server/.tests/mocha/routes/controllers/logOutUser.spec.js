@@ -1,4 +1,4 @@
-const logOutUser = require('../../../routes/controllers/logOutUser')()
+const logOutUser = require('../../../../routes/controllers/logOutUser')()
 const sinon = require('sinon')
 const httpMocks = require('node-mocks-http')
 const assert = require('chai').assert

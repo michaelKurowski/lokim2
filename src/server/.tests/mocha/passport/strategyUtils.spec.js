@@ -1,5 +1,5 @@
-const strategyUtils = require('../../passport/strategyUtils')
-const responseManager = require('../../routes/controllers/utilities/responseManager')
+const strategyUtils = require('../../../passport/strategyUtils')
+const responseManager = require('../../../routes/controllers/utilities/responseManager')
 const assert = require('chai').assert
 
 let suite = {}

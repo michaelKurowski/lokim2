@@ -1,5 +1,5 @@
-const ERROR_MESSAGES = require('../miscellaneous/configErrorMessages.json')
-const configFileServiceProvider = require('../configFileService')
+const ERROR_MESSAGES = require('../../miscellaneous/configErrorMessages.json')
+const configFileServiceProvider = require('../../configFileService')
 const sinon = require('sinon')
 const chai = require('chai')
 const chaiAsPromised = require('chai-as-promised')

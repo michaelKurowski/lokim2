@@ -2,7 +2,7 @@ const assert = require('chai').assert
 const sinon = require('sinon')
 const EventEmitter = require('events').EventEmitter
 const httpMocks = require('node-mocks-http')
-const initializeLoginHandler = require('../../../routes/controllers/utilities/initializeLoginHandler')
+const initializeLoginHandler = require('../../../../routes/controllers/utilities/initializeLoginHandler')
 
 let suite = {}
 describe('#initializeLoginHandler', () => {

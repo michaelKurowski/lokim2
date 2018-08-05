@@ -1,4 +1,4 @@
-const isUserAuthenticated = require('../../../../routes/controllers/Middleware/isUserAuthenticated')()
+const isUserAuthenticated = require('../../../../../routes/controllers/Middleware/isUserAuthenticated')()
 const assert = require('chai').assert
 const sinon = require('sinon')
 const httpMocks = require('node-mocks-http')

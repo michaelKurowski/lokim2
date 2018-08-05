@@ -1,4 +1,4 @@
-const responseManager = require('../../../routes/controllers/utilities/responseManager')
+const responseManager = require('../../../../routes/controllers/utilities/responseManager')
 const assert = require('chai').assert
 const httpMocks = require('node-mocks-http')
 const EventEmitter = require('events').EventEmitter

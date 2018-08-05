@@ -1,5 +1,5 @@
-const strategiesProvider = require('../../passport/strategies')
-const responseManager = require('../../routes/controllers/utilities/responseManager')
+const strategiesProvider = require('../../../passport/strategies')
+const responseManager = require('../../../routes/controllers/utilities/responseManager')
 const sinon = require('sinon')
 const assert = require('chai').assert
 

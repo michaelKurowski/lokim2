@@ -1,6 +1,6 @@
-const UsersProvider = require('../../../ws-routes/controllers/Users')
+const UsersProvider = require('../../../../ws-routes/controllers/Users')
 const sinon = require('sinon')
-const namespaceInfo =  require('../../../protocol/protocol.json').users
+const namespaceInfo =  require('../../../../protocol/protocol.json').users
 const EVENT_TYPES = namespaceInfo.eventTypes
 
 let suite = {}

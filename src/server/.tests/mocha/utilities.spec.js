@@ -1,6 +1,6 @@
-const Utilities = require('../utilities')
+const Utilities = require('../../utilities')
 const assert = require('chai').assert
-const ConnectionsRepository = require('../ws-routes/ConnectionsRepository')
+const ConnectionsRepository = require('../../ws-routes/ConnectionsRepository')
 const sinon = require('sinon')
 let suite = null
 
