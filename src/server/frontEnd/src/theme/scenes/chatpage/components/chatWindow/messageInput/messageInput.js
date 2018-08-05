@@ -26,7 +26,7 @@ class MessageInput extends React.Component {
 
 	render() {
 		return (
-			<form className='p-2 w-100' onSubmit={this.onSubmit}>
+			<form className='p-2 w-100' onSubmit={this.onSubmit} data-test='send-message'>
 				<input className='form-control' placeholder='Message...' value={this.state.input} onChange={this.handleUserInput}/>
 				<button className='btn btn-primary'>Send</button>
 			</form>

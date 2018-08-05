@@ -5,6 +5,7 @@ const webSocketActions = require('../webSocket/webSocket.actions').actions
 const CLIENT_SPECIFIC_WEBSOCKET_EVENTS = require('../webSocket/clientSpecificWebSocketEvents.json')
 const PROTOCOL = require('../../../../protocol/protocol.json')
 const roomActions = require('../roomsManagement/room.actions').actions
+const findUserActions = require('../findUsers/findUsers.actions').actions
 const webSocketProvider = require('services/webSocket/webSocketProvider')
 const serverProvidedProtocols = require('../../../../protocol/protocol.json')
 const _ = require('lodash')
@@ -55,6 +56,7 @@ function* mapWebsocketEventsToActions(event) {
 			yield put(roomActions.addMember(event.payload.username, event.payload.roomId))
 			break
 		case PROTOCOL.users.eventTypes.FIND:
+			yield put(findUserActions.usersFound(event.payload.foundUsernames))
 			return
 		default:
 			return

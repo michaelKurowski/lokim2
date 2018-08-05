@@ -25,6 +25,7 @@ const SIDE_PANEL_DIRECTIONS = require('theme/components/sidePanel/sidePanelDirec
 const roomActions = require('services/roomsManagement/room.actions')
 const roomsManagementActions = require('services/roomsManagement/roomsManagement.actions')
 const sessionActions = require('services/session/session.actions')
+const findUsersActions = require('services/findUsers/findUsers.actions')
 
 let socket
 
@@ -34,7 +35,8 @@ function mapStateToProps(state) {
 		joinedRooms: Object.keys(state.roomsManagementReducer.rooms),
 		username: state.sessionReducer.username,
 		isWebSocketRoomConenctionEstabilished: state.sessionReducer.isConnectedToRoom,
-		isWebSocketUsersConenctionEstabilished: state.sessionReducer.isConnectedToUsers
+		isWebSocketUsersConenctionEstabilished: state.sessionReducer.isConnectedToUsers,
+		usersFound: state.findUsersReducer.usersFound
 	}
 }
 
@@ -44,7 +46,8 @@ function mapDispatchToProps(dispatch) {
 		selectRoom: roomId => dispatch(roomsManagementActions.actions.selectRoom(roomId)),
 		joinRoom: roomId => dispatch(roomsManagementActions.actions.joinRoom(roomId)),
 		createRoom: invitedUsers => dispatch(roomsManagementActions.actions.createRoom(invitedUsers)),
-		logOut: () => dispatch(sessionActions.actions.logOut())
+		logOut: () => dispatch(sessionActions.actions.logOut()),
+		findUsersByUsername: username => dispatch(findUsersActions.actions.findUser(username))
 	}
 }
 
@@ -114,7 +117,6 @@ class ChatPage extends React.Component {
 	}
 
 	handleJoinEvent(data) {
-		console.log('handleJoinEvent', data.username, this.props.username)
 		if (data.username === this.props.username)
 			this.changeSelectedRoom(data)
 	}
@@ -158,7 +160,7 @@ class ChatPage extends React.Component {
 						<h4>Room: {this.state.selectedRoom ? this.state.selectedRoom : 'none'}</h4>
 						{this.getSelectedRoom() ? <RoomMembersList usernames={this.getSelectedRoom().members}/> : <div></div>}
 						<ConnectStatus connection={this.isConnected()}/>
-						<UserFinder foundUsers={this.state.usersFound} createRoom={this.createRoom} findUser={this.findUserByUsername}/>
+						<UserFinder foundUsers={this.props.usersFound} createRoom={this.createRoom} findUser={this.props.findUsersByUsername}/>
 						<Link className='btn btn-danger' onClick={this.props.logOut} to={HOMEPAGE_PATH} >Logout</Link>
 					</SidePanel>
 				</div>

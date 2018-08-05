@@ -10,6 +10,7 @@ const webSocketEmitter = require('./services/sagas/webSocketEmitters.saga').watc
 //REDUCERS
 const roomsManagementReducer = require('./services/roomsManagement/roomsManagement.reducer')
 const sessionReducer = require('./services/session/session.reducer')
+const findUsersReducer = require('./services/findUsers/findUsers.reducer')
 
 const isDevMode = require('../../config.json').devPropeties.devMode
 
@@ -18,7 +19,7 @@ function initializeRedux() {
 	const initialMiddleware = [sagaMiddleware]
     
 	const middleware = isDevMode ? composeWithDevTools(applyMiddleware(...initialMiddleware)) : applyMiddleware(...initialMiddleware)
-	const rootReducer = combineReducers({roomsManagementReducer, sessionReducer})
+	const rootReducer = combineReducers({roomsManagementReducer, sessionReducer, findUsersReducer})
 	const store = createStore(rootReducer, middleware)
 	sagaMiddleware.run(webSocketListener)
 	sagaMiddleware.run(watchLogIn)

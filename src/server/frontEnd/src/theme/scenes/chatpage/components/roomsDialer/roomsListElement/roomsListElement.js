@@ -11,7 +11,7 @@ class RoomsListElement extends React.Component {
 	}
 	render() {
 		return(
-			<div className='room-ID list-group-item' key={this.state.ID} onClick={this.props.onClick}>
+			<div className='room-ID list-group-item' data-test='list-dialer-element' key={this.state.ID} onClick={this.props.onClick}>
 				<li>{this.state.name}</li>
 			</div>
 		)

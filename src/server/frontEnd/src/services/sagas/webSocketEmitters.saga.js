@@ -3,6 +3,7 @@ const WEBSOCKET_EVENTS = require('../webSocket/webSocket.actions').CODES
 const ROOM_ACTION_CODES = require('../roomsManagement/room.actions').CODES
 const ROOM_MANAGEMENT_CODES = require('../roomsManagement/roomsManagement.actions').CODES
 const SESSION_ACTION_CODES = require('../session/session.actions').CODES
+const FIND_USERS_ACTION_CODES = require('../findUsers/findUsers.actions').CODES
 const protocols = require('../../utils/io-protocol.json')
 const webSocketProvider = require('services/webSocket/webSocketProvider')
 
@@ -15,6 +16,12 @@ function* watchSendMessage() {
 	yield takeEvery(ROOM_MANAGEMENT_CODES.JOIN_ROOM, joinRoom)
 	yield takeEvery(ROOM_MANAGEMENT_CODES.CREATE_ROOM, createRoom)
 	yield takeEvery(SESSION_ACTION_CODES.LOG_OUT, logOut)
+	yield takeEvery(FIND_USERS_ACTION_CODES.FIND_USER, findUsersByUsername)
+}
+
+function* findUsersByUsername(action) {
+	const socket = webSocketProvider.get()
+	yield call(emitFindUsersByUsername, socket, action.payload.username)
 }
 
 function* logOut() {
@@ -43,6 +50,10 @@ function emitCreateRoom(socket, eventObject) {
 
 function emitJoinRoom(socket, eventObject) {
 	socket.room.emit(protocols.JOIN, eventObject)
+}
+
+function emitFindUsersByUsername(socket, username) {
+	socket.users.emit(protocols.FIND, {queryPhrase: username})
 }
 
 function emitMessage(socket, eventObject) {
