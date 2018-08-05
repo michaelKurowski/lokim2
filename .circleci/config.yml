@@ -84,9 +84,9 @@ jobs:
           command: cd src/server/ && npx cypress run
 
       - store_artifacts:
-          path: /home/circleci/project/src/server/cypress/videos
+          path: /home/circleci/project/src/server/.tests/cypress/videos
       - store_artifacts:
-          path: /home/circleci/project/src/server/cypress/screenshots
+          path: /home/circleci/project/src/server/.tests/cypress/screenshots
 
       - run:
           name: Print the Current Time
