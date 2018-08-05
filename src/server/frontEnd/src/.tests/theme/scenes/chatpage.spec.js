@@ -34,6 +34,7 @@ describe('<ChatPage />', () => {
 			HomeMock: HomeMock
 		}
 	})
+
 	describe('Healthcheck', () => {
 		it('redirects to homepage when user is not logged in', () => {
 			const EXPECTED_ELEMENTS_COUNT = 1
@@ -67,17 +68,41 @@ describe('<ChatPage />', () => {
 
 	describe('Functionality', () => {
 		describe('Messaging', () => {
-			it('sends ', () => {
+			it('sends proper action when sending message', () => {
+
+			})
+
+			it('adds message to chat history when messages data of selected room changes in store', () => {
 
 			})
 		})
 
 		describe('Inviting users', () => {
+			it('sends relevelant websocket event when typing username', () => {
 
+			})
+
+			it('shows found usernames when receiving relevelant websocket message', () => {
+
+			})
 		})
 
 		describe('Joining rooms', () => {
+			it('sends proper action when joining to room', () => {
 
+			})
+
+			it('adds room to avsilible rooms when list of rooms changes in store', () => {
+
+			})
+
+			it('changes messages history when selecting another room', () => {
+
+			})
+
+			it('changes room members when selecting another room', () => {
+				
+			})
 		})
 	})
 /*
