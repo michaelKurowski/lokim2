@@ -108,3 +108,7 @@ hr {
 .y-scroll {
   overflow-y: scroll;
 }
+
+.notification {
+  position: absolute;
+}

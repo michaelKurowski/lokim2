@@ -27,8 +27,7 @@ context('Login', () => {
 		cy.get('[name="username"]').type('test_user222')
 		cy.get('[name="password"]').type('test_password')
 		cy.get('input[value="Login"]').click()
-		cy.url().should('include', '/chat')
-		cy.get('.success')
+		cy.get('.alert-danger')
 	})
 
 	it('can logout', () => {

@@ -64,12 +64,16 @@ class HomePage extends React.Component {
 		return !socket || (socket.room.disconnected && socket.users.disconnected)
 	}
 
+	renderLoginFailed() {
+		return <div className='alert alert-danger' role='alert'>Login failed</div>
+	}
+
 	render() {
 		if (this.isLoggedIn())
 			return <Redirect to={{pathname: CHAT_PATH, state: {username: this.state.username}}}/>
-		if (this.didLoggingFailed()) alert('Log in failed')
 		return (
 			<div className="App" id='homepage'>
+				{this.didLoggingFailed() ? this.renderLoginFailed() : <div></div>}
 				<div className="App-header">
 					<img src={logo} className="App-logo" alt="logo" />
 					<h2>Welcome to Loki Instant Messenger</h2>
