@@ -1,5 +1,5 @@
 const React = require('react')
-
+const _ = require('lodash')
 class MessageInput extends React.Component {
 	constructor() {
 		super()
@@ -11,6 +11,7 @@ class MessageInput extends React.Component {
 	}
 
 	sendMessage() {
+		if (_.isEmpty(this.state.input)) return
 		this.props.sendMessage(this.state.input)
 		this.setState({input: ''})
 	}
@@ -26,9 +27,15 @@ class MessageInput extends React.Component {
 
 	render() {
 		return (
-			<form className='p-2 w-100' onSubmit={this.onSubmit} data-test='send-message'>
-				<input className='form-control' placeholder='Message...' value={this.state.input} onChange={this.handleUserInput}/>
-				<button className='btn btn-primary'>Send</button>
+			<form className='p-2 w-100' onSubmit={this.onSubmit}>
+				<input
+					className='form-control'
+					placeholder='Message...'
+					value={this.state.input}
+					onChange={this.handleUserInput}
+					data-test='message-input'
+				/>
+				<button className='btn btn-primary' data-test='send-message' >Send</button>
 			</form>
 		)
 	}

@@ -1,5 +1,6 @@
 const React = require('react')
 const ChatPage = require('theme/scenes/chatpage/chatpage')
+const sinon = require('sinon')
 const {configure, mount, } = require('enzyme')
 const {Provider} = require('react-redux')
 const {MemoryRouter, Route} = require('react-router-dom')
@@ -8,6 +9,8 @@ const HOME_URL = require('routing-config').paths.HOME
 const CHAT_URL = require('routing-config').paths.CHAT
 const initializeRedux = require('../../../initializeRedux')
 const DUMMY_USERNAME = 'dummyUsername'
+const webSocketProvider = require('../../../services/webSocket/webSocketProvider')
+const MessageInput = require('../../../theme/scenes/chatpage/components/chatWindow/messageInput/messageInput')
 let suite = {}
 
 
@@ -17,7 +20,7 @@ describe('<ChatPage />', () => {
 		suite = {}
 		const store = initializeRedux()
 		const HomeMock = () => (<div className='dummy'></div>)
-
+		webSocketProvider.create()
 		const CHATPAGE_COMPONENT = 
 			<Provider store={store}>
 				<MemoryRouter initialEntries={[CHAT_URL]}>
@@ -31,8 +34,13 @@ describe('<ChatPage />', () => {
 		suite = {
 			wrapper: CHATPAGE_COMPONENT,
 			store: store,
-			HomeMock: HomeMock
+			HomeMock: HomeMock,
+			sinonSandbox: sinon.createSandbox()
 		}
+	})
+
+	afterEach(() => {
+		suite.sinonSandbox.restore()
 	})
 
 	describe('Healthcheck', () => {
@@ -54,27 +62,82 @@ describe('<ChatPage />', () => {
 
 	describe('In it\'s initial state', () => {
 		it('have no room selected', () => {
-
+			mount(suite.wrapper)
+			expect(suite.store.getState().roomsManagementReducer.selectedRoom).toBe('')
 		})
 
-		it('have no messages loaded', () => {
-
+		it('have no rooms loaded', () => {
+			mount(suite.wrapper)
+			const roomIds = Object.keys(suite.store.getState().roomsManagementReducer.rooms)
+			const amountOfRooms = roomIds.length
+			expect(amountOfRooms).toBe(0)
 		})
 
 		it('have username displayed', () => {
-
+			mount(suite.wrapper)
+			const userUsername = suite.store.getState().sessionReducer.username
+			expect(userUsername).toBe('')
 		})
 	})
 
 	describe('Functionality', () => {
+		beforeEach(() => {
+			suite.store.dispatch({type: 'AUTHORISE', payload: {username: DUMMY_USERNAME}})
+			suite.store.dispatch({type: 'WEBSOCKET_CONNECTION_ESTABILISHED', payload: {namespace: 'room'}})
+			suite.store.dispatch({type: 'WEBSOCKET_CONNECTION_ESTABILISHED', payload: {namespace: 'users'}})
+			suite.store.dispatch({type: 'ADD_MEMBER', payload: {username: DUMMY_USERNAME, roomId: 'lala'}})
+		})
 		describe('Messaging', () => {
-			it('sends proper action when sending message', () => {
+			describe('when already in room', () => {
+				beforeEach(() => {
+					suite.renderedTree = mount(suite.wrapper)
+					const roomDialer = suite.renderedTree.find('[data-test="list-dialer-element"]').first()
+					roomDialer.simulate('click')
+				})
 
+				it('sends proper ws event when sending message', () => {
+					//given
+					const WEBSOCKET_MESSAGE_MOCK = {
+						roomId: 'lala',
+						message: 'DOMMY_MESSAGE',
+						username: 'dummyUsername' 
+					}
+					const webSocketEmitSpy = suite.sinonSandbox.spy(webSocketProvider.get().room, 'emit')
+					
+					const messageSendInput = suite.renderedTree.find('[data-test="message-input"]').first()
+					const messageSendButton = suite.renderedTree.find('[data-test="send-message"]').first()
+	
+					//when
+					
+					messageSendInput.simulate('change', {target: {value: 'DOMMY_MESSAGE'}})
+					messageSendButton.simulate('submit')
+	
+					//then
+					const messageHasBeenSent = webSocketEmitSpy.calledWithMatch('message', WEBSOCKET_MESSAGE_MOCK)
+					expect(messageHasBeenSent).toBe(true)
+	
+				})
+	
+				it('doesn\'t sends websocket event if message input is empty', () => {
+					//given
+					const webSocketEmitSpy = suite.sinonSandbox.spy(webSocketProvider.get().room, 'emit')
+
+					const messageSendButton = suite.renderedTree.find('[data-test="send-message"]').first()
+	
+					//when
+					
+					messageSendButton.simulate('submit')
+	
+					//then
+					const messageHasBeenSent = webSocketEmitSpy.calledWithMatch('message')
+					expect(messageHasBeenSent).toBe(false)
+				})
+	
+				it('adds message to chat history when messages data of selected room changes in store', () => {
+	
+				})
 			})
 
-			it('adds message to chat history when messages data of selected room changes in store', () => {
-
-			})
 		})
 
 		describe('Inviting users', () => {
@@ -83,6 +146,10 @@ describe('<ChatPage />', () => {
 			})
 
 			it('shows found usernames when receiving relevelant websocket message', () => {
+
+			})
+
+			it('switches to new room when user is invited by somebody', () => {
 
 			})
 		})
