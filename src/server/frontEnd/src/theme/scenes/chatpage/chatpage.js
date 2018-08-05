@@ -137,10 +137,6 @@ class ChatPage extends React.Component {
 		this.props.sendMessage(newMessage)
 	}
 
-	logOut() {
-
-	}
-
 	render() {
 		if(!this.props.username) return <Redirect to={HOMEPAGE_PATH}/>
 		return (
