@@ -10,4 +10,5 @@ src/server/config.json
 ./package-lock.json
 src/server/public
 coverage
-src/server/cypress/videos
+src/server/.tests/cypress/videos
+src/server/.tests/cypress/screenshots
