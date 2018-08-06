@@ -134,7 +134,21 @@ describe('<ChatPage />', () => {
 				})
 	
 				it('adds message to chat history when messages data of selected room changes in store', () => {
-	
+					//given
+					const DUMMY_MESSAGE = {
+						message: 'DUMMY_MESSAGE',
+						timestamp: 121243454623453462346,
+						username: 'author',
+						roomId: 'lala'
+					}
+
+					//when
+					suite.store.dispatch({type: 'ADD_MESSAGE', payload: {message: DUMMY_MESSAGE, roomId: 'lala'}})
+					suite.renderedTree = mount(suite.wrapper)
+					const messagesHistory = suite.renderedTree.find('[data-test="chat-message"]').first()
+
+					//then
+					expect(messagesHistory.props().text).toBe('DUMMY_MESSAGE') 
 				})
 			})
 

@@ -15,6 +15,7 @@ class ChatHistory extends React.Component {
 				text={message.message}
 				date={message.timestamp}
 				author={message.username}
+				data-test='chat-message'
 			/>))
 	}
 
@@ -29,7 +30,7 @@ class ChatHistory extends React.Component {
 	render() {
 		return (
 			<div ref={this.messagesHistoryElement} className='p-2 y-scroll h-100 w-100'>
-				<ul className='list-group room-ID-list'>
+				<ul className='list-group room-ID-list' data-test='chat-history'>
 					{this.generateMessages()}
 				</ul>
 			</div>
