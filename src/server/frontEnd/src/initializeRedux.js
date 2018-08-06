@@ -20,6 +20,7 @@ if (!process.env.NODE_ENV)
 
 
 if (isDevMode) {
+	console.log('isDevMode', process.env.NODE_ENV)
 	composeWithDevTools = require('redux-devtools-extension').composeWithDevTools
 }
 
