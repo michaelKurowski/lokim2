@@ -12,11 +12,15 @@ const DUMMY_USERNAME = 'dummyUsername'
 const webSocketProvider = require('services/webSocket/webSocketProvider')
 const WEB_SOCKET_PROTOCOL = require('../../../../../protocol/protocol.json')
 const findUsersActions = require('services/findUsers/findUsers.actions').actions
-const roomManagementActions = require('services/roomsManagement/roomsManagement.actions').actions
+const roomActions = require('services/roomsManagement/room.actions').actions
+const sessionActions = require('services/session/session.actions').actions
+const webSocketActions = require('services/webSocket/webSocket.actions').actions
 let suite = {}
 
 const MOUSE_CLICK_EVENT = 'click'
 const FORM_SUBMIT_EVENT = 'submit'
+
+const ALREADY_JOINED_ROOM = 'lala'
 
 configure({adapter: new Adapter()})
 describe('<ChatPage />', () => {
@@ -57,7 +61,7 @@ describe('<ChatPage />', () => {
 
 		it('redirects to homepage when user is logged in', () => {
 			const EXPECTED_ELEMENTS_COUNT = 1
-			suite.store.dispatch({type: 'AUTHORISE', payload: {username: DUMMY_USERNAME}})
+			suite.store.dispatch(sessionActions.authorise(DUMMY_USERNAME))
 			const renderedTree = mount(suite.wrapper)
 			const elementsCount = renderedTree.find(ChatPage).length
 			expect(elementsCount).toBe(EXPECTED_ELEMENTS_COUNT)
@@ -86,10 +90,10 @@ describe('<ChatPage />', () => {
 
 	describe('Functionality', () => {
 		beforeEach(() => {
-			suite.store.dispatch({type: 'AUTHORISE', payload: {username: DUMMY_USERNAME}})
-			suite.store.dispatch({type: 'WEBSOCKET_CONNECTION_ESTABILISHED', payload: {namespace: 'room'}})
-			suite.store.dispatch({type: 'WEBSOCKET_CONNECTION_ESTABILISHED', payload: {namespace: 'users'}})
-			suite.store.dispatch({type: 'ADD_MEMBER', payload: {username: DUMMY_USERNAME, roomId: 'lala'}})
+			suite.store.dispatch(sessionActions.authorise(DUMMY_USERNAME))
+			suite.store.dispatch(webSocketActions.webSocketConnectionEstabilished('room'))
+			suite.store.dispatch(webSocketActions.webSocketConnectionEstabilished('users'))
+			suite.store.dispatch(roomActions.addMember(DUMMY_USERNAME, ALREADY_JOINED_ROOM))
 			suite.renderedTree = mount(suite.wrapper)
 		})
 		describe('Sending message', () => {
@@ -117,9 +121,10 @@ describe('<ChatPage />', () => {
 
 				it('sends proper websocket event when sending message', () => {
 					//given
+					const DUMMY_MESSAGE_TEXT = 'DOMMY_MESSAGE'
 					const WEBSOCKET_MESSAGE_MOCK = {
-						roomId: 'lala',
-						message: 'DOMMY_MESSAGE',
+						roomId: ALREADY_JOINED_ROOM,
+						message: DUMMY_MESSAGE_TEXT,
 						username: 'dummyUsername' 
 					}
 					const webSocketEmitSpy = suite.sinonSandbox.spy(webSocketProvider.get().room, 'emit')
@@ -129,7 +134,7 @@ describe('<ChatPage />', () => {
 	
 					//when
 					
-					messageSendInput.simulate('change', {target: {value: 'DOMMY_MESSAGE'}})
+					messageSendInput.simulate('change', {target: {value: DUMMY_MESSAGE_TEXT}})
 					messageSendButton.simulate(FORM_SUBMIT_EVENT)
 	
 					//then
@@ -157,37 +162,39 @@ describe('<ChatPage />', () => {
 		describe('Receiving message', () => {
 			it('updates messages history when received message belongs to currently selected room', () => {
 				//given
+
 				const DUMMY_MESSAGE = {
 					message: 'DUMMY_MESSAGE',
 					timestamp: 121243454623453462346,
 					username: 'author',
-					roomId: 'lala'
+					roomId: ALREADY_JOINED_ROOM
 				}
 
 				//when
 				const roomDialer = suite.renderedTree.find('[data-test="list-dialer-element"]').first()
 				roomDialer.simulate(MOUSE_CLICK_EVENT)
-				suite.store.dispatch({type: 'ADD_MESSAGE', payload: {message: DUMMY_MESSAGE, roomId: 'lala'}})
+				suite.store.dispatch(roomActions.addMessage(DUMMY_MESSAGE, ALREADY_JOINED_ROOM))
 				suite.renderedTree = mount(suite.wrapper)
 				const messagesHistory = suite.renderedTree.find('[data-test="chat-message"]').first()
 
 				//then
-				expect(messagesHistory.props().text).toBe('DUMMY_MESSAGE') 
+				expect(messagesHistory.props().text).toBe(DUMMY_MESSAGE.message) 
 			})
 
 			it('doesn\'t update messages history when received message is from nonselected room', () => {
 				//given
+				const DUMMY_ROOM = 'lala2'
 				const DUMMY_MESSAGE = {
 					message: 'DUMMY_MESSAGE',
 					timestamp: 121243454623453462346,
 					username: 'author',
-					roomId: 'lala2'
+					roomId: DUMMY_ROOM
 				}
 
 				//when
 				const roomDialer = suite.renderedTree.find('[data-test="list-dialer-element"]').first()
 				roomDialer.simulate(MOUSE_CLICK_EVENT)
-				suite.store.dispatch({type: 'ADD_MESSAGE', payload: {message: DUMMY_MESSAGE, roomId: 'lala2'}})
+				suite.store.dispatch(roomActions.addMessage(DUMMY_MESSAGE, DUMMY_ROOM))
 				suite.renderedTree = mount(suite.wrapper)
 				const messagesHistory = suite.renderedTree.find('[data-test="chat-message"]').first()
 				const messagesCount = messagesHistory.length
@@ -200,14 +207,15 @@ describe('<ChatPage />', () => {
 		describe('Searching for users', () => {
 			it('sends relevelant websocket event when typing username', () => {
 				//given
+				const USERNAME_TO_FIND = 'DUMMY_USERNAME'
 				const DUMMY_USER_QUERY = {
-					queryPhrase: 'DUMMY_USERNAME'
+					queryPhrase: USERNAME_TO_FIND
 				}
 				const webSocketEmitSpy = suite.sinonSandbox.spy(webSocketProvider.get().users, 'emit')
 				const userQueryInput = suite.renderedTree.find('[data-test="user-query-input"]').first()
 
 				//when
-				userQueryInput.simulate('change', {target: {value: 'DUMMY_USERNAME'}})
+				userQueryInput.simulate('change', {target: {value: USERNAME_TO_FIND}})
 
 				//then
 				const hasWebscoketEventBeenSent = webSocketEmitSpy.calledWithMatch('find', DUMMY_USER_QUERY)
@@ -216,35 +224,36 @@ describe('<ChatPage />', () => {
 
 			it('shows found usernames when receiving relevelant websocket message', () => {
 				//given
-				const receivedUsers = [
+				const RECEIVED_USERS = [
 					'DUMMY_USER1',
 					'DUMMY_USER2'
 				]
 
 				const userQueryInput = suite.renderedTree.find('[data-test="user-query-input"]').first()
-				userQueryInput.simulate('change', {target: {value: 'DUMMY_USERNAME'}})
+				userQueryInput.simulate('change', {target: {value: RECEIVED_USERS[0]}})
 
 				//when
 				
-				suite.store.dispatch(findUsersActions.usersFound(receivedUsers))
+				suite.store.dispatch(findUsersActions.usersFound(RECEIVED_USERS))
 				suite.renderedTree.update()
 
 
 				//then
 				const listOfUsernames = suite.renderedTree.find('[data-test="users-finder-results"]').first()
 				const displayedUsernamesFound = listOfUsernames.find('li').map(node => node.text())
-				expect(receivedUsers).toMatchObject(displayedUsernamesFound)
+				
+				expect(displayedUsernamesFound).toMatchObject(RECEIVED_USERS)
 			})
 
 			it('sends websocket request to create new room when clicking on found user', () => {
 				//given
-				const receivedUsers = [
+				const RECEIVED_USERS = [
 					'DUMMY_USER1'
 				]
 				const userQueryInput = suite.renderedTree.find('[data-test="user-query-input"]').first()
-				userQueryInput.simulate('change', {target: {value: 'DUMMY_USERNAME'}})
+				userQueryInput.simulate('change', {target: {value: RECEIVED_USERS[0]}})
 				const webSocketEmitSpy = suite.sinonSandbox.spy(webSocketProvider.get().room, 'emit')
-				suite.store.dispatch(findUsersActions.usersFound(receivedUsers))
+				suite.store.dispatch(findUsersActions.usersFound(RECEIVED_USERS))
 				suite.renderedTree.update()
 				const listOfUsernames = suite.renderedTree.find('[data-test="users-finder-results"]').first()
 				const foundUser = listOfUsernames.find('li').first()
@@ -253,7 +262,7 @@ describe('<ChatPage />', () => {
 				foundUser.simulate(MOUSE_CLICK_EVENT)
 
 				//then
-				const EXPECTED_WEBSOCKET_PAYLOAD = {invitedUsersIndexes: ['DUMMY_USER1']}
+				const EXPECTED_WEBSOCKET_PAYLOAD = {invitedUsersIndexes: RECEIVED_USERS}
 				const hasWebSocketEventBeenSent =
 					webSocketEmitSpy.calledWithMatch(WEB_SOCKET_PROTOCOL.room.eventTypes.CREATE, EXPECTED_WEBSOCKET_PAYLOAD)
 				expect(hasWebSocketEventBeenSent).toBe(true)
@@ -285,7 +294,8 @@ describe('<ChatPage />', () => {
 			it('adds room to rooms list', () => {
 				//given
 				const DUMMY_ROOM_ID = 'dummyRoom'
-				suite.store.dispatch({type: 'ADD_MEMBER', payload: {username: DUMMY_USERNAME, roomId: DUMMY_ROOM_ID}})
+				suite.store.dispatch(roomActions.addMember(DUMMY_USERNAME, DUMMY_ROOM_ID))
+
 				suite.renderedTree = mount(suite.wrapper)
 
 				//then
