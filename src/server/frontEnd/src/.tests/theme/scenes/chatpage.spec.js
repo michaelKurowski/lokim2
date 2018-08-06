@@ -154,7 +154,7 @@ describe('<ChatPage />', () => {
 
 		})
 
-		describe('Inviting users', () => {
+		describe('Inviting users to chat', () => {
 			it('sends relevelant websocket event when typing username', () => {
 
 			})
