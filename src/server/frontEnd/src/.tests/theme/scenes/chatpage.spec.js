@@ -111,7 +111,6 @@ describe('<ChatPage />', () => {
 					const messageSendButton = suite.renderedTree.find('[data-test="send-message"]').first()
 	
 					//when
-					
 					messageSendButton.simulate(FORM_SUBMIT_EVENT)
 	
 					//then
