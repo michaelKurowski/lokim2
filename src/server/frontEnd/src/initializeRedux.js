@@ -15,14 +15,9 @@ const findUsersReducer = require('./services/findUsers/findUsers.reducer')
 let composeWithDevTools
 let isDevMode = (process.env.NODE_ENV === 'development')
 
-if (!process.env.NODE_ENV) 
-	isDevMode = require('../../config.json').devPropeties.devMode
+if (!process.env.NODE_ENV) isDevMode = require('../../config.json').devPropeties.devMode
 
-
-if (isDevMode) {
-	console.log('isDevMode', process.env.NODE_ENV)
-	composeWithDevTools = require('redux-devtools-extension').composeWithDevTools
-}
+if (isDevMode) composeWithDevTools = require('redux-devtools-extension').composeWithDevTools
 
 function initializeRedux() {
 	const sagaMiddleware = createSagaMiddleware()
