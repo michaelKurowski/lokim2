@@ -1,0 +1,6 @@
+{
+    "CONNECT": "connect",
+    "RECONNECT": "reconnect",
+    "RECONNECT_ERROR": "reconnect_error",
+    "RECONNECT_FAILED": "reconnect_failed"
+}

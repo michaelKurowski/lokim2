@@ -31,17 +31,15 @@
 			"request": "launch",
 			"name": "Jest Tests (frontend)",
 			"runtimeVersion": "8.9.4",
-			"runtimeExecutable": "npm",
+			"program": "${workspaceRoot}/src/server/frontEnd/node_modules/.bin/jest",
 			"runtimeArgs": [
-				"run",
-				"test-debug"
+				"--inspect-brk"
 			],
 			"protocol": "inspector",
 			"port": 9229,
 			"cwd": "${workspaceRoot}/src/server/frontEnd/",
 			"console": "integratedTerminal",
-			"restart": true,
-			"internalConsoleOptions": "neverOpen"
+			"internalConsoleOptions": "openOnSessionStart"
 		}
 	]
 }

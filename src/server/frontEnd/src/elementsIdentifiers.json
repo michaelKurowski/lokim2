@@ -1,0 +1,30 @@
+
+{
+    "ID": {
+        "BUTTONS": {
+            "LOGIN": "spc-button-sign-in",
+            "REGISTER": "spc-button-sign-up",
+            "LOGOUT": "spc-button-sign-out",
+            "JOIN_ROOM": "spc-button-join-room",
+            "SEND_MESSAGE": "spc-button-send-message"
+        },
+        "INPUTS": {
+            "LOGIN_USERNAME": "spc-input-sign-in-username",
+            "LOGIN_PASSWORD": "spc-input-sign-in-password",
+            "FIND_USER_USERNAME": "spc-input-find-user",
+            "JOIN_ROOM": "spc-input-join-room",
+            "SEND_MESSAGE": "spc-input-send-message"
+        },
+        "OTHER": {
+            "CHAT_HISTORY": "spc-other-chat-history"
+        }
+    },
+    "CLASS": {
+        "CLICKABLES": {
+            "FIND_USER_RESULT": "spc-clickable-find-user-result"
+        },
+        "OTHER": {
+            "CHAT_MESSAGE": "spc-other-chat-message"
+        }
+    }
+}

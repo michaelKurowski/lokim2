@@ -11,21 +11,26 @@ jobs:
           MONGO_INITDB_ROOT_USERNAME: mongousradmin
           MONGO_INITDB_ROOT_PASSWORD: mongopassadmin
           MONGO_INITDB_DATABASE: container
+      - image: cypress/base:8
     steps:
       - checkout
       - restore_cache:
           name: Restore cache (backend)
           keys:
-          - v1-dependencies-{{ checksum "src/server/package.json" }}
+          - v2-dependencies-{{ checksum "src/server/package.json" }}
           # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+          - v2-dependencies-
 
       - restore_cache:
           name: Restore cache (frontEnd)
           keys:
-          - v1-dependencies-{{ checksum "src/server/frontEnd/package.json" }}
+          - v2-dependencies-{{ checksum "src/server/frontEnd/package.json" }}
           # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+          - v2-dependencies-
+
+      - run:
+          name: Cypress Dependencies
+          command: sudo apt-get update && sudo apt-get install xvfb libgtk2.0-0 libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 --fix-missing
 
       - run: 
           name: Deployment (backend)
@@ -34,18 +39,20 @@ jobs:
       - run: 
           name: Deployment (frontEnd)
           command: cd src/server/frontEnd && npm install
-
+          
       - save_cache:
           name: Saving cache (backend)
           paths:
             - src/server/node_modules
-          key: v1-dependencies-{{ checksum "src/server/package.json" }}
+            - /home/circleci/.cache
+            - /home/circleci/.npm
+          key: v2-dependencies-{{ checksum "src/server/package.json" }}
 
       - save_cache:
           name: Saving cache (frontEnd)
           paths:
             - src/server/frontEnd/node_modules
-          key: v1-dependencies-{{ checksum "src/server/frontEnd/package.json" }}
+          key: v2-dependencies-{{ checksum "src/server/frontEnd/package.json" }}
 
       - run:
           name: Static Analysis (backend & frontEnd)
@@ -62,6 +69,24 @@ jobs:
       - run:
           name: Jest tests (frontEnd)
           command: cd src/server/frontEnd/ && npm run test-coverage
+
+      - run: 
+          name: Deployment (frontEnd) - Webpack
+          command: cd src/server/ && npm run build-dev
+          
+      - run:
+          name: Start NodeJS
+          command: cd src/server/ && npm start
+          background: true
+
+      - run:
+          name: E2E tests
+          command: cd src/server/ && npx cypress run
+
+      - store_artifacts:
+          path: /home/circleci/project/src/server/.tests/cypress/videos
+      - store_artifacts:
+          path: /home/circleci/project/src/server/.tests/cypress/screenshots
 
       - run:
           name: Print the Current Time
