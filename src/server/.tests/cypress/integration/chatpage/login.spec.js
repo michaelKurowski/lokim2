@@ -5,7 +5,9 @@ context('Login', () => {
 		suite = {
 			CORRECT_USERNAME: 'test_username',
 			CORRECT_PASSWORD: 'test_password',
-			WRONG_USERNAME: 'test_user222'
+			WRONG_USERNAME: 'test_user222',
+			WRONG_PASSWORD: 'wrong_password',
+			EMAIL: 'testEmail@test.co.uk'
 		}
 		cy.visit('http://localhost:5000')
 	})
@@ -23,7 +25,7 @@ context('Login', () => {
 		cy.url().should('include', '/register')
 		cy.get('[name="username"]').type(suite.CORRECT_USERNAME)
 		cy.get('[name="password"]').type(suite.CORRECT_PASSWORD)
-		cy.get('[name="email"]').type('testEmail@test.co.uk')
+		cy.get('[name="email"]').type(suite.EMAIL)
 		cy.get('.register-button').click()
 		cy.url().should('include', '/')
 	})
@@ -36,9 +38,16 @@ context('Login', () => {
 		cy.get('.success')
 	})
 
-	it('can see message when login fails', () => {
+	it('can see message when login fails due to wrong username', () => {
 		cy.get('[name="username"]').type(suite.WRONG_USERNAME)
 		cy.get('[name="password"]').type(suite.CORRECT_PASSWORD)
+		cy.get('input[value="Login"]').click()
+		cy.get('.alert-danger')
+	})
+
+	it('can see message when login fails due to wrong password', () => {
+		cy.get('[name="username"]').type(suite.CORRECT_USERNAME)
+		cy.get('[name="password"]').type(suite.WRONG_PASSWORD)
 		cy.get('input[value="Login"]').click()
 		cy.get('.alert-danger')
 	})

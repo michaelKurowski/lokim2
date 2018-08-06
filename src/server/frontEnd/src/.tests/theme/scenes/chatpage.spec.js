@@ -59,7 +59,7 @@ describe('<ChatPage />', () => {
 			expect(elementsCount).toBe(EXPECTED_ELEMENTS_COUNT)
 		})
 
-		it('redirects to homepage when user is logged in', () => {
+		it('redirects to chatpage when user is logged in', () => {
 			const EXPECTED_ELEMENTS_COUNT = 1
 			suite.store.dispatch(sessionActions.authorise(DUMMY_USERNAME))
 			const renderedTree = mount(suite.wrapper)

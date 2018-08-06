@@ -29,7 +29,6 @@ describe('<App />', () => {
 		const element = mount(createApp(suite.store))
 		const elementIdentifier = element.render().children()[0].attribs.id
 		expect(elementIdentifier).toBe(EXPECTED_ID)
-		console.log(suite.store)
 	})
 })
 
