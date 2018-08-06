@@ -23,7 +23,7 @@ class UserFinder extends React.Component {
 
 	showQuerryingResults() {
 		if (this.state.isQuerying)
-			return <UsersList usernames={this.props.foundUsers} onUserClick={this.inviteUser}/>
+			return <UsersList usernames={this.props.foundUsers} onUserClick={this.inviteUser} data-test='users-finder-results'/>
 	}
 
 	render() {

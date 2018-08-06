@@ -7,12 +7,16 @@ const {MemoryRouter, Route} = require('react-router-dom')
 const Adapter = require('enzyme-adapter-react-16')
 const HOME_URL = require('routing-config').paths.HOME
 const CHAT_URL = require('routing-config').paths.CHAT
-const initializeRedux = require('../../../initializeRedux')
+const initializeRedux = require('frontEnd/src/initializeRedux')
 const DUMMY_USERNAME = 'dummyUsername'
-const webSocketProvider = require('../../../services/webSocket/webSocketProvider')
+const webSocketProvider = require('services/webSocket/webSocketProvider')
 const MessageInput = require('../../../theme/scenes/chatpage/components/chatWindow/messageInput/messageInput')
+const WEB_SOCKET_PROTOCOL = require('../../../../../protocol/protocol.json')
+const findUsersActions = require('services/findUsers/findUsers.actions').actions
 let suite = {}
 
+const MOUSE_CLICK_EVENT = 'click'
+const FORM_SUBMIT_EVENT = 'submit'
 
 configure({adapter: new Adapter()})
 describe('<ChatPage />', () => {
@@ -86,16 +90,32 @@ describe('<ChatPage />', () => {
 			suite.store.dispatch({type: 'WEBSOCKET_CONNECTION_ESTABILISHED', payload: {namespace: 'room'}})
 			suite.store.dispatch({type: 'WEBSOCKET_CONNECTION_ESTABILISHED', payload: {namespace: 'users'}})
 			suite.store.dispatch({type: 'ADD_MEMBER', payload: {username: DUMMY_USERNAME, roomId: 'lala'}})
+			suite.renderedTree = mount(suite.wrapper)
 		})
-		describe('Messaging', () => {
+		describe('Sending message', () => {
 			describe('when already in room', () => {
 				beforeEach(() => {
-					suite.renderedTree = mount(suite.wrapper)
 					const roomDialer = suite.renderedTree.find('[data-test="list-dialer-element"]').first()
-					roomDialer.simulate('click')
+					roomDialer.simulate(MOUSE_CLICK_EVENT)
 				})
 
-				it('sends proper ws event when sending message', () => {
+					
+				it('doesn\'t sends websocket event when message input is empty', () => {
+					//given
+					const webSocketEmitSpy = suite.sinonSandbox.spy(webSocketProvider.get().room, 'emit')
+
+					const messageSendButton = suite.renderedTree.find('[data-test="send-message"]').first()
+	
+					//when
+					
+					messageSendButton.simulate(FORM_SUBMIT_EVENT)
+	
+					//then
+					const messageHasBeenSent = webSocketEmitSpy.calledWithMatch('message')
+					expect(messageHasBeenSent).toBe(false)
+				})
+
+				it('sends proper websocket event when sending message', () => {
 					//given
 					const WEBSOCKET_MESSAGE_MOCK = {
 						roomId: 'lala',
@@ -110,79 +130,173 @@ describe('<ChatPage />', () => {
 					//when
 					
 					messageSendInput.simulate('change', {target: {value: 'DOMMY_MESSAGE'}})
-					messageSendButton.simulate('submit')
+					messageSendButton.simulate(FORM_SUBMIT_EVENT)
 	
 					//then
 					const messageHasBeenSent = webSocketEmitSpy.calledWithMatch('message', WEBSOCKET_MESSAGE_MOCK)
 					expect(messageHasBeenSent).toBe(true)
 	
 				})
-	
-				it('doesn\'t sends websocket event if message input is empty', () => {
-					//given
-					const webSocketEmitSpy = suite.sinonSandbox.spy(webSocketProvider.get().room, 'emit')
+			})
 
+			describe('when not in any room', () => {
+				it('can\'t be done because of no send message button', () => {
+					//given
 					const messageSendButton = suite.renderedTree.find('[data-test="send-message"]').first()
 	
 					//when
-					
-					messageSendButton.simulate('submit')
+					const messageSendButtonAmount = messageSendButton.length
 	
 					//then
-					const messageHasBeenSent = webSocketEmitSpy.calledWithMatch('message')
-					expect(messageHasBeenSent).toBe(false)
-				})
-	
-				it('adds message to chat history when messages data of selected room changes in store', () => {
-					//given
-					const DUMMY_MESSAGE = {
-						message: 'DUMMY_MESSAGE',
-						timestamp: 121243454623453462346,
-						username: 'author',
-						roomId: 'lala'
-					}
-
-					//when
-					suite.store.dispatch({type: 'ADD_MESSAGE', payload: {message: DUMMY_MESSAGE, roomId: 'lala'}})
-					suite.renderedTree = mount(suite.wrapper)
-					const messagesHistory = suite.renderedTree.find('[data-test="chat-message"]').first()
-
-					//then
-					expect(messagesHistory.props().text).toBe('DUMMY_MESSAGE') 
+					expect(messageSendButtonAmount).toBe(0)
 				})
 			})
 
 		})
 
-		describe('Inviting users to chat', () => {
-			it('sends relevelant websocket event when typing username', () => {
+		describe('Receiving message', () => {
+			it('updates messages history when received message belongs to currently selected room', () => {
+				//given
+				const DUMMY_MESSAGE = {
+					message: 'DUMMY_MESSAGE',
+					timestamp: 121243454623453462346,
+					username: 'author',
+					roomId: 'lala'
+				}
 
+				//when
+				const roomDialer = suite.renderedTree.find('[data-test="list-dialer-element"]').first()
+				roomDialer.simulate(MOUSE_CLICK_EVENT)
+				suite.store.dispatch({type: 'ADD_MESSAGE', payload: {message: DUMMY_MESSAGE, roomId: 'lala'}})
+				suite.renderedTree = mount(suite.wrapper)
+				const messagesHistory = suite.renderedTree.find('[data-test="chat-message"]').first()
+
+				//then
+				expect(messagesHistory.props().text).toBe('DUMMY_MESSAGE') 
+			})
+
+			it('doesn\'t update messages history when received message is from nonselected room', () => {
+				//given
+				const DUMMY_MESSAGE = {
+					message: 'DUMMY_MESSAGE',
+					timestamp: 121243454623453462346,
+					username: 'author',
+					roomId: 'lala2'
+				}
+
+				//when
+				const roomDialer = suite.renderedTree.find('[data-test="list-dialer-element"]').first()
+				roomDialer.simulate(MOUSE_CLICK_EVENT)
+				suite.store.dispatch({type: 'ADD_MESSAGE', payload: {message: DUMMY_MESSAGE, roomId: 'lala2'}})
+				suite.renderedTree = mount(suite.wrapper)
+				const messagesHistory = suite.renderedTree.find('[data-test="chat-message"]').first()
+				const messagesCount = messagesHistory.length
+
+				//then
+				expect(messagesCount).toBe(0) 
+			})
+		})
+
+		describe('Searching for users', () => {
+			it('sends relevelant websocket event when typing username', () => {
+				//given
+				const DUMMY_USER_QUERY = {
+					queryPhrase: 'DUMMY_USERNAME'
+				}
+				const webSocketEmitSpy = suite.sinonSandbox.spy(webSocketProvider.get().users, 'emit')
+				const userQueryInput = suite.renderedTree.find('[data-test="user-query-input"]').first()
+
+				//when
+				userQueryInput.simulate('change', {target: {value: 'DUMMY_USERNAME'}})
+
+				//then
+				const hasWebscoketEventBeenSent = webSocketEmitSpy.calledWithMatch('find', DUMMY_USER_QUERY)
+				expect(hasWebscoketEventBeenSent).toBe(true)
 			})
 
 			it('shows found usernames when receiving relevelant websocket message', () => {
+				//given
+				const receivedUsers = [
+					'DUMMY_USER1',
+					'DUMMY_USER2'
+				]
+
+				const userQueryInput = suite.renderedTree.find('[data-test="user-query-input"]').first()
+				userQueryInput.simulate('change', {target: {value: 'DUMMY_USERNAME'}})
+
+				//when
+				
+				suite.store.dispatch(findUsersActions.usersFound(receivedUsers))
+				suite.renderedTree.update()
+
+
+				//then
+				const listOfUsernames = suite.renderedTree.find('[data-test="users-finder-results"]').first()
+				const displayedUsernamesFound = listOfUsernames.find('li').map(node => node.text())
+				expect(receivedUsers).toMatchObject(displayedUsernamesFound)
+			})
+
+			it('sends websocket request to create new room when clicking on found user', () => {
+				//given
+				const receivedUsers = [
+					'DUMMY_USER1'
+				]
+				const userQueryInput = suite.renderedTree.find('[data-test="user-query-input"]').first()
+				userQueryInput.simulate('change', {target: {value: 'DUMMY_USERNAME'}})
+				const webSocketEmitSpy = suite.sinonSandbox.spy(webSocketProvider.get().room, 'emit')
+				suite.store.dispatch(findUsersActions.usersFound(receivedUsers))
+				suite.renderedTree.update()
+				const listOfUsernames = suite.renderedTree.find('[data-test="users-finder-results"]').first()
+				const foundUser = listOfUsernames.find('li').first()
+
+				//when
+				foundUser.simulate(MOUSE_CLICK_EVENT)
+
+				//then
+				const EXPECTED_WEBSOCKET_PAYLOAD = {invitedUsersIndexes: ['DUMMY_USER1']}
+				const hasWebSocketEventBeenSent =
+					webSocketEmitSpy.calledWithMatch(WEB_SOCKET_PROTOCOL.room.eventTypes.CREATE, EXPECTED_WEBSOCKET_PAYLOAD)
+				expect(hasWebSocketEventBeenSent).toBe(true)
+			})
+		})
+
+		describe('Joining room', () => {
+			it('sends proper websocket event when joining to room', () => {
 
 			})
 
-			it('switches to new room when user is invited by somebody', () => {
+			it('causes selection of freshly joined room', () => {
+
+			})
+
+			it('adds room to rooms list', () => {
+
+			})
+
+
+		})
+
+		describe('Selecting room', () => {
+			it('changes visible messages history to messages present in the selected room', () => {
+
+			})
+
+			it('changes visible room members to ones present in the selected room', () => {
+				
+			})
+
+			it('changes destination for newly sent messages to selected room ID', () => {
 
 			})
 		})
 
-		describe('Joining rooms', () => {
-			it('sends proper action when joining to room', () => {
+		describe('Logging out', () => {
+			it('have logout button', () => {
 
 			})
 
-			it('adds room to avsilible rooms when list of rooms changes in store', () => {
-
-			})
-
-			it('changes messages history when selecting another room', () => {
-
-			})
-
-			it('changes room members when selecting another room', () => {
-				
+			it('logs user out when clicking logout button', () => {
+			
 			})
 		})
 	})

@@ -127,7 +127,7 @@ class ChatPage extends React.Component {
 						<h4>Room: {this.props.selectedRoom ? this.props.selectedRoom : 'none'}</h4>
 						{this.getSelectedRoom() ? <RoomMembersList usernames={this.getSelectedRoom().members}/> : <div></div>}
 						<ConnectStatus connection={this.isConnected()}/>
-						<UserFinder foundUsers={this.props.usersFound} createRoom={this.createRoom} findUser={this.props.findUsersByUsername}/>
+						<UserFinder data-test='user-finder' foundUsers={this.props.usersFound} createRoom={this.createRoom} findUser={this.props.findUsersByUsername}/>
 						<Link className='btn btn-danger' onClick={this.props.logOut} to={HOMEPAGE_PATH} >Logout</Link>
 					</SidePanel>
 				</div>

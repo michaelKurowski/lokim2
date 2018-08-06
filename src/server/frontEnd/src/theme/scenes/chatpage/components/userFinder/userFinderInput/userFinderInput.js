@@ -25,6 +25,7 @@ class UserFinderInput extends React.Component {
 				placeholder='Username'
 				value={this.props.isQuerying ? this.state.username : ''}
 				onChange={this.setUsername}
+				data-test='user-query-input'
 			/>
 		)
 	}
