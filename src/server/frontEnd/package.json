@@ -50,7 +50,8 @@
       "\\.(css|less)$": "<rootDir>/assetsTransformer.js",
       "^routing-config$": "<rootDir>/src/routes/routes.json",
       "services(.*)$": "<rootDir>/src/services$1",
-      "theme(.*)$": "<rootDir>/src/theme$1"
+      "theme(.*)$": "<rootDir>/src/theme$1",
+      "frontEnd(.*)$": "<rootDir>$1"
     },
     "verbose": true,
     "testURL": "http://localhost/"
