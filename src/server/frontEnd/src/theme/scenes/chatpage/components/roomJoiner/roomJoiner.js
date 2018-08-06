@@ -21,8 +21,14 @@ class RoomJoiner extends React.Component {
 	render() {
 		return (
 			<div>
-				<input className='form-control' palceholder='Room name' value={this.state.roomToJoin} onChange={this.handleRoomToJoinUserInput}/>
-				<button className='btn btn-primary' onClick={this.joinSelectedRoom}> Join Room </button>
+				<input
+					className='form-control'
+					palceholder='Room name'
+					value={this.state.roomToJoin}
+					onChange={this.handleRoomToJoinUserInput}
+					data-test='room-joiner-input'
+				/>
+				<button className='btn btn-primary' onClick={this.joinSelectedRoom} data-test='room-joiner-button'> Join Room </button>
 			</div>
 		)
 	}
