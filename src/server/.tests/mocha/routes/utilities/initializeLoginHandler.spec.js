@@ -14,11 +14,11 @@ describe('#initializeLoginHandler', () => {
 		})
 		suite.loginHandler = initializeLoginHandler(suite.requestMock, suite.responseMock)
 	})
-	it('should respond with error status code and description, when error is given', () => {
+	it('should respond with error status code and DESCRIPTION, when error is given', () => {
 		//given
 		const error = {
-			code: 401,
-			description: 'UNAUTHORIZED'
+			CODE: 401,
+			DESCRIPTION: 'UNAUTHORIZED'
 		}
 		const userInstance = {}
 		const info = null
@@ -29,9 +29,9 @@ describe('#initializeLoginHandler', () => {
 		//then
 		const statusCode = suite.responseMock._getStatusCode()
 		const payload = suite.responseMock._getData()
-		const expectedStatusCode = error.code
+		const expectedStatusCode = error.CODE
 		const expectedPayload = JSON.stringify({
-			description: error.description
+			DESCRIPTION: error.DESCRIPTION
 		})
 
 		assert.strictEqual(statusCode, expectedStatusCode)
@@ -54,7 +54,7 @@ describe('#initializeLoginHandler', () => {
 
 		const expectedStatusCode = 400
 		const expectedPayload = JSON.stringify({
-			description: 'BAD_REQUEST'
+			DESCRIPTION: 'BAD_REQUEST'
 		})
 
 		assert.strictEqual(statusCode, expectedStatusCode)

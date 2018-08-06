@@ -25,7 +25,7 @@ describe('logOutUser', () => {
 		const responseStatusCode = suite.responseMock._getStatusCode()
 
 		const expectedBody = JSON.stringify({
-			description: 'UNAUTHORIZED'
+			DESCRIPTION: 'UNAUTHORIZED'
 		})
 		const expectedStatusCode = 401
 
@@ -48,7 +48,7 @@ describe('logOutUser', () => {
 
 			const expectedStatusCode = 200
 			const expectedBody = JSON.stringify({ 
-				description: 'OK'
+				DESCRIPTION: 'OK'
 			})
 
 			assert.strictEqual(responseBody, expectedBody)
@@ -69,7 +69,7 @@ describe('logOutUser', () => {
 	
 			const expectedStatusCode = 400
 			const expectedBody = JSON.stringify({ 
-				description: 'BAD_REQUEST'
+				DESCRIPTION: 'BAD_REQUEST'
 			})
 	
 			assert.strictEqual(responseBody, expectedBody)
