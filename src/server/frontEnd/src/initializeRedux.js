@@ -13,7 +13,7 @@ const sessionReducer = require('./services/session/session.reducer')
 const findUsersReducer = require('./services/findUsers/findUsers.reducer')
 
 let composeWithDevTools
-let isDevMode = process.env.NODE_ENV === 'development' 
+let isDevMode = (process.env.NODE_ENV === 'development')
 
 if (!process.env.NODE_ENV) 
 	isDevMode = require('../../config.json').devPropeties.devMode
