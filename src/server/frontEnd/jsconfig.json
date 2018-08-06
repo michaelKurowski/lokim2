@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "theme/*": ["./src/theme/*"],
+            "services/*": ["./src/services/*"]
+          }
+    },
+    "include": [
+        "./src/.tests/**/*.js",
+        "./**/*.js"
+      ]
+}
