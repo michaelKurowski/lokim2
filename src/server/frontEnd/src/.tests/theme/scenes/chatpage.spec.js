@@ -10,7 +10,6 @@ const CHAT_URL = require('routing-config').paths.CHAT
 const initializeRedux = require('frontEnd/src/initializeRedux')
 const DUMMY_USERNAME = 'dummyUsername'
 const webSocketProvider = require('services/webSocket/webSocketProvider')
-const MessageInput = require('../../../theme/scenes/chatpage/components/chatWindow/messageInput/messageInput')
 const WEB_SOCKET_PROTOCOL = require('../../../../../protocol/protocol.json')
 const findUsersActions = require('services/findUsers/findUsers.actions').actions
 let suite = {}
