@@ -1,5 +1,5 @@
 const {createStore, applyMiddleware, combineReducers} = require('redux')
-const {composeWithDevTools} = require('redux-devtools-extension')
+
 
 //SAGA
 const createSagaMiddleware = require('redux-saga').default
@@ -12,7 +12,12 @@ const roomsManagementReducer = require('./services/roomsManagement/roomsManageme
 const sessionReducer = require('./services/session/session.reducer')
 const findUsersReducer = require('./services/findUsers/findUsers.reducer')
 
-const isDevMode = require('../../config.json').devPropeties.devMode
+let composeWithDevTools
+let isDevMode = (process.env.NODE_ENV === 'development')
+
+if (!process.env.NODE_ENV) isDevMode = require('../../config.json').devPropeties.devMode
+
+if (isDevMode) composeWithDevTools = require('redux-devtools-extension').composeWithDevTools
 
 function initializeRedux() {
 	const sagaMiddleware = createSagaMiddleware()
