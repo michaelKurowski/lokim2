@@ -23,6 +23,10 @@ const userSchema = new Schema({
 	}, 
 	salt:{
 		type: String
+	},
+	active: {
+		type: Boolean,
+		default: false
 	}
 })
 
