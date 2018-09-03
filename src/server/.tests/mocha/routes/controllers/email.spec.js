@@ -3,6 +3,11 @@ const assert = require('chai').assert
 const sinon = require('sinon')
 
 let suite = {}
+const DUMMY_EMAIL = 'dummy@mail.com'
+const DUMMY_SUBJECT = 'subject'
+const DUMMY_BODY = 'bodybodybody'
+const NO_EMAIL = null
+const EXPECTED_ERROR_MESSAGE = 'Receive address, subject or body cannot be undefined.'
 
 describe('email controller', () => {
 	beforeEach(() => {
@@ -29,5 +34,20 @@ describe('email controller', () => {
             const generatedToken2 = emailController.createToken()
             assert.notStrictEqual(generatedToken1, generatedToken2)
         })
+    })
+    describe('Mail Options', () => {
+      it('Should be equal.', () => {
+        const generatedOptions = emailController.mailOptions(DUMMY_EMAIL, DUMMY_SUBJECT, DUMMY_BODY)
+        const EXPECTED_OPTIONS = {
+            from: '"Lokim Messenger Services" <lokim.messenger@mail.com>',
+            to: 'dummy@mail.com',
+            subject: 'subject',
+            text: 'bodybodybody'
+        }
+        assert.deepStrictEqual(generatedOptions, EXPECTED_OPTIONS)
+      })
+      it('Should throw an error when no options are provided.', () => {
+          assert.throws(emailController.sendMail(NO_EMAIL), EXPECTED_ERROR_MESSAGE)
+      })
     })
 })

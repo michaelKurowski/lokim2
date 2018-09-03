@@ -60,5 +60,6 @@ function sendMail(recvAddress, subject, body){
 
 module.exports = { 
     createToken,
+    mailOptions: setMailOptions,
     sendMail   
 }
