@@ -1,4 +1,5 @@
 const crypto = require('crypto')
+const nodemailer = require('nodemailer')
 const HASH_ALGORITHM = 'sha256'
 const DIGEST_METHOD = 'hex'
 
