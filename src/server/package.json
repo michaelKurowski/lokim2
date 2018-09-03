@@ -58,6 +58,7 @@
     "mongoose": "^5.0.8",
     "mongoose-unique-validator": "^2.0.0",
     "nyc": "^14.0.0",
+    "nodemailer": "^4.6.8",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "passport.socketio": "^3.7.0",
