@@ -18,7 +18,7 @@ describe('email controller', () => {
         // })
         it('Should create a valid token based on Math.random and current date', () => {
             sinon.stub(Math, 'random').returns(4)
-            sinon.stub(Date, 'getTime').returns(1535984556)
+            sinon.stub(Date).returns(1535984556)
             const generatedToken = emailController.createToken()
             const EXPECTED_TOKEN = null; //ADD LATER #FIXME
 
