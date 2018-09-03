@@ -5,20 +5,24 @@ const _ = require('lodash')
 
 const HASH_ALGORITHM = 'sha256'
 const DIGEST_METHOD = 'hex'
+
 const testAccount = {
     email: process.env.EMAIL,
-    password: process.env.EMAIL_PASSWORD
+    password: process.env.EMAIL_PASSWORD,
+    host: process.env.EMAIL_HOST
 }
 
-let transporter = nodemailer.createTransport({
-    host: 'smtp.mail.com',
-    port: 587 ,
+const SMTP_OPTIONS = {
+    host: testAccount.host,
+    port: 587,
     secure: false,
     auth: {
         user: testAccount.email,
         pass: testAccount.password
     }
-})
+}
+
+let transporter = nodemailer.createTransport(SMTP_OPTIONS)
 
 transporter.verify((err) => {
     if(err) return console.log(err)
