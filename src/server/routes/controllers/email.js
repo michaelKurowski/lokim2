@@ -3,8 +3,7 @@ const nodemailer = require('nodemailer')
 const logger = require('../../logger')
 const _ = require('lodash')
 
-const HASH_ALGORITHM = 'sha256'
-const DIGEST_METHOD = 'hex'
+const HEX = 'hex'
 
 const testAccount = {
     email: process.env.EMAIL,
@@ -30,11 +29,7 @@ transporter.verify((err) => {
 })
 
 function createToken(){
-    const currentDate = (new Date().valueOf().toString())
-    const random = Math.random().toString()
-
-    const hash = crypto.createHash(HASH_ALGORITHM)
-    const token = hash.update(currentDate + random).digest(DIGEST_METHOD)
+    const token = crypto.randomBytes(20).toString(HEX)
     return token
 }
 
