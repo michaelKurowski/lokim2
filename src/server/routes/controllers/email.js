@@ -11,7 +11,7 @@ const testAccount = {
     host: process.env.EMAIL_HOST
 }
 
-const SMTP_OPTIONS = {
+const SMTP_OPTIONS = { //TODO: Add SMTPS
     host: testAccount.host,
     port: 587,
     secure: false,
@@ -56,5 +56,5 @@ function sendMail(recvAddress, subject, body){
 module.exports = { 
     createToken,
     mailOptions: setMailOptions,
-    sendMail   
+    sendMail
 }
