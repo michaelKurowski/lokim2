@@ -1,10 +1,9 @@
-const crypto = require('crypto')
+const responseManager = require('./utilities/responseManager')
+const config = require('../../config.json')
 const nodemailer = require('nodemailer')
 const logger = require('../../logger')
+const crypto = require('crypto')
 const _ = require('lodash')
-const config = require('../../config.json')
-
-const HEX = 'hex'
 
 const testAccount = {
     email: process.env.EMAIL || config.email.email,
@@ -24,14 +23,13 @@ const SMTP_OPTIONS = { //TODO: Add SMTPS
 
 let transporter = nodemailer.createTransport(SMTP_OPTIONS)
 
-logger.info(SMTP_OPTIONS)
 transporter.verify((err) => {
     if(err) return console.log(err)
     logger.info('Email server is ready to take our messages')
 })
 
 function createToken(){
-    const token = crypto.randomBytes(20).toString(HEX)
+    const token = crypto.randomBytes(20).toString('hex')
     return token
 }
 
@@ -55,8 +53,49 @@ function sendMail(recvAddress, subject, body){
     })
 }
 
+function prepareVerification(VerifyModel = require('../../models/verification')){
+    return (userData, host, token) => {
+        const {username, email} = userData
+        const link =`${host}/verification?key=${token}`
+        const subject = 'Verification Email'
+        const body = `You can activate your account at ${link}. It will expire after 30  days.` //TODO: Make it expire after 30 days
+
+        const verifyData = {username, token}
+        const verifyInstance = new VerifyModel(verifyData)
+        
+        verifyInstance.save()
+            .then(() => emailer.sendMail(email, subject, body))
+            .catch(err => {
+                logger.info(`Register contoller error: ${err}`)
+                responseManager.sendResponse(res, responseManager.MESSAGES.ERRORS.BAD_REQUEST)
+            })
+    }
+}
+
+function emailVerification(
+    Verify = require('../../models/verification'),
+    User = require('../../models/user')){
+    return (req, res, next) => {
+        const token = req.params.token
+        Verify.find({token}, (err, foundUser) => {
+            if(err) return responseManager.sendResponse(res, responseManager.MESSAGES.BAD_REQUEST)
+            const {username} = foundUser
+
+            //Find and update user
+            User.findAndModify({username}, {
+                active: true
+            })
+            //Delete the now-worthless hash token
+            Verify.deleteOne({username, token})
+            return responseManager.sendResponse(res, responseManager.MESSAGES.OK)
+        })
+    }
+}
+
 module.exports = { 
     createToken,
     mailOptions: setMailOptions,
-    sendMail
+    sendMail,
+    prepareVerification,
+    verifyUser: emailVerification
 }
