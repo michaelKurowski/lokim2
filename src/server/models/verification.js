@@ -1,6 +1,7 @@
 const dbConnection = require('../dbConnectionProvider').getDbConnection()
-const {Schema} = require('mongoose')
+const mongoose = require('mongoose')
 const uniqueValidator = require('mongoose-unique-validator')
+const Schema = mongoose.Schema
 
 const DUPLICATE_KEY_ERROR_DESC = 'There was a duplicate key'
 
