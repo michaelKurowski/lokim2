@@ -18,7 +18,7 @@ function createPostRegisterController(UserModel = require('../../models/user')) 
 
 		const serverURL = req.protocol + '://' + req.get('host') + req.originalUrl
 		const hashToken = emailer.createToken()
-		prepareVerification({
+		emailer.prepareVerification()({
 			username: userData.username,
 			email: userData.email
 		}, serverURL, hashToken)
@@ -31,25 +31,6 @@ function createPostRegisterController(UserModel = require('../../models/user')) 
 				responseManager.sendResponse(res, responseManager.MESSAGES.ERRORS.BAD_REQUEST)
 			})
 	}
-}
-
-function prepareVerification(userData, host, token){ //FIXME: NAME BETTER
-	const VerifyModel = require('../../models/verification')
-
-	const {username, email} = userData
-	const link =`${host}/verification?key=${token}`
-    const subject = 'Verification Email'
-	const body = `You can activate your account at ${link}. It will expire after 30  days.` //TODO: Make it expire after 30 days
-
-	const verifyData = {username, token}
-	const verifyInstance = new VerifyModel(verifyData)
-	
-	verifyInstance.save()
-		.then(() => emailer.sendMail(email, subject, body))
-		.catch(err => {
-			logger.info(`Register contoller error: ${err}`)
-			responseManager.sendResponse(res, responseManager.MESSAGES.ERRORS.BAD_REQUEST)
-		})
 }
 
 module.exports = {
