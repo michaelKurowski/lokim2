@@ -1,12 +1,15 @@
 const logger = require('../logger')
 
-const addNotification = (NotificationModel, UserModel, sendingNotificationUsername, recievingNotificationUsername, notificationType) => {
+const addNotification = (sendingNotificationUsername, receivingNotificationUsername, notificationType, 
+	NotificationModel= require('../models/notification'), 
+	UserModel = require('../models/user')) => {
+		
 	const notificationData = {
 		username: sendingNotificationUsername,
 		notificationType
 	}
 	const searchingCriteria = {
-		username: recievingNotificationUsername
+		username: receivingNotificationUsername
 	}
 	const newNotification = new NotificationModel(notificationData)
 
@@ -18,9 +21,9 @@ const addNotification = (NotificationModel, UserModel, sendingNotificationUserna
 		.then(() => newNotification)	
 }
 
-const sendMessageToSepcificUser = (socket, connetcions, recieverUsername, eventType, payload) => {
-	if (connetcions.usersToConnectionsMap.has(recieverUsername)) {
-		const receivingUserSocketId = connetcions.usersToConnectionsMap.get(recieverUsername).id
+const emitEventToUser = (socket, connections, receivingUsername, eventType, payload) => {
+	if (connections.usersToConnectionsMap.has(receivingUsername)) {
+		const receivingUserSocketId = connections.usersToConnectionsMap.get(receivingUsername).id
 		socket.to(receivingUserSocketId).emit(eventType, payload)
 		return true
 	}
@@ -33,6 +36,6 @@ const errorWrapper = (event, err) => {
 
 module.exports = {
 	addNotification,
-	sendMessageToSepcificUser,
+	emitEventToUser,
 	errorWrapper
 }

@@ -3,7 +3,7 @@ const _ = require('lodash')
 const mongoose = require('mongoose')
 const uniqueValidator = require('mongoose-unique-validator')
 const NotificationModel = require('./notification')
-const friendsSchema = require('./friendsSchema')
+const FriendModel = require('./friend')
 const Schema = mongoose.Schema
 
 const MESSAGES = {
@@ -29,9 +29,9 @@ const userSchema = new Schema({
 	salt:{
 		type: String
 	},
-	pendingNotifications:[NotificationModel.schema],
+	notifications:[NotificationModel.schema],
 	friends:{
-		type: [friendsSchema],
+		type: [FriendModel.schema],
 		validate: {
 			validator: val => {
 				const usernamesList = _.map(val, user => user.username)

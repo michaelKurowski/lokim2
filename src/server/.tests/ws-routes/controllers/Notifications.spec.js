@@ -42,10 +42,10 @@ describe('Notifications websocket namespace', () => {
 
 			//when
 			suite.notificationsInstance.removeNotifications(DUMMY_DATA, suite.socketMock)
-				.then(asserations)
+				.then(assertions)
 
 			//then
-			function asserations() {
+			function assertions() {
 				sinon.assert.calledWith(suite.socketMock.emit, CLIENT_EVENTS.REMOVE_NOTIFICATIONS)
 				done()
 			}
@@ -74,14 +74,14 @@ describe('Notifications websocket namespace', () => {
 
 			//when
 			suite.notificationsInstance.removeNotifications(DUMMY_DATA, suite.socketMock)
-				.then(asserations)
+				.then(assertions)
 			
 			//then
-			function asserations() {
+			function assertions() {
 				const expectedSearchingCriteria = {username: suite.DUMMY_USERNAME}
 				const expectedQuery = {
 					$pull: {
-						pendingNotifications: {
+						notifications: {
 							$or: DUMMY_DATA.notificationIds
 						}
 					}
@@ -92,14 +92,14 @@ describe('Notifications websocket namespace', () => {
 		})
 	})
 
-	describe('#PendingNotifications', () => {
+	describe('#Notifications', () => {
 
-		it('should call emit with pending notifications event type and attached array with notifications to response', done => {
+		it('should call emit notifications event type and attached array with notifications to response', done => {
 			//given
 			const DUMMY_DATA = {}
 			const QUERY_FEEDBACK_MOCK = {
 				username: suite.DUMMY_USERNAME,
-				pendingNotifications: [
+				notifications: [
 					{
 						username: 'DUMMY_USERNAME_2',
 						notificationType: CLIENT_EVENTS.INVITE
@@ -114,13 +114,16 @@ describe('Notifications websocket namespace', () => {
 			suite.userModelMock.find.returns(queryResultMock)
 
 			//when
-			suite.notificationsInstance.getPendingNotifications(DUMMY_DATA, suite.socketMock)
-				.then(asserations)
+			suite.notificationsInstance.getNotifications(DUMMY_DATA, suite.socketMock)
+				.then(assertions)
 			
 			//then
-			function asserations() {
-				const expectedAttachment = QUERY_FEEDBACK_MOCK.pendingNotifications
-				sinon.assert.calledWith(suite.socketMock.emit.firstCall, CLIENT_EVENTS.GET_PENDING_NOTIFICATIONS, expectedAttachment)
+			function assertions() {
+				const expectedAttachment = QUERY_FEEDBACK_MOCK.notifications
+				sinon.assert.calledWith(
+					suite.socketMock.emit.firstCall, 
+					CLIENT_EVENTS.GET_NOTIFICATIONS, 
+					expectedAttachment)
 				done()
 			}
 		})

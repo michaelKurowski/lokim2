@@ -28,7 +28,7 @@ class Notifications {
 		const searchingCriteria = {username: requestingUsername}
 		const query = {	
 			$pull: {
-				pendingNotifications: {
+				notifications: {
 					$or: notificationIdsList
 				}
 			}
@@ -40,18 +40,18 @@ class Notifications {
 	}
 
 	/**
-	 * User gets list of pending notifications
+	 * User gets list of notifications
 	 * @name getPendingNotifications
 	 * @memberof Notifications
 	 */
-	[EVENT_TYPES.GET_PENDING_NOTIFICATIONS](data, socket) {
+	[EVENT_TYPES.GET_NOTIFICATIONS](data, socket) {
 		const {username} = socket.request.user
 		return this.UserModel.find({username}).exec()
 			.then(users => {
-				const pendingNotificationsArray = users[0].pendingNotifications
-				socket.emit(EVENT_TYPES.GET_PENDING_NOTIFICATIONS, pendingNotificationsArray)
+				const notificationsArray = users[0].notifications
+				socket.emit(EVENT_TYPES.GET_NOTIFICATIONS, notificationsArray)
 			})
-			.catch(err => this.utils.errorWrapper(EVENT_TYPES.GET_PENDING_NOTIFICATIONS, err))
+			.catch(err => this.utils.errorWrapper(EVENT_TYPES.GET_NOTIFICATIONS, err))
 	}
 }
 
