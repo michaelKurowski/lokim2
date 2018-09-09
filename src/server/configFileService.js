@@ -50,9 +50,9 @@ module.exports = function ({
 function validateDatabaseConfig(database) {
 	if (!process.env.DB_HOSTNAME)
 		assert.isNotEmpty(database.host, ERROR_MESSAGES.DATABASE.EMPTY_HOSTNAME)
-	if (!process.env.DB_USERNAME && database.username)
+	if (!process.env.DB_USERNAME && !database.username)
 		console.warn(ERROR_MESSAGES.DATABASE.EMPTY_USERNAME)
-	if (!process.env.DB_PASSWORD && database.password)
+	if (!process.env.DB_PASSWORD && !database.password)
 		console.warn(ERROR_MESSAGES.DATABASE.EMPTY_PASSWORD)	
 }
 
