@@ -84,16 +84,14 @@ function emailVerification(
             }
             const {username} = foundUser
             console.log('foundUser', foundUser)
-            
+
             //Find and update user
             User.findOneAndUpdate({username}, {
                 active: true
             }, (err) => {
                 if (err) return console.log(err)
-                Verify.remove({username, token}, (err, success) => {
-                    console.log('Remove Message:', err || success)
-                    return responseManager.sendResponse(res, responseManager.MESSAGES.SUCCESSES.OK)
-                })
+                Verify.remove({token}, (err) => console.log)
+                return responseManager.sendResponse(res, responseManager.MESSAGES.SUCCESSES.OK)
             })
         })
     }
