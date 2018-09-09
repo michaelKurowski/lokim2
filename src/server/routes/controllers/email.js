@@ -56,9 +56,9 @@ function sendMail(recvAddress, subject, body){
 function prepareVerification(VerifyModel = require('../../models/verification')){
     return (userData, host, token) => {
         const {username, email} = userData
-        const link =`${host}/verify?${token}`
+        const link =`${host}/verify/${token}`
         const subject = 'Verification Email'
-        const body = `You can activate your account at ${link}. It will expire after 30  days.` //TODO: Make it expire after 30 days
+        const body = `You can activate your account at ${link} \nIt will expire after 30  days.` //TODO: Make it expire after 30 days
 
         const verifyData = {username, token}
         const verifyInstance = new VerifyModel(verifyData)
@@ -76,20 +76,18 @@ function emailVerification(
     User = require('../../models/user')){
     return (req, res, next) => {
         const token = req.params.token
-        console.log('Token:', token)
-        Verify.find({token}, (err, foundUser) => {
-            if(err) {
-                console.log('Verify Find Token Error: ', err)
-                return responseManager.sendResponse(res, responseManager.MESSAGES.ERRORS.BAD_REQUEST)
-            }
-            const {username} = foundUser
-            console.log('foundUser', foundUser)
+        
+        if(_.isEmpty(token))
+            return responseManager.sendResponse(res, responseManager.MESSAGES.ERRORS.BAD_REQUEST)
 
-            //Find and update user
-            User.findOneAndUpdate({username}, {
-                active: true
-            }, (err) => {
-                if (err) return console.log(err)
+        Verify.find({token}, (err, foundUser) => {
+            if(err) 
+                return responseManager.sendResponse(res, responseManager.MESSAGES.ERRORS.BAD_REQUEST)
+
+            const {username} = foundUser
+
+            User.findOneAndUpdate({username}, {active: true}, (err) => { 
+                if (err) return responseManager.sendResponse(res, responseManager.MESSAGES.ERRORS.BAD_REQUEST)
                 Verify.remove({token}, (err) => console.log)
                 return responseManager.sendResponse(res, responseManager.MESSAGES.SUCCESSES.OK)
             })
