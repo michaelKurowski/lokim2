@@ -11,7 +11,7 @@ const path = require('path')
 router.post('/register', registerController.post())
 router.post('/login', logInUser())
 router.post('/logout', isUserAuthenticated(), logOutUser())
-router.post('/verify', emailController.verifyUser())
+router.get('/verify/:token', emailController.verifyUser())
 
 router.use('/protocol', express.static(path.join(process.cwd(), '/protocol')))
 router.use('/', express.static(path.join(process.cwd(), '/public')))

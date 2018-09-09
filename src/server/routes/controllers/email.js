@@ -56,7 +56,7 @@ function sendMail(recvAddress, subject, body){
 function prepareVerification(VerifyModel = require('../../models/verification')){
     return (userData, host, token) => {
         const {username, email} = userData
-        const link =`${host}/verification?key=${token}`
+        const link =`${host}/verify?${token}`
         const subject = 'Verification Email'
         const body = `You can activate your account at ${link}. It will expire after 30  days.` //TODO: Make it expire after 30 days
 
@@ -64,10 +64,9 @@ function prepareVerification(VerifyModel = require('../../models/verification'))
         const verifyInstance = new VerifyModel(verifyData)
         
         verifyInstance.save()
-            .then(() => emailer.sendMail(email, subject, body))
+            .then(() => sendMail(email, subject, body))
             .catch(err => {
-                logger.info(`Register contoller error: ${err}`)
-                responseManager.sendResponse(res, responseManager.MESSAGES.ERRORS.BAD_REQUEST)
+                logger.info(`Email contoller error: ${err}`)
             })
     }
 }
@@ -77,17 +76,24 @@ function emailVerification(
     User = require('../../models/user')){
     return (req, res, next) => {
         const token = req.params.token
+        console.log('Token:', token)
         Verify.find({token}, (err, foundUser) => {
-            if(err) return responseManager.sendResponse(res, responseManager.MESSAGES.BAD_REQUEST)
+            if(err) {
+                console.log('Verify Find Token Error: ', err)
+                return responseManager.sendResponse(res, responseManager.MESSAGES.ERRORS.BAD_REQUEST)
+            }
             const {username} = foundUser
-
+            console.log('foundUser', foundUser)
             //Find and update user
-            User.findAndModify({username}, {
+            User.findOneAndUpdate({username}, {
                 active: true
+            }, (err, success) => {
+                console.log('Update Message:', err || success)
+                Verify.remove({username, token}, (err, success) => {
+                    console.log('Remove Message:', err || success)
+                    return responseManager.sendResponse(res, responseManager.MESSAGES.SUCCESSES.OK)
+                })
             })
-            //Delete the now-worthless hash token
-            Verify.deleteOne({username, token})
-            return responseManager.sendResponse(res, responseManager.MESSAGES.OK)
         })
     }
 }
