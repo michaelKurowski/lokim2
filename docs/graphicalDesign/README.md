@@ -4,6 +4,7 @@
 ## Tertiary
 # Design
 ## Texture and Overall Feeling
+ - Flat Design Style
  - Offset shadows
  - Avoid borders, give sections different colors, or apply shadows
  - Keep extra spacing between sections
