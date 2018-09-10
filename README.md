@@ -1,29 +1,61 @@
-# Lokim project
-This is a backend for LokIM Instant Messanger, focused on anonymity and security of its users.
-## How to use
-1. Clone a repository with `git clone <repository URL>`.
-2. Configure `/src/server/config.json`.
-3. When starting the server for the first time, run: `npm i`, `npm run build`, and `npm start` from `/src/server` directory in.
-4. After that just run `npm start` every time to start the server
-## For devs
-In order to run tests, run `npm test` from `/src/server`.
-`npm run build-dev` to build app for dev mode
-You can use it, and debug from inside Visual Studio Code by running `Mocha Tests` debug task.
-
-To generate docs, run `npm run generate-docs`
+# LokIM
+LokIM is NodeJS & React based Instant Messanger.
+## Prerequisites
+ - NodeJS 8.0 or newer
+## How to start (for users)
+ 1. Clone a repository with `git clone <repository URL>`
+ 2. Run `npm i` inside `/src/server/`
+ 3. Run `npm i` inside `/src/server/frontEnd/`
+ 4. Run `npm run build` inside `/src/server/` directory.
+ 5. Run `npm run generate-config` from the same directory as before.
+ 6. Fill `/src/server/config.json` or set appropiate environmental variables.
+ 7. Run `npm start` from `src/server/`
+## How to start (for development team)
+ 1. Clone a repository with `git clone <repository URL>`
+ 2. Run `npm i` inside `/src/server/`
+ 3. Run `npm i` inside `/src/server/frontEnd/`
+ 4. Run `npm run build-dev` inside `/src/server/` directory.
+ 5. Run `npm run generate-config` from the same directory as before.
+ 6. Fill `/src/server/config.json` or set appropiate environmental variables.
+ 7. Run `npm start` from `src/server/`
+## Environmental variables
+ - `DB_USERNAME` MongoDB Username
+ - `DB_PASSWORD` MongoDB Password
+ - `DB_HOSTNAME` MongoDB Hostname
+## Development specific command
+### Tests
+ - For unit and integration tests on backend run `npm test` in `/src/server`
+ - For unit and integration tests on frontend run `npm test` in `/src/server/frontEnd/`
+ - In order to collect server test coverage, run `npm run test-coverage` in `src/server/`
+ - In order to collect frontend test coverage, run `npm run test-coverage` in `src/server/frontEnd/`
+ - For E2E tests run `npm run test-cypress`
+### Linting
+ - Run `npm run eslint` in `src/server/` to lint the whole project.
+ - Run `npm run eslint-auto-fix` in `src/server/` to automatically fix trivial linting errors.
+### Docs
+ - Run `npm run generate-docs` in `src/server/` to generate endpoints documentation inside the project.
 ## Technologies used:
-* DB
+* Database
     * MongoDB
-    * Redis
 * Backend
 	* Express
 	* Winston
 	* Mongoose
 	* Passport
-* Dev tools
-    * Eslint
-    * Testing tools
+    * **Dev tools**
         * Mocha
         * Chai
         * Node HTTP Mocks
         * Sinon
+* Frontend
+    * React
+    * Redux
+    * Redux Sagas
+    * **Dev tools**
+        * Jest
+        * Enzyme
+        * Sinon
+* Dev tools
+    * Eslint
+    * Cypress 
+
