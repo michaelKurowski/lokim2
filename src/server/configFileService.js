@@ -5,7 +5,7 @@ const FILE_NOT_EXISTING = 'ENOENT'
 const assert = require('chai').assert
 const ERROR_MESSAGES = require('./miscellaneous/configErrorMessages.json')
 /*
-	We disable eslint here, as logger is not yet initialized 
+	We disable eslint no-console rule here, as logger is not yet initialized 
 	at the moment when configFileService is being ran for the first time.
 */
 /* eslint-disable no-console */
