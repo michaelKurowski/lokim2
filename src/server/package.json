@@ -88,6 +88,7 @@
     "mocha": "^5.0.4",
     "node-mocks-http": "^1.5.8",
     "nyc": "^11.7.1",
-    "sinon": "^4.4.2"
+    "sinon": "^4.4.2",
+    "webpack-stream": "^5.1.1"
   }
 }
