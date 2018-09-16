@@ -1,7 +1,13 @@
 # Color palette
-## Primary
-## Secondary
-## Tertiary
+Primary color dark:   #455A64  
+Primary color:        #607D8B  
+Primary color light:  #CFD8DC  
+Primary color text:   #FFFFFF  
+Accent color:         #009688  
+Primary text color:   #212121  
+Secondary text color: #757575  
+Divider color:        #BDBDBD  
+
 # Design
 ## Texture and Overall Feeling
  - Flat Design Style
