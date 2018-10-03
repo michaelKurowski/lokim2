@@ -71,7 +71,7 @@ function prepareVerification(VerifyModel = require('../../models/verification'))
     }
 }
 
-function emailVerification(
+function emailVerification( //TODO: rename this, ambiguous with prepareVerification
     Verify = require('../../models/verification'),
     User = require('../../models/user')){
     return (req, res, next) => {
