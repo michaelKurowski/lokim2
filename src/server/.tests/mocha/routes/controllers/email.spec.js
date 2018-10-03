@@ -2,17 +2,29 @@ const emailController = require('../../../../routes/controllers/email')
 const assert = require('chai').assert
 const sinon = require('sinon')
 const crypto = require('crypto')
-let suite = {}
+const nodemailer = require('nodemailer')
+
 const DUMMY_EMAIL = 'dummy@mail.com'
 const DUMMY_SUBJECT = 'subject'
 const DUMMY_BODY = 'bodybodybody'
-const NO_EMAIL = null
+const NO_EMAIL = [null, null, null]
 const EXPECTED_ERROR_MESSAGE = 'Receive address, subject or body cannot be undefined.'
 const BUFFER_ALLOC_SIZE = 20
+const DUMMY_OPTIONS = {
+    to: DUMMY_EMAIL,
+    subject: DUMMY_SUBJECT,
+    text: DUMMY_BODY
+}
 const BUFFER_VALUE = 2
+const DUMMY_TRANSPORT = {
+    sendMail: (data, callback) => {
+        const err = new Error('some error');
+        callback(err, null);
+    }
+}
 const HEX = 'hex'
 
-describe('email controller', () => {
+describe('E-mail Controller', () => {
 	beforeEach(() => {
         suite = {}
     })
@@ -57,11 +69,26 @@ describe('email controller', () => {
       })
     })
     describe('Sending Mail', () => {
-        it('Should send an e-mail with the specified details.', () => {
+        let sandbox 
 
+        beforeEach(() => {
+             sandbox = sinon.sandbox.create()            
+        })
+        afterEach(() => {
+            sandbox.restore()
+        })
+        //TODO: Maybe refactor, not happy with this.
+        it('Should send an e-mail with the specified details.', () => {
+            const TEST_OPTIONS = emailController.mailOptions(...DUMMY_OPTIONS)
+            sandbox.stub(nodemailer, 'createTransport').returns(DUMMY_TRANSPORT)
+            const transport = nodemailer.createTransport()
+
+            emailController.sendMail(transport)(TEST_OPTIONS, (err) => {
+                assert.strictEqual(err, null)
+            })
         })
         it('Should throw an error when no options are provided.', () => {
-            assert.throws(() => emailController.sendMail(NO_EMAIL), Error, EXPECTED_ERROR_MESSAGE)
+            assert.throws(() => emailController.sendMail(DUMMY_TRANSPORT)(NO_EMAIL), Error, EXPECTED_ERROR_MESSAGE)
         })
     })
     describe('Prepare Verification', () => {
@@ -86,7 +113,7 @@ describe('email controller', () => {
 
         })
         it('Should return a BAD_REQUEST if there is no user in the user table that matches the username found in the verify table.', () => {
-            
+
         })
         it('Should find a user and update his active flag to true, delete the token and return OK', () => {
 

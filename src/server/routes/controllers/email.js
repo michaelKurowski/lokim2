@@ -21,12 +21,16 @@ const SMTP_OPTIONS = { //TODO: Add SMTPS
     }
 }
 
-let transporter = nodemailer.createTransport(SMTP_OPTIONS)
+async function prepareTransporter(){
+    let transporter = nodemailer.createTransport(SMTP_OPTIONS)
 
-transporter.verify((err) => {
-    if(err) return console.log(err)
-    logger.info('Email server is ready to take our messages')
-})
+    await transporter.verify((err) => {
+        if(err) return console.log(err)
+        logger.info('Email server is ready to take our messages')
+    })
+
+    return transporter
+}
 
 function createToken(){
     const token = crypto.randomBytes(20).toString('hex')
@@ -42,15 +46,15 @@ function setMailOptions(recvAddress, subject, body){
     }
 }
 
-function sendMail(recvAddress, subject, body){
-    if([recvAddress, subject, body].some(_.isEmpty)) throw new Error('Receive address, subject or body cannot be undefined.')
-
-    const mailOptions = setMailOptions(recvAddress, subject, body)
-    
-    transporter.sendMail(mailOptions, (err, info) => {
-        if(err) return console.log(err)
-        console.log('Message sent: %s', info.messageId)
-    })
+function sendMail(transporter = prepareTransporter()){
+    return (mailOptions) => {
+        if([...mailOptions].some(_.isEmpty)) throw new Error('Receive address, subject or body cannot be undefined.')
+        
+        transporter.sendMail(mailOptions, (err, info) => {
+            if(err) return console.log(err)
+            console.log('Message sent: %s', info.messageId)
+        })
+    }
 }
 
 function prepareVerification(VerifyModel = require('../../models/verification')){
