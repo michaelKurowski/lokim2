@@ -1,7 +1,7 @@
 const emailController = require('../../../../routes/controllers/email')
 const assert = require('chai').assert
 const sinon = require('sinon')
-
+const crypto = require('crypto')
 let suite = {}
 const DUMMY_EMAIL = 'dummy@mail.com'
 const DUMMY_SUBJECT = 'subject'
@@ -29,11 +29,11 @@ describe('email controller', () => {
         })
         it('Should create a valid token of length 20', () => {
             const buf1 = Buffer.alloc(BUFFER_ALLOC_SIZE, BUFFER_VALUE)
-            sinon.stub(crypto, 'randomBytes').returns(buf1)
+            sandbox.stub(crypto, 'randomBytes').returns(buf1)
 
             const generatedToken = emailController.createToken()
             const EXPECTED_TOKEN = buf1.toString(HEX)
-            const EXPECTED_LENGTH = 20
+            const EXPECTED_LENGTH = 40
 
             assert.strictEqual(generatedToken, EXPECTED_TOKEN)
             assert.strictEqual(generatedToken.length, EXPECTED_LENGTH)
@@ -55,8 +55,41 @@ describe('email controller', () => {
         }
         assert.deepStrictEqual(generatedOptions, EXPECTED_OPTIONS)
       })
-      it('Should throw an error when no options are provided.', () => {
-          assert.throws(emailController.sendMail(NO_EMAIL), EXPECTED_ERROR_MESSAGE)
-      })
+    })
+    describe('Sending Mail', () => {
+        it('Should send an e-mail with the specified details.', () => {
+
+        })
+        it('Should throw an error when no options are provided.', () => {
+            assert.throws(() => emailController.sendMail(NO_EMAIL), Error, EXPECTED_ERROR_MESSAGE)
+        })
+    })
+    describe('Prepare Verification', () => {
+        it('Should accept user data, URL of host domain, and a verification token.', () => {
+
+        })
+        it('Should save an instance of the user with the verification token to the verification table.', () => {
+
+        })
+        it('Should throw an error if any of the details are undefined.', () => {
+
+        })
+    })
+    describe('Email Verification', () => {
+        it('Should return a BAD_REQUEST message if no token is provided.', () => {
+
+        })
+        it('Should find a user based on the token.', () => {
+
+        })
+        it('Should return a BAD_REQUEST if no user is found.', () => {
+
+        })
+        it('Should return a BAD_REQUEST if there is no user in the user table that matches the username found in the verify table.', () => {
+            
+        })
+        it('Should find a user and update his active flag to true, delete the token and return OK', () => {
+
+        })
     })
 })
