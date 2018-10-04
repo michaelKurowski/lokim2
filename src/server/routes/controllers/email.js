@@ -48,8 +48,12 @@ function setMailOptions(recvAddress, subject, body){
 
 function sendMail(transporter = prepareTransporter()){
     return (mailOptions) => {
-        if([...mailOptions].some(_.isEmpty)) throw new Error('Receive address, subject or body cannot be undefined.')
-        
+        for(let key in mailOptions){
+            if(Object.hasOwnProperty.call(mailOptions, key)){ //Filters out unimportant props (ie. from prototype chain)
+                if(_.isEmpty(mailOptions[key])) throw new Error('Mail options cannot be undefined.')
+            }
+        }
+
         transporter.sendMail(mailOptions, (err, info) => {
             if(err) return console.log(err)
             console.log('Message sent: %s', info.messageId)
