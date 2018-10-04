@@ -8,7 +8,7 @@ const DUMMY_EMAIL = 'dummy@mail.com'
 const DUMMY_SUBJECT = 'subject'
 const DUMMY_BODY = 'bodybodybody'
 const NO_EMAIL = [null, null, null]
-const EXPECTED_ERROR_MESSAGE = 'Receive address, subject or body cannot be undefined.'
+const EXPECTED_ERROR_MESSAGE = 'Mail options cannot be undefined.'
 const BUFFER_ALLOC_SIZE = 20
 const DUMMY_OPTIONS = {
     to: DUMMY_EMAIL,
@@ -18,8 +18,9 @@ const DUMMY_OPTIONS = {
 const BUFFER_VALUE = 2
 const DUMMY_TRANSPORT = {
     sendMail: (data, callback) => {
-        const err = new Error('some error');
-        callback(err, null);
+        callback(null, {
+            messageId: 1
+        });
     }
 }
 const HEX = 'hex'
@@ -79,11 +80,9 @@ describe('E-mail Controller', () => {
         })
         //TODO: Maybe refactor, not happy with this.
         it('Should send an e-mail with the specified details.', () => {
-            const TEST_OPTIONS = emailController.mailOptions(...DUMMY_OPTIONS)
             sandbox.stub(nodemailer, 'createTransport').returns(DUMMY_TRANSPORT)
             const transport = nodemailer.createTransport()
-
-            emailController.sendMail(transport)(TEST_OPTIONS, (err) => {
+            emailController.sendMail(transport)(DUMMY_OPTIONS, (err) => {
                 assert.strictEqual(err, null)
             })
         })
