@@ -3,10 +3,13 @@ const assert = require('chai').assert
 const sinon = require('sinon')
 const crypto = require('crypto')
 const nodemailer = require('nodemailer')
-
 const DUMMY_EMAIL = 'dummy@mail.com'
 const DUMMY_SUBJECT = 'subject'
 const DUMMY_BODY = 'bodybodybody'
+const DUMMY_USER = 'dummyUser'
+const DUMMY_PASSWORD = 'dummyPassword'
+const DUMMY_HOST = 'localhost'
+const DUMMY_TOKEN = '1234567890!#'
 const NO_EMAIL = [null, null, null]
 const EXPECTED_ERROR_MESSAGE = 'Mail options cannot be undefined.'
 const BUFFER_ALLOC_SIZE = 20
@@ -73,7 +76,7 @@ describe('E-mail Controller', () => {
         let sandbox 
 
         beforeEach(() => {
-             sandbox = sinon.sandbox.create()            
+            sandbox = sinon.sandbox.create()        
         })
         afterEach(() => {
             sandbox.restore()
@@ -102,8 +105,37 @@ describe('E-mail Controller', () => {
         })
     })
     describe('Email Verification', () => {
-        it('Should return a BAD_REQUEST message if no token is provided.', () => {
+        let suite = {}
 
+        beforeEach(() => {
+            const verifyMock = {
+                find: function(token, callback){
+                    return callback(null, {username: DUMMY_USER})
+                },
+                remove: function(token, callback){
+                    return callback
+                }
+            }
+
+            const userMock = {
+                findOneAndUpdate: function(username, action, callback){
+                    return callback
+                }
+            }
+            suite.verify = emailController.verifyUser(verifyMock, userMock)
+        })
+        afterEach(() => {
+            suite = {}
+        })
+
+        it('Should return a BAD_REQUEST message if no token is provided.', () => {
+            const NO_TOKEN = null
+            const EXPECTED_RESULT = {
+                CODE: 400, 
+                DESCRIPTION: 'BAD_REQUEST'
+            }
+            const ACTUAL_RESULT = emailController.verifyUser(NO_TOKEN)
+            assert.deepStrictEqual(ACTUAL_RESULT, EXPECTED_RESULT)
         })
         it('Should find a user based on the token.', () => {
 
