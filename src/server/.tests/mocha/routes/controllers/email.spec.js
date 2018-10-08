@@ -13,26 +13,31 @@ const DUMMY_TOKEN = '1234567890!#'
 const NO_EMAIL = [null, null, null]
 const EXPECTED_ERROR_MESSAGE = 'Mail options cannot be undefined.'
 const BUFFER_ALLOC_SIZE = 20
+const INVALID_TOKEN = null
+const INVALID_USER = null
 const DUMMY_OPTIONS = {
     to: DUMMY_EMAIL,
     subject: DUMMY_SUBJECT,
     text: DUMMY_BODY
 }
 const BUFFER_VALUE = 2
-const DUMMY_TRANSPORT = {
-    sendMail: (data, callback) => {
-        callback(null, {
-            messageId: 1
-        });
-    }
-}
 const HEX = 'hex'
 
-describe('E-mail Controller', () => {
-	beforeEach(() => {
-        suite = {}
-    })
+const RES_MOCK = {
+    _code: "",
+    json: (obj) => {
+        return {
+            CODE: _code,
+            DESCRIPTION: obj.DESCRIPTION
+        }
+    },
+    status: function(code){
+        _code = code
+        return this
+    }
+}
 
+describe('E-mail Controller', () => {
     describe('Sandboxed Token Creation', () => {
         let sandbox
 
@@ -74,7 +79,9 @@ describe('E-mail Controller', () => {
     })
     describe('Sending Mail', () => {
         let sandbox 
-
+        const DUMMY_TRANSPORT = {
+            sendMail: sinon.spy()
+        }
         beforeEach(() => {
             sandbox = sinon.sandbox.create()        
         })
@@ -93,15 +100,47 @@ describe('E-mail Controller', () => {
             assert.throws(() => emailController.sendMail(DUMMY_TRANSPORT)(NO_EMAIL), Error, EXPECTED_ERROR_MESSAGE)
         })
     })
-    describe('Prepare Verification', () => {
-        it('Should accept user data, URL of host domain, and a verification token.', () => {
-
+    describe('Save Record to DB', () => {
+        let suite = {}
+        const verifyMock = function(){
+            return {
+                save: sinon.stub().returns(new Promise(res => res()))
+            }
+        }
+        beforeEach(() => {
+            suite.saveRecord = emailController.saveRecordToDB(verifyMock)
         })
-        it('Should save an instance of the user with the verification token to the verification table.', () => {
-
+        afterEach(() => {
+            suite = {}
         })
-        it('Should throw an error if any of the details are undefined.', () => {
+        it('Should return true if all inputs are valid.', () => {
+            const ACTUAL_RESULT = suite.saveRecord(DUMMY_USER, DUMMY_TOKEN)
+            const EXPECTED_RESULT = true
 
+            assert(ACTUAL_RESULT, EXPECTED_RESULT)
+        })
+        it('Should throw an error when no details are provided.', () => {
+            assert.throws(() => suite.saveRecord(INVALID_USER, INVALID_TOKEN))
+        })
+    })
+    describe('Send Verification Mail', () => {
+        let suite = {}
+        const DUMMY_TRANSPORT = {
+            sendMail: sinon.spy()
+        }
+        
+        beforeEach(() => {
+            suite.send = emailController.sendVerificationMail(DUMMY_TRANSPORT)
+        })
+        afterEach(() => {
+            suite = {}
+        })
+        it('Should throw an error when invalid details are provided', () => {
+            assert.throws(() => suite.send(DUMMY_EMAIL, DUMMY_HOST, INVALID_TOKEN))
+        })
+        it('Should send an email when details are correct', () => {
+            suite.send(DUMMY_EMAIL, DUMMY_HOST, DUMMY_TOKEN)
+            sinon.assert.calledOnce(DUMMY_TRANSPORT.sendMail)
         })
     })
     describe('Email Verification', () => {
@@ -113,13 +152,13 @@ describe('E-mail Controller', () => {
                     return callback(null, {username: DUMMY_USER})
                 },
                 remove: function(token, callback){
-                    return callback
+                    return callback(null)
                 }
             }
 
             const userMock = {
                 findOneAndUpdate: function(username, action, callback){
-                    return callback
+                    return callback(null)
                 }
             }
             suite.verify = emailController.verifyUser(verifyMock, userMock)
@@ -129,25 +168,25 @@ describe('E-mail Controller', () => {
         })
 
         it('Should return a BAD_REQUEST message if no token is provided.', () => {
-            const NO_TOKEN = null
+            const NO_TOKEN = {params: {token: null}}
+
             const EXPECTED_RESULT = {
                 CODE: 400, 
                 DESCRIPTION: 'BAD_REQUEST'
             }
-            const ACTUAL_RESULT = emailController.verifyUser(NO_TOKEN)
+            const ACTUAL_RESULT = suite.verify(NO_TOKEN, RES_MOCK)
             assert.deepStrictEqual(ACTUAL_RESULT, EXPECTED_RESULT)
         })
         it('Should find a user based on the token.', () => {
+            const TOKEN = {params: {token: DUMMY_TOKEN}}
 
-        })
-        it('Should return a BAD_REQUEST if no user is found.', () => {
+            const EXPECTED_RESULT = {
+                CODE: 200,
+                DESCRIPTION: 'OK'
+            }
 
-        })
-        it('Should return a BAD_REQUEST if there is no user in the user table that matches the username found in the verify table.', () => {
-
-        })
-        it('Should find a user and update his active flag to true, delete the token and return OK', () => {
-
+            const ACTUAL_RESULT = suite.verify(TOKEN, RES_MOCK)
+            assert.deepStrictEqual(ACTUAL_RESULT, EXPECTED_RESULT)
         })
     })
 })

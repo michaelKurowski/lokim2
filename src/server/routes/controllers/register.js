@@ -18,15 +18,11 @@ function createPostRegisterController(UserModel = require('../../models/user')) 
 
 		const serverURL = req.protocol + '://' + req.get('host') + req.originalUrl
 		const hashToken = emailer.createToken()
-
-		const emailData = {
-			username: userData.username,
-			email: userData.email
-		}
 		
 		const userInstance = new UserModel(userData)
 		userInstance.save()
-			.then(() => emailer.prepareVerification()(emailData, serverURL, hashToken))
+			.then(() => emailer.saveRecordToDB()(userData.username, hashToken))
+			.then(() => emailer.sendVerificationMail()(userData.email, serverURL, hashToken))
 			.then(() => responseManager.sendResponse(res, responseManager.MESSAGES.SUCCESSES.OK))
 			.catch(err => {
 				logger.info(`Register contoller error: ${err}`)
