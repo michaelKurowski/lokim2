@@ -64,7 +64,7 @@ jobs:
 
       - run:
           name: Mocha tests (backend)
-          command: cd src/server/ && npm run test-coverage
+          command: cd src/server/ && npm run report-coverage
 
       - run:
           name: Jest tests (frontEnd)
