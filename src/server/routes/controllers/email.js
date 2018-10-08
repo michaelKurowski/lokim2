@@ -61,25 +61,31 @@ function sendMail(transporter = prepareTransporter()){
     }
 }
 
-function prepareVerification(VerifyModel = require('../../models/verification')){
-    return (userData, host, token) => {
-        const {username, email} = userData
-        const link =`${host}/verify/${token}`
-        const subject = 'Verification Email'
-        const body = `You can activate your account at ${link} \nIt will expire after 30  days.` //TODO: Make it expire after 30 days
+function saveRecordToDB(VerifyModel = require('../../models/verification')){
+    return (username, token) => {
+        if(_.isEmpty(username) || _.isEmpty(token)) throw new Error('You must provide a username and verification token.')
 
         const verifyData = {username, token}
         const verifyInstance = new VerifyModel(verifyData)
         
-        verifyInstance.save()
-            .then(() => sendMail(email, subject, body))
-            .catch(err => {
-                logger.info(`Email contoller error: ${err}`)
-            })
+        return verifyInstance.save().catch(err => {throw new Error(err)})
     }
 }
 
-function emailVerification( //TODO: rename this, ambiguous with prepareVerification
+function sendVerificationMail(transporter = prepareTransporter()){
+    return (email, hostname, verificationToken) => {
+        if(_.isEmpty(email) || _.isEmpty(hostname) || _.isEmpty(verificationToken))
+            throw new Error('You must provide a hostname, email and verification token.')
+
+        const link =`${hostname}/verify/${verificationToken}`
+        const subject = 'Verification Email'
+        const body = `You can activate your account at ${link} \nIt will expire after 30  days.`
+
+        sendMail(transporter)(setMailOptions(email, subject, body))
+    }
+}
+
+function verifyUser(
     Verify = require('../../models/verification'),
     User = require('../../models/user')){
     return (req, res, next) => {
@@ -88,13 +94,13 @@ function emailVerification( //TODO: rename this, ambiguous with prepareVerificat
         if(_.isEmpty(token))
             return responseManager.sendResponse(res, responseManager.MESSAGES.ERRORS.BAD_REQUEST)
 
-        Verify.find({token}, (err, foundUser) => {
+        return Verify.find({token}, (err, foundUser) => {
             if(err) 
                 return responseManager.sendResponse(res, responseManager.MESSAGES.ERRORS.BAD_REQUEST)
 
             const {username} = foundUser
 
-            User.findOneAndUpdate({username}, {active: true}, (err) => { 
+            return User.findOneAndUpdate({username}, {active: true}, (err) => { 
                 if (err) return responseManager.sendResponse(res, responseManager.MESSAGES.ERRORS.BAD_REQUEST)
                 Verify.remove({token}, (err) => console.log)
                 return responseManager.sendResponse(res, responseManager.MESSAGES.SUCCESSES.OK)
@@ -107,6 +113,7 @@ module.exports = {
     createToken,
     mailOptions: setMailOptions,
     sendMail,
-    prepareVerification,
-    verifyUser: emailVerification
+    saveRecordToDB,
+    sendVerificationMail,
+    verifyUser
 }
