@@ -5,13 +5,15 @@ const logger = require('../../logger')
 const crypto = require('crypto')
 const _ = require('lodash')
 
+const LOKIM_EMAIL = '"Lokim Messenger Services" <lokim.messenger@mail.com>'
+
 const testAccount = {
     email: process.env.EMAIL || config.email.email,
     password: process.env.EMAIL_PASSWORD || config.email.password,
     host: process.env.EMAIL_HOST || config.email.host
 }
 
-const SMTP_OPTIONS = { //TODO: Add SMTPS
+const SMTP_OPTIONS = {
     host: `smtp.${testAccount.host}`,
     port: 587,
     secure: false,
@@ -25,7 +27,7 @@ async function prepareTransporter(){
     let transporter = nodemailer.createTransport(SMTP_OPTIONS)
 
     await transporter.verify((err) => {
-        if(err) return console.log(err)
+        if(err) return logger.warn(`Transporter Verification Error: ${err}`)
         logger.info('Email server is ready to take our messages')
     })
 
@@ -39,7 +41,7 @@ function createToken(){
 
 function setMailOptions(recvAddress, subject, body){
     return {
-        from: '"Lokim Messenger Services" <lokim.messenger@mail.com>',
+        from: LOKIM_EMAIL,
         to: recvAddress,
         subject,
         text: body
@@ -55,8 +57,8 @@ function sendMail(transporter = prepareTransporter()){
         }
 
         transporter.sendMail(mailOptions, (err, info) => {
-            if(err) return console.log(err)
-            console.log('Message sent: %s', info.messageId)
+            if(err) return logger.warn(`Email failed to send. Details: ${err}`)
+            logger.info('Message sent: %s', info.messageId)
         })
     }
 }
@@ -68,7 +70,7 @@ function saveRecordToDB(VerifyModel = require('../../models/verification')){
         const verifyData = {username, token}
         const verifyInstance = new VerifyModel(verifyData)
         
-        return verifyInstance.save().catch(err => {throw new Error(err)})
+        return verifyInstance.save().catch(err => {throw new Error('Error creating Verify record. Please ensure details are unique.')})//TODO: Handle this better
     }
 }
 
@@ -102,7 +104,7 @@ function verifyUser(
 
             return User.findOneAndUpdate({username}, {active: true}, (err) => { 
                 if (err) return responseManager.sendResponse(res, responseManager.MESSAGES.ERRORS.BAD_REQUEST)
-                Verify.remove({token}, (err) => console.log)
+                Verify.remove({token}, (err) => logger.warn(err))
                 return responseManager.sendResponse(res, responseManager.MESSAGES.SUCCESSES.OK)
             })
         })
