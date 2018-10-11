@@ -8,6 +8,7 @@ const DUMMY_SUBJECT = 'subject'
 const DUMMY_BODY = 'bodybodybody'
 const DUMMY_USER = 'dummyUser'
 const DUMMY_PASSWORD = 'dummyPassword'
+const LOKIM_EMAIL = '"Lokim Messenger Services" <lokim.messenger@mail.com>'
 const DUMMY_HOST = 'localhost'
 const DUMMY_TOKEN = '1234567890!#'
 const NO_EMAIL = [null, null, null]
@@ -21,7 +22,7 @@ const DUMMY_OPTIONS = {
     text: DUMMY_BODY
 }
 const BUFFER_VALUE = 2
-const HEX = 'hex'
+const TOKEN_FORMAT = 'hex'
 
 const RES_MOCK = {
     _code: "",
@@ -53,7 +54,7 @@ describe('E-mail Controller', () => {
             sandbox.stub(crypto, 'randomBytes').returns(buf1)
 
             const generatedToken = emailController.createToken()
-            const EXPECTED_TOKEN = buf1.toString(HEX)
+            const EXPECTED_TOKEN = buf1.toString(TOKEN_FORMAT)
             const EXPECTED_LENGTH = 40
 
             assert.strictEqual(generatedToken, EXPECTED_TOKEN)
@@ -69,7 +70,7 @@ describe('E-mail Controller', () => {
       it('Should be equal.', () => {
         const generatedOptions = emailController.mailOptions(DUMMY_EMAIL, DUMMY_SUBJECT, DUMMY_BODY)
         const EXPECTED_OPTIONS = {
-            from: '"Lokim Messenger Services" <lokim.messenger@mail.com>',
+            from: LOKIM_EMAIL,
             to: 'dummy@mail.com',
             subject: 'subject',
             text: 'bodybodybody'
@@ -104,7 +105,7 @@ describe('E-mail Controller', () => {
         let suite = {}
         const verifyMock = function(){
             return {
-                save: sinon.stub().returns(new Promise(res => res()))
+                save: sinon.stub().resolves()
             }
         }
         beforeEach(() => {
@@ -120,7 +121,8 @@ describe('E-mail Controller', () => {
             assert(ACTUAL_RESULT, EXPECTED_RESULT)
         })
         it('Should throw an error when no details are provided.', () => {
-            assert.throws(() => suite.saveRecord(INVALID_USER, INVALID_TOKEN))
+            const EXPECTED_ERROR_MESSAGE = 'You must provide a username and verification token.'
+            assert.throws(() => suite.saveRecord(INVALID_USER, INVALID_TOKEN), Error, EXPECTED_ERROR_MESSAGE)
         })
     })
     describe('Send Verification Mail', () => {
@@ -136,7 +138,8 @@ describe('E-mail Controller', () => {
             suite = {}
         })
         it('Should throw an error when invalid details are provided', () => {
-            assert.throws(() => suite.send(DUMMY_EMAIL, DUMMY_HOST, INVALID_TOKEN))
+            const EXPECTED_ERROR_MESSAGE = 'You must provide a hostname, email and verification token.'
+            assert.throws(() => suite.send(DUMMY_EMAIL, DUMMY_HOST, INVALID_TOKEN), Error, EXPECTED_ERROR_MESSAGE)
         })
         it('Should send an email when details are correct', () => {
             suite.send(DUMMY_EMAIL, DUMMY_HOST, DUMMY_TOKEN)
