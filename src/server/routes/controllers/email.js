@@ -104,7 +104,7 @@ function verifyUser(
 
             return User.findOneAndUpdate({username}, {active: true}, (err) => { 
                 if (err) return responseManager.sendResponse(res, responseManager.MESSAGES.ERRORS.BAD_REQUEST)
-                Verify.remove({token}, (err) => logger.warn(err))
+                Verify.remove({token}).catch((err) => logger.warn(err))
                 return responseManager.sendResponse(res, responseManager.MESSAGES.SUCCESSES.OK)
             })
         })
