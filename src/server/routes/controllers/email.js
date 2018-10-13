@@ -6,6 +6,8 @@ const crypto = require('crypto')
 const _ = require('lodash')
 
 const LOKIM_EMAIL = '"Lokim Messenger Services" <lokim.messenger@mail.com>'
+const INVALID_TOKEN = 'Invalid token.'
+const USER_NOT_FOUND = 'User not found.'
 
 const testAccount = {
     email: process.env.EMAIL || config.email.email,
@@ -94,18 +96,19 @@ function verifyUser(
         const token = req.params.token
         
         if(_.isEmpty(token))
-            return responseManager.sendResponse(res, responseManager.MESSAGES.ERRORS.BAD_REQUEST)
+            throw new Error(INVALID_TOKEN)
 
         return Verify.find({token}, (err, foundUser) => {
-            if(err) 
-                return responseManager.sendResponse(res, responseManager.MESSAGES.ERRORS.BAD_REQUEST)
+            if(err)
+                throw new Error(INVALID_TOKEN)
 
             const {username} = foundUser
 
             return User.findOneAndUpdate({username}, {active: true}, (err) => { 
-                if (err) return responseManager.sendResponse(res, responseManager.MESSAGES.ERRORS.BAD_REQUEST)
-                Verify.remove({token}).catch((err) => logger.warn(err))
-                return responseManager.sendResponse(res, responseManager.MESSAGES.SUCCESSES.OK)
+                if (err)
+                    throw new Error(USER_NOT_FOUND)
+                    
+                return Verify.remove({token})
             })
         })
     }
