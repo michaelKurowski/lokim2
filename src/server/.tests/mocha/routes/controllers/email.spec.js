@@ -24,19 +24,19 @@ const DUMMY_OPTIONS = {
 const BUFFER_VALUE = 2
 const TOKEN_FORMAT = 'hex'
 
-const RES_MOCK = {
-    _code: "",
-    json: (obj) => {
-        return {
-            CODE: _code,
-            DESCRIPTION: obj.DESCRIPTION
-        }
-    },
-    status: function(code){
-        _code = code
-        return this
-    }
-}
+// const RES_MOCK = {
+//     _code: "",
+//     json: (obj) => {
+//         return {
+//             CODE: _code,
+//             DESCRIPTION: obj.DESCRIPTION
+//         }
+//     },
+//     status: function(code){
+//         _code = code
+//         return this
+//     }
+// }
 
 describe('E-mail Controller', () => {
     describe('Sandboxed Token Creation', () => {
@@ -154,8 +154,8 @@ describe('E-mail Controller', () => {
                 find: function(token, callback){
                     return callback(null, {username: DUMMY_USER})
                 },
-                remove: function(token, callback){
-                    return callback(null)
+                remove: function(token){
+                    return null
                 }
             }
 
@@ -170,26 +170,19 @@ describe('E-mail Controller', () => {
             suite = {}
         })
 
-        it('Should return a BAD_REQUEST message if no token is provided.', () => {
+        it('Should return an INVALID_TOKEN Error if no token is provided.', () => {
             const NO_TOKEN = {params: {token: null}}
 
-            const EXPECTED_RESULT = {
-                CODE: 400, 
-                DESCRIPTION: 'BAD_REQUEST'
-            }
-            const ACTUAL_RESULT = suite.verify(NO_TOKEN, RES_MOCK)
-            assert.deepStrictEqual(ACTUAL_RESULT, EXPECTED_RESULT)
+            const EXPECTED_ERROR_MESSAGE = 'Invalid token.'
+            assert.throws(() => suite.verify(NO_TOKEN), Error, EXPECTED_ERROR_MESSAGE)
         })
         it('Should find a user based on the token.', () => {
             const TOKEN = {params: {token: DUMMY_TOKEN}}
 
-            const EXPECTED_RESULT = {
-                CODE: 200,
-                DESCRIPTION: 'OK'
-            }
+            const EXPECTED_RESULT = null //Returns nothing, if nothing goes wrong 
 
-            const ACTUAL_RESULT = suite.verify(TOKEN, RES_MOCK)
-            assert.deepStrictEqual(ACTUAL_RESULT, EXPECTED_RESULT)
+            const ACTUAL_RESULT = suite.verify(TOKEN)
+            assert.strictEqual(ACTUAL_RESULT, EXPECTED_RESULT)
         })
     })
 })
