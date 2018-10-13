@@ -79,3 +79,11 @@ function validateLoggingConfig(logging) {
 	assert.isNotEmpty(logging.logLevel, ERROR_MESSAGES.LOGGING.EMPTY_LOG_LEVEL)
 }
 
+function validateEmailConfig(email){
+	assert.isNotEmpty(email.email)
+	assert.isNotEmpty(email.password)
+	assert.isNotEmpty(email.port)
+	assert.isNotEmpty(email.host)
+	assert.isBoolean(email.secure)
+}
+
