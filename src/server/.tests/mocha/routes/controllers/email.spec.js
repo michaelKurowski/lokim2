@@ -24,20 +24,6 @@ const DUMMY_OPTIONS = {
 const BUFFER_VALUE = 2
 const TOKEN_FORMAT = 'hex'
 
-// const RES_MOCK = {
-//     _code: "",
-//     json: (obj) => {
-//         return {
-//             CODE: _code,
-//             DESCRIPTION: obj.DESCRIPTION
-//         }
-//     },
-//     status: function(code){
-//         _code = code
-//         return this
-//     }
-// }
-
 describe('E-mail Controller', () => {
     describe('Sandboxed Token Creation', () => {
         let sandbox
@@ -80,25 +66,23 @@ describe('E-mail Controller', () => {
     })
     describe('Sending Mail', () => {
         let sandbox 
-        const DUMMY_TRANSPORT = {
-            sendMail: sinon.spy()
-        }
         beforeEach(() => {
-            sandbox = sinon.sandbox.create()        
+            sandbox = sinon.sandbox.create()
+            sandbox.DUMMY_TRANSPORT = {
+                sendMail: sinon.spy()
+            }   
         })
         afterEach(() => {
             sandbox.restore()
         })
-        //TODO: Maybe refactor, not happy with this.
+
         it('Should send an e-mail with the specified details.', () => {
-            sandbox.stub(nodemailer, 'createTransport').returns(DUMMY_TRANSPORT)
-            const transport = nodemailer.createTransport()
-            emailController.sendMail(transport)(DUMMY_OPTIONS, (err) => {
-                assert.strictEqual(err, null)
-            })
+            const sendMail = emailController.sendMail(sandbox.DUMMY_TRANSPORT)
+            sendMail(DUMMY_OPTIONS)
+            sinon.assert.calledOnce(sandbox.DUMMY_TRANSPORT.sendMail)
         })
         it('Should throw an error when no options are provided.', () => {
-            assert.throws(() => emailController.sendMail(DUMMY_TRANSPORT)(NO_EMAIL), Error, EXPECTED_ERROR_MESSAGE)
+            assert.throws(() => emailController.sendMail(sandbox.DUMMY_TRANSPORT)(NO_EMAIL), Error, EXPECTED_ERROR_MESSAGE)
         })
     })
     describe('Save Record to DB', () => {
@@ -127,12 +111,12 @@ describe('E-mail Controller', () => {
     })
     describe('Send Verification Mail', () => {
         let suite = {}
-        const DUMMY_TRANSPORT = {
-            sendMail: sinon.spy()
-        }
-        
+
         beforeEach(() => {
-            suite.send = emailController.sendVerificationMail(DUMMY_TRANSPORT)
+            suite.DUMMY_TRANSPORT = {
+                sendMail: sinon.spy()
+            }
+            suite.send = emailController.sendVerificationMail(suite.DUMMY_TRANSPORT)
         })
         afterEach(() => {
             suite = {}
@@ -140,10 +124,11 @@ describe('E-mail Controller', () => {
         it('Should throw an error when invalid details are provided', () => {
             const EXPECTED_ERROR_MESSAGE = 'You must provide a hostname, email and verification token.'
             assert.throws(() => suite.send(DUMMY_EMAIL, DUMMY_HOST, INVALID_TOKEN), Error, EXPECTED_ERROR_MESSAGE)
+            sinon.assert.notCalled(suite.DUMMY_TRANSPORT.sendMail)
         })
         it('Should send an email when details are correct', () => {
             suite.send(DUMMY_EMAIL, DUMMY_HOST, DUMMY_TOKEN)
-            sinon.assert.calledOnce(DUMMY_TRANSPORT.sendMail)
+            sinon.assert.calledOnce(suite.DUMMY_TRANSPORT.sendMail)
         })
     })
     describe('Email Verification', () => {

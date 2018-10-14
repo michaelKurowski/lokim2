@@ -1,4 +1,3 @@
-const responseManager = require('./utilities/responseManager')
 const config = require('../../config.json')
 const nodemailer = require('nodemailer')
 const logger = require('../../logger')
@@ -120,5 +119,6 @@ module.exports = {
     sendMail,
     saveRecordToDB,
     sendVerificationMail,
+    prepareTransporter,
     verifyUser
 }
