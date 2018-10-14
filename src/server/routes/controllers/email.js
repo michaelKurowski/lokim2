@@ -8,19 +8,20 @@ const LOKIM_EMAIL = '"Lokim Messenger Services" <lokim.messenger@mail.com>'
 const INVALID_TOKEN = 'Invalid token.'
 const USER_NOT_FOUND = 'User not found.'
 
-const testAccount = {
+const account = {
     email: process.env.EMAIL || config.email.email,
     password: process.env.EMAIL_PASSWORD || config.email.password,
-    host: process.env.EMAIL_HOST || config.email.host
+    host: process.env.EMAIL_HOST || config.email.host,
+    port: process.env.EMAIL_PORT || config.email.port
 }
 
 const SMTP_OPTIONS = {
-    host: `smtp.${testAccount.host}`,
-    port: 587,
+    host: `smtp.${account.host}`,
+    port: account.PORT,
     secure: false,
     auth: {
-        user: testAccount.email,
-        pass: testAccount.password
+        user: account.email,
+        pass: account.password
     }
 }
 
@@ -71,7 +72,7 @@ function saveRecordToDB(VerifyModel = require('../../models/verification')){
         const verifyData = {username, token}
         const verifyInstance = new VerifyModel(verifyData)
         
-        return verifyInstance.save().catch(err => {throw new Error('Error creating Verify record. Please ensure details are unique.')})//TODO: Handle this better
+        return verifyInstance.save().catch(err => {throw new Error('Error creating Verify record. Please ensure details are unique. More details: ' + err)})//TODO: Handle this better
     }
 }
 
