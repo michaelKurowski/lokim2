@@ -137,19 +137,35 @@ describe('E-mail Controller', () => {
         beforeEach(() => {
             const verifyMock = {
                 find: function(token, callback){
-                    return callback(null, {username: DUMMY_USER})
+                    if(!token) return callback(true)
+
+                    return callback(null, {username: DUMMY_USER})    
                 },
                 remove: function(token){
                     return null
                 }
             }
+            const verifyMockToFail = {
+                find: function(token, callback){
+                    return callback(true, null)    
+                }
+            }
 
             const userMock = {
                 findOneAndUpdate: function(username, action, callback){
+                    if(!username) return callback(true)
+
                     return callback(null)
                 }
             }
+            const userMockToFail = {
+                findOneAndUpdate: function(username, action, callback){
+                    return callback(true)
+                }
+            }
             suite.verify = emailController.verifyUser(verifyMock, userMock)
+            suite.verifyUserNotFound = emailController.verifyUser(verifyMock, userMockToFail)
+            suite.verifyTokenNotFound = emailController.verifyUser(verifyMockToFail, userMock)
         })
         afterEach(() => {
             suite = {}
@@ -168,6 +184,17 @@ describe('E-mail Controller', () => {
 
             const ACTUAL_RESULT = suite.verify(TOKEN)
             assert.strictEqual(ACTUAL_RESULT, EXPECTED_RESULT)
+        })
+        it('Should throw an error if no token is found', () => {
+            const requestMock = {params: {token: 'invalid token'}}
+            const EXPECTED_ERROR_MESSAGE = 'Invalid token.'
+            assert.throws(() => suite.verifyTokenNotFound(requestMock), Error, EXPECTED_ERROR_MESSAGE)
+        })
+        it('Should throw an error if no user is found, but a token is', () => {
+            const requestMock = {params: {token: DUMMY_TOKEN}}
+            const EXPECTED_ERROR_MESSAGE = 'User not found.'
+
+            assert.throws(() => suite.verifyUserNotFound(requestMock), Error, EXPECTED_ERROR_MESSAGE)
         })
     })
 })
