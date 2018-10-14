@@ -1,4 +1,5 @@
 const responseManager = require('../routes/controllers/utilities/responseManager')
+const USER_NOT_VERIFIED = 'User is not verified.'
 
 const loginStrategy = (UserModel = require('../models/user'), strategyUtils = require('./strategyUtils')) => {
 	const validateUser = (username, password, done) => {
@@ -7,6 +8,7 @@ const loginStrategy = (UserModel = require('../models/user'), strategyUtils = re
 		return Promise.resolve(validation)
 			.then(assignFoundUser)
 			.then(assignPasswordValidationResult)
+			.then(isUserVerified)
 			.then(finish)
 			.catch(() => {
 				const userToSerialize = null
@@ -29,6 +31,13 @@ const loginStrategy = (UserModel = require('../models/user'), strategyUtils = re
 					validation.user = user
 					return validation
 				})
+		}
+
+		function isUserVerified(validation){
+			if(!validation.user.hasOwnProperty('active') || !validation.user.active)
+				throw new Error(USER_NOT_VERIFIED)
+	
+			return validation
 		}
 	}
 
