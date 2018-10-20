@@ -34,7 +34,7 @@ const loginStrategy = (UserModel = require('../models/user'), strategyUtils = re
 		}
 
 		function isUserVerified(validation){
-			if(!validation.user.hasOwnProperty('active') || !validation.user.active)
+			if(!validation.user.hasOwnProperty('active') && !validation.user.active)
 				throw new Error(USER_NOT_VERIFIED)
 	
 			return validation
