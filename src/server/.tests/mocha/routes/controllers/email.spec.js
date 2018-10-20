@@ -21,7 +21,7 @@ const DUMMY_OPTIONS = {
     subject: DUMMY_SUBJECT,
     text: DUMMY_BODY
 }
-const BUFFER_VALUE = 2
+const BUFFER_VALUE = 'H'
 const TOKEN_FORMAT = 'hex'
 
 describe('E-mail Controller', () => {
@@ -35,16 +35,19 @@ describe('E-mail Controller', () => {
         afterEach(() => {
             sandbox.restore()
         })
-        it('Should create a valid token of length 20', () => {
-            const buf1 = Buffer.alloc(BUFFER_ALLOC_SIZE, BUFFER_VALUE)
-            sandbox.stub(crypto, 'randomBytes').returns(buf1)
+        it('Should create a valid token of length 40', () => {
+            const mockBuffer = Buffer.alloc(BUFFER_ALLOC_SIZE, BUFFER_VALUE)
 
-            const generatedToken = emailController.createToken()
-            const EXPECTED_TOKEN = buf1.toString(TOKEN_FORMAT)
+            sandbox.stub(crypto, 'randomBytes').returns(mockBuffer)
+            
+            const EXPECTED_TOKEN = '4848484848484848484848484848484848484848'
             const EXPECTED_LENGTH = 40
 
-            assert.strictEqual(generatedToken, EXPECTED_TOKEN)
-            assert.strictEqual(generatedToken.length, EXPECTED_LENGTH)
+            const ACTUAL_TOKEN = emailController.createToken()
+            const ACTUAL_LENGTH = ACTUAL_TOKEN.length
+            
+            assert.strictEqual(ACTUAL_TOKEN, EXPECTED_TOKEN)
+            assert.strictEqual(ACTUAL_LENGTH, EXPECTED_LENGTH)
         })
         it('Should return a different value every time', () => {
             const generatedToken1 = emailController.createToken()
@@ -124,7 +127,6 @@ describe('E-mail Controller', () => {
         it('Should throw an error when invalid details are provided', () => {
             const EXPECTED_ERROR_MESSAGE = 'You must provide a hostname, email and verification token.'
             assert.throws(() => suite.send(DUMMY_EMAIL, DUMMY_HOST, INVALID_TOKEN), Error, EXPECTED_ERROR_MESSAGE)
-            sinon.assert.notCalled(suite.DUMMY_TRANSPORT.sendMail)
         })
         it('Should send an email when details are correct', () => {
             suite.send(DUMMY_EMAIL, DUMMY_HOST, DUMMY_TOKEN)
@@ -137,7 +139,7 @@ describe('E-mail Controller', () => {
         beforeEach(() => {
             const verifyMock = {
                 find: function(token, callback){
-                    
+
                     return callback(null, {username: DUMMY_USER})    
                 },
                 remove: function(token){
