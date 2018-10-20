@@ -53,13 +53,13 @@ describe('E-mail Controller', () => {
         })
     })
     describe('Mail Options', () => {
-      it('Should be equal.', () => {
+      it('Should return an object equal to the expected output.', () => {
         const generatedOptions = emailController.mailOptions(DUMMY_EMAIL, DUMMY_SUBJECT, DUMMY_BODY)
         const EXPECTED_OPTIONS = {
             from: LOKIM_EMAIL,
-            to: 'dummy@mail.com',
-            subject: 'subject',
-            text: 'bodybodybody'
+            to: DUMMY_EMAIL,
+            subject: DUMMY_SUBJECT,
+            text: DUMMY_BODY
         }
         assert.deepStrictEqual(generatedOptions, EXPECTED_OPTIONS)
       })
@@ -76,7 +76,7 @@ describe('E-mail Controller', () => {
             sandbox.restore()
         })
 
-        it('Should send an e-mail with the specified details.', () => {
+        it('Should attempt to send an e-mail by calling sendMail of the transporter.', () => {
             const sendMail = emailController.sendMail(sandbox.DUMMY_TRANSPORT)
             sendMail(DUMMY_OPTIONS)
             sinon.assert.calledOnce(sandbox.DUMMY_TRANSPORT.sendMail)
@@ -99,10 +99,10 @@ describe('E-mail Controller', () => {
             suite = {}
         })
         it('Should return true if all inputs are valid.', () => {
-            const ACTUAL_RESULT = suite.saveRecord(DUMMY_USER, DUMMY_TOKEN)
-            const EXPECTED_RESULT = true
+            const ARE_ALL_RESULTS_VALID = suite.saveRecord(DUMMY_USER, DUMMY_TOKEN)
+            const ALL_RESULTS_ARE_VALID = true
 
-            assert(ACTUAL_RESULT, EXPECTED_RESULT)
+            assert(ARE_ALL_RESULTS_VALID, ALL_RESULTS_ARE_VALID)
         })
         it('Should throw an error when no details are provided.', () => {
             const EXPECTED_ERROR_MESSAGE = 'You must provide a username and verification token.'
@@ -137,8 +137,7 @@ describe('E-mail Controller', () => {
         beforeEach(() => {
             const verifyMock = {
                 find: function(token, callback){
-                    if(!token) return callback(true)
-
+                    
                     return callback(null, {username: DUMMY_USER})    
                 },
                 remove: function(token){
@@ -153,8 +152,6 @@ describe('E-mail Controller', () => {
 
             const userMock = {
                 findOneAndUpdate: function(username, action, callback){
-                    if(!username) return callback(true)
-
                     return callback(null)
                 }
             }
@@ -180,10 +177,10 @@ describe('E-mail Controller', () => {
         it('Should find a user based on the token.', () => {
             const TOKEN = {params: {token: DUMMY_TOKEN}}
 
-            const EXPECTED_RESULT = null //Returns nothing, if nothing goes wrong 
+            const NO_VALIDATION_ERROR = null
 
-            const ACTUAL_RESULT = suite.verify(TOKEN)
-            assert.strictEqual(ACTUAL_RESULT, EXPECTED_RESULT)
+            const RESULTING_VALIDATION_ERROR = suite.verify(TOKEN)
+            assert.strictEqual(RESULTING_VALIDATION_ERROR, NO_VALIDATION_ERROR)
         })
         it('Should throw an error if no token is found', () => {
             const requestMock = {params: {token: 'invalid token'}}
