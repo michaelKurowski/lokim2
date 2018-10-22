@@ -1,6 +1,7 @@
 const responseManager = require('./utilities/responseManager')
 const Utilities = require('../../utilities')
 const logger = require('../../logger')
+const serverURL = require('../../config').host
 const emailController = require('./email')
 const SALT_SIZE = 70
 
@@ -19,8 +20,7 @@ function createPostRegisterController(
 			salt
 		}
 
-		//TODO: Discuss about adding to config, or some such alternative.
-		const serverURL = "https://lokim.herokuapp.com" 
+
 		const hashToken = emailController.createToken()
 		const saveVerificationDetails = emailController.saveRecordToDB(VerifyModel)
 		const sendVerificationMail = emailController.sendVerificationMail(Transporter)

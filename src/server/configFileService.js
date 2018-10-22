@@ -30,6 +30,8 @@ module.exports = function ({
 			validateDatabaseConfig(config.database)
 			validateHttpServerConfig(config.httpServer)
 			validateLoggingConfig(config.logging)
+			validateEmailConfig(config.email)
+			validateHostConfig(config.host)
 			validateSessionConfig(config.session)
 			validateDevPropetiesConfig(config.devPropeties)
 		},
@@ -65,6 +67,18 @@ function validateHttpServerConfig(httpServer) {
 	assert.isNumber(httpServer.port, ERROR_MESSAGES.HTTP_SERVER.WRONG_PORT)
 }
 
+function validateHostConfig(host){
+	assert.isNotEmpty(host, ERROR_MESSAGES.EMPTY_HOSTNAME)
+}
+
+function validateEmailConfig(email){
+	assert.isNotEmpty(email.email, ERROR_MESSAGES.EMAIL.EMPTY_EMAIL)
+	assert.isNotEmpty(email.password, ERROR_MESSAGES.EMAIL.EMPTY_PASSWORD)
+	assert.isNotEmpty(email.hostname, ERROR_MESSAGES.EMAIL.EMPTY_HOST)
+	assert.isNumber(email.port, ERROR_MESSAGES.EMAIL.EMPTY_PORT)
+
+}
+
 function validateSessionConfig(session) {
 	assert.isNotEmpty(session.secret, ERROR_MESSAGES.SESSION.EMPTY_SECRET)
 	assert.isNotEmpty(session.cookieName, ERROR_MESSAGES.SESSION.EMPTY_COOKIE_NAME)
@@ -86,13 +100,5 @@ function validateDevPropetiesConfig(devPropeties) {
 function validateLoggingConfig(logging) {
 	assert.isNotEmpty(logging.fileName, ERROR_MESSAGES.LOGGING.EMPTY_FILENAME)
 	assert.isNotEmpty(logging.logLevel, ERROR_MESSAGES.LOGGING.EMPTY_LOG_LEVEL)
-}
-
-function validateEmailConfig(email){
-	assert.isNotEmpty(email.email)
-	assert.isNotEmpty(email.password)
-	assert.isNotEmpty(email.port)
-	assert.isNotEmpty(email.host)
-	assert.isBoolean(email.secure)
 }
 

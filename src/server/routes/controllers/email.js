@@ -8,12 +8,7 @@ const LOKIM_EMAIL = '"Lokim Messenger Services" <lokim.messenger@mail.com>'
 const INVALID_TOKEN = 'Invalid token.'
 const USER_NOT_FOUND = 'User not found.'
 
-const account = {
-    email: process.env.EMAIL || config.email.email,
-    password: process.env.EMAIL_PASSWORD || config.email.password,
-    host: process.env.EMAIL_HOST || config.email.host,
-    port: process.env.EMAIL_PORT || config.email.port
-}
+const account = config.email
 
 const SMTP_OPTIONS = {
     host: `smtp.${account.host}`,
