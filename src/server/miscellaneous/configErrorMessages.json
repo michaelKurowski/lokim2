@@ -11,6 +11,13 @@
 		"EMPTY_FILENAME": "Log file filename can't be empty",
 		"EMPTY_LOG_LEVEL": "Logging level can't be empty string"
 	},
+	"EMAIL": {
+		"EMPTY_EMAIL": "Email cannot be empty.",
+		"EMPTY_PASSWORD": "Email password cannot be empty.",
+		"EMPTY_HOST": "Email hostname cannot be empty.",
+		"EMPTY_PORT": "Email port cannot be empty."
+	},
+	"EMPTY_HOSTNAME": "Server URL hostname cannot be empty.",
 	"SESSION": {
 		"EMPTY_SECRET": "Session's secret can't be empty",
 		"EMPTY_COOKIE_NAME": "Session's cookie name can't be empty",

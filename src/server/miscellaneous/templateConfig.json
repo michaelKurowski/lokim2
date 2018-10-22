@@ -7,6 +7,13 @@
 	"httpServer": {
 		"port": 5000
 	},
+	"host": "",
+	"email": {
+		"email": "",
+		"password": "",
+		"hostname": "",
+		"port": ""
+	},
 	"logging" : {
 		"fileName": "logs.log",
 		"logLevel": "info"
