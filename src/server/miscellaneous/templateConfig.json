@@ -7,7 +7,7 @@
 	"httpServer": {
 		"port": 5000
 	},
-	"host": "",
+	"host": "https://lokim2.herokuapp.com",
 	"email": {
 		"email": "",
 		"password": "",
