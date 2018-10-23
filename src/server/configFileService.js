@@ -36,7 +36,11 @@ module.exports = function ({
 				const configTemplate = require('./miscellaneous/templateConfig.json')
 				configTemplate.database.username = process.env.DB_USERNAME || ''
 				configTemplate.database.password = process.env.DB_PASSWORD || ''
-
+				configTemplate.email.email = process.env.EMAIL || ''
+				configTemplate.email.password = process.env.EMAIL_PASSWORD || ''
+				configTemplate.email.hostname = process.env.EMAIL_HOST || ''
+				configTemplate.email.port = process.env.EMAIL_PORT || 587 //Default SMTP port
+				
 				const configToGenerate = JSON.stringify(configTemplate, null, '\t')
 				fs.writeFile(pathToConfig, configToGenerate, fileWriteError => {
 					if (fileWriteError) return reject(fileWriteError)
