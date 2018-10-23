@@ -139,6 +139,13 @@ describe('Config file service', () => {
 					fileName: 'logs.log',
 					logLevel: 'warn'
 				},
+				host: 'localhost',
+				email: {
+					email: 'littleteacup@mockemail.com',
+					password: 'something',
+					hostname: 'mockemail.com',
+					port: 587
+				},
 				httpServer: {
 					port: 5000
 				},

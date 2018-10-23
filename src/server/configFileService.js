@@ -58,11 +58,11 @@ function validateHttpServerConfig(httpServer) {
 	assert.isNumber(httpServer.port, ERROR_MESSAGES.HTTP_SERVER.WRONG_PORT)
 }
 
-function validateHostConfig(host){
+function validateHostConfig(host) {
 	assert.isNotEmpty(host, ERROR_MESSAGES.EMPTY_HOSTNAME)
 }
 
-function validateEmailConfig(email){
+function validateEmailConfig(email) {
 	assert.isNotEmpty(email.email, ERROR_MESSAGES.EMAIL.EMPTY_EMAIL)
 	assert.isNotEmpty(email.password, ERROR_MESSAGES.EMAIL.EMPTY_PASSWORD)
 	assert.isNotEmpty(email.hostname, ERROR_MESSAGES.EMAIL.EMPTY_HOST)
