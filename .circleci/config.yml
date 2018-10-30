@@ -31,7 +31,7 @@ jobs:
 
       - run:
           name: Setting environmental variables
-          command: export EMAIL_HOST="localhost"
+          command: export EMAIL_HOST="localhost" && export EMAIL="dummy@em.com"
 
       - run:
           name: Cypress Dependencies
