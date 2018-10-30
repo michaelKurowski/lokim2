@@ -39,7 +39,7 @@ module.exports = function ({
 				configTemplate.email.email = process.env.EMAIL || ''
 				configTemplate.email.password = process.env.EMAIL_PASSWORD || ''
 				configTemplate.email.hostname = process.env.EMAIL_HOST || ''
-				configTemplate.email.port = process.env.EMAIL_PORT || 587 //Default SMTP port
+				configTemplate.email.port = parseInt(process.env.EMAIL_PORT) || 587 //Default SMTP port
 				
 				const configToGenerate = JSON.stringify(configTemplate, null, '\t')
 				fs.writeFile(pathToConfig, configToGenerate, fileWriteError => {
