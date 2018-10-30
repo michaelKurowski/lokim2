@@ -16,6 +16,7 @@ jobs:
     environment:
       EMAIL_HOST: "localhost"
       EMAIL: "dummy@em.com"
+      EMAIL_PORT: 25
     steps:
       - checkout
       - restore_cache:
