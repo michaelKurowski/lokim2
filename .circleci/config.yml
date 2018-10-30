@@ -64,11 +64,15 @@ jobs:
 
       - run:
           name: Mocha tests (backend)
-          command: cd src/server/ && npm run report-coverage
+          command: cd src/server/ && npm run test-coverage
 
       - run:
           name: Jest tests (frontEnd)
-          command: cd src/server/frontEnd/ && npm run report-coverage
+          command: cd src/server/frontEnd/ && npm run test-coverage
+
+      - run:
+          name: Push coverage to Codecov
+          command: npx codecov
 
       - run: 
           name: Deployment (frontEnd) - Webpack
