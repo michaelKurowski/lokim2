@@ -11,7 +11,7 @@ const USER_NOT_FOUND = 'User not found.'
 const account = config.email
 
 const SMTP_OPTIONS = {
-	host: account.hostname,
+	host: `smtp.${account.hostname}`,
 	port: account.port,
 	secure: false,
 	auth: {
@@ -20,14 +20,9 @@ const SMTP_OPTIONS = {
 	}
 }
 
-async function prepareTransporter() {
+function prepareTransporter() {
 	let transporter = nodemailer.createTransport(SMTP_OPTIONS)
-
-	await transporter.verify((err) => {
-		if(err) return logger.error(`Transporter Verification Error: ${err}`)
-		logger.info('Email server is ready to take our messages')
-	})
-
+	
 	return transporter
 }
 
