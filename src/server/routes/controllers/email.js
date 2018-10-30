@@ -24,7 +24,7 @@ async function prepareTransporter() {
 	let transporter = nodemailer.createTransport(SMTP_OPTIONS)
 
 	await transporter.verify((err) => {
-		if(err) return logger.warn(`Transporter Verification Error: ${err}`)
+		if(err) return logger.error(`Transporter Verification Error: ${err}`)
 		logger.info('Email server is ready to take our messages')
 	})
 
