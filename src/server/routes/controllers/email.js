@@ -11,8 +11,8 @@ const USER_NOT_FOUND = 'User not found.'
 const account = config.email
 
 const SMTP_OPTIONS = {
-	host: `smtp.${account.hostname}`,
-	port: account.PORT,
+	host: account.hostname,
+	port: account.port,
 	secure: false,
 	auth: {
 		user: account.email,
