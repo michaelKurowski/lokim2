@@ -94,6 +94,8 @@ jobs:
           path: /home/circleci/project/src/server/.tests/cypress/screenshotsi
       - store_artifacts:
           path: /home/circleci/project/src/server/logs
+      - store_artifacts:
+          path: /home/circleci/project/src/server/config.json
 
       - run:
           name: Print the Current Time
