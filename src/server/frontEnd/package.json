@@ -28,8 +28,7 @@
     "test-debug": "jest --env=jsdom --runInBand -i",
     "test-coverage": "npm test -- --coverage > coverage.lcov",
     "eslint": "node ./node_modules/eslint/bin/eslint.js --ignore-path ./.eslintignore ./",
-    "eslint-auto-fix": "node ./node_modules/eslint/bin/eslint.js --ignore-path ./.eslintignore ./ --fix",
-    "report-coverage": "npm test -- --coverage > coverage.lcov && npx codecov"
+    "eslint-auto-fix": "node ./node_modules/eslint/bin/eslint.js --ignore-path ./.eslintignore ./ --fix"
   },
   "jest": {
     "collectCoverageFrom": [

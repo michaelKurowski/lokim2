@@ -13,7 +13,6 @@
     "generate-docs": "node ./node_modules/jsdoc/jsdoc -r ./ws-routes/",
     "generate-client-files": "npm run --prefix frontEnd build",
     "test-coverage": "node ./node_modules/nyc/bin/nyc --all --check-coverage --report-dir ../../coverage npm test",
-    "report-coverage": "node ./node_modules/nyc/bin/nyc --all --check-coverage --reporter=text-lcov npm test > coverage.lcov && npx codecov",
     "generate-config": "node -e 'require(\"./configFileService\")().generateConfig()'",
     "test-cypress": "node ./runCypress.js"
   },
