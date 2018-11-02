@@ -70,6 +70,10 @@ jobs:
           name: Jest tests (frontEnd)
           command: cd src/server/frontEnd/ && npm run test-coverage
 
+      - run:
+          name: Push coverage to Codecov
+          command: npx codecov
+
       - run: 
           name: Deployment (frontEnd) - Webpack
           command: cd src/server/ && npm run build-dev
