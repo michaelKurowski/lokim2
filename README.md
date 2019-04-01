@@ -4,20 +4,14 @@ LokIM is NodeJS & React based Instant Messanger.
  - NodeJS 8.0 or newer
 ## How to start (for users)
  1. Clone a repository with `git clone <repository URL>`
- 2. Run `npm i` inside `/src/server/`
- 3. Run `npm i` inside `/src/server/frontEnd/`
- 4. Run `npm run build` inside `/src/server/` directory.
- 5. Run `npm run generate-config` from the same directory as before.
- 6. Fill `/src/server/config.json` or set appropiate environmental variables.
- 7. Run `npm start` from `src/server/`
+ 2. Run `npm run prepare` inside root directory of the repository
+ 3. Fill `/src/server/config.json` or set appropiate environmental variables.
+ 4. Run `npm start` inside root directory of the repository
 ## How to start (for development team)
  1. Clone a repository with `git clone <repository URL>`
- 2. Run `npm i` inside `/src/server/`
- 3. Run `npm i` inside `/src/server/frontEnd/`
- 4. Run `npm run build-dev` inside `/src/server/` directory.
- 5. Run `npm run generate-config` from the same directory as before.
- 6. Fill `/src/server/config.json` or set appropiate environmental variables.
- 7. Run `npm start` from `src/server/`
+ 2. Run `npm run prepare-dev` inside root directory of the repository
+ 3. Fill `/src/server/config.json` or set appropiate environmental variables.
+ 4. Run `npm start` inside root directory of the repository
 ## Environmental variables
  - `DB_USERNAME` MongoDB Username
  - `DB_PASSWORD` MongoDB Password
