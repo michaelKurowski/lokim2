@@ -13,7 +13,7 @@ const PATHS = {
 }
 
 function start(cb) {
-    const cliProcess = exec(`node ${PATHS.SERVER_ENTRY_POINT}`, function (err, stdout, stderr) {
+    const cliProcess = exec(`cd ${PATHS.SERVER} && node ${PATHS.SERVER_ENTRY_POINT}`, function (err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
         cb(err);
@@ -70,7 +70,7 @@ function preparationMessege(cb) {
 
 function publishFrontEndBundle(cb) {
     src(PATHS.WEBPACK_GENERATED_BUNDLE)
-    .pipe(dest(PATHS.HTTP_SERVER_PUBLIC_DIRECTORY))
+        .pipe(dest(PATHS.HTTP_SERVER_PUBLIC_DIRECTORY))
     cb();
 }
 
