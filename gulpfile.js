@@ -40,7 +40,7 @@ function installFrontEndDependencies(cb) {
 }
 
 function bundleDev(cb) {
-    exec(`cd ${PATHS.SERVER} && node ./node_modules/.bin/webpack --config ./dev.webpack.config.js && cp ./frontEnd/src/theme/index.html ./public/`, function (err, stdout, stderr) {
+    exec(`cd ${PATHS.SERVER} && node ${PATHS.WEBPACK} --config ${PATHS.WEBPACK_DEV_CONFIG}`, function (err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
         cb(err);
