@@ -6,7 +6,6 @@
   "scripts": {
     "build": "node ./node_modules/.bin/webpack --config ./prod.webpack.config.js && cp ./frontEnd/src/theme/index.html ./public/",
     "build-dev": "node ./node_modules/.bin/webpack --config ./dev.webpack.config.js && cp ./frontEnd/src/theme/index.html ./public/",
-    "start": "node ./index.js",
     "test": "./node_modules/mocha/bin/mocha './.tests/mocha/**/*.spec.js'",
     "eslint": "node ./node_modules/eslint/bin/eslint.js --ignore-path ./.eslintignore ./",
     "eslint-auto-fix": "node ./node_modules/eslint/bin/eslint.js --ignore-path ./.eslintignore --fix",
