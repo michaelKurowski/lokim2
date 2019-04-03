@@ -13,3 +13,4 @@ coverage
 src/server/.tests/cypress/videos
 src/server/.tests/cypress/screenshots
 src/server/frontEnd/coverage.lcov
+node_modules
