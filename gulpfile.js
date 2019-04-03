@@ -3,7 +3,7 @@ const exec = require('child_process').exec
 const path = require('path')
 
 function start(cb) {
-    const destinationPath = path.resolve('src', 'server')
+    const destinationPath = path.resolve(__dirname, 'src', 'server')
     const cliProcess = exec(`npm start --prefix ${destinationPath}`, function (err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
@@ -15,7 +15,7 @@ function start(cb) {
 }
 
 function installServerDependencies(cb) {
-    const destinationPath = path.resolve('src', 'server')
+    const destinationPath = path.resolve(__dirname, 'src', 'server')
     exec(`npm install --prefix ${destinationPath}`, function (err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
@@ -24,7 +24,7 @@ function installServerDependencies(cb) {
 }
 
 function installFrontEndDependencies(cb) {
-    const destinationPath = path.resolve('src', 'server', 'frontEnd')
+    const destinationPath = path.resolve(__dirname, 'src', 'server', 'frontEnd')
     exec(`npm install --prefix ${destinationPath}`, function (err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
@@ -33,7 +33,7 @@ function installFrontEndDependencies(cb) {
 }
 
 function buildDev(cb) {
-    const destinationPath = path.resolve('src', 'server')
+    const destinationPath = path.resolve(__dirname, 'src', 'server')
     exec(`npm run build-dev --prefix ${destinationPath}`, function (err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
@@ -42,7 +42,7 @@ function buildDev(cb) {
 }
 
 function build() {
-    const destinationPath = path.resolve('src', 'server')
+    const destinationPath = path.resolve(__dirname, 'src', 'server')
     exec(`npm run build --prefix ${destinationPath}`, function (err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
@@ -51,7 +51,7 @@ function build() {
 }
 
 function generateConfig(cb) {
-    const destinationPath = path.resolve('src', 'server')
+    const destinationPath = path.resolve(__dirname, 'src', 'server')
     exec(`npm run generate-config --prefix ${destinationPath}`, function (err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
