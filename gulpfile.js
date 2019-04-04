@@ -1,13 +1,19 @@
-const {series} = require('gulp')
+const {series, src, dest} = require('gulp')
 const exec = require('child_process').exec
 const path = require('path')
 const PATHS = {
     SERVER: path.resolve(__dirname, 'src', 'server'),
-    FRONTEND: path.resolve(__dirname, 'src', 'server', 'frontEnd')
+    SERVER_ENTRY_POINT: path.resolve(__dirname, 'src', 'server', 'index.js'),
+    WEBPACK: path.resolve(__dirname, 'src', 'server', 'node_modules', '.bin', 'webpack'),
+    WEBPACK_PROD_CONFIG: path.resolve(__dirname, 'src', 'server', 'prod.webpack.config.js'),
+    WEBPACK_DEV_CONFIG: path.resolve(__dirname, 'src', 'server', 'dev.webpack.config.js'),
+    FRONTEND: path.resolve(__dirname, 'src', 'server', 'frontEnd'),
+    WEBPACK_GENERATED_BUNDLE: path.resolve(__dirname, 'src', 'server', 'frontEnd', 'src', 'theme', 'index.html'),
+    HTTP_SERVER_PUBLIC_DIRECTORY: path.resolve(__dirname, 'src', 'server', 'public')
 }
 
 function start(cb) {
-    const cliProcess = exec(`npm start --prefix ${PATHS.SERVER}`, function (err, stdout, stderr) {
+    const cliProcess = exec(`node ${PATHS.SERVER_ENTRY_POINT}`, function (err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
         cb(err);
@@ -33,16 +39,16 @@ function installFrontEndDependencies(cb) {
     })
 }
 
-function buildDev(cb) {
-    exec(`npm run build-dev --prefix ${PATHS.SERVER}`, function (err, stdout, stderr) {
+function bundleDev(cb) {
+    exec(`cd ${PATHS.SERVER} && node ./node_modules/.bin/webpack --config ./dev.webpack.config.js && cp ./frontEnd/src/theme/index.html ./public/`, function (err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
         cb(err);
     })
 }
 
-function build() {
-    exec(`npm run build --prefix ${PATHS.SERVER}`, function (err, stdout, stderr) {
+function bundle() {
+    exec(`cd ${PATHS.SERVER} && node ${PATHS.WEBPACK} --config ${PATHS.WEBPACK_PROD_CONFIG}`, function (err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
         cb(err);
@@ -62,9 +68,17 @@ function preparationMessege(cb) {
     cb();
 }
 
+function publishFrontEndBundle(cb) {
+    src(PATHS.WEBPACK_GENERATED_BUNDLE)
+    .pipe(dest(PATHS.HTTP_SERVER_PUBLIC_DIRECTORY))
+    cb();
+}
 
+
+const buildDev = series(bundleDev, publishFrontEndBundle)
+const build = series(bundle, publishFrontEndBundle)
 const prepareDev = series(installServerDependencies, installFrontEndDependencies, buildDev, generateConfig, preparationMessege)
 const prepare = series(installServerDependencies, installFrontEndDependencies, build, generateConfig, preparationMessege)
 
 
-module.exports = {start, prepareDev, prepare}
+module.exports = {start, prepareDev, prepare, build, buildDev}
