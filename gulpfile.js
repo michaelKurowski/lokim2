@@ -8,6 +8,7 @@ const PATHS = {
     WEBPACK_PROD_CONFIG: path.resolve(__dirname, 'src', 'server', 'prod.webpack.config.js'),
     WEBPACK_DEV_CONFIG: path.resolve(__dirname, 'src', 'server', 'dev.webpack.config.js'),
     FRONTEND: path.resolve(__dirname, 'src', 'server', 'frontEnd'),
+    JEST_CONFIG: path.resolve(__dirname, 'src', 'server', 'frontEnd', 'package.json'),
     WEBPACK_GENERATED_BUNDLE: path.resolve(__dirname, 'src', 'server', 'frontEnd', 'src', 'theme', 'index.html'),
     HTTP_SERVER_PUBLIC_DIRECTORY: path.resolve(__dirname, 'src', 'server', 'public'),
     ESLINT: path.resolve(__dirname, 'src', 'server', 'node_modules', 'eslint', 'bin', 'eslint.js'),
@@ -21,7 +22,9 @@ const PATHS = {
     FRONTEND_ESLINT_IGNORE: path.resolve(__dirname, 'src', 'server', 'frontEnd', '.eslintignore'),
     JS_DOCS_OUTPUT_DIRECTORY: path.resolve(__dirname, 'src', 'server', 'out'),
     FRONTEND_JEST: path.resolve(__dirname, 'src', 'server', 'frontEnd', 'node_modules', '.bin', 'jest'),
-    FRONTEND_TEST_COVERAGE: path.resolve(__dirname, 'src', 'server', 'frontEnd', 'coverage.lcov')
+    FRONTEND_TEST_COVERAGE: path.resolve(__dirname, 'src', 'server', 'frontEnd', 'coverage.lcov'),
+    CONFIG_GENERATOR_SERVICE: path.resolve(__dirname, 'src', 'server', 'configFileService.js'),
+    MOCHA: path.resolve(__dirname, 'src', 'server', 'node_modules', 'mocha', 'bin', 'mocha')
 }
 
 function start(cb) {
@@ -68,7 +71,7 @@ function bundle() {
 }
 
 function generateConfig(cb) {
-    exec(`npm run generate-config --prefix ${PATHS.SERVER}`, function (err, stdout, stderr) {
+    exec(`cd ${PATHS.SERVER} && node -e 'require("${PATHS.CONFIG_GENERATOR_SERVICE}")().generateConfig()'`, function (err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
         cb(err);
@@ -147,10 +150,18 @@ function frontEndTestDebug(cb) {
 }
 
 function frontEndTestCoverage(cb) {
-    exec(`cd ${PATHS.FRONTEND} && npm test -- --coverage > coverage.lcov`, function (err, stdout, stderr) {
+    const cliProcess = exec(`cd ${PATHS.FRONTEND} && jest --rootDir ${PATHS.FRONTEND} --config ${PATHS.JEST_CONFIG} --coverage > coverage.lcov`, function (err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
         cb(err);
+    })
+
+    cliProcess.stdout.on('data', function(data) {
+        console.log(data)
+    })
+
+    cliProcess.stderr.on('data', function(data) {
+        console.log(data)
     })
 }
 
@@ -164,6 +175,14 @@ function frontEndEslint(cb) {
 
 function frontEndEslintAutoFix(cb) {
     exec(`node ${PATHS.FRONTEND_ESLINT} --ignore-path ${PATHS.FRONTEND_ESLINT_IGNORE} ${PATHS.FRONTEND} --fix`, function (err, stdout, stderr) {
+        console.log(stdout);
+        console.log(stderr);
+        cb(err);
+    })
+}
+
+function serverTest(cb) {
+    exec(`cd ${PATHS.SERVER} && ${PATHS.MOCHA} './.tests/mocha/**/*.spec.js'`, function (err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
         cb(err);
@@ -184,4 +203,4 @@ const prepareDev = series(installServerDependencies, installFrontEndDependencies
 const prepare = series(installServerDependencies, installFrontEndDependencies, build, generateConfig, preparationMessege)
 
 
-module.exports = {start, prepareDev, prepare, build, buildDev, eslint, eslintAutoFix, generateDocs, testCoverage, testCypress, frontEndTest, frontEndTestDebug, frontEndTestCoverage, frontEndEslint, frontEndEslintAutoFix}
+module.exports = {start, prepareDev, prepare, build, buildDev, eslint, eslintAutoFix, generateDocs, testCoverage, testCypress, frontEndTest, frontEndTestDebug, frontEndTestCoverage, frontEndEslint, frontEndEslintAutoFix, generateConfig, serverTest}
