@@ -38,8 +38,8 @@ context('Login', () => {
 		cy.get('[name="email"]').type(suite.EMAIL)
 		cy.get('.register-button').click()
 		cy.url().should('include', '/')
-		const emails = await api.getEmails(inbox.id, { minCount: 1 })
-		console.log(emails)
+		api.getEmails(inbox.id, { minCount: 1 }).then(() => console.log(emails))
+		
 	})
 
 	it('can login', () => {
