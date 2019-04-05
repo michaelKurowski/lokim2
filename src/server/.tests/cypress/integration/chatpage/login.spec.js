@@ -3,9 +3,13 @@
 const MailSlurp = require('mailslurp-client').MailSlurp
 const api = new MailSlurp({ apiKey: "test" }) 
 let suite
+let inbox
 context('Login', () => {
 	before(() => {
-		const inbox = await api.createInbox()
+
+		return api.createInbox().then(api => {
+			inbox = api
+		})
 	})
 	beforeEach(() => {
 		suite = {
