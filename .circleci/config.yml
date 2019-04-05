@@ -85,7 +85,7 @@ jobs:
 
       - run:
           name: E2E tests
-          command: cd src/server/ && npx cypress run
+          command: npx gulp testCypress
 
       - store_artifacts:
           path: /home/circleci/project/src/server/.tests/cypress/videos

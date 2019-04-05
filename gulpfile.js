@@ -117,7 +117,7 @@ function testCoverage(cb) {
 }
 
 function testCypress(cb) {
-    exec(`node ${PATHS.TEST_CYPRESS}`, function (err, stdout, stderr) {
+    exec(`cd ${PATHS.SERVER} && npx cypress run `, function (err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
         cb(err);
