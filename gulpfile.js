@@ -13,12 +13,13 @@ const PATHS = {
     ESLINT: path.resolve(__dirname, 'src', 'server', 'node_modules', 'eslint', 'bin', 'eslint.js'),
     ESLINT_IGNORE: path.resolve(__dirname, 'src', 'server', '.eslintignore'),
     JSDOC: path.resolve(__dirname, 'src', 'server', 'node_modules', 'jsdoc', 'jsdoc'),
-    WEBSOCKET_ROUTING_DIRECTORY: path.resolve(__dirname, 'src', 'server', 'wp-routes'),
+    WEBSOCKET_ROUTING_DIRECTORY: path.resolve(__dirname, 'src', 'server', 'ws-routes'),
     NYC: path.resolve(__dirname, 'src', 'server', 'node_modules', 'nyc', 'bin', 'nyc'),
     COVERAGE_REPORT_DIRECTORY: path.resolve(__dirname, 'coverage'),
     TEST_CYPRESS: path.resolve(__dirname, 'src', 'server', 'runCypress.js'),
     FRONTEND_ESLINT: path.resolve(__dirname, 'src', 'server', 'frontEnd', 'node_modules', 'eslint', 'bin', 'eslint.js'),
-    FRONTEND_ESLINT_IGNORE: path.resolve(__dirname, 'src', 'server', 'frontEnd', '.eslintignore')
+    FRONTEND_ESLINT_IGNORE: path.resolve(__dirname, 'src', 'server', 'frontEnd', '.eslintignore'),
+    JS_DOCS_OUTPUT_DIRECTORY: path.resolve(__dirname, 'src', 'server', 'out')
 }
 
 function start(cb) {
@@ -84,7 +85,7 @@ function publishFrontEndBundle(cb) {
 }
 
 function eslint(cb) {
-    exec(`node ${PATH.ESLINT} --ignore-path ${PATH.ESLINT_IGNORE} ${PATH.SERVER}`, function (err, stdout, stderr) {
+    exec(`node ${PATHS.ESLINT} --ignore-path ${PATHS.ESLINT_IGNORE} ${PATHS.SERVER}`, function (err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
         cb(err);
@@ -92,7 +93,7 @@ function eslint(cb) {
 }
 
 function eslintAutoFix(cb) {
-    exec(`node ${PATH.ESLINT} --ignore-path ${PATH.ESLINT_IGNORE} --fix`, function (err, stdout, stderr) {
+    exec(`node ${PATHS.ESLINT} --ignore-path ${PATHS.ESLINT_IGNORE} --fix ${PATHS.SERVER}`, function (err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
         cb(err);
@@ -100,15 +101,7 @@ function eslintAutoFix(cb) {
 }
 
 function generateDocs(cb) {
-    exec(`node ${PATH.JSDOC} -r ${PATH.WEBSOCKET_ROUTING_DIRECTORY}`, function (err, stdout, stderr) {
-        console.log(stdout);
-        console.log(stderr);
-        cb(err);
-    })
-}
-
-function generateClientFiles(cb) {
-    exec(`npm run ${PATH.FRONTEND} build`, function (err, stdout, stderr) {
+    exec(`node ${PATHS.JSDOC} -r ${PATHS.WEBSOCKET_ROUTING_DIRECTORY} -d ${PATHS.JS_DOCS_OUTPUT_DIRECTORY}`, function (err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
         cb(err);
@@ -116,7 +109,7 @@ function generateClientFiles(cb) {
 }
 
 function testCoverage(cb) {
-    exec(`node ${PATH.NYC} --all --check-coverage --report-dir ${PATH.COVERAGE_REPORT_DIRECTORY} npm test`, function (err, stdout, stderr) {
+    exec(`cd ${PATHS.SERVER} && node ${PATHS.NYC} --all --check-coverage --report-dir ${PATHS.COVERAGE_REPORT_DIRECTORY} npm test`, function (err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
         cb(err);
@@ -124,7 +117,7 @@ function testCoverage(cb) {
 }
 
 function testCypress(cb) {
-    exec(`node ${PATH.TEST_CYPRESS}`, function (err, stdout, stderr) {
+    exec(`node ${PATHS.TEST_CYPRESS}`, function (err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
         cb(err);
@@ -156,7 +149,7 @@ function frontEndTestCoverage(cb) {
 }
 
 function frontEndEslint(cb) {
-    exec(`node ${PATH.FRONTEND_ESLINT} --ignore-path ${PATH.FRONTEND_ESLINT_IGNORE} ${PATH.FRONTEND}`, function (err, stdout, stderr) {
+    exec(`node ${PATHS.FRONTEND_ESLINT} --ignore-path ${PATHS.FRONTEND_ESLINT_IGNORE} ${PATHS.FRONTEND}`, function (err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
         cb(err);
@@ -164,7 +157,7 @@ function frontEndEslint(cb) {
 }
 
 function frontEndEslintAutoFix(cb) {
-    exec(`node ${PATH.FRONTEND_ESLINT} --ignore-path ${PATH.FRONTEND_ESLINT_IGNORE} ${PATH.FRONTEND} --fix`, function (err, stdout, stderr) {
+    exec(`node ${PATHS.FRONTEND_ESLINT} --ignore-path ${PATHS.FRONTEND_ESLINT_IGNORE} ${PATHS.FRONTEND} --fix`, function (err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
         cb(err);
@@ -185,4 +178,4 @@ const prepareDev = series(installServerDependencies, installFrontEndDependencies
 const prepare = series(installServerDependencies, installFrontEndDependencies, build, generateConfig, preparationMessege)
 
 
-module.exports = {start, prepareDev, prepare, build, buildDev, eslint, eslintAutoFix, generateDocs, generateClientFiles, testCoverage, testCypress, frontEndTest, frontEndTestDebug, frontEndTestCoverage, frontEndEslint, frontEndEslintAutoFix}
+module.exports = {start, prepareDev, prepare, build, buildDev, eslint, eslintAutoFix, generateDocs, testCoverage, testCypress, frontEndTest, frontEndTestDebug, frontEndTestCoverage, frontEndEslint, frontEndEslintAutoFix}
