@@ -4,7 +4,12 @@ const ERROR_DURING_READING_CONFIG = 'Error during reading config file: '
 const FILE_NOT_EXISTING = 'ENOENT'
 const assert = require('chai').assert
 const ERROR_MESSAGES = require('./miscellaneous/configErrorMessages.json')
-
+const _ = require('lodash')
+/*
+	We disable eslint no-console rule here, as logger is not yet initialized 
+	at the moment when configFileService is being ran for the first time.
+*/
+/* eslint-disable no-console */
 module.exports = function ({
 	fs = require('fs'),
 	path = require('path'),
@@ -57,6 +62,10 @@ module.exports = function ({
 function validateDatabaseConfig(database) {
 	if (!process.env.DB_HOSTNAME)
 		assert.isNotEmpty(database.host, ERROR_MESSAGES.DATABASE.EMPTY_HOSTNAME)
+	if (!process.env.DB_USERNAME && _.isEmpty(database.username))
+		console.warn(ERROR_MESSAGES.DATABASE.EMPTY_USERNAME)
+	if (!process.env.DB_PASSWORD && _.isEmpty(database.password))
+		console.warn(ERROR_MESSAGES.DATABASE.EMPTY_PASSWORD)	
 }
 
 function validateHttpServerConfig(httpServer) {

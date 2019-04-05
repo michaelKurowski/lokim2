@@ -1,7 +1,7 @@
 {
 	"DATABASE": {
-		"EMPTY_USERNAME": "Database username can't be empty",
-		"EMPTY_PASSWORD": "Database password can't be empty",
+		"EMPTY_USERNAME": "Database username is empty. Is it intended?",
+		"EMPTY_PASSWORD": "Database password is empty. Is it intended?",
 		"EMPTY_HOSTNAME": "Database hostname can't be empty"
 	},
 	"HTTP_SERVER": {

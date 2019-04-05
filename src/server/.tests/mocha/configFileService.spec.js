@@ -12,9 +12,11 @@ let env = _.clone(process.env)
 describe('Config file service', () => {
 	beforeEach(() => {
 		suite = {}
+		suite.sandbox = sinon.createSandbox()
 	})
 
 	afterEach(() => {
+		suite.sandbox.restore()
 		process.env = _.clone(env)
 	})
 
@@ -180,6 +182,62 @@ describe('Config file service', () => {
 			it('should throw error when hostname is empty and no env variable is set', () => {
 				suite.configMock.database.host = ''
 				assert.throws(suite.invokeValidateFields, ERROR_MESSAGES.DATABASE.EMPTY_HOSTNAME)
+			})
+
+			it('should log warning when username is empty and no env variable is set', () => {
+				suite.configMock.database.username = ''
+				suite.sandbox.spy(console, 'warn')
+				suite.invokeValidateFields()
+				suite.sandbox.assert.calledOnce(console.warn)
+			})
+
+			it('should log warning when password is empty and no env variable is set', () => {
+				suite.configMock.database.password = ''
+				suite.sandbox.spy(console, 'warn')
+				suite.invokeValidateFields()
+				suite.sandbox.assert.calledOnce(console.warn)
+			})
+		})
+	
+		describe('Http server settings', () => {
+			it('should throw error when port is not a number', () => {
+				suite.configMock.httpServer.port = null
+				assert.throws(suite.invokeValidateFields, ERROR_MESSAGES.HTTP_SERVER.WRONG_PORT)
+			})
+		})
+	
+		describe('Logging settings', () => {
+			it('should throw error when log filename is empty', () => {
+				suite.configMock.logging.fileName = ''
+				assert.throws(suite.invokeValidateFields, ERROR_MESSAGES.LOGGING.EMPTY_FILENAME)
+			})
+		})
+	
+		describe('Http server settings', () => {
+			it('should throw error when port is not a number', () => {
+				suite.configMock.httpServer.port = null
+				assert.throws(suite.invokeValidateFields, ERROR_MESSAGES.HTTP_SERVER.WRONG_PORT)
+			})
+		})
+	
+		describe('Logging settings', () => {
+			it('should throw error when log filename is empty', () => {
+				suite.configMock.logging.fileName = ''
+				assert.throws(suite.invokeValidateFields, ERROR_MESSAGES.LOGGING.EMPTY_FILENAME)
+			})
+		})
+	
+		describe('Http server settings', () => {
+			it('should throw error when port is not a number', () => {
+				suite.configMock.httpServer.port = null
+				assert.throws(suite.invokeValidateFields, ERROR_MESSAGES.HTTP_SERVER.WRONG_PORT)
+			})
+		})
+	
+		describe('Logging settings', () => {
+			it('should throw error when log filename is empty', () => {
+				suite.configMock.logging.fileName = ''
+				assert.throws(suite.invokeValidateFields, ERROR_MESSAGES.LOGGING.EMPTY_FILENAME)
 			})
 		})
 	
