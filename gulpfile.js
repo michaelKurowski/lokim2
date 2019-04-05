@@ -9,7 +9,14 @@ const PATHS = {
     WEBPACK_DEV_CONFIG: path.resolve(__dirname, 'src', 'server', 'dev.webpack.config.js'),
     FRONTEND: path.resolve(__dirname, 'src', 'server', 'frontEnd'),
     WEBPACK_GENERATED_BUNDLE: path.resolve(__dirname, 'src', 'server', 'frontEnd', 'src', 'theme', 'index.html'),
-    HTTP_SERVER_PUBLIC_DIRECTORY: path.resolve(__dirname, 'src', 'server', 'public')
+    HTTP_SERVER_PUBLIC_DIRECTORY: path.resolve(__dirname, 'src', 'server', 'public'),
+    ESLINT: path.resolve(__dirname, 'src', 'server', 'node_modules', 'eslint', 'bin', 'eslint.js'),
+    ESLINT_IGNORE: path.resolve(__dirname, 'src', 'server', '.eslintignore'),
+    JSDOC: path.resolve(__dirname, 'src', 'server', 'node_modules', 'jsdoc', 'jsdoc'),
+    WEBSOCKET_ROUTING_DIRECTORY: path.resolve(__dirname, 'src', 'server', 'wp-routes'),
+    NYC: path.resolve(__dirname, 'src', 'server', 'node_modules', 'nyc', 'bin', 'nyc'),
+    COVERAGE_REPORT_DIRECTORY: path.resolve(__dirname, 'coverage'),
+    TEST_CYPRESS: path(__dirname, 'src', 'server', 'runCypress.js')
 }
 
 function start(cb) {
@@ -74,6 +81,61 @@ function publishFrontEndBundle(cb) {
     cb();
 }
 
+function eslint(cb) {
+    exec(`node ${PATH.ESLINT} --ignore-path ${PATH.ESLINT_IGNORE} ${PATH.SERVER}`, function (err, stdout, stderr) {
+        console.log(stdout);
+        console.log(stderr);
+        cb(err);
+    })
+}
+
+function eslintAutoFix(cb) {
+    exec(`node ${PATH.ESLINT} --ignore-path ${PATH.ESLINT_IGNORE} --fix`, function (err, stdout, stderr) {
+        console.log(stdout);
+        console.log(stderr);
+        cb(err);
+    })
+}
+
+function generateDocs(cb) {
+    exec(`node ${PATH.JSDOC} -r ${PATH.WEBSOCKET_ROUTING_DIRECTORY}`, function (err, stdout, stderr) {
+        console.log(stdout);
+        console.log(stderr);
+        cb(err);
+    })
+}
+
+function generateClientFiles(cb) {
+    exec(`npm run ${PATH.FRONTEND} build`, function (err, stdout, stderr) {
+        console.log(stdout);
+        console.log(stderr);
+        cb(err);
+    })
+}
+
+function testCoverage(cb) {
+    exec(`node ${PATH.NYC} --all --check-coverage --report-dir ${PATH.COVERAGE_REPORT_DIRECTORY} npm test`, function (err, stdout, stderr) {
+        console.log(stdout);
+        console.log(stderr);
+        cb(err);
+    })
+}
+
+function testCypress(cb) {
+    exec(`node ${PATH.TEST_CYPRESS}`, function (err, stdout, stderr) {
+        console.log(stdout);
+        console.log(stderr);
+        cb(err);
+    })
+}
+
+// function (cb) {
+//     exec(``, function (err, stdout, stderr) {
+//         console.log(stdout);
+//         console.log(stderr);
+//         cb(err);
+//     })
+// }
 
 const buildDev = series(bundleDev, publishFrontEndBundle)
 const build = series(bundle, publishFrontEndBundle)
@@ -81,4 +143,4 @@ const prepareDev = series(installServerDependencies, installFrontEndDependencies
 const prepare = series(installServerDependencies, installFrontEndDependencies, build, generateConfig, preparationMessege)
 
 
-module.exports = {start, prepareDev, prepare, build, buildDev}
+module.exports = {start, prepareDev, prepare, build, buildDev, eslint, eslintAutoFix, generateDocs, generateClientFiles, testCoverage, testCypress}
