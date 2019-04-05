@@ -16,7 +16,9 @@ const PATHS = {
     WEBSOCKET_ROUTING_DIRECTORY: path.resolve(__dirname, 'src', 'server', 'wp-routes'),
     NYC: path.resolve(__dirname, 'src', 'server', 'node_modules', 'nyc', 'bin', 'nyc'),
     COVERAGE_REPORT_DIRECTORY: path.resolve(__dirname, 'coverage'),
-    TEST_CYPRESS: path(__dirname, 'src', 'server', 'runCypress.js')
+    TEST_CYPRESS: path.resolve(__dirname, 'src', 'server', 'runCypress.js'),
+    FRONTEND_ESLINT: path.resolve(__dirname, 'src', 'server', 'frontEnd', 'node_modules', 'eslint', 'bin', 'eslint.js'),
+    FRONTEND_ESLINT_IGNORE: path.resolve(__dirname, 'src', 'server', 'frontEnd', '.eslintignore')
 }
 
 function start(cb) {
@@ -129,6 +131,46 @@ function testCypress(cb) {
     })
 }
 
+function frontEndTest(cb) {
+    exec(`jest`, function (err, stdout, stderr) {
+        console.log(stdout);
+        console.log(stderr);
+        cb(err);
+    })
+}
+
+function frontEndTestDebug(cb) {
+    exec(`jest --env=jsdom --runInBand -i`, function (err, stdout, stderr) {
+        console.log(stdout);
+        console.log(stderr);
+        cb(err);
+    })
+}
+
+function frontEndTestCoverage(cb) {
+    exec(`npm test -- --coverage > coverage.lcov`, function (err, stdout, stderr) {
+        console.log(stdout);
+        console.log(stderr);
+        cb(err);
+    })
+}
+
+function frontEndEslint(cb) {
+    exec(`node ${PATH.FRONTEND_ESLINT} --ignore-path ${PATH.FRONTEND_ESLINT_IGNORE} ${PATH.FRONTEND}`, function (err, stdout, stderr) {
+        console.log(stdout);
+        console.log(stderr);
+        cb(err);
+    })
+}
+
+function frontEndEslintAutoFix(cb) {
+    exec(`node ${PATH.FRONTEND_ESLINT} --ignore-path ${PATH.FRONTEND_ESLINT_IGNORE} ${PATH.FRONTEND} --fix`, function (err, stdout, stderr) {
+        console.log(stdout);
+        console.log(stderr);
+        cb(err);
+    })
+}
+
 // function (cb) {
 //     exec(``, function (err, stdout, stderr) {
 //         console.log(stdout);
@@ -143,4 +185,4 @@ const prepareDev = series(installServerDependencies, installFrontEndDependencies
 const prepare = series(installServerDependencies, installFrontEndDependencies, build, generateConfig, preparationMessege)
 
 
-module.exports = {start, prepareDev, prepare, build, buildDev, eslint, eslintAutoFix, generateDocs, generateClientFiles, testCoverage, testCypress}
+module.exports = {start, prepareDev, prepare, build, buildDev, eslint, eslintAutoFix, generateDocs, generateClientFiles, testCoverage, testCypress, frontEndTest, frontEndTestDebug, frontEndTestCoverage, frontEndEslint, frontEndEslintAutoFix}
