@@ -8,7 +8,7 @@
     "build-dev": "node ./node_modules/.bin/webpack --config ./dev.webpack.config.js && cp ./frontEnd/src/theme/index.html ./public/",
     "test": "./node_modules/mocha/bin/mocha './.tests/mocha/**/*.spec.js'",
     "eslint": "node ./node_modules/eslint/bin/eslint.js --ignore-path ./.eslintignore ./",
-    "eslint-auto-fix": "node ./node_modules/eslint/bin/eslint.js --ignore-path ./.eslintignore --fix",
+    "eslint-auto-fix": "node ./node_modules/eslint/bin/eslint.js --ignore-path ./.eslintignore --fix ./",
     "generate-docs": "node ./node_modules/jsdoc/jsdoc -r ./ws-routes/",
     "generate-client-files": "npm run --prefix frontEnd build",
     "test-coverage": "node ./node_modules/nyc/bin/nyc --all --check-coverage --report-dir ../../coverage npm test",

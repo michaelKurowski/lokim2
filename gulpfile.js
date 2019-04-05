@@ -19,7 +19,9 @@ const PATHS = {
     TEST_CYPRESS: path.resolve(__dirname, 'src', 'server', 'runCypress.js'),
     FRONTEND_ESLINT: path.resolve(__dirname, 'src', 'server', 'frontEnd', 'node_modules', 'eslint', 'bin', 'eslint.js'),
     FRONTEND_ESLINT_IGNORE: path.resolve(__dirname, 'src', 'server', 'frontEnd', '.eslintignore'),
-    JS_DOCS_OUTPUT_DIRECTORY: path.resolve(__dirname, 'src', 'server', 'out')
+    JS_DOCS_OUTPUT_DIRECTORY: path.resolve(__dirname, 'src', 'server', 'out'),
+    FRONTEND_JEST: path.resolve(__dirname, 'src', 'server', 'frontEnd', 'node_modules', '.bin', 'jest'),
+    FRONTEND_TEST_COVERAGE: path.resolve(__dirname, 'src', 'server', 'frontEnd', 'coverage.lcov')
 }
 
 function start(cb) {
@@ -125,7 +127,7 @@ function testCypress(cb) {
 }
 
 function frontEndTest(cb) {
-    exec(`jest`, function (err, stdout, stderr) {
+    exec(`cd ${PATHS.FRONTEND} && npx jest`, function (err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
         cb(err);
@@ -133,15 +135,19 @@ function frontEndTest(cb) {
 }
 
 function frontEndTestDebug(cb) {
-    exec(`jest --env=jsdom --runInBand -i`, function (err, stdout, stderr) {
+    const cliProcess = exec(`node --inspect-brk ${PATHS.FRONTEND_JEST} --runInBand`, function (err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
         cb(err);
     })
+    //jest prints stderr's instead of stdout's
+    cliProcess.stderr.on('data', function(data) {
+        console.log(data)
+    })
 }
 
 function frontEndTestCoverage(cb) {
-    exec(`npm test -- --coverage > coverage.lcov`, function (err, stdout, stderr) {
+    exec(`cd ${PATHS.FRONTEND} && npm test -- --coverage > coverage.lcov`, function (err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
         cb(err);
