@@ -1,5 +1,5 @@
 const {series, src, dest} = require('gulp')
-const exec = require('child_process').exec
+const {exec, spawn} = require('child_process')
 const path = require('path')
 const PATHS = {
     SERVER: path.resolve(__dirname, 'src', 'server'),
@@ -39,11 +39,18 @@ function start(cb) {
 }
 
 function installServerDependencies(cb) {
-    exec(`npm install --prefix ${PATHS.SERVER}`, function (err, stdout, stderr) {
-        console.log(stdout);
-        console.log(stderr);
-        cb(err);
-    })
+    const ls = spawn(`npm`, ['install'], {cwd: PATHS.SERVER, shell: true, stdio: "inherit"})
+    console.log(PATHS.SERVER)
+    /*
+      ls.stdout.pipe(process.stdout)
+      ls.stderr.on('data', (data) => {
+        console.log(`stderr: ${data}`);
+      });
+       */
+      ls.on('close', (code) => {
+        cb()
+      });
+     
 }
 
 function installFrontEndDependencies(cb) {
