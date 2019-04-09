@@ -77,7 +77,7 @@ function installFrontEndDependencies(cb) {
 // }
 
 function bundleDev(cb) {
-    const childProcess = spawn(`node ${PATHS.WEBPACK}`, ['--config', PATHS.WEBPACK_DEV_CONFIG], { cwd: PATHS.SERVER, shell: true, stdio: 'inherit' })
+    const childProcess = spawn(`npx ${PATHS.WEBPACK}`, ['--config', PATHS.WEBPACK_DEV_CONFIG], { cwd: PATHS.SERVER, shell: true, stdio: 'inherit' })
     childProcess.on('close', (data) => {
         cb()
     })
@@ -92,7 +92,7 @@ function bundleDev(cb) {
 // }
 
 function bundle(cb) {
-    const childProcess = spawn(`node ${PATHS.WEBPACK}`, ['--config', PATHS.WEBPACK_PROD_CONFIG], { cwd: PATHS.SERVER, shell: true, stdio: 'inherit' })
+    const childProcess = spawn(`npx ${PATHS.WEBPACK}`, ['--config', PATHS.WEBPACK_PROD_CONFIG], { cwd: PATHS.SERVER, shell: true, stdio: 'inherit' })
     childProcess.on('close', (data) => {
         cb()
     })
