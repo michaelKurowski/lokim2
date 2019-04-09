@@ -148,7 +148,7 @@ function eslint(cb) {
 // }
 
 function eslintAutoFix(cb) {
-    const childProcess = spawn(`node ${PATHS.ESLINT}`, ['--ignore-paths', PATHS.ESLINT_IGNORE, '--fix', PATHS.SERVER], { cwd: PATHS.SERVER, shell: true, stdio: 'inherit' })
+    const childProcess = spawn(`node ${PATHS.ESLINT}`, ['--ignore-path', PATHS.ESLINT_IGNORE, '--fix', PATHS.SERVER], { cwd: PATHS.SERVER, shell: true, stdio: 'inherit' })
     childProcess.on('close', (data) => {
         cb()
     })
@@ -208,7 +208,7 @@ function testCypress(cb) {
 // }
 
 function frontEndTest(cb) {
-    const childProcess = spawn('npx jest', {cwd: PATHS.FRONTEND})
+    const childProcess = spawn('npx jest', {cwd: PATHS.FRONTEND, shell: true, stdio: 'inherit'})
     childProcess.on('close', (data) => {
         cb()
     })
@@ -281,7 +281,7 @@ function frontEndEslint(cb) {
 // }
 
 function frontEndEslintAutoFix(cb) {
-    const childProcess = spawn(`node ${PATHS.FRONTEND_ESLINT}`, ['--ignore-path', PATHS.FRONTEND_ESLINT_IGNORE, PATHS.FRONTEND], {cwd: PATHS.FRONTEND, shell: true, stdio: 'inherit'})
+    const childProcess = spawn(`node ${PATHS.FRONTEND_ESLINT}`, ['--ignore-path', PATHS.FRONTEND_ESLINT_IGNORE, '--fix', PATHS.FRONTEND], {cwd: PATHS.FRONTEND, shell: true, stdio: 'inherit'})
     childProcess.on('close', (data) => {
         cb()
     })
