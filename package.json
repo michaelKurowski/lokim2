@@ -4,7 +4,7 @@
         "prepare": "cd ./src/server && npm i && cd frontEnd && npm i && cd .. && npm run build && npm run generate-config && cd ../.. && echo 'Now fill /src/server/config.json or set environmental variables'",
         "prepare-dev": "cd ./src/server && npm i && cd frontEnd && npm i && cd .. && npm run build-dev && npm run generate-config && cd ../.. && echo 'Now fill /src/server/config.json or set environmental variables'"
     },
-    "devDependencies": {
+    "dependencies": {
         "gulp": "^4.0.0",
         "gulp-path": "^4.0.0"
     }
