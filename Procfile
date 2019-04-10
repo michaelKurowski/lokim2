@@ -1,1 +1,1 @@
-web: npm install && npx gulp prepare && npx gulp start
+web: npx gulp start
