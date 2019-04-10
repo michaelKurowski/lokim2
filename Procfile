@@ -1,1 +1,1 @@
-web: npm start --prefix src/server
+web: npm install && npx gulp prepare && gulp start
