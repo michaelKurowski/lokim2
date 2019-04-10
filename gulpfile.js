@@ -23,7 +23,7 @@ const PATHS = {
     JS_DOCS_OUTPUT_DIRECTORY: path.resolve(__dirname, 'src', 'server', 'out'),
     FRONTEND_JEST: path.resolve(__dirname, 'src', 'server', 'frontEnd', 'node_modules', '.bin', 'jest'),
     FRONTEND_TEST_COVERAGE: path.resolve(__dirname, 'src', 'server', 'frontEnd', 'coverage.lcov'),
-    CONFIG_GENERATOR_SERVICE: path.resolve(__dirname, 'src', 'server', 'configFileService.js'),
+    CONFIG_GENERATOR_SERVICE: './configFileService.js',
     MOCHA: path.resolve(__dirname, 'src', 'server', 'node_modules', 'mocha', 'bin', 'mocha')
 }
 const red = '\x1b[31m'
@@ -107,7 +107,7 @@ function bundle(cb) {
 // }
 
 function generateConfig(cb) {
-    childProcess = spawn('node', ['-e', `'require("${PATHS.CONFIG_GENERATOR_SERVICE}")().generateConfig()'`], { cwd: PATHS.SERVER, shell: true, stdio: 'inherit' })
+    childProcess = spawn('node', ['-e', `"require('${PATHS.CONFIG_GENERATOR_SERVICE}')().generateConfig()"`], { cwd: PATHS.SERVER, shell: true, stdio: 'inherit' })
     childProcess.on('close', (data) => {
         cb()
     })
