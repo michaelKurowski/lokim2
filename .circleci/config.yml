@@ -16,7 +16,7 @@ jobs:
           MONGO_INITDB_ROOT_PASSWORD: mongopassadmin
           MONGO_INITDB_DATABASE: container
       - image: cypress/base:8
-      - image: digiplant/fake-smtp
+      - image: schickling/mailcatcher
     steps:
       - checkout
       - restore_cache:
