@@ -1,4 +1,5 @@
 /// <reference types="Cypress" />
+const http = request('http')
 let suite
 let inbox
 context('Login', () => {
@@ -28,7 +29,10 @@ context('Login', () => {
 		cy.get('[name="password"]').type(suite.CORRECT_PASSWORD)
 		cy.get('[name="email"]').type(suite.EMAIL)
 		cy.get('.register-button').click()
-		cy.visit('http://localhost:1080/messages')
+		http.get('localhost:1080/messages', res => {
+			cy.log(res)
+			done()
+		})
 		cy.url().should('include', '/')
 
 	})
