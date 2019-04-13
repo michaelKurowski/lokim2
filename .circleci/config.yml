@@ -37,13 +37,9 @@ jobs:
           command: sudo npm i && sudo npm link gulp
 
       - run: 
-          name: Deployment (backend)
-          command: npx gulp installServerDependencies
-
-      - run: 
-          name: Deployment (frontEnd)
-          command: gulp installFrontEndDependencies
-          
+          name: Building project
+          command: npx gulp prepare
+         
       - save_cache:
           name: Saving cache (backend)
           paths:
@@ -63,10 +59,6 @@ jobs:
           command: gulp eslint
 
       - run:
-          name: Generate config file (backend)
-          command: gulp generateConfig
-
-      - run:
           name: Mocha tests (backend)
           command: gulp serverTest
 
@@ -77,10 +69,6 @@ jobs:
       - run:
           name: Push coverage to Codecov
           command: codecov
-
-      - run: 
-          name: Deployment (frontEnd) - Webpack
-          command: gulp buildDev
           
       - run:
           name: Start NodeJS
