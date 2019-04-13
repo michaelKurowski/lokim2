@@ -9,6 +9,16 @@ const roomSchema = new Schema({
     },
     messages: [{author: String, body: String, date: Date}],
     creationDate: {type: Date, default: Date.now}
+    /**
+     * At this stage it makes sense to move the list of users in the room to the database for accessibility.
+     * however I will not be commenting this out until a discussion has been held, as this is a major change to existing infrastucture
+     * 
+     *  */ 
+    // users: [{
+    //     userId: {type: mongoose.Schema.ObjectId, required: true},
+    //     name: String,
+    //     joinDate: {type: Date, default: Date.now}
+    // }]
 })
 
 
