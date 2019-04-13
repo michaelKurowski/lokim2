@@ -136,7 +136,7 @@ function frontEndTestDebug(cb) {
 }
 
 function frontEndTestCoverage(cb) {
-    const childProcess = spawn('jest', ['--rootDir', PATHS.FRONTEND, '--config', PATHS.JEST_CONFIG, '--coverage > coverage.lcov'], {cwd: PATHS.FRONTEND, shell: true, stdio: 'inherit'})
+    const childProcess = spawn('npx jest', ['--rootDir', PATHS.FRONTEND, '--config', PATHS.JEST_CONFIG, '--coverage > coverage.lcov'], {cwd: PATHS.FRONTEND, shell: true, stdio: 'inherit'})
     childProcess.on('close', (data) => {
         cb()
     })
