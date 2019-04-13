@@ -1,16 +1,7 @@
 /// <reference types="Cypress" />
-
-const MailSlurp = require('mailslurp-client').MailSlurp
-const api = new MailSlurp({ apiKey: "test" }) 
 let suite
 let inbox
 context('Login', () => {
-	before(() => {
-
-		return api.createInbox().then(api => {
-			inbox = api
-		})
-	})
 	beforeEach(() => {
 		suite = {
 			CORRECT_USERNAME: 'test_username',
@@ -38,7 +29,6 @@ context('Login', () => {
 		cy.get('[name="email"]').type(suite.EMAIL)
 		cy.get('.register-button').click()
 		cy.url().should('include', '/')
-		api.getEmails(inbox.id, { minCount: 1 }).then(() => console.log(emails))
 		
 	})
 
