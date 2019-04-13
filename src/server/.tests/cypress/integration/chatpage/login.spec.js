@@ -23,6 +23,7 @@ context('Login', () => {
 	})
 
 	it('can register', done => {
+		cy.log('starting test')
 		cy.get('.home-button.btn.btn-secondary a').click()
 		cy.url().should('include', '/register')
 		cy.get('[name="username"]').type(suite.CORRECT_USERNAME)
