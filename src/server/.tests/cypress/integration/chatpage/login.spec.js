@@ -28,7 +28,7 @@ context('Login', () => {
 		cy.get('[name="password"]').type(suite.CORRECT_PASSWORD)
 		cy.get('[name="email"]').type(suite.EMAIL)
 		cy.get('.register-button').click()
-		cy.visit('localhost:1025/messages')
+		cy.visit('http://localhost:1080/messages')
 		cy.url().should('include', '/')
 
 	})
