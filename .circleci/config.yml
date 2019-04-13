@@ -60,10 +60,18 @@ jobs:
 
       - run:
           name: Mocha tests (backend)
-          command: gulp serverTestCoverage
+          command: gulp serverTest
 
       - run:
           name: Jest tests (frontEnd)
+          command: gulp frontEndTest
+
+      - run:
+          name: Coverage (backend)
+          command: gulp serverTestCoverage
+
+      - run:
+          name: Coverage (frontEnd)
           command: gulp frontEndTestCoverage
 
       - run:
