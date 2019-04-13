@@ -31,6 +31,14 @@ context('Login', () => {
 		cy.get('[name="email"]').type(suite.EMAIL)
 		cy.get('.register-button').click()
 		cy.log('starting request')
+		cy.request({
+			method: 'GET',
+			url: 'http://localhost:1080/messages',
+			failOnStatusCode: false
+		}).then(() => {
+			cy.log('DANE POBRANE')
+			done()
+		})
 		http.get('localhost:1080/messages', res => {
 			cy.log(res)
 			cy.url().should('include', '/')
