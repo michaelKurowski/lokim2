@@ -161,6 +161,9 @@ function serverTest(cb) {
     childProcess.on('close', (data) => {
         cb()
     })
+    childProcess.on('error', (data) => {
+        throw data
+    })
 }
 
 const build = series(bundle, publishFrontEndBundle)
