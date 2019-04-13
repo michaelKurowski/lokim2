@@ -3,9 +3,6 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const roomSchema = new Schema({
-    id: {
-        //Unique ID for the room, preferable true ID of room when created
-    },
     name: {
         type: String,
         required: true
