@@ -7,7 +7,8 @@
 			"LEAVE": "leave",
 			"CREATE": "create",
 			"CONNECTION": "connection",
-			"LIST_MEMBERS": "listMembers"
+			"LIST_MEMBERS": "listMembers",
+			"ALL_MESSAGES": "allMessages"
 		}
 	},
 	"users": {
