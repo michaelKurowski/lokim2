@@ -1,5 +1,5 @@
 const { series, src, dest } = require('gulp')
-const spawn = require('child_process')
+const { spawn } = require('child_process')
 const path = require('path')
 const PATHS = {
     SERVER: path.resolve(__dirname, 'src', 'server'),
