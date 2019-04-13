@@ -75,7 +75,7 @@ function generateConfig(cb) {
 
 //internal function
 function preparationMessege(cb) {
-    console.log(green, 'Now fill /src/server/config.json or set environmental variables')
+    console.log('Now fill /src/server/config.json or set environmental variables')
     cb();
 }
 
