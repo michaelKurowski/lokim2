@@ -15,6 +15,10 @@
     "test-cypress": "node ./runCypress.js"
   },
   "nyc": {
+    "lines": 60,
+    "statements": 0,
+    "functions": 0,
+    "branches": 0,
     "exclude": [
       "out/",
       "frontEnd/",

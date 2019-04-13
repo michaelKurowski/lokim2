@@ -34,6 +34,7 @@ function start(cb) {
     })
 }
 
+//internal function
 function installServerDependencies(cb) {
     const childProcess = spawn('npm install', { cwd: PATHS.SERVER, shell: true, stdio: 'inherit' })
     childProcess.on('close', (data) => {
@@ -41,6 +42,7 @@ function installServerDependencies(cb) {
     })
 }
 
+//internal function
 function installFrontEndDependencies(cb) {
     const childProcess = spawn('npm install', { cwd: PATHS.FRONTEND, shell: true, stdio: 'inherit' })
     childProcess.on('close', (data) => {
@@ -48,6 +50,7 @@ function installFrontEndDependencies(cb) {
     })
 }
 
+//internal function
 function bundleDev(cb) {
     const childProcess = spawn(`npx ${PATHS.WEBPACK}`, ['--config', PATHS.WEBPACK_DEV_CONFIG], { cwd: PATHS.SERVER, shell: true, stdio: 'inherit' })
     childProcess.on('close', (data) => {
@@ -55,6 +58,7 @@ function bundleDev(cb) {
     })
 }
 
+//internal function
 function bundle(cb) {
     const childProcess = spawn(`npx ${PATHS.WEBPACK}`, ['--config', PATHS.WEBPACK_PROD_CONFIG], { cwd: PATHS.SERVER, shell: true, stdio: 'inherit' })
     childProcess.on('close', (data) => {
@@ -69,11 +73,13 @@ function generateConfig(cb) {
     })
 }
 
+//internal function
 function preparationMessege(cb) {
     console.log(green, 'Now fill /src/server/config.json or set environmental variables')
     cb();
 }
 
+//internal function
 function publishFrontEndBundle(cb) {
     src(PATHS.WEBPACK_GENERATED_BUNDLE)
         .pipe(dest(PATHS.HTTP_SERVER_PUBLIC_DIRECTORY))
@@ -162,15 +168,14 @@ const buildDev = series(bundleDev, publishFrontEndBundle)
 const prepare = series(installServerDependencies, installFrontEndDependencies, build, generateConfig, preparationMessege)
 const prepareDev = series(installServerDependencies, installFrontEndDependencies, buildDev, generateConfig, preparationMessege)
 const eslint = series(serverEslint, frontEndEslint)
+const test = series(serverTest, frontEndTest)
 
 module.exports = {
+    //functions
     start,
-    prepareDev,
-    prepare,
-    build,
-    buildDev,
-    eslint,
-    eslintAutoFix,
+    generateConfig,
+    serverEslint,
+    serverEslintAutoFix,
     generateDocs,
     testCoverage,
     testCypress,
@@ -179,5 +184,12 @@ module.exports = {
     frontEndTestCoverage,
     frontEndEslint,
     frontEndEslintAutoFix,
-    generateConfig,
-    serverTest}
+    serverTest,
+    //series
+    build,
+    buildDev,
+    prepare,
+    prepareDev,
+    eslint,
+    test
+    }

@@ -34,11 +34,11 @@ jobs:
 
       - run: 
           name: Deployment (backend)
-          command: cd src/server && npm install
+          command: npx gulp installServerDependencies
 
       - run: 
           name: Deployment (frontEnd)
-          command: cd src/server/frontEnd && npm install
+          command: npx gulp installFrontEndDependencies
           
       - save_cache:
           name: Saving cache (backend)
@@ -56,19 +56,19 @@ jobs:
 
       - run:
           name: Static Analysis (backend & frontEnd)
-          command: cd src/server && npm run eslint
+          command: npx gulp eslint
 
       - run:
           name: Generate config file (backend)
-          command: cd src/server && npm run generate-config
+          command: npx gulp generateConfig
 
       - run:
           name: Mocha tests (backend)
-          command: cd src/server/ && npm run test-coverage
+          command: npx gulp serverTest
 
       - run:
           name: Jest tests (frontEnd)
-          command: cd src/server/frontEnd/ && npm run test-coverage
+          command: npx gulp frontEndTestCoverage
 
       - run:
           name: Push coverage to Codecov
@@ -76,11 +76,11 @@ jobs:
 
       - run: 
           name: Deployment (frontEnd) - Webpack
-          command: cd src/server/ && npm run build-dev
+          command: npx gulp buildDev
           
       - run:
           name: Start NodeJS
-          command: cd src/server/ && npm start
+          command: npx gulp start
           background: true
 
       - run:

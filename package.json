@@ -8,5 +8,11 @@
     "dependencies": {
         "gulp": "^4.0.0",
         "gulp-path": "^4.0.0"
+    },
+    "nyc": {
+        "lines": 60,
+        "statements": 0,
+        "functions": 0,
+        "branches": 0
     }
 }
