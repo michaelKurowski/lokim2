@@ -107,7 +107,7 @@ function generateDocs(cb) {
     })
 }
 
-function testCoverage(cb) {
+function serverTestCoverage(cb) {
     const childProcess = spawn(`node ${PATHS.NYC}`, ['--all', '--check-coverage', '--report-dir', PATHS.COVERAGE_REPORT_DIRECTORY, 'npm', 'test'], {cwd: PATHS.SERVER, shell: true, stdio: 'inherit'})
     childProcess.on('close', (data) => {
         cb()
@@ -177,7 +177,7 @@ module.exports = {
     serverEslint,
     serverEslintAutoFix,
     generateDocs,
-    testCoverage,
+    serverTestCoverage,
     testCypress,
     frontEndTest,
     frontEndTestDebug,
