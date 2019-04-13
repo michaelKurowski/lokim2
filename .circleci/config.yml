@@ -34,7 +34,7 @@ jobs:
 
       - run:
           name: Installing root dependencies
-          command: sudo npm i && npm link gulp
+          command: sudo npm i && sudo npm link gulp
 
       - run: 
           name: Deployment (backend)
