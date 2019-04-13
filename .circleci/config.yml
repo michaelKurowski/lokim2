@@ -34,15 +34,15 @@ jobs:
 
       - run:
           name: Installing root dependencies
-          command: npm i
+          command: npm i --global gulp gulp-path
 
       - run: 
           name: Deployment (backend)
-          command: npx gulp installServerDependencies
+          command: gulp installServerDependencies
 
       - run: 
           name: Deployment (frontEnd)
-          command: npx gulp installFrontEndDependencies
+          command: gulp installFrontEndDependencies
           
       - save_cache:
           name: Saving cache (backend)
@@ -60,36 +60,36 @@ jobs:
 
       - run:
           name: Static Analysis (backend & frontEnd)
-          command: npx gulp eslint
+          command: gulp eslint
 
       - run:
           name: Generate config file (backend)
-          command: npx gulp generateConfig
+          command: gulp generateConfig
 
       - run:
           name: Mocha tests (backend)
-          command: npx gulp serverTest
+          command: gulp serverTest
 
       - run:
           name: Jest tests (frontEnd)
-          command: npx gulp frontEndTestCoverage
+          command: gulp frontEndTestCoverage
 
       - run:
           name: Push coverage to Codecov
-          command: npx codecov
+          command: codecov
 
       - run: 
           name: Deployment (frontEnd) - Webpack
-          command: npx gulp buildDev
+          command: gulp buildDev
           
       - run:
           name: Start NodeJS
-          command: npx gulp start
+          command: gulp start
           background: true
 
       - run:
           name: E2E tests
-          command: npx gulp testCypress
+          command: gulp testCypress
 
       - store_artifacts:
           path: /home/circleci/project/src/server/.tests/cypress/videos
