@@ -1,5 +1,5 @@
 /// <reference types="Cypress" />
-const http = request('http')
+const http = require('http')
 let suite
 let inbox
 context('Login', () => {
