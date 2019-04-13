@@ -34,7 +34,7 @@ jobs:
 
       - run:
           name: Installing root dependencies
-          command: npm i --global gulp gulp-path
+          command: sudo npm i --global gulp gulp-path
 
       - run: 
           name: Deployment (backend)
