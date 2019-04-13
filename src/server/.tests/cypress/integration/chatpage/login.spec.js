@@ -29,11 +29,13 @@ context('Login', () => {
 		cy.get('[name="password"]').type(suite.CORRECT_PASSWORD)
 		cy.get('[name="email"]').type(suite.EMAIL)
 		cy.get('.register-button').click()
+		cy.log('starting request')
 		http.get('localhost:1080/messages', res => {
 			cy.log(res)
+			cy.url().should('include', '/')
 			done()
 		})
-		cy.url().should('include', '/')
+		
 
 	})
 
