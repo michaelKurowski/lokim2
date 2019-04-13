@@ -157,7 +157,7 @@ function frontEndEslintAutoFix(cb) {
 }
 
 function serverTest(cb) {
-    const childProcess = spawn(`${PATHS.MOCHA} './.tests/mocha/**/*.spec.js'`, {cwd: PATHS.SERVER, shell: true, stdio: 'inherit'})
+    const childProcess = spawn(`${PATHS.MOCHA} './.tests/mocha/**/*.spec.js'`, {cwd: PATHS.SERVER, shell: true, stdio: 'inherit', detached: false})
     childProcess.on('close', (data) => {
         cb()
     })
