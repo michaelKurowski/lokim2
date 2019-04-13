@@ -115,6 +115,22 @@ class Room {
 			})
 			.catch(err => logger.error(err))
 	}
+
+	/**
+	 * Sends all messages currently in the Room
+	 * @name allMessages
+	 * @memberof Room
+	 * @member
+	 * 
+	 */
+
+	 [EVENT_TYPES.ALL_MESSAGES](data, socket){
+		const roomId = data.roomId
+		const roomData = getMessagesForCurrentRoom(roomId)
+
+		socket.emit(EVENT_TYPES.ALL_MESSAGES, {roomId, roomData})
+	 }
+
 }
 
 async function getRoomClients(room) {
@@ -133,4 +149,30 @@ function joinUsersToRoom(invitedUsersIndexes, roomId, connections, controller) {
 	})
 }
 
+function getMessagesForCurrentRoom(roomId){
+	/**
+	 * 1. Query for room via room ID
+	 * 2. Send messages if they exist
+	 */
+}
+
+function appendMessageToHistory(roomId, message, username){
+	if(_.isEmpty([roomId, message, username])) throw new Error('Saving a message requires a roomId, message text and author\'s username')
+
+	const room = /* room.findOne(roomId) */ null
+
+	const message = {
+		author: username,
+		body: message,
+		creationDate: Date.now()
+	}
+
+	/**
+	 * 1. Check if parameters are valid
+	 * 2. Find room via roomId
+	 * 3. Create message object
+	 * 4. Append new message object to the existing array of messages
+	 * 5. Save
+	 */
+}
 module.exports = Room
