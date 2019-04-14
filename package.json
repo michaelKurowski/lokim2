@@ -1,6 +1,6 @@
 {
     "scripts": {
-        "heroku-postbuild": "npx gulp prepare",
+        "heroku-postbuild": "npx gulp prepare"
     },
     "dependencies": {
         "gulp": "^4.0.0",
