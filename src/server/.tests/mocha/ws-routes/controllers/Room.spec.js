@@ -19,7 +19,6 @@ const SOCKET_OPTIONS = {
 let suite
 describe('Room websocket namespace', () => {
 	beforeEach(() => {
-		throw 'dupa'
 		suite = {}
 		suite.connectionsMock = {
 			usersToConnectionsMap: new Map()
