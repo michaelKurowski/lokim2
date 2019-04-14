@@ -37,10 +37,6 @@ context('Login', () => {
 			failOnStatusCode: false
 		}).then(() => {
 			cy.log('DANE POBRANE')
-			done()
-		})
-		http.get('localhost:1080/messages', res => {
-			cy.log(res)
 			cy.url().should('include', '/')
 			done()
 		})

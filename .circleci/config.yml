@@ -8,9 +8,8 @@ jobs:
           DB_PASSWORD: mongopassadmin
           EMAIL_HOST: localhost
           EMAIL: dummy@em.com
-          EMAIL_PORT: 25
+          EMAIL_PORT: 1080
           EMAIL_PASSWORD: dommuPass
-          DEBUG: cypress:* cypress open
       - image: circleci/mongo:3.4
         environment:
           MONGO_INITDB_ROOT_USERNAME: mongousradmin
