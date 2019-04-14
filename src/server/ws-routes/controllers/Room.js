@@ -2,6 +2,7 @@ const uuidv4 = require('uuid/v4')
 const _ = require('lodash')
 const namespaceInfo =  require('../../protocol/protocol.json').room
 const EVENT_TYPES = namespaceInfo.eventTypes
+const roomController = require('../../controllers/room')
 const util = require('util')
 const logger = require('../../logger')
 /**
