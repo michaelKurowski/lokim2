@@ -27,50 +27,42 @@ const PATHS = {
     MOCHA: path.resolve(__dirname, 'src', 'server', 'node_modules', 'mocha', 'bin', 'mocha')
 }
 
-function start(cb) {
-    const childProcess = spawn(`node ${PATHS.SERVER_ENTRY_POINT}`, { cwd: PATHS.SERVER, shell: true, stdio: 'inherit' })
-    childProcess.on('close', (data) => {
-        cb()
+function run (command, workingDirectory, commandArguments = []) {
+    return new Promise(resolve => {
+        const childProcess = spawn(command, commandArguments, {cwd: workingDirectory, shell: true, stdio: 'inherit', detached: false})
+        childProcess.on('exit', (exitCode) => {
+            if (exitCode !== 0) throw `COMMAND FAILED > ${command}`
+            resolve()
+        })
     })
+}
+
+function start() {
+    return run(`node ${PATHS.SERVER_ENTRY_POINT}`, PATHS.SERVER)
 }
 
 //internal function
 function installServerDependencies(cb) {
-    const childProcess = spawn('npm install', { cwd: PATHS.SERVER, shell: true, stdio: 'inherit' })
-    childProcess.on('close', (data) => {
-        cb()
-    })
+    return run('npm install', PATHS.SERVER)
 }
 
 //internal function
 function installFrontEndDependencies(cb) {
-    const childProcess = spawn('npm install', { cwd: PATHS.FRONTEND, shell: true, stdio: 'inherit' })
-    childProcess.on('close', (data) => {
-        cb()
-    })
+    return run('npm install', PATHS.FRONTEND)
 }
 
 //internal function
 function bundleDev(cb) {
-    const childProcess = spawn(`npx ${PATHS.WEBPACK}`, ['--config', PATHS.WEBPACK_DEV_CONFIG], { cwd: PATHS.SERVER, shell: true, stdio: 'inherit' })
-    childProcess.on('close', (data) => {
-        cb()
-    })
+    return run(`npx ${PATHS.WEBPACK}`, PATHS.SERVER, ['--config', PATHS.WEBPACK_DEV_CONFIG])
 }
 
 //internal function
 function bundle(cb) {
-    const childProcess = spawn(`npx ${PATHS.WEBPACK}`, ['--config', PATHS.WEBPACK_PROD_CONFIG], { cwd: PATHS.SERVER, shell: true, stdio: 'inherit' })
-    childProcess.on('close', (data) => {
-        cb()
-    })
+    return run(`npx ${PATHS.WEBPACK}`, PATHS.SERVER, ['--config', PATHS.WEBPACK_PROD_CONFIG])
 }
 
 function generateConfig(cb) {
-    childProcess = spawn('node', ['-e', `"require('${PATHS.CONFIG_GENERATOR_SERVICE}')().generateConfig()"`], { cwd: PATHS.SERVER, shell: true, stdio: 'inherit' })
-    childProcess.on('close', (data) => {
-        cb()
-    })
+    return run('node', PATHS.SERVER, ['-e', `"require('${PATHS.CONFIG_GENERATOR_SERVICE}')().generateConfig()"`])
 }
 
 //internal function
@@ -87,82 +79,47 @@ function publishFrontEndBundle(cb) {
 }
 
 function serverEslint(cb) {
-    const childProcess = spawn(`node ${PATHS.ESLINT}`, ['--ignore-path', PATHS.ESLINT_IGNORE, PATHS.SERVER], { cwd: PATHS.SERVER, shell: true, stdio: 'inherit' })
-    childProcess.on('close', (data) => {
-        cb()
-    })
+    return run(`node ${PATHS.ESLINT}`, PATHS.SERVER, ['--ignore-path', PATHS.ESLINT_IGNORE, PATHS.SERVER])
 }
 
 function serverEslintAutoFix(cb) {
-    const childProcess = spawn(`node ${PATHS.ESLINT}`, ['--ignore-path', PATHS.ESLINT_IGNORE, '--fix', PATHS.SERVER], { cwd: PATHS.SERVER, shell: true, stdio: 'inherit' })
-    childProcess.on('close', (data) => {
-        cb()
-    })
+    return run(`node ${PATHS.ESLINT}`, PATHS.SERVER, ['--ignore-path', PATHS.ESLINT_IGNORE, '--fix', PATHS.SERVER])
 }
 
 function generateDocs(cb) {
-    const childProcess = spawn(`node ${PATHS.JSDOC}`, ['-r', PATHS.WEBSOCKET_ROUTING_DIRECTORY, '-d', PATHS.JS_DOCS_OUTPUT_DIRECTORY], { cwd: PATHS.SERVER, shell: true, stdio: 'inherit' })
-    childProcess.on('close', (data) => {
-        cb()
-    })
+    return run(`node ${PATHS.JSDOC}`, PATHS.SERVER, ['-r', PATHS.WEBSOCKET_ROUTING_DIRECTORY, '-d', PATHS.JS_DOCS_OUTPUT_DIRECTORY])
 }
 
 function serverTestCoverage(cb) {
-    const childProcess = spawn(`node ${PATHS.NYC}`, ['--all', '--check-coverage', '--report-dir', PATHS.COVERAGE_REPORT_DIRECTORY, 'npm', 'test'], {cwd: PATHS.SERVER, shell: true, stdio: 'inherit'})
-    childProcess.on('close', (data) => {
-        cb()
-    })
+    return run(`node ${PATHS.NYC}`, PATHS.SERVER, ['--all', '--check-coverage', '--report-dir', PATHS.COVERAGE_REPORT_DIRECTORY, 'npm', 'test'])
 }
 
 function testCypress(cb) {
-    const childProcess = spawn('npx cypress run', {cwd: PATHS.SERVER, shell: true, stdio: 'inherit'})
-    childProcess.on('close', (data) => {
-        cb()
-    })
+    return run('npx cypress run', PATHS.SERVER)
 }
 
 function frontEndTest(cb) {
-    const childProcess = spawn('npx jest', {cwd: PATHS.FRONTEND, shell: true, stdio: 'inherit'})
-    childProcess.on('close', (data) => {
-        cb()
-    })
+    return run('npx jest', PATHS.FRONTEND)
 }
 
 function frontEndTestDebug(cb) {
-    const childProcess = spawn('node', ['--inspect-brk', PATHS.FRONTEND_JEST, '--runInBand'], {cwd: PATHS.FRONTEND, shell: true, stdio: 'inherit'})
-    childProcess.on('close', (data) => {
-        cb()
-    })
+    return run('node', PATHS.FRONTEND, ['--inspect-brk', PATHS.FRONTEND_JEST, '--runInBand'])
 }
 
 function frontEndTestCoverage(cb) {
-    const childProcess = spawn('npx jest', ['--rootDir', PATHS.FRONTEND, '--config', PATHS.JEST_CONFIG, '--coverage > coverage.lcov'], {cwd: PATHS.FRONTEND, shell: true, stdio: 'inherit'})
-    childProcess.on('close', (data) => {
-        cb()
-    })
+    return run('npx jest', PATHS.FRONTEND, ['--rootDir', PATHS.FRONTEND, '--config', PATHS.JEST_CONFIG, '--coverage > coverage.lcov'])
 }
 
 function frontEndEslint(cb) {
-    const childProcess = spawn(`node ${PATHS.FRONTEND_ESLINT}`, ['--ignore-path', PATHS.FRONTEND_ESLINT_IGNORE, PATHS.FRONTEND], {cwd: PATHS.FRONTEND, shell: true, stdio: 'inherit'})
-    childProcess.on('close', (data) => {
-        cb()
-    })
+    return run(`node ${PATHS.FRONTEND_ESLINT}`, PATHS.FRONTEND, ['--ignore-path', PATHS.FRONTEND_ESLINT_IGNORE, PATHS.FRONTEND])
 }
 
 function frontEndEslintAutoFix(cb) {
-    const childProcess = spawn(`node ${PATHS.FRONTEND_ESLINT}`, ['--ignore-path', PATHS.FRONTEND_ESLINT_IGNORE, '--fix', PATHS.FRONTEND], {cwd: PATHS.FRONTEND, shell: true, stdio: 'inherit'})
-    childProcess.on('close', (data) => {
-        cb()
-    })
+    return run(`node ${PATHS.FRONTEND_ESLINT}`, PATHS.FRONTEND, ['--ignore-path', PATHS.FRONTEND_ESLINT_IGNORE, '--fix', PATHS.FRONTEND])
 }
 
 function serverTest(cb) {
-    const command = 'npx mocha "./.tests/mocha/**/*.spec.js"'
-    const childProcess = spawn(command, {cwd: PATHS.SERVER, shell: true, stdio: 'inherit', detached: false})
-    childProcess.on('exit', (exitCode) => {
-        if (exitCode !== 0) throw `COMMAND FAILED > ${command}`
-        cb()
-    })
+    return run('npx mocha "./.tests/mocha/**/*.spec.js"', PATHS.SERVER)
 }
 
 const build = series(bundle, publishFrontEndBundle)
