@@ -91,7 +91,7 @@ function generateDocs(cb) {
 }
 
 function serverTestCoverage(cb) {
-    return run(`node ${PATHS.NYC}`, PATHS.SERVER, ['--all', '--check-coverage', '--report-dir', PATHS.COVERAGE_REPORT_DIRECTORY, 'npm', 'test'])
+    return run(`node ${PATHS.NYC}`, PATHS.SERVER, ['--all', '--check-coverage', '--report-dir', PATHS.COVERAGE_REPORT_DIRECTORY, 'npx', 'mocha', './.tests/mocha/**/*.spec.js'])
 }
 
 function testCypress(cb) {
