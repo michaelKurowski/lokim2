@@ -23,11 +23,11 @@ class Room {
         }, (err) => handleError(err))
     }
 
-    editRoomName(id, name){
-        if(_.isEmpty([id, name])) throw new Error('ID and new name must be provided when editing room name.')
+    editRoomName(id, name, newName){
+        if(_.isEmpty([id, name, newName])) throw new Error('ID and new name must be provided when editing room name.')
 
-        RoomModel.findOne({_id: id, name}, (err, foundRoom) => {
-
+        RoomModel.findOneAndUpdate({id, name}, {name: newName}, (err) => {
+            if(err) handleError(err)
         })
     }
 
@@ -49,20 +49,61 @@ class Room {
             })
         })
     }
+
+    addUser(id, user){
+        const newUser = {
+            userId: user.id,
+            name: user.username,
+            joinDate: Date.now()
+        }
+
+        RoomModel.findOne({id}, (err, foundRoom) => {
+            const users = foundRoom.users
+            users.push(newUser)
+
+            RoomModel.updateOne({id}, {users}, (err, res) => {
+                if(err) handleError(err)
+
+                //Add some logic to make sure res.modifiedCount === 1
+            })
+        })
+    }
+
+    removeUser(id, user){
+        const newUser = {
+            userId: user.id,
+            name: user.username,
+            joinDate: Date.now()
+        }
+
+        RoomModel.findOne({id}, (err, foundRoom) => {
+            const users = foundRoom.users
+            const index = users.findIndex(element => element.userId === newUser.userID)
+
+            users.splice(index, 1)
+            
+            RoomModel.updateOne({id}, {users}, (err, res) => {
+                if(err) handleError(err)
+
+                //Add some logic to make sure res.modifiedCount === 1
+            })
+        })
+    }
 }
 
+module.export = Room
 
 function handleError(err){
     logger.warn(err)
 }
 
 /**
- * Create Room
- * Delete Room
- * Edit Room Name
- * Add message
- * Delete message
- * Add user
- * Delete user
+ * Create Room ✓
+ * Delete Room  ✓
+ * Edit Room Name ✓
+ * Add message ✓
+ * Delete message ✓
+ * Add user ✓
+ * Delete user ✓
  * 
  */
