@@ -34,11 +34,14 @@ context('Login', () => {
 			method: 'GET',
 			url: 'http://localhost:1080/messages/1.plain',
 			failOnStatusCode: false
-		}).then((data) => {
+		}).then(reponse => {
 			cy.url().should('include', '/')
-			const hash = data.body.split('/verify/')[1].split(' ')[0]
-			cy.visit(`http://localhost:5002/verify/${hash}`)
-			cy.wait(200)
+			const hash = reponse.body.split('/verify/')[1].split(' ')[0]
+			return cy.request({
+				method: 'GET',
+				url: `http://localhost:5002/verify/${hash}`,
+				failOnStatusCode: true
+			})
 		})
 	})
 
