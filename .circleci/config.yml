@@ -6,10 +6,10 @@ jobs:
         environment:
           DB_USERNAME: mongousradmin
           DB_PASSWORD: mongopassadmin
-          EMAIL_HOST: localhost
-          EMAIL: dummy@em.com
-          EMAIL_PORT: 1080
-          EMAIL_PASSWORD: dommuPass
+          SMTP_HOSTNAME: localhost
+          SMTP_USERNAME: dummy@em.com
+          SMTP_PORT: 1080
+          SMTP_PASSWORD: dommuPass
       - image: circleci/mongo:3.4
         environment:
           MONGO_INITDB_ROOT_USERNAME: mongousradmin

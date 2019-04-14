@@ -41,9 +41,9 @@ module.exports = function ({
 				const configTemplate = require('./miscellaneous/templateConfig.json')
 				configTemplate.database.username = process.env.DB_USERNAME || ''
 				configTemplate.database.password = process.env.DB_PASSWORD || ''
-				configTemplate.email.email = process.env.EMAIL || ''
-				configTemplate.email.password = process.env.EMAIL_PASSWORD || ''
-				configTemplate.email.hostname = process.env.EMAIL_HOST || ''
+				configTemplate.email.email = process.env.SMTP_USERNAME || ''
+				configTemplate.email.password = process.env.SMTP_PASSWORD || ''
+				configTemplate.email.hostname = process.env.SMTP_HOSTNAME || ''
 				const DEFAULT_SMTP_PORT = 587
 				configTemplate.email.port = parseInt(process.env.EMAIL_PORT) || DEFAULT_SMTP_PORT
 				

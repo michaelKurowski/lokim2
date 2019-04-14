@@ -18,6 +18,10 @@ LokIM is NodeJS & React based Instant Messanger.
  - `DB_USERNAME` MongoDB Username
  - `DB_PASSWORD` MongoDB Password
  - `DB_HOSTNAME` MongoDB Hostname
+ - `SMTP_HOSTNAME`
+ - `SMTP_USERNAME`
+ - `SMTP_PASSWORD`
+ - `SMTP_PORT`
 ## Development specific command
 ### Tests
  - For unit and integration tests on backend run `gulp serverTest`
