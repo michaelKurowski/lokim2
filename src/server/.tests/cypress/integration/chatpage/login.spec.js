@@ -11,13 +11,13 @@ context('Login', () => {
 			WRONG_PASSWORD: 'wrong_password',
 			EMAIL: 'testEmail@test.co.uk'
 		}
-		cy.visit('http://localhost:5000')
+		cy.visit('http://localhost:5002')
 	})
 
 	afterEach(done => {
 		cy.request({
 			method: 'POST',
-			url: 'http://localhost:5000/logout',
+			url: 'http://localhost:5002/logout',
 			failOnStatusCode: false
 		}).then(() => done())
 	})
@@ -38,7 +38,7 @@ context('Login', () => {
 			cy.url().should('include', '/')
 			throw data.body
 			const hash = data.body.split('/verify/')[1].split(' ')[0]
-			cy.visit(`http://localhost:5000/verify/${hash}`)
+			cy.visit(`http://localhost:5002/verify/${hash}`)
 			done()
 		})
 	})
