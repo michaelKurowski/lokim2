@@ -35,13 +35,12 @@ context('Login', () => {
 			method: 'GET',
 			url: 'http://localhost:1080/messages',
 			failOnStatusCode: false
-		}).then(() => {
+		}).then((data) => {
 			cy.log('DANE POBRANE')
 			cy.url().should('include', '/')
+			throw JSON.stringify(data.body)
 			done()
 		})
-		
-
 	})
 
 	it('can login', () => {
