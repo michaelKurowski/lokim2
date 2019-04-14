@@ -31,7 +31,7 @@ context('Login', () => {
 		cy.get('[name="email"]').type(suite.EMAIL)
 		cy.get('.register-button').click()
 		cy.log('starting request')
-		cy.wait(5000)
+		cy.wait(2000)
 		cy.request({
 			method: 'GET',
 			url: 'http://localhost:1080/messages',
