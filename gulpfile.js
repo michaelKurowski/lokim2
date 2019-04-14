@@ -127,6 +127,7 @@ const buildDev = series(bundleDev, publishFrontEndBundle)
 const prepare = series(installServerDependencies, installFrontEndDependencies, build, generateConfig, preparationMessege)
 const prepareDev = series(installServerDependencies, installFrontEndDependencies, buildDev, generateConfig, preparationMessege)
 const eslint = series(serverEslint, frontEndEslint)
+const eslintAutoFix = series(serverEslintAutoFix, frontEndEslintAutoFix)
 const test = series(serverTest, frontEndTest)
 
 module.exports = {
@@ -150,5 +151,6 @@ module.exports = {
     prepare,
     prepareDev,
     eslint,
+    eslintAutoFix,
     test
     }
