@@ -34,7 +34,7 @@ context('Login', () => {
 		cy.wait(2000)
 		cy.request({
 			method: 'GET',
-			url: 'http://localhost:1080/messages',
+			url: 'http://localhost:1080/messages/1.plain',
 			failOnStatusCode: false
 		}).then((data) => {
 			cy.log('DANE POBRANE')
