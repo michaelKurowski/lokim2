@@ -1,7 +1,6 @@
 {
     "scripts": {
         "heroku-postbuild": "npx gulp prepare",
-        "start": "npm start --prefix ./src/server"
     },
     "dependencies": {
         "gulp": "^4.0.0",
