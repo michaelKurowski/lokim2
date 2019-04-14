@@ -38,6 +38,7 @@ context('Login', () => {
 			cy.url().should('include', '/')
 			const hash = data.body.split('/verify/')[1].split(' ')[0]
 			cy.visit(`http://localhost:5002/verify/${hash}`)
+			cy.wait(200)
 			done()
 		})
 	})
