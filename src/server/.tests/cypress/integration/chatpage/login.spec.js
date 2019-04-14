@@ -22,7 +22,7 @@ context('Login', () => {
 		}).then(() => done())
 	})
 
-	it('can register', done => {
+	it('can register', () => {
 		cy.get('.home-button.btn.btn-secondary a').click()
 		cy.url().should('include', '/register')
 		cy.get('[name="username"]').type(suite.CORRECT_USERNAME)
@@ -30,7 +30,7 @@ context('Login', () => {
 		cy.get('[name="email"]').type(suite.EMAIL)
 		cy.get('.register-button').click()
 		cy.wait(2500)
-		cy.request({
+		return cy.request({
 			method: 'GET',
 			url: 'http://localhost:1080/messages/1.plain',
 			failOnStatusCode: false
@@ -39,7 +39,6 @@ context('Login', () => {
 			const hash = data.body.split('/verify/')[1].split(' ')[0]
 			cy.visit(`http://localhost:5002/verify/${hash}`)
 			cy.wait(200)
-			done()
 		})
 	})
 
