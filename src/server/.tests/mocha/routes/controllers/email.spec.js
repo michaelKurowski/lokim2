@@ -24,6 +24,10 @@ const DUMMY_OPTIONS = {
 const BUFFER_VALUE = 'H'
 const TOKEN_FORMAT = 'hex'
 
+const RESPONSE_MOCK = {
+    status: () => ({json() {}})
+}
+
 describe('E-mail Controller', () => {
     describe('Sandboxed Token Creation', () => {
         let sandbox
@@ -138,7 +142,7 @@ describe('E-mail Controller', () => {
 
         beforeEach(() => {
             const verifyMock = {
-                find: function(token, callback){
+                findOne: function(token, callback){
 
                     return callback(null, {username: DUMMY_USER})    
                 },
@@ -147,7 +151,7 @@ describe('E-mail Controller', () => {
                 }
             }
             const verifyMockToFail = {
-                find: function(token, callback){
+                findOne: function(token, callback){
                     return callback(true, null)    
                 }
             }
@@ -174,14 +178,15 @@ describe('E-mail Controller', () => {
             const NO_TOKEN = {params: {token: null}}
 
             const EXPECTED_ERROR_MESSAGE = 'Invalid token.'
+            
             assert.throws(() => suite.verify(NO_TOKEN), Error, EXPECTED_ERROR_MESSAGE)
         })
         it('Should find a user based on the token.', () => {
             const TOKEN = {params: {token: DUMMY_TOKEN}}
-
             const NO_VALIDATION_ERROR = null
 
-            const RESULTING_VALIDATION_ERROR = suite.verify(TOKEN)
+            const RESULTING_VALIDATION_ERROR = suite.verify(TOKEN, RESPONSE_MOCK)
+            console.log('result', RESULTING_VALIDATION_ERROR)
             assert.strictEqual(RESULTING_VALIDATION_ERROR, NO_VALIDATION_ERROR)
         })
         it('Should throw an error if no token is found', () => {
