@@ -86,13 +86,13 @@ function verifyUser(
 		if(_.isEmpty(token))
 			throw new Error(INVALID_TOKEN)
 
-		return Verify.find({token}, (err, foundUser) => {
+		return Verify.findOne({token}, (err, foundUser) => {
 			if(err)
 				throw new Error(INVALID_TOKEN)
 
 			const {username} = foundUser
 
-			return User.findOneAndUpdate({username}, {active: true}, (err) => { 
+			return User.findOneAndUpdate({username}, {$set: {active: true}}, (err) => { 
 				if (err)
 					throw new Error(USER_NOT_FOUND)
                     
