@@ -3,11 +3,11 @@ const assert = require('chai').assert
 const path = require('path')
 const CURRENT_PATH = path.resolve(__dirname)
 
-describe('npm run generate-docs', () => {
+describe('generating docs', () => {
 	it('should exit with code 0 (no errors)', done => {
 		const COMMAND_CONFIG = {cwd: CURRENT_PATH}
-		const COMMAND = 'npm'
-		const COMMAND_ARGUMENTS = ['run', 'generate-docs']
+		const COMMAND = 'npx'
+		const COMMAND_ARGUMENTS = ['gulp', 'generateDocs']
 
 		const generateDocs = spawn(COMMAND, COMMAND_ARGUMENTS, COMMAND_CONFIG)
 
