@@ -23,23 +23,21 @@ context('Login', () => {
 	})
 
 	it('can register', done => {
-		cy.log('starting test')
 		cy.get('.home-button.btn.btn-secondary a').click()
 		cy.url().should('include', '/register')
 		cy.get('[name="username"]').type(suite.CORRECT_USERNAME)
 		cy.get('[name="password"]').type(suite.CORRECT_PASSWORD)
 		cy.get('[name="email"]').type(suite.EMAIL)
 		cy.get('.register-button').click()
-		cy.log('starting request')
 		cy.wait(2000)
 		cy.request({
 			method: 'GET',
 			url: 'http://localhost:1080/messages/1.plain',
 			failOnStatusCode: false
 		}).then((data) => {
-			cy.log('DANE POBRANE')
 			cy.url().should('include', '/')
-			throw JSON.stringify(data.body)
+			const hash = data.body.split('/verify/')[1].split(' ')[0]
+			cy.visit(`http://localhost:5000/verify/${hash}`)
 			done()
 		})
 	})
