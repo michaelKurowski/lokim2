@@ -16,7 +16,8 @@ const PATHS = {
     JSDOC: path.resolve(__dirname, 'src', 'server', 'node_modules', 'jsdoc', 'jsdoc'),
     WEBSOCKET_ROUTING_DIRECTORY: path.resolve(__dirname, 'src', 'server', 'ws-routes'),
     NYC: path.resolve(__dirname, 'src', 'server', 'node_modules', 'nyc', 'bin', 'nyc'),
-    COVERAGE_REPORT_DIRECTORY: path.resolve(__dirname, 'coverage'),
+    SERVER_COVERAGE_REPORT_DIRECTORY: path.resolve(__dirname, 'coverage'),
+    FRONTEND_COVERAGE_REPORT_DIRECTORY: path.resolve(__dirname, 'frontEnd', 'coverage'),
     TEST_CYPRESS: path.resolve(__dirname, 'src', 'server', 'runCypress.js'),
     FRONTEND_ESLINT: path.resolve(__dirname, 'src', 'server', 'frontEnd', 'node_modules', 'eslint', 'bin', 'eslint.js'),
     FRONTEND_ESLINT_IGNORE: path.resolve(__dirname, 'src', 'server', 'frontEnd', '.eslintignore'),
@@ -91,7 +92,7 @@ function generateDocs(cb) {
 }
 
 function serverTestCoverage(cb) {
-    return run(`node ${PATHS.NYC}`, PATHS.SERVER, ['--all', '--check-coverage', '--report-dir', PATHS.COVERAGE_REPORT_DIRECTORY, 'npx', 'gulp', 'serverTest'])
+    return run(`node ${PATHS.NYC}`, PATHS.SERVER, ['--all', '--check-coverage', '--report-dir', PATHS.SERVER_COVERAGE_REPORT_DIRECTORY, 'npx', 'gulp', 'serverTest'])
 }
 
 function testCypress(cb) {
@@ -107,7 +108,7 @@ function frontEndTestDebug(cb) {
 }
 
 function frontEndTestCoverage(cb) {
-    return run('npx jest', PATHS.FRONTEND, ['--rootDir', PATHS.FRONTEND, '--config', PATHS.JEST_CONFIG, '--coverage > coverage.lcov'])
+    return run('npx jest', PATHS.FRONTEND, ['--rootDir', PATHS.FRONTEND, '--config', PATHS.JEST_CONFIG, '--coverage'])
 }
 
 function frontEndEslint(cb) {
