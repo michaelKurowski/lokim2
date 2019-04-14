@@ -119,7 +119,7 @@ function frontEndEslintAutoFix(cb) {
 }
 
 function serverTest(cb) {
-    return run('npx mocha "./.tests/mocha/**/*.spec.js"', PATHS.SERVER)
+    return run('npx mocha "./.tests/mocha/**/*.spec.js"', PATHS.SERVER, ['--no-timeouts'])
 }
 
 const build = series(bundle, publishFrontEndBundle)
