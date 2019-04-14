@@ -36,7 +36,6 @@ context('Login', () => {
 			failOnStatusCode: false
 		}).then((data) => {
 			cy.url().should('include', '/')
-			throw data.body
 			const hash = data.body.split('/verify/')[1].split(' ')[0]
 			cy.visit(`http://localhost:5002/verify/${hash}`)
 			done()
