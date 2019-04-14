@@ -8,7 +8,7 @@ jobs:
           DB_PASSWORD: mongopassadmin
           SMTP_HOSTNAME: localhost
           SMTP_USERNAME: dummy@em.com
-          SMTP_PORT: 1080
+          SMTP_PORT: 1025
           SMTP_PASSWORD: dommuPass
       - image: circleci/mongo:3.4
         environment:
