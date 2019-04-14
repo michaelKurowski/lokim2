@@ -1,6 +1,7 @@
 const config = require('../../config.json')
 const nodemailer = require('nodemailer')
 const logger = require('../../logger')
+const responseManager = require('./utilities/responseManager')
 const crypto = require('crypto')
 const _ = require('lodash')
 
@@ -80,7 +81,7 @@ function sendVerificationMail(transporter = prepareTransporter()) {
 function verifyUser(
 	Verify = require('../../models/verification'),
 	User = require('../../models/user')) {
-	return (req) => {
+	return (req, res) => {
 		const token = req.params.token
         
 		if(_.isEmpty(token))
@@ -95,7 +96,7 @@ function verifyUser(
 			return User.findOneAndUpdate({username}, {$set: {active: true}}, (err) => { 
 				if (err)
 					throw new Error(USER_NOT_FOUND)
-                    
+				responseManager.sendResponse(res, responseManager.MESSAGES.SUCCESSES.OK)
 				return Verify.remove({token})
 			})
 		})
