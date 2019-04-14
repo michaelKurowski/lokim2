@@ -29,7 +29,7 @@ context('Login', () => {
 		cy.get('[name="password"]').type(suite.CORRECT_PASSWORD)
 		cy.get('[name="email"]').type(suite.EMAIL)
 		cy.get('.register-button').click()
-		cy.wait(2000)
+		cy.wait(2500)
 		cy.request({
 			method: 'GET',
 			url: 'http://localhost:1080/messages/1.plain',
