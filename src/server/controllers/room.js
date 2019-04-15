@@ -27,7 +27,7 @@ class Room {
         if(_.isEmpty([id, name, newName])) throw new Error('ID and new name must be provided when editing room name.')
 
         RoomModel.findOneAndUpdate({id, name}, {name: newName}, (err) => {
-            if(err) handleError(err)
+            if(err) return handleError(err)
         })
     }
 
@@ -43,7 +43,7 @@ class Room {
             messages.push(newMessage)
 
             RoomModel.updateOne({id}, {messages}, (err, res) => {
-                if(err) handleError(err)
+                if(err) return handleError(err)
 
                 //Add some logic to make sure res.modifiedCount === 1
             })
@@ -58,11 +58,13 @@ class Room {
         }
 
         RoomModel.findOne({id}, (err, foundRoom) => {
+            if(err) return handleError(err)
+
             const users = foundRoom.users
             users.push(newUser)
 
             RoomModel.updateOne({id}, {users}, (err, res) => {
-                if(err) handleError(err)
+                if(err) return handleError(err)
 
                 //Add some logic to make sure res.modifiedCount === 1
             })
@@ -77,13 +79,15 @@ class Room {
         }
 
         RoomModel.findOne({id}, (err, foundRoom) => {
+            if(err) return handleError(err)
+
             const users = foundRoom.users
             const index = users.findIndex(element => element.userId === newUser.userID)
 
             users.splice(index, 1)
             
             RoomModel.updateOne({id}, {users}, (err, res) => {
-                if(err) handleError(err)
+                if(err) return handleError(err)
 
                 //Add some logic to make sure res.modifiedCount === 1
             })
