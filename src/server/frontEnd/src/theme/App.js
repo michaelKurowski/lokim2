@@ -2,11 +2,15 @@ const React = require('react')
 const HomePage = require('./scenes/homepage/homepage')
 const Register = require('./scenes/register/register')
 const ChatPage = require('./scenes/chatpage/chatpage')
+const CorrectEmailPage = require('./scenes/verifyEmail/correct')
+const InvalidEmailPage = require('./scenes/verifyEmail/invalid')
 const {BrowserRouter, Route} = require('react-router-dom')
 const {paths} = require('routing-config')
 const LOGIN_URL = paths.HOME
 const REGISTER_URL = paths.REGISTER
 const CHAT_URL = paths.CHAT
+const INVALID_EMAIL_URL = paths.EMAIL_INVALID
+const VALID_EMAIL_URL = paths.EMAIL_VALID
 import './index.css'
 import './App.css'
 
@@ -18,6 +22,8 @@ class App extends React.Component {
 					<Route exact path={LOGIN_URL} component={HomePage} />
 					<Route path={REGISTER_URL} component={Register} />
 					<Route path={CHAT_URL} component={ChatPage}/>
+					<Route path={INVALID_EMAIL_URL} component={InvalidEmailPage}/>
+					<Route path={VALID_EMAIL_URL} component={CorrectEmailPage}/>
 				</div>
 			</BrowserRouter>
 		)
