@@ -15,7 +15,7 @@
 		"EMPTY_EMAIL": "Email cannot be empty.",
 		"EMPTY_PASSWORD": "Email password cannot be empty.",
 		"EMPTY_HOST": "Email hostname cannot be empty.",
-		"EMPTY_PORT": "Email port cannot be empty."
+		"INVALID_PORT": "Email port must be a number."
 	},
 	"EMPTY_HOSTNAME": "Server URL hostname cannot be empty.",
 	"SESSION": {

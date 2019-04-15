@@ -80,7 +80,7 @@ function validateEmailConfig(email) {
 	assert.isNotEmpty(email.email, ERROR_MESSAGES.EMAIL.EMPTY_EMAIL)
 	assert.isNotEmpty(email.password, ERROR_MESSAGES.EMAIL.EMPTY_PASSWORD)
 	assert.isNotEmpty(email.hostname, ERROR_MESSAGES.EMAIL.EMPTY_HOST)
-	assert.isNumber(email.port, ERROR_MESSAGES.EMAIL.EMPTY_PORT)
+	assert.isNumber(email.port, ERROR_MESSAGES.EMAIL.INVALID_PORT)
 
 }
 
