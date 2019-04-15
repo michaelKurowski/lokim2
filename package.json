@@ -1,6 +1,6 @@
 {
     "scripts": {
-        "postinstall": "npm install --prefix ./src/server && mkdir ./src/server/public && npm install --prefix ./src/server/frontEnd && npm run --prefix ./src/server build",
+        "postinstall": "npm install --prefix ./src/server && mkdir ./src/server/public && npm install --prefix ./src/server/frontEnd && npm run --prefix ./src/server build && npm run --prefix ./src/server generate-confi",
         "start": "npm start --prefix ./src/server",
         "prepare": "cd ./src/server && npm i && cd frontEnd && npm i && cd .. && npm run build && npm run generate-config && cd ../.. && echo 'Now fill /src/server/config.json or set environmental variables'",
 	    "prepare-dev": "cd ./src/server && npm i && cd frontEnd && npm i && cd .. && npm run build-dev && npm run generate-config && cd ../.. && echo 'Now fill /src/server/config.json or set environmental variables'"
