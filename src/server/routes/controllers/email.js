@@ -1,7 +1,6 @@
 const config = require('../../config.json')
 const nodemailer = require('nodemailer')
 const logger = require('../../logger')
-const responseManager = require('./utilities/responseManager')
 const crypto = require('crypto')
 const _ = require('lodash')
 
@@ -10,7 +9,6 @@ const EMAIL_SENDER = account.email || process.env.SMTP_USERNAME
 const LOKIM_EMAIL = `"Lokim Messenger Services" <${EMAIL_SENDER}>`
 const INVALID_TOKEN = 'Invalid token.'
 const USER_NOT_FOUND = 'User not found.'
-
 
 
 const SMTP_OPTIONS = {
@@ -90,7 +88,7 @@ function verifyUser(
 
 		return Verify.findOne({token}, (err, foundUser) => {
 			if(err || foundUser === null) {
-				
+				return res.redirect('/email-is-invalid')
 			}
 				
 
