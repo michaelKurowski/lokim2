@@ -37,12 +37,14 @@ context('Login', () => {
 		}).then(reponse => {
 			cy.url().should('include', '/')
 			const hash = reponse.body.split('/verify/')[1].split(' ')[0]
-			return cy.request({
-				method: 'GET',
-				url: `http://localhost:5002/verify/${hash}`,
-				failOnStatusCode: true
-			})
+			cy.visit(`http://localhost:5002/verify/${hash}`)
+			cy.get('#email-correct')
 		})
+	})
+
+	it('receives an incorrect email page when entering wrong email activation link', () => {
+		cy.visit(`http://localhost:5002/verify/incorrecthash`)
+		cy.get('#email-incorrect')
 	})
 
 	it('can login', () => {
