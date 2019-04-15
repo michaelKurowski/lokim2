@@ -15,6 +15,8 @@ router.get('/verify/:token', emailController.verifyUser())
 
 router.use('/protocol', express.static(path.join(process.cwd(), '/protocol')))
 router.use('/', express.static(path.join(process.cwd(), '/public')))
+router.use('/email-is-invalid', express.static(path.join(process.cwd(), '/public')))
+router.use('/email-is-valid', express.static(path.join(process.cwd(), '/public')))
 if (config.devPropeties.devMode) 
 	router.use('/test', express.static(path.join(process.cwd(), '/.tests/tools')))
 

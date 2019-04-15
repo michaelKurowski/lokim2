@@ -2,7 +2,9 @@
     "paths": {
         "REGISTER": "/register",
         "CHAT": "/chat",
-        "HOME": "/"
+        "HOME": "/",
+        "EMAIL_INVALID": "/email-is-invalid",
+        "EMAIL_VALID": "/email-is-valid"
     },
     "urls": {
         "LOGIN": "/login",
