@@ -6,8 +6,8 @@ const crypto = require('crypto')
 const _ = require('lodash')
 
 const account = config.email
-
-const LOKIM_EMAIL = `"Lokim Messenger Services" <${account.email}>`
+const EMAIL_SENDER = account.email || process.env.SMTP_USERNAME
+const LOKIM_EMAIL = `"Lokim Messenger Services" <${EMAIL_SENDER}>`
 const INVALID_TOKEN = 'Invalid token.'
 const USER_NOT_FOUND = 'User not found.'
 
@@ -18,7 +18,7 @@ const SMTP_OPTIONS = {
 	port: account.port || process.env.SMTP_PORT,
 	secure: false,
 	auth: {
-		user: account.email || process.env.SMTP_USERNAME,
+		user: EMAIL_SENDER,
 		pass: account.password || process.env.SMTP_PASSWORD
 	}
 }
