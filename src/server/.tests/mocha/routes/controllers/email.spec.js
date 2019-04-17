@@ -32,7 +32,7 @@ const RESPONSE_MOCK = {
     redirect() {}
 }
 
-describe.only('E-mail Controller', () => {
+describe('E-mail Controller', () => {
     describe('Sandboxed Token Creation', () => {
         let sandbox
 
