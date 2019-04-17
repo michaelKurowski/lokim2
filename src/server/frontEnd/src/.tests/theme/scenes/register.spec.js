@@ -10,7 +10,7 @@ const RegisterPage = require('theme/scenes/register/register')
 configure({adapter: new Adapter()})
 
 let suite
-describe.only('<Register />', () => {
+describe('<Register />', () => {
     beforeEach(() => {
         const REGISTER_PAGE_COMPONENT = 
             <MemoryRouter initialEntries={[REGISTER_URL]}>
@@ -25,4 +25,4 @@ describe.only('<Register />', () => {
     it('renders without errors', () => {
         mount(suite.wrapper)
     })
-});
+})
