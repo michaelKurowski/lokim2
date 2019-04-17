@@ -28,6 +28,9 @@ class Room {
 	[EVENT_TYPES.JOIN](data, socket) {
 		const {roomId} = data
 		if (_.isEmpty(roomId)) return
+		
+		roomController.addUser(socket.request.user)
+
 		const username = socket.request.user.username
 		const timestamp = new Date().getTime()
 		
@@ -54,6 +57,9 @@ class Room {
 		const {roomId, message} = data
 		const username = socket.request.user.username
 		const timestamp = new Date().getTime()
+
+		roomController.addMessage(roomId, message, username, timestamp)
+
 		socket.emit(EVENT_TYPES.MESSAGE, {message, username, timestamp, roomId})
 		socket.to(roomId).emit(EVENT_TYPES.MESSAGE, {message, username, timestamp, roomId})
 	}
@@ -73,6 +79,9 @@ class Room {
 
 		const timestamp = new Date().getTime()
 		const username = socket.request.user.username
+
+		roomController.removeUser(roomId, socket.request.user)
+
 		socket.to(roomId).emit(EVENT_TYPES.LEAVE, {username, timestamp})
 		socket.leave({roomId})
 	}
@@ -88,6 +97,8 @@ class Room {
 	[EVENT_TYPES.CREATE](data, socket, connections) {
 		const {invitedUsersIndexes} = data
 		const roomId = uuidv4()
+
+		roomController.createRoom(roomId)
 
 		this.join({roomId}, socket, connections)
 		joinUsersToRoom(invitedUsersIndexes, roomId, connections, this)
@@ -151,29 +162,7 @@ function joinUsersToRoom(invitedUsersIndexes, roomId, connections, controller) {
 }
 
 function getMessagesForCurrentRoom(roomId){
-	/**
-	 * 1. Query for room via room ID
-	 * 2. Send messages if they exist
-	 */
+	return roomController.allMessages(roomId)
 }
 
-function appendMessageToHistory(roomId, message, username){
-	if(_.isEmpty([roomId, message, username])) throw new Error('Saving a message requires a roomId, message text and author\'s username')
-
-	const room = /* room.findOne(roomId) */ null
-
-	const message = {
-		author: username,
-		body: message,
-		creationDate: Date.now()
-	}
-
-	/**
-	 * 1. Check if parameters are valid
-	 * 2. Find room via roomId
-	 * 3. Create message object
-	 * 4. Append new message object to the existing array of messages
-	 * 5. Save
-	 */
-}
 module.exports = Room
