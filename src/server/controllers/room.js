@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const logger = require('../../logger')
+const logger = require('../logger')
 
 class Room {
     constructor(RoomModel = require('../models/room')){
@@ -39,6 +39,8 @@ class Room {
         }
 
         RoomModel.findOne({id}, (err, foundRoom) => {
+            if(err) throw new Error('Could not find room ID.')
+
             const messages = foundRoom.messages
             messages.push(newMessage)
 
@@ -91,6 +93,24 @@ class Room {
 
                 //Add some logic to make sure res.modifiedCount === 1
             })
+        })
+    }
+
+    listUsers(id){
+        return RoomModel.findOne({id}, (err, foundRoom) => {
+            if(err) return handleError(err)
+
+            const users = foundRoom.users.map(x => x.name)
+            return users
+        })
+    }
+
+    allMessages(id){
+        return RoomModel.findOne({id}, (err, foundRoom) => {
+            if(err) throw new Error('Could not find room ID.')
+
+            const messages = foundRoom.messages
+            return messages
         })
     }
 }
