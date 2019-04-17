@@ -3,12 +3,13 @@ const assert = require('chai').assert
 const sinon = require('sinon')
 const crypto = require('crypto')
 const nodemailer = require('nodemailer')
-const DUMMY_EMAIL = 'dummy@mail.com'
+const config = require('../../../../config.json')
+const DUMMY_EMAIL = config.email.email
 const DUMMY_SUBJECT = 'subject'
 const DUMMY_BODY = 'bodybodybody'
 const DUMMY_USER = 'dummyUser'
 const DUMMY_PASSWORD = 'dummyPassword'
-const LOKIM_EMAIL = '"Lokim Messenger Services" <lokim.messenger@mail.com>'
+const LOKIM_EMAIL = `"Lokim Messenger Services" <${config.email.email}>`
 const DUMMY_HOST = 'localhost'
 const DUMMY_TOKEN = '1234567890!#'
 const NO_EMAIL = [null, null, null]
@@ -25,10 +26,13 @@ const BUFFER_VALUE = 'H'
 const TOKEN_FORMAT = 'hex'
 
 const RESPONSE_MOCK = {
-    status: () => ({json() {}})
+    status: () => ({
+        json() {}
+    }),
+    redirect() {}
 }
 
-describe('E-mail Controller', () => {
+describe.only('E-mail Controller', () => {
     describe('Sandboxed Token Creation', () => {
         let sandbox
 
@@ -179,26 +183,25 @@ describe('E-mail Controller', () => {
 
             const EXPECTED_ERROR_MESSAGE = 'Invalid token.'
             
-            assert.throws(() => suite.verify(NO_TOKEN), Error, EXPECTED_ERROR_MESSAGE)
+            assert.strictEqual(suite.verify(NO_TOKEN, RESPONSE_MOCK), EXPECTED_ERROR_MESSAGE)
         })
         it('Should find a user based on the token.', () => {
             const TOKEN = {params: {token: DUMMY_TOKEN}}
             const NO_VALIDATION_ERROR = null
 
             const RESULTING_VALIDATION_ERROR = suite.verify(TOKEN, RESPONSE_MOCK)
-            console.log('result', RESULTING_VALIDATION_ERROR)
             assert.strictEqual(RESULTING_VALIDATION_ERROR, NO_VALIDATION_ERROR)
         })
-        it('Should throw an error if no token is found', () => {
+        it('Should return an INVALID_TOKEN if no token is found', () => {
             const requestMock = {params: {token: 'invalid token'}}
             const EXPECTED_ERROR_MESSAGE = 'Invalid token.'
-            assert.throws(() => suite.verifyTokenNotFound(requestMock), Error, EXPECTED_ERROR_MESSAGE)
+            assert.strictEqual(suite.verifyTokenNotFound(requestMock, RESPONSE_MOCK), EXPECTED_ERROR_MESSAGE)
         })
-        it('Should throw an error if no user is found, but a token is', () => {
+        it('Should return an error if no user is found, but a token is', () => {
             const requestMock = {params: {token: DUMMY_TOKEN}}
             const EXPECTED_ERROR_MESSAGE = 'User not found.'
 
-            assert.throws(() => suite.verifyUserNotFound(requestMock), Error, EXPECTED_ERROR_MESSAGE)
+            assert.strictEqual(suite.verifyUserNotFound(requestMock, RESPONSE_MOCK), EXPECTED_ERROR_MESSAGE)
         })
     })
 })

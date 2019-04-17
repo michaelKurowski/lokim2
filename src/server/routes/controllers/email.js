@@ -83,12 +83,16 @@ function verifyUser(
 	User = require('../../models/user')) {
 	return (req, res) => {
 		const token = req.params.token
-        
-		if(_.isEmpty(token)) logger.error(INVALID_TOKEN, req)
+
+		if(_.isEmpty(token)) {
+			logger.error(INVALID_TOKEN, req)
+			return INVALID_TOKEN
+		}
 
 		return Verify.findOne({token}, (err, foundUser) => {
 			if(err || foundUser === null) {
-				return res.redirect('/email-is-invalid')
+				res.redirect('/email-is-invalid')
+				return INVALID_TOKEN
 			}
 				
 
@@ -96,8 +100,9 @@ function verifyUser(
 
 			return User.findOneAndUpdate({username}, {$set: {active: true}}, (err) => { 
 				if (err) {
-					if(_.isEmpty(token)) logger.error(USER_NOT_FOUND, req)
-					return res.redirect('/email-is-invalid')
+					logger.error(USER_NOT_FOUND, req)
+					res.redirect('/email-is-invalid')
+					return USER_NOT_FOUND
 				}
 				res.redirect('/email-is-valid')
 				return Verify.remove({token})
