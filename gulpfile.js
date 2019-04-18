@@ -92,7 +92,7 @@ function generateDocs(cb) {
 }
 
 function serverTestCoverage(cb) {
-    return run(`node ${PATHS.NYC}`, PATHS.SERVER, ['--all', '--check-coverage', '--report-dir', PATHS.SERVER_COVERAGE_REPORT_DIRECTORY, 'npx', 'gulp', 'serverTest'])
+    return run(`node ${PATHS.NYC}`, PATHS.SERVER, ['--check-coverage', '--report-dir', PATHS.SERVER_COVERAGE_REPORT_DIRECTORY, 'npx', 'gulp', 'serverTest'])
 }
 
 function testCypress(cb) {
@@ -120,7 +120,7 @@ function frontEndEslintAutoFix(cb) {
 }
 
 function serverTest(cb) {
-    return run('npx mocha "./.tests/mocha/**/*.spec.js"', PATHS.SERVER, ['--no-timeouts'])
+    return run('node ./node_modules/mocha/bin/mocha "./.tests/mocha/**/*.spec.js"', PATHS.SERVER, ['--no-timeouts'])
 }
 
 const build = series(bundle, publishFrontEndBundle)

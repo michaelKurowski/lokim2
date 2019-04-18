@@ -7,6 +7,7 @@
         "gulp-path": "^4.0.0"
     },
     "nyc": {
+        "all": false,
         "lines": 60,
         "statements": 0,
         "functions": 0,
