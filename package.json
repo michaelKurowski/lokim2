@@ -1,8 +1,16 @@
 {
     "scripts": {
-        "postinstall": "npm install --prefix ./src/server && mkdir ./src/server/public && npm install --prefix ./src/server/frontEnd && npm run --prefix ./src/server build && npm run --prefix ./src/server generate-config",
-        "start": "npm start --prefix ./src/server",
-        "prepare": "cd ./src/server && npm i && cd frontEnd && npm i && cd .. && npm run build && npm run generate-config && cd ../.. && echo 'Now fill /src/server/config.json or set environmental variables'",
-	    "prepare-dev": "cd ./src/server && npm i && cd frontEnd && npm i && cd .. && npm run build-dev && npm run generate-config && cd ../.. && echo 'Now fill /src/server/config.json or set environmental variables'"
+        "heroku-postbuild": "npx gulp prepare"
+    },
+    "dependencies": {
+        "gulp": "^4.0.0",
+        "gulp-path": "^4.0.0"
+    },
+    "nyc": {
+        "all": false,
+        "lines": 60,
+        "statements": 0,
+        "functions": 0,
+        "branches": 0
     }
 }

@@ -7,9 +7,10 @@ src/server/logs/**
 **/*.log
 src/server/out
 src/server/config.json
-./package-lock.json
+package-lock.json
 src/server/public
 coverage
 src/server/.tests/cypress/videos
 src/server/.tests/cypress/screenshots
 src/server/frontEnd/coverage.lcov
+node_modules
