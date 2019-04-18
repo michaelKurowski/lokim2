@@ -9,14 +9,13 @@ class Room {
     createRoom(id, name){
         if(_.isEmpty(id)) throw new Error('Room must have an ID')
 
-        RoomModel.create({ id, name }
-        , (err) => handleError(err))
+        return RoomModel.create({ id, name }, (err) => handleError(err))
     }
 
     deleteRoom(id, name, creationDate){
         if(_.isEmpty([id, name, creationDate])) throw new Error('deleteRoom parameter requirements not met.')
 
-        RoomModel.deleteOne({
+        return RoomModel.deleteOne({
             id,
             name,
             creationDate
@@ -26,7 +25,7 @@ class Room {
     editRoomName(id, name, newName){
         if(_.isEmpty([id, name, newName])) throw new Error('ID and new name must be provided when editing room name.')
 
-        RoomModel.findOneAndUpdate({id, name}, {name: newName}, (err) => {
+        return RoomModel.findOneAndUpdate({id, name}, {name: newName}, (err) => {
             if(err) return handleError(err)
         })
     }
@@ -38,13 +37,13 @@ class Room {
             date
         }
 
-        RoomModel.findOne({id}, (err, foundRoom) => {
+       return  RoomModel.findOne({id}, (err, foundRoom) => {
             if(err) throw new Error('Could not find room ID.')
 
             const messages = foundRoom.messages
             messages.push(newMessage)
 
-            RoomModel.updateOne({id}, {messages}, (err, res) => {
+            return RoomModel.updateOne({id}, {messages}, (err, res) => {
                 if(err) return handleError(err)
 
                 //Add some logic to make sure res.modifiedCount === 1
