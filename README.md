@@ -4,30 +4,32 @@ LokIM is NodeJS & React based Instant Messanger.
  - NodeJS 8.0 or newer
 ## How to start (for users)
  1. Clone a repository with `git clone <repository URL>`
- 2. Run `npm run prepare` inside root directory of the repository
- 3. Fill `/src/server/config.json` or set appropiate environmental variables.
- 4. Run `npm start` inside root directory of the repository
+ 2. Run `npm i` inside root directory of repository
+ 3. Run `gulp prepare`
+ 4. Fill `/src/server/config.json` or set appropiate environmental variables.
+ 5. Run `gulp start`
 ## How to start (for development team)
  1. Clone a repository with `git clone <repository URL>`
- 2. Run `npm run prepare-dev` inside root directory of the repository
+ 2. Run `npm i` inside root directory of repository
+ 2. Run `gulp prepareDev`
  3. Fill `/src/server/config.json` or set appropiate environmental variables.
- 4. Run `npm start` inside root directory of the repository
+ 4. Run `gulp start`
 ## Environmental variables
  - `DB_USERNAME` MongoDB Username
  - `DB_PASSWORD` MongoDB Password
  - `DB_HOSTNAME` MongoDB Hostname
 ## Development specific command
 ### Tests
- - For unit and integration tests on backend run `npm test` in `/src/server`
- - For unit and integration tests on frontend run `npm test` in `/src/server/frontEnd/`
- - In order to collect server test coverage, run `npm run test-coverage` in `src/server/`
- - In order to collect frontend test coverage, run `npm run test-coverage` in `src/server/frontEnd/`
- - For E2E tests run `npm run test-cypress`
+ - For unit and integration tests on backend run `gulp serverTest`
+ - For unit and integration tests on frontend run `gulp frontEndTest`
+ - In order to collect server test coverage, run `gulp serverTestCoverage`
+ - In order to collect frontend test coverage, run `gulp frontEndTestCoverage`
+ - For E2E tests run `gulp testCypress`
 ### Linting
- - Run `npm run eslint` in `src/server/` to lint the whole project.
- - Run `npm run eslint-auto-fix` in `src/server/` to automatically fix trivial linting errors.
+ - Run `gulp eslint` to lint the whole project.
+ - Run `gulp eslintAutoFix` to automatically fix trivial linting errors.
 ### Docs
- - Run `npm run generate-docs` in `src/server/` to generate endpoints documentation inside the project.
+ - Run `gulp generateDocs` to generate endpoints documentation inside the project.
 ## Technologies used:
 * Database
     * MongoDB
@@ -51,5 +53,9 @@ LokIM is NodeJS & React based Instant Messanger.
         * Sinon
 * Dev tools
     * Eslint
-    * Cypress 
-
+    * Cypress
+    * Gulp
+### Supported OSes:
+* Microsoft Windows (tested on 7, 10)
+* Linux (tested on Manjaro 18.0.4, Arch 5.0.7)
+* MacOS (tested on 10.14.3)

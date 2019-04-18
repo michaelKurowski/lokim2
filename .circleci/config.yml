@@ -32,14 +32,14 @@ jobs:
           name: Cypress Dependencies
           command: sudo apt-get update && sudo apt-get install xvfb libgtk2.0-0 libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 --fix-missing
 
-      - run: 
-          name: Deployment (backend)
-          command: cd src/server && npm install
+      - run:
+          name: Installing root dependencies
+          command: sudo npm i && sudo npm link gulp && sudo npm i -g codecov
 
       - run: 
-          name: Deployment (frontEnd)
-          command: cd src/server/frontEnd && npm install
-          
+          name: Building project
+          command: npx gulp prepare
+         
       - save_cache:
           name: Saving cache (backend)
           paths:
@@ -56,36 +56,36 @@ jobs:
 
       - run:
           name: Static Analysis (backend & frontEnd)
-          command: cd src/server && npm run eslint
-
-      - run:
-          name: Generate config file (backend)
-          command: cd src/server && npm run generate-config
+          command: gulp eslint
 
       - run:
           name: Mocha tests (backend)
-          command: cd src/server/ && npm run test-coverage
+          command: gulp serverTest
 
       - run:
           name: Jest tests (frontEnd)
-          command: cd src/server/frontEnd/ && npm run test-coverage
+          command: gulp frontEndTest
+
+      - run:
+          name: Coverage (backend)
+          command: gulp serverTestCoverage
+
+      - run:
+          name: Coverage (frontEnd)
+          command: gulp frontEndTestCoverage
 
       - run:
           name: Push coverage to Codecov
-          command: npx codecov
-
-      - run: 
-          name: Deployment (frontEnd) - Webpack
-          command: cd src/server/ && npm run build-dev
+          command: codecov
           
       - run:
           name: Start NodeJS
-          command: cd src/server/ && npm start
+          command: gulp start
           background: true
 
       - run:
           name: E2E tests
-          command: cd src/server/ && npx cypress run
+          command: gulp testCypress
 
       - store_artifacts:
           path: /home/circleci/project/src/server/.tests/cypress/videos
