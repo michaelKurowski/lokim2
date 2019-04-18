@@ -55,3 +55,7 @@ LokIM is NodeJS & React based Instant Messanger.
     * Eslint
     * Cypress
     * Gulp
+### Supported OSes:
+* Microsoft Windows (tested on 7, 10)
+* Linux (tested on Manjaro 18.0.4, Arch 5.0.7)
+* MacOS (tested on 10.14.3)
