@@ -9,13 +9,13 @@ class Room {
     createRoom(id, name){
         if(_.isEmpty(id)) throw new Error('Room must have an ID')
 
-        return RoomModel.create({ id, name }, (err) => handleError(err))
+        return this.RoomModel.create({ id, name }, (err) => handleError(err))
     }
 
     deleteRoom(id, name, creationDate){
-        if(_.isEmpty([id, name, creationDate])) throw new Error('deleteRoom parameter requirements not met.')
+        if(_.isEmpty(id, name, creationDate)) throw new Error('Deleting requires a Room ID, Name and Creation Date')
 
-        return RoomModel.deleteOne({
+        return this.RoomModel.deleteOne({
             id,
             name,
             creationDate
@@ -23,9 +23,10 @@ class Room {
     }
 
     editRoomName(id, name, newName){
-        if(_.isEmpty([id, name, newName])) throw new Error('ID and new name must be provided when editing room name.')
+        if(_.isEmpty(id, name, newName)) throw new Error('ID and new name must be provided when editing room name.')
+        if(name === newName) throw new Error('Provided room names cannot be the same.')
 
-        return RoomModel.findOneAndUpdate({id, name}, {name: newName}, (err) => {
+        return this.RoomModel.findOneAndUpdate({id, name}, {name: newName}, (err) => {
             if(err) return handleError(err)
         })
     }
@@ -37,13 +38,13 @@ class Room {
             date
         }
 
-       return  RoomModel.findOne({id}, (err, foundRoom) => {
+       return this.RoomModel.findOne({id}, (err, foundRoom) => {
             if(err) throw new Error('Could not find room ID.')
 
             const messages = foundRoom.messages
             messages.push(newMessage)
 
-            return RoomModel.updateOne({id}, {messages}, (err, res) => {
+            return this.RoomModel.updateOne({id}, {messages}, (err, res) => {
                 if(err) return handleError(err)
 
                 //Add some logic to make sure res.modifiedCount === 1
@@ -58,13 +59,13 @@ class Room {
             joinDate: Date.now()
         }
 
-        RoomModel.findOne({id}, (err, foundRoom) => {
+        this.RoomModel.findOne({id}, (err, foundRoom) => {
             if(err) return handleError(err)
 
             const users = foundRoom.users
             users.push(newUser)
 
-            RoomModel.updateOne({id}, {users}, (err, res) => {
+            this.RoomModel.updateOne({id}, {users}, (err, res) => {
                 if(err) return handleError(err)
 
                 //Add some logic to make sure res.modifiedCount === 1
@@ -79,7 +80,7 @@ class Room {
             joinDate: Date.now()
         }
 
-        RoomModel.findOne({id}, (err, foundRoom) => {
+        this.RoomModel.findOne({id}, (err, foundRoom) => {
             if(err) return handleError(err)
 
             const users = foundRoom.users
@@ -87,7 +88,7 @@ class Room {
 
             users.splice(index, 1)
             
-            RoomModel.updateOne({id}, {users}, (err, res) => {
+            this.RoomModel.updateOne({id}, {users}, (err, res) => {
                 if(err) return handleError(err)
 
                 //Add some logic to make sure res.modifiedCount === 1
@@ -96,7 +97,7 @@ class Room {
     }
 
     listUsers(id){
-        return RoomModel.findOne({id}, (err, foundRoom) => {
+        return this.RoomModel.findOne({id}, (err, foundRoom) => {
             if(err) return handleError(err)
 
             const users = foundRoom.users.map(x => x.name)
@@ -105,7 +106,7 @@ class Room {
     }
 
     allMessages(id){
-        return RoomModel.findOne({id}, (err, foundRoom) => {
+        return this.RoomModel.findOne({id}, (err, foundRoom) => {
             if(err) throw new Error('Could not find room ID.')
 
             const messages = foundRoom.messages
@@ -114,10 +115,10 @@ class Room {
     }
 }
 
-module.export = Room
+module.exports =  Room
 
-function handleError(err){
-    logger.warn(err)
+function handleError(err){ //TODO: Improve this
+    if(err) return logger.warn(err)
 }
 
 /**
