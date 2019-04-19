@@ -308,7 +308,7 @@ describe('<ChatPage />', () => {
 					}
 				}).length
 
-				expect(matchingElementsCount).toBe(1)
+				expect(matchingElementsCount).toBe(2)
 			})
 		})
 	})
