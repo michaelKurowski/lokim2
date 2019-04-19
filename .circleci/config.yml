@@ -44,8 +44,8 @@ jobs:
           name: Saving cache (backend)
           paths:
             - src/server/node_modules
-            - ~/.cache
-            - ~/.npm
+            - /home/circleci/.cache
+            - /home/circleci/.npm
           key: v2-dependencies-{{ checksum "src/server/package.json" }}
 
       - save_cache:
