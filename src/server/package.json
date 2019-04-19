@@ -5,7 +5,7 @@
   "main": "index.js",
   "nyc": {
     "all": true,
-    "lines": 60,
+    "lines": 0,
     "statements": 0,
     "functions": 0,
     "branches": 0,
