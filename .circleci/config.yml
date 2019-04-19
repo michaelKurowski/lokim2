@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:11-stretch
+      - image: circleci/node:10.13-stretch
         environment:
           DB_USERNAME: mongousradmin
           DB_PASSWORD: mongopassadmin
@@ -44,7 +44,7 @@ jobs:
           name: Saving cache (backend)
           paths:
             - src/server/node_modules
-            - /home/circleci/.cache
+            - /home/circleci/.cache # Cypress is stored here
             - /home/circleci/.npm
           key: v3-dependencies-{{ checksum "src/server/package.json" }}
 
