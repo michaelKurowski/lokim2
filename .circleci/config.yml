@@ -17,16 +17,16 @@ jobs:
       - restore_cache:
           name: Restore cache (backend)
           keys:
-          - v2-dependencies-{{ checksum "src/server/package.json" }}
+          - v3-dependencies-{{ checksum "src/server/package.json" }}
           # fallback to using the latest cache if no exact match is found
-          - v2-dependencies-
+          - v3-dependencies-
 
       - restore_cache:
           name: Restore cache (frontEnd)
           keys:
-          - v2-dependencies-{{ checksum "src/server/frontEnd/package.json" }}
+          - v3-dependencies-{{ checksum "src/server/frontEnd/package.json" }}
           # fallback to using the latest cache if no exact match is found
-          - v2-dependencies-
+          - v3-dependencies-
 
       - run:
           name: Cypress Dependencies
@@ -46,13 +46,13 @@ jobs:
             - src/server/node_modules
             - /home/circleci/.cache
             - /home/circleci/.npm
-          key: v2-dependencies-{{ checksum "src/server/package.json" }}
+          key: v3-dependencies-{{ checksum "src/server/package.json" }}
 
       - save_cache:
           name: Saving cache (frontEnd)
           paths:
             - src/server/frontEnd/node_modules
-          key: v2-dependencies-{{ checksum "src/server/frontEnd/package.json" }}
+          key: v3-dependencies-{{ checksum "src/server/frontEnd/package.json" }}
 
       - run:
           name: Static Analysis (backend & frontEnd)
