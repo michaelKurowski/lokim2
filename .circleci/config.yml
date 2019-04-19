@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:8.9.4-stretch
+      - image: circleci/node:10.13-stretch
         environment:
           DB_USERNAME: mongousradmin
           DB_PASSWORD: mongopassadmin
@@ -17,16 +17,16 @@ jobs:
       - restore_cache:
           name: Restore cache (backend)
           keys:
-          - v2-dependencies-{{ checksum "src/server/package.json" }}
+          - v4-dependencies-{{ checksum "src/server/package.json" }}
           # fallback to using the latest cache if no exact match is found
-          - v2-dependencies-
+          - v4-dependencies-
 
       - restore_cache:
           name: Restore cache (frontEnd)
           keys:
-          - v2-dependencies-{{ checksum "src/server/frontEnd/package.json" }}
+          - v4-dependencies-{{ checksum "src/server/frontEnd/package.json" }}
           # fallback to using the latest cache if no exact match is found
-          - v2-dependencies-
+          - v4-dependencies-
 
       - run:
           name: Cypress Dependencies
@@ -34,7 +34,7 @@ jobs:
 
       - run:
           name: Installing root dependencies
-          command: sudo npm i && sudo npm link gulp && sudo npm i -g codecov
+          command: npm ci && sudo npm link gulp && sudo npm i -g codecov
 
       - run: 
           name: Building project
@@ -44,15 +44,15 @@ jobs:
           name: Saving cache (backend)
           paths:
             - src/server/node_modules
-            - /home/circleci/.cache
+            - /home/circleci/.cache # Cypress is stored here
             - /home/circleci/.npm
-          key: v2-dependencies-{{ checksum "src/server/package.json" }}
+          key: v4-dependencies-{{ checksum "src/server/package.json" }}
 
       - save_cache:
           name: Saving cache (frontEnd)
           paths:
             - src/server/frontEnd/node_modules
-          key: v2-dependencies-{{ checksum "src/server/frontEnd/package.json" }}
+          key: v4-dependencies-{{ checksum "src/server/frontEnd/package.json" }}
 
       - run:
           name: Static Analysis (backend & frontEnd)

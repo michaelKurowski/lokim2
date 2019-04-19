@@ -7,7 +7,6 @@ src/server/logs/**
 **/*.log
 src/server/out
 src/server/config.json
-package-lock.json
 src/server/public
 coverage
 src/server/.tests/cypress/videos
