@@ -17,6 +17,7 @@ const SOCKET_OPTIONS = {
 }
 
 let suite
+
 describe('Room websocket namespace', () => {
 	beforeEach(() => {
 		suite = {}

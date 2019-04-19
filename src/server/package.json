@@ -3,26 +3,21 @@
   "version": "0.0.1",
   "description": "Ultra secure communicator server",
   "main": "index.js",
-  "scripts": {
-    "build": "node ./node_modules/.bin/webpack --config ./prod.webpack.config.js && cp ./frontEnd/src/theme/index.html ./public/",
-    "build-dev": "node ./node_modules/.bin/webpack --config ./dev.webpack.config.js && cp ./frontEnd/src/theme/index.html ./public/",
-    "start": "node ./index.js",
-    "test": "./node_modules/mocha/bin/mocha './.tests/mocha/**/*.spec.js'",
-    "eslint": "node ./node_modules/eslint/bin/eslint.js --ignore-path ./.eslintignore ./",
-    "eslint-auto-fix": "node ./node_modules/eslint/bin/eslint.js --ignore-path ./.eslintignore --fix ./",
-    "generate-docs": "node ./node_modules/jsdoc/jsdoc -r ./ws-routes/",
-    "generate-client-files": "npm run --prefix frontEnd build",
-    "test-coverage": "node ./node_modules/nyc/bin/nyc --all --check-coverage --report-dir ../../coverage npm test",
-    "generate-config": "node -e 'require(\"./configFileService\")().generateConfig()'",
-    "test-cypress": "node ./runCypress.js"
-  },
   "nyc": {
+    "all": true,
+    "lines": 60,
+    "statements": 0,
+    "functions": 0,
+    "branches": 0,
     "exclude": [
       "out/",
       "frontEnd/",
       "public/",
       "runCypress.js",
-      ".tests/"
+      ".tests/",
+      "coverage/lcov-report",
+      "dev.webpack.config.js",
+      "prod.webpack.config.js"
     ],
     "reporter": [
       "text",
@@ -63,6 +58,7 @@
     "mongoose": "^5.0.8",
     "mongoose-unique-validator": "^2.0.0",
     "nodemailer": "^4.6.8",
+    "nyc": "^14.0.0",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "passport.socketio": "^3.7.0",
@@ -90,7 +86,6 @@
     "mailslurp-client": "^3.0.14",
     "mocha": "^5.0.4",
     "node-mocks-http": "^1.5.8",
-    "nyc": "^11.7.1",
     "sinon": "^4.4.2"
   }
 }
