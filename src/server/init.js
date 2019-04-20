@@ -35,9 +35,9 @@ async function init({
 	const httpPort = process.env.PORT || injectedHttpPort || config.httpServer.port
 	const httpServerListening = initializationProcedures.initializeHttpServer(httpServer, httpPort)
 
-	const connectToSMTP = require('./connectToSMTP')
+	const {prepareTransporter} = require('./routes/controllers/email')
 	
-	const transporter = connectToSMTP()
+	const transporter = prepareTransporter()
 	transporter.verify((err) => {
 		if(err) throw Error(`Transporter Verification Error: ${err}`)
 		logger.info('Email server is ready to take our messages')
