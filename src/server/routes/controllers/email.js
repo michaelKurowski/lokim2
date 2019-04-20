@@ -91,7 +91,7 @@ function verifyUser(
 
 		const username = findUsername(token, Verify)
 		
-		if(username === null){
+		if(username === null) {
 			res.redirect('/email-is-invalid')
 			return INVALID_TOKEN
 		}
@@ -108,7 +108,7 @@ function verifyUser(
 	}
 }
 
-function findUsername(token, Verify){
+function findUsername(token, Verify) {
 	return Verify.findOne({token}, (err, foundUser) => {
 		if(err || foundUser === null) return null
 		return foundUser.username
