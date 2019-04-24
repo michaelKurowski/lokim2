@@ -24,7 +24,7 @@ LokIM is NodeJS & React based Instant Messanger.
  - For unit and integration tests on frontend run `gulp frontEndTest`
  - In order to collect server test coverage, run `gulp serverTestCoverage`
  - In order to collect frontend test coverage, run `gulp frontEndTestCoverage`
- - For E2E tests run `gulp testCypress`
+ - For E2E tests run `gulp start` and then `gulp testCypress`
 ### Linting
  - Run `gulp eslint` to lint the whole project.
  - Run `gulp eslintAutoFix` to automatically fix trivial linting errors.
