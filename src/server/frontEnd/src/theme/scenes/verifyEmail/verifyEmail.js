@@ -6,7 +6,7 @@ class VerifyEmail extends React.Component {
 	}
 
 	isSuccessful() {
-		return !!new URLSearchParams(location.search).get('is-validation-successful')
+		return new URLSearchParams(location.search).get('is-validation-successful') === 'true'
 	}
 
 	render() {
