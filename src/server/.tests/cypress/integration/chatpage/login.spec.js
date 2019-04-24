@@ -11,13 +11,13 @@ context('Login', () => {
 			WRONG_PASSWORD: 'wrong_password',
 			EMAIL: 'testEmail@test.co.uk'
 		}
-		cy.visit('http://localhost:5002')
+		cy.visit('http://localhost:5000')
 	})
 
 	afterEach(done => {
 		cy.request({
 			method: 'POST',
-			url: 'http://localhost:5002/logout',
+			url: 'http://localhost:5000/logout',
 			failOnStatusCode: false
 		}).then(() => done())
 	})
@@ -37,13 +37,13 @@ context('Login', () => {
 		}).then(reponse => {
 			cy.url().should('include', '/')
 			const hash = reponse.body.split('/verify/')[1].split(' ')[0]
-			cy.visit(`http://localhost:5002/verify/${hash}`)
+			cy.visit(`http://localhost:5000/verify/${hash}`)
 			cy.get('#email-correct')
 		})
 	})
 
 	it('receives an incorrect email page when entering wrong email activation link', () => {
-		cy.visit(`http://localhost:5002/verify/incorrecthash`)
+		cy.visit(`http://localhost:5000/verify/incorrecthash`)
 		cy.get('#email-incorrect')
 	})
 
