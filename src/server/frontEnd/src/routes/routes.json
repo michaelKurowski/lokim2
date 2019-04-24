@@ -3,7 +3,7 @@
         "REGISTER": "/register",
         "CHAT": "/chat",
         "HOME": "/",
-        "EMAIL_INVALID": "/verify-email"
+        "VERIFY_EMAIL": "/verify-email"
     },
     "urls": {
         "LOGIN": "/login",
