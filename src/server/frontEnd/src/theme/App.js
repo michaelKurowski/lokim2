@@ -3,7 +3,6 @@ const HomePage = require('./scenes/homepage/homepage')
 const Register = require('./scenes/register/register')
 const ChatPage = require('./scenes/chatpage/chatpage')
 const VerifyEmail = require('./scenes/verifyEmail/verifyEmail')
-const InvalidEmailPage = require('./scenes/verifyEmail/invalid')
 const {BrowserRouter, Route} = require('react-router-dom')
 const {paths} = require('routing-config')
 const LOGIN_URL = paths.HOME
