@@ -7,8 +7,8 @@ const _ = require('lodash')
 const account = config.email
 const EMAIL_SENDER = account.email || process.env.SMTP_USERNAME
 const LOKIM_EMAIL = `"Lokim Messenger Services" <${EMAIL_SENDER}>`
-const INVALID_TOKEN = 'Invalid token.'
-const USER_NOT_FOUND = 'User not found.'
+const INVALID_TOKEN = new Error('Invalid token.')
+const USER_NOT_FOUND = new Error('User not found.')
 
 
 const SMTP_OPTIONS = {
@@ -85,34 +85,36 @@ function verifyUser(
 		const token = req.params.token
 
 		if(_.isEmpty(token)) {
-			logger.error(INVALID_TOKEN, req)
-			return INVALID_TOKEN
+			logger.error(INVALID_TOKEN.message, req)
+			return Promise.reject(INVALID_TOKEN)
 		}
 
 		return findUsername(token, Verify)
-			.catch(() => {
+			.then(updateUser(User))
+			.then(() => {
+				res.redirect('/email-is-valid')
+				return Verify.remove({token})
+			})
+			.catch(error => {
 				res.redirect('/email-is-invalid')
-				return INVALID_TOKEN
+				return Promise.reject(error)
 			})
-			.then(username => {
-				User.findOneAndUpdate({username}, {$set: {active: true}}, (err) => { 
-					if (err) {
-						logger.error(USER_NOT_FOUND, req)
-						res.redirect('/email-is-invalid')
-						return USER_NOT_FOUND
-					}
-					res.redirect('/email-is-valid')
-					return Verify.remove({token})
-				})
-			})
-
 
 	}
 }
 
+function updateUser(User) {
+	return username => User.findOneAndUpdate({username}, {$set: {active: true}})
+		.catch(() => Promise.reject(USER_NOT_FOUND))
+}
+
 function findUsername(token, Verify) {
 	return Verify.findOne({token})
-		.then(foundUser => foundUser.username)
+		.then(foundUser => {
+			if (foundUser === null) return Promise.reject(INVALID_TOKEN)
+			return foundUser.username
+		})
+		.catch(() => Promise.reject(INVALID_TOKEN))
 }
 
 module.exports = { 
@@ -122,5 +124,6 @@ module.exports = {
 	saveRecordToDB,
 	sendVerificationMail,
 	prepareTransporter,
-	verifyUser
+	verifyUser,
+	errors: {INVALID_TOKEN, USER_NOT_FOUND}
 }

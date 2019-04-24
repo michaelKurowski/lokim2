@@ -1,5 +1,8 @@
 const emailController = require('../../../../routes/controllers/email')
-const assert = require('chai').assert
+const chaiAsPromised = require('chai-as-promised')
+const chai = require('chai')
+chai.use(chaiAsPromised)
+const assert = chai.assert
 const sinon = require('sinon')
 const crypto = require('crypto')
 const nodemailer = require('nodemailer')
@@ -141,14 +144,14 @@ describe('E-mail Controller', () => {
             sinon.assert.calledOnce(suite.DUMMY_TRANSPORT.sendMail)
         })
     })
-    describe('Email Verification', () => {
+    describe.only('Email Verification', () => {
         let suite = {}
 
         beforeEach(() => {
             const verifyMock = {
                 findOne: function(token, callback){
 
-                    return callback(null, {username: DUMMY_USER})    
+                    return Promise.resolve(DUMMY_USER) 
                 },
                 remove: function(token){
                     return null
@@ -156,18 +159,18 @@ describe('E-mail Controller', () => {
             }
             const verifyMockToFail = {
                 findOne: function(token, callback){
-                    return callback(true, null)    
+                    return Promise.reject(null)   
                 }
             }
 
             const userMock = {
                 findOneAndUpdate: function(username, action, callback){
-                    return callback(null)
+                    return Promise.resolve(null) 
                 }
             }
             const userMockToFail = {
                 findOneAndUpdate: function(username, action, callback){
-                    return callback(true)
+                    return Promise.resolve(null) 
                 }
             }
             suite.verify = emailController.verifyUser(verifyMock, userMock)
@@ -181,27 +184,32 @@ describe('E-mail Controller', () => {
         it('Should return an INVALID_TOKEN Error if no token is provided.', () => {
             const NO_TOKEN = {params: {token: null}}
 
-            const EXPECTED_ERROR_MESSAGE = 'Invalid token.'
-            
-            assert.strictEqual(suite.verify(NO_TOKEN, RESPONSE_MOCK), EXPECTED_ERROR_MESSAGE)
+            const EXPECTED_ERROR_MESSAGE = emailController.errors.INVALID_TOKEN
+            return assert.isRejected(suite.verify(NO_TOKEN, RESPONSE_MOCK), EXPECTED_ERROR_MESSAGE)
         })
         it('Should find a user based on the token.', () => {
             const TOKEN = {params: {token: DUMMY_TOKEN}}
             const NO_VALIDATION_ERROR = null
 
             const RESULTING_VALIDATION_ERROR = suite.verify(TOKEN, RESPONSE_MOCK)
-            assert.strictEqual(RESULTING_VALIDATION_ERROR, NO_VALIDATION_ERROR)
+            return assert.becomes(RESULTING_VALIDATION_ERROR, NO_VALIDATION_ERROR)
         })
         it('Should return an INVALID_TOKEN if no token is found', () => {
             const requestMock = {params: {token: 'invalid token'}}
-            const EXPECTED_ERROR_MESSAGE = 'Invalid token.'
-            assert.strictEqual(suite.verifyTokenNotFound(requestMock, RESPONSE_MOCK), EXPECTED_ERROR_MESSAGE)
+            const EXPECTED_ERROR_MESSAGE = emailController.errors.INVALID_TOKEN
+            return assert.isRejected(
+                suite.verifyTokenNotFound(requestMock, RESPONSE_MOCK),
+                EXPECTED_ERROR_MESSAGE
+            )
         })
         it('Should return an error if no user is found, but a token is', () => {
             const requestMock = {params: {token: DUMMY_TOKEN}}
-            const EXPECTED_ERROR_MESSAGE = 'User not found.'
+            const EXPECTED_ERROR_MESSAGE = emailController.errors.USER_NOT_FOUND
 
-            assert.strictEqual(suite.verifyUserNotFound(requestMock, RESPONSE_MOCK), EXPECTED_ERROR_MESSAGE)
+            assert.isRejected(
+                suite.verifyUserNotFound(requestMock, RESPONSE_MOCK),
+                EXPECTED_ERROR_MESSAGE
+            )
         })
     })
 })
