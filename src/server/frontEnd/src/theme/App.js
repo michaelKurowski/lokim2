@@ -21,7 +21,6 @@ class App extends React.Component {
 					<Route exact path={LOGIN_URL} component={HomePage} />
 					<Route path={REGISTER_URL} component={Register} />
 					<Route path={CHAT_URL} component={ChatPage}/>
-					<Route path={INVALID_EMAIL_URL} component={InvalidEmailPage}/>
 					<Route path={VERIFY_EMAIL_URL} component={VerifyEmail}/>
 				</div>
 			</BrowserRouter>
