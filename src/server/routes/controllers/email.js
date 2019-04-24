@@ -89,30 +89,30 @@ function verifyUser(
 			return INVALID_TOKEN
 		}
 
-		const username = findUsername(token, Verify)
-		
-		if(username === null) {
-			res.redirect('/email-is-invalid')
-			return INVALID_TOKEN
-		}
-
-		return User.findOneAndUpdate({username}, {$set: {active: true}}, (err) => { 
-			if (err) {
-				logger.error(USER_NOT_FOUND, req)
+		return findUsername(token, Verify)
+			.catch(() => {
 				res.redirect('/email-is-invalid')
-				return USER_NOT_FOUND
-			}
-			res.redirect('/email-is-valid')
-			return Verify.remove({token})
-		})
+				return INVALID_TOKEN
+			})
+			.then(() => {
+				User.findOneAndUpdate({username}, {$set: {active: true}}, (err) => { 
+					if (err) {
+						logger.error(USER_NOT_FOUND, req)
+						res.redirect('/email-is-invalid')
+						return USER_NOT_FOUND
+					}
+					res.redirect('/email-is-valid')
+					return Verify.remove({token})
+				})
+			})
+
+
 	}
 }
 
 function findUsername(token, Verify) {
-	return Verify.findOne({token}, (err, foundUser) => {
-		if(err || foundUser === null) return null
-		return foundUser.username
-	})
+	return Verify.findOne({token})
+		.then(foundUser => foundUser.username)
 }
 
 module.exports = { 
