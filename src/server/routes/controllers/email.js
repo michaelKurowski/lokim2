@@ -92,11 +92,11 @@ function verifyUser(
 		return findUsername(token, Verify)
 			.then(updateUser(User))
 			.then(() => {
-				res.redirect('/email-is-valid')
+				res.redirect('/verify-email?is-validation-successful=true')
 				return Verify.remove({token})
 			})
 			.catch(error => {
-				res.redirect('/email-is-invalid')
+				res.redirect('/verify-email?is-validation-successful=false')
 				return Promise.reject(error)
 			})
 
