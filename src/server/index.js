@@ -1,6 +1,5 @@
 const init = require('./init')
 
-
 init().catch(error => {
 	const FAILURE_EXIT_CODE = 1
 	const logger = require('./logger')
