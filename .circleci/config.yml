@@ -10,7 +10,7 @@ jobs:
           SMTP_USERNAME: dummy@em.com
           SMTP_PORT: 1025
           SMTP_PASSWORD: dommuPass
-          PORT: 5002
+          PORT: 5000
       - image: circleci/mongo:3.4
         environment:
           MONGO_INITDB_ROOT_USERNAME: mongousradmin
