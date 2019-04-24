@@ -94,7 +94,7 @@ function verifyUser(
 				res.redirect('/email-is-invalid')
 				return INVALID_TOKEN
 			})
-			.then(() => {
+			.then(username => {
 				User.findOneAndUpdate({username}, {$set: {active: true}}, (err) => { 
 					if (err) {
 						logger.error(USER_NOT_FOUND, req)
