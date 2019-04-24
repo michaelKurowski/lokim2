@@ -44,12 +44,12 @@ function start() {
 
 //internal function
 function installServerDependencies(cb) {
-    return run('npm install', PATHS.SERVER)
+    return run('npm ci', PATHS.SERVER)
 }
 
 //internal function
 function installFrontEndDependencies(cb) {
-    return run('npm install', PATHS.FRONTEND)
+    return run('npm ci', PATHS.FRONTEND)
 }
 
 //internal function
