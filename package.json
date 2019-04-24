@@ -12,5 +12,20 @@
         "statements": 0,
         "functions": 0,
         "branches": 0
+    },
+    "devDependencies": {
+        "husky": "^2.0.0",
+        "lint-staged": "^8.1.5"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "cd src/server && lint-staged"
+        }
+    },
+    "lint-staged": {
+        "*.js": [
+            "eslint --fix",
+            "git add"
+        ]
     }
 }
