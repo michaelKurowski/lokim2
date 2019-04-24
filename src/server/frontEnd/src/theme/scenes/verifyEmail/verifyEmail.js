@@ -1,12 +1,12 @@
 const React = require('react')
 
-class Register extends React.Component {
+class VerifyEmail extends React.Component {
 	constructor(props) {
 		super(props)
 	}
 
 	isSuccessful() {
-		return new URLSearchParams(location.search).get('is-validation-successful')
+		return !!new URLSearchParams(location.search).get('is-validation-successful')
 	}
 
 	render() {
@@ -18,4 +18,4 @@ class Register extends React.Component {
 	}
 }
 
-module.exports = Register
+module.exports = VerifyEmail
