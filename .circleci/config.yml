@@ -96,7 +96,7 @@ jobs:
       - store_artifacts:
           path: /home/circleci/project/src/server/.tests/cypress/videos
       - store_artifacts:
-          path: /home/circleci/project/src/server/.tests/cypress/screenshotsi
+          path: /home/circleci/project/src/server/.tests/cypress/screenshots
       - store_artifacts:
           path: /home/circleci/project/src/server/logs
       - store_artifacts:
