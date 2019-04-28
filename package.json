@@ -3,7 +3,7 @@
         "heroku-postbuild": "npx gulp prepare"
     },
     "dependencies": {
-        "gulp": "^4.0.0",
+        "gulp": "^4.0.1",
         "gulp-path": "^4.0.0"
     },
     "nyc": {
