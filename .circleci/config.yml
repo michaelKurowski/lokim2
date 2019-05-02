@@ -7,7 +7,7 @@ jobs:
           DB_USERNAME: mongousradmin
           DB_PASSWORD: mongopassadmin
           DB_HOSTNAME: localhost:27017/data
-      - image: circleci/mongo:4.1.9-jessie
+      - image: mongo:4.1.9-jessie
         environment:
           MONGO_INITDB_ROOT_USERNAME: mongousradmin
           MONGO_INITDB_ROOT_PASSWORD: mongopassadmin
