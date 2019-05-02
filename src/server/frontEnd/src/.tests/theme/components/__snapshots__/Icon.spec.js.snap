@@ -2,21 +2,18 @@
 
 exports[`Icon Component logo icon renders correctly 1`] = `
 <img
-  height="200px"
-  src="assets/undefined.svg"
+  src="icons/undefined.svg"
 />
 `;
 
 exports[`Icon Component renders correctly 1`] = `
 <img
-  height="200px"
-  src="assets/undefined.svg"
+  src="icons/undefined.svg"
 />
 `;
 
 exports[`Icon Component sizes icon renders correctly 1`] = `
 <img
-  height="200px"
-  src="assets/undefined.svg"
+  src="icons/undefined.svg"
 />
 `;

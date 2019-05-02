@@ -3,14 +3,20 @@ const React = require('react')
 
 class Icon extends React.Component {
 
+
+	handleSize(size) {
+		if (size === "small") {
+			return "50px"
+		} else if (size === "big") {
+			return "70px"
+		} else "60px"
+	}
+
 	render() {
-		const urlToIcon = `assets/${this.props.name}.svg`
-		const small = "100px"
-		const medium = "150px"
-		const big = "200px"
+		const urlToIcon = `icons/${this.props.name}.svg`
 
 		return (
-			<img src={urlToIcon} height={big} />
+			<img src={urlToIcon} height={this.handleSize(this.props.size)} />
 		)
 	}
 }
