@@ -9,7 +9,6 @@ jobs:
           DB_HOSTNAME: localhost:27017/data
       - image: circleci/mongo:4.1.9
         environment:
-          MONGO_URL: mongodb://localhost:27017/data
           MONGO_INITDB_ROOT_USERNAME: mongousradmin
           MONGO_INITDB_ROOT_PASSWORD: mongopassadmin
           MONGO_INITDB_DATABASE: container
