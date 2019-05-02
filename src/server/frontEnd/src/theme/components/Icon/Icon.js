@@ -1,3 +1,6 @@
+
+const React = require('react')
+
 class Icon extends React.Component {
 
 	render() {
@@ -11,3 +14,5 @@ class Icon extends React.Component {
 		)
 	}
 }
+
+module.exports = Icon
