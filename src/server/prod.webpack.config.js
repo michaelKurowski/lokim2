@@ -1,4 +1,5 @@
 const path = require('path')
+const tailwindcss = require('tailwindcss')
 require('webpack')
 module.exports = {
 	mode: 'production',
@@ -32,7 +33,7 @@ module.exports = {
 			},
 			{
 				test: /\.css$/,
-				use: [ 'style-loader', 'css-loader' ]
+				use: [ 'style-loader', 'postcss-loader' ]
 			}
 		]
 	},
