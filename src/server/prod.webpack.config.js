@@ -1,5 +1,4 @@
 const path = require('path')
-const tailwindcss = require('tailwindcss')
 require('webpack')
 module.exports = {
 	mode: 'production',
