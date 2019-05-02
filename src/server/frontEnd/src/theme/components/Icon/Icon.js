@@ -5,11 +5,11 @@ class Icon extends React.Component {
 
 
 	handleSize(size) {
-		if (size === "small") {
-			return "50px"
-		} else if (size === "big") {
-			return "70px"
-		} else "60px"
+		if (size === 'small') {
+			return '50px'
+		} else if (size === 'big') {
+			return '70px'
+		} else '60px'
 	}
 
 	render() {

@@ -11,13 +11,13 @@ describe('Icon Component', () => {
     })
     it('logo icon renders correctly', () => {
         const tree = renderer.create(<
-            Icon src={"logo"} />
+            Icon src={'logo'} />
         ).toJSON()
         expect(tree).toMatchSnapshot()
     })
     it('sizes icon renders correctly', () => {
         const tree = renderer.create(<
-            Icon height={"big"} />
+            Icon height={'big'} />
         ).toJSON()
         expect(tree).toMatchSnapshot()
     })
