@@ -16,7 +16,7 @@ class Avatar extends React.Component {
 
     render() {
         return (
-            <img src={`http://robohash.org/${this.props.username}`} height={this.handleSize(this.props.size)} />
+            <img className='card-img-top' src={`http://robohash.org/${this.props.username}`} height={this.handleSize(this.props.size)} />
         )
     }
 }
