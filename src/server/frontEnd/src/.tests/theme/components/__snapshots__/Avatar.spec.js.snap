@@ -11,3 +11,9 @@ exports[`Avatar Component renders correctly 1`] = `
   src="http://robohash.org/undefined"
 />
 `;
+
+exports[`Avatar Component sizes Avatar renders correctly 1`] = `
+<img
+  src="http://robohash.org/undefined"
+/>
+`;

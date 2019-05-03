@@ -11,13 +11,13 @@ describe('Avatar Component', () => {
     })
     it('Avatar icon renders correctly', () => {
         const tree = renderer.create(<
-            Avatar src={`http://robohash.org/${this.props.username}`} />
+            Avatar src={`http://robohash.org/Damian`} />
         ).toJSON()
         expect(tree).toMatchSnapshot()
     })
     it('sizes Avatar renders correctly', () => {
         const tree = renderer.create(<
-            Avatar height={this.handleSize(this.props.size)} />
+            Avatar height={'small'} />
         ).toJSON()
         expect(tree).toMatchSnapshot()
     })
