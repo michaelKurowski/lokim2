@@ -2,8 +2,8 @@ const React = require('react')
 
 
 class Avatar extends React.Component {
-    constructor() {
-        super()
+    constructor(props) {
+        super(props)
     }
 
     handleSize(size) {

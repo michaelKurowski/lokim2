@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Avatar Component Avatar icon renders correctly 1`] = `
+<img
+  src="http://robohash.org/undefined"
+/>
+`;
+
+exports[`Avatar Component renders correctly 1`] = `
+<img
+  src="http://robohash.org/undefined"
+/>
+`;
