@@ -113,7 +113,7 @@ class ChatPage extends React.Component {
 		return (
 			<div id='chatpage' className='h-full'>
 				<div className='flex flex-row h-full'>
-					<SidePanel direction={SIDE_PANEL_DIRECTIONS.LEFT} color='grey-light'>
+					<SidePanel direction={SIDE_PANEL_DIRECTIONS.LEFT} color='dark'>
 						<MiniProfile username={this.props.username} />
 						<RoomJoiner joinRoom={this.joinToRoom} />
 						<RoomsDialer rooms={this.props.joinedRooms} selectRoom={this.changeSelectedRoom} />
@@ -123,7 +123,7 @@ class ChatPage extends React.Component {
 							<ChatWindow messages={this.getSelectedRoom().messages} sendMessage={this.sendMessage}/> :
 							<div className='w-full'></div>
 					}
-					<SidePanel direction={SIDE_PANEL_DIRECTIONS.RIGHT} color='grey-light'>
+					<SidePanel direction={SIDE_PANEL_DIRECTIONS.RIGHT} color='dark'>
 						<h4>Room: {this.props.selectedRoom ? this.props.selectedRoom : 'none'}</h4>
 						{this.getSelectedRoom() ? <RoomMembersList usernames={this.getSelectedRoom().members}/> : <div></div>}
 						<ConnectStatus connection={this.isConnected()}/>
