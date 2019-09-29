@@ -8,6 +8,8 @@ const JoinResponse = require('../responses/JoinResponse.class')
 const MessageResponse = require('../responses/MessageResponse.class')
 const LeaveResponse = require('../responses/LeaveResponse.class')
 const ListMembersResponse = require('../responses/ListMembersResponse.class')
+const MessageModel = require('../../models/message')
+const mongoose = require('mongoose')
 /**
  * /Room websocket namespace and its events
  * @namespace
@@ -35,6 +37,13 @@ class Room {
 		
 		socket.join(roomId, () => {
 			const response = new JoinResponse(username, roomId)
+			MessageModel.find({ roomId }, 'author text date', (err, messages) => {
+				if (err) return logger.error(err);
+				messages.forEach(message => {
+					const response = new MessageResponse(message.author, roomId, message.text, message.date)
+					socket.emit(EVENT_TYPES.MESSAGE, response.serialize())
+				})
+			})
 			socket.emit(EVENT_TYPES.JOIN, response.serialize())
 			socket.to(roomId).emit(EVENT_TYPES.JOIN, response.serialize())
 			this.listMembers(data, socket)
@@ -57,6 +66,17 @@ class Room {
 		const {roomId, message} = data
 		const username = socket.request.user.username
 		const response = new MessageResponse(username, roomId, message)
+		const messageDataToSaveInDb = {
+			author: username,
+			text: message,
+			roomId,
+			date: response.date
+		}
+		const messageModelInstance = new MessageModel(messageDataToSaveInDb)
+		messageModelInstance.save()
+			.catch(err => {
+				logger.error(err)
+			})
 		socket.emit(EVENT_TYPES.MESSAGE, response.serialize())
 		socket.to(roomId).emit(EVENT_TYPES.MESSAGE, response.serialize())
 	}
