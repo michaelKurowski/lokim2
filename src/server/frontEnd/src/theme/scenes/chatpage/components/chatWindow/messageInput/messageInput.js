@@ -27,7 +27,7 @@ class MessageInput extends React.Component {
 
 	render() {
 		return (
-			<form className='p-2 w-100' onSubmit={this.onSubmit}>
+			<form className='p-2 w-100 flex justify-between' onSubmit={this.onSubmit}>
 				<input
 					className='form-control'
 					placeholder='Message...'

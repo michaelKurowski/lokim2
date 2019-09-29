@@ -14,7 +14,7 @@ class App extends React.Component {
 	render() {
 		return (
 			<BrowserRouter>
-				<div className='container-fluid h-100'>
+				<div className='h-full'>
 					<Route exact path={LOGIN_URL} component={HomePage} />
 					<Route path={REGISTER_URL} component={Register} />
 					<Route path={CHAT_URL} component={ChatPage}/>

@@ -111,9 +111,9 @@ class ChatPage extends React.Component {
 	render() {
 		if(!this.props.username) return <Redirect to={HOMEPAGE_PATH}/>
 		return (
-			<div className='container-fluid h-100-vh my-chat-page' id='chatpage'>
-				<div className='row h-100'>
-					<SidePanel direction={SIDE_PANEL_DIRECTIONS.LEFT}>
+			<div id='chatpage' className='h-full'>
+				<div className='flex flex-row h-full'>
+					<SidePanel direction={SIDE_PANEL_DIRECTIONS.LEFT} color='grey-light'>
 						<MiniProfile username={this.props.username} />
 						<RoomJoiner joinRoom={this.joinToRoom} />
 						<RoomsDialer rooms={this.props.joinedRooms} selectRoom={this.changeSelectedRoom} />
@@ -121,9 +121,9 @@ class ChatPage extends React.Component {
 					{
 						this.getSelectedRoom() ?
 							<ChatWindow messages={this.getSelectedRoom().messages} sendMessage={this.sendMessage}/> :
-							<div className='col-md-6 h-100-vh d-flex flex-column'></div>
+							<div className='w-full'></div>
 					}
-					<SidePanel direction={SIDE_PANEL_DIRECTIONS.RIGHT}>
+					<SidePanel direction={SIDE_PANEL_DIRECTIONS.RIGHT} color='grey-light'>
 						<h4>Room: {this.props.selectedRoom ? this.props.selectedRoom : 'none'}</h4>
 						{this.getSelectedRoom() ? <RoomMembersList usernames={this.getSelectedRoom().members}/> : <div></div>}
 						<ConnectStatus connection={this.isConnected()}/>
