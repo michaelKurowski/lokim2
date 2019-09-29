@@ -23,7 +23,7 @@ function setMembers(members, roomId) {
 }
 
 function addMessage(messageObject, roomId) {
-	if (_.isEmpty(messageObject.message) || !roomId) return {type: CODES.INCORRECT_MESSAGE, payload: {message: messageObject, roomId}}
+	if (_.isEmpty(messageObject.payload.text) || !roomId) return {type: CODES.INCORRECT_MESSAGE, payload: {message: messageObject, roomId}}
 	return {type: CODES.ADD_MESSAGE, payload: {message: messageObject, roomId}}
 }
 

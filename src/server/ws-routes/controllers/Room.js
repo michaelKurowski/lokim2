@@ -4,6 +4,8 @@ const namespaceInfo =  require('../../protocol/protocol.json').room
 const EVENT_TYPES = namespaceInfo.eventTypes
 const util = require('util')
 const logger = require('../../logger')
+const JoinResponse = require('../responses/JoinResponse.class')
+const MessageResponse = require('../responses/MessageResponse.class')
 /**
  * /Room websocket namespace and its events
  * @namespace
@@ -31,8 +33,9 @@ class Room {
 		const timestamp = new Date().getTime()
 		
 		socket.join(roomId, () => {
-			socket.emit(EVENT_TYPES.JOIN, {username, roomId, timestamp})
-			socket.to(roomId).emit(EVENT_TYPES.JOIN, {username, roomId, timestamp})
+			const response = new JoinResponse(username, roomId)
+			socket.emit(EVENT_TYPES.JOIN, response.serialize())
+			socket.to(roomId).emit(EVENT_TYPES.JOIN, response.serialize())
 			this.listMembers(data, socket)
 		})
 		
@@ -52,9 +55,9 @@ class Room {
 	[EVENT_TYPES.MESSAGE](data, socket) {
 		const {roomId, message} = data
 		const username = socket.request.user.username
-		const timestamp = new Date().getTime()
-		socket.emit(EVENT_TYPES.MESSAGE, {message, username, timestamp, roomId})
-		socket.to(roomId).emit(EVENT_TYPES.MESSAGE, {message, username, timestamp, roomId})
+		const response = new MessageResponse(username, roomId, message)
+		socket.emit(EVENT_TYPES.MESSAGE, response.serialize())
+		socket.to(roomId).emit(EVENT_TYPES.MESSAGE, response.serialize())
 	}
 
 	/**
