@@ -57,7 +57,7 @@ function* mapWebsocketEventsToActions(event) {
 			yield* handleJoinEvent(event)
 			break
 		case PROTOCOL.users.eventTypes.FIND:
-			yield put(findUserActions.usersFound(event.payload.foundUsernames))
+			yield put(findUserActions.usersFound(event.payload.payload.usernames))
 			return
 		default:
 			return

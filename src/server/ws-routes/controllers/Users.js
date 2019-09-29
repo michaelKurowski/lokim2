@@ -2,6 +2,7 @@ const namespaceInfo =  require('../../protocol/protocol.json').users
 const EVENT_TYPES = namespaceInfo.eventTypes
 const logger = require('../../logger')
 const _ = require('lodash')
+const FindResponse = require('../responses/FindResponse.class')
 
 /**
  * /Users websocket namespace and its events
@@ -30,7 +31,8 @@ class Users {
 		return this.UserModel.find(query, USERNAME_DB_FIELD).exec()
 			.then(users => {
 				const foundUsernames = _.map(users, user => user.username)
-				socket.emit(EVENT_TYPES.FIND, {foundUsernames})
+				const response = new FindResponse(foundUsernames)
+				socket.emit(EVENT_TYPES.FIND, response.serialize())
 			}).catch(err => {
 				logger.error(err)
 			})
