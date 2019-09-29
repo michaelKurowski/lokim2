@@ -8,7 +8,7 @@ class ChatWindow extends React.Component {
 
 	render() {
 		return (
-			<div className='col-md-6 h-100-vh d-flex flex-column'>
+			<div className='w-full flex flex-col justify-end h-full'>
 				<ChatHistory messages={this.props.messages}/>
 				<MessageInput sendMessage={this.props.sendMessage}/>
 			</div>
