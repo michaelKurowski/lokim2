@@ -48,7 +48,7 @@ function* mapWebsocketEventsToActions(event) {
 			yield put(webSocketActions.webSocketConnectionEstabilished(event.payload.namespace))
 			break
 		case PROTOCOL.room.eventTypes.LIST_MEMBERS:
-			yield put(roomActions.setMembers(event.payload.usernames, event.payload.roomId))
+			yield put(roomActions.setMembers(event.payload.payload.usernames, event.payload.payload.roomId))
 			break
 		case PROTOCOL.room.eventTypes.MESSAGE:
 			yield put(roomActions.addMessage(event.payload, event.payload.payload.roomId))

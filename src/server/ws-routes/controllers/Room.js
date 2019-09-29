@@ -7,6 +7,7 @@ const logger = require('../../logger')
 const JoinResponse = require('../responses/JoinResponse.class')
 const MessageResponse = require('../responses/MessageResponse.class')
 const LeaveResponse = require('../responses/LeaveResponse.class')
+const ListMembersResponse = require('../responses/ListMembersResponse.class')
 /**
  * /Room websocket namespace and its events
  * @namespace
@@ -108,15 +109,14 @@ class Room {
 	*/
 
 	[EVENT_TYPES.LIST_MEMBERS](data, socket) {
-		const timestamp = new Date().getTime()
 		const roomId = data.roomId
 		const room = socket.nsp.in(roomId)
 		getRoomClients(room)
 			.then(clients => {
 				const usernames = _.map(clients, socketId => 
 					getUsername(room.connected[socketId]))
-				socket.emit(EVENT_TYPES.LIST_MEMBERS,
-					{roomId, timestamp, usernames})
+				const response = new ListMembersResponse(usernames, roomId)
+				socket.emit(EVENT_TYPES.LIST_MEMBERS, response.serialize())
 			})
 			.catch(err => logger.error(err))
 	}
