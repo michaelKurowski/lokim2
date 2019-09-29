@@ -8,7 +8,7 @@ class Avatar extends React.Component {
 			size: this.props.size
 		}
 	}
-
+	
 	render() {
 		return(
 			<div className={`w-${this.state.size} `+ `h-${this.state.size}`}>
