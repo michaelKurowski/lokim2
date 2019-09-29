@@ -1,5 +1,6 @@
 
 const mockRequire = require('mock-require')
+mockRequire.stopAll()
 mockMessageModel()
 
 const logOutUser = require('../../../../routes/controllers/logOutUser')()
@@ -22,7 +23,7 @@ describe('logOutUser', () => {
 	})
 
 	afterEach(() => {
-		mockRequire.reRequire('../../../../models/message')
+		mockRequire.stopAll()
 	})
 
 	it('should respond with unauthorized, when user has no session', () => {
@@ -106,12 +107,14 @@ function mockMessageModel() {
 	let MessageModelMock = function () {
 		this.save = () => Promise.resolve()
 	}
-	MessageModelMock.find = () => Promise.resolve({
-		text: 'dummy text',
-		author: 'dummy author',
-		date: 32132321321132,
-		roomId: 'DUMMY_ROOM'
-	})
+	MessageModelMock.find = (query, fields, cb) => {
+		cb(null, [{
+			text: 'dummy text',
+			author: 'dummy author',
+			date: 32132321321132,
+			roomId: 'DUMMY_ROOM'
+		}])
+	}
 	
 	mockRequire('../../../../models/message', MessageModelMock)
 }
