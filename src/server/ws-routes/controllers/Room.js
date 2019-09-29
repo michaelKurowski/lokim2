@@ -32,7 +32,6 @@ class Room {
 		const {roomId} = data
 		if (_.isEmpty(roomId)) return
 		const username = socket.request.user.username
-		const timestamp = new Date().getTime()
 		
 		socket.join(roomId, () => {
 			const response = new JoinResponse(username, roomId)
@@ -75,7 +74,6 @@ class Room {
 	[EVENT_TYPES.LEAVE](data, socket) {
 		const {roomId} = data
 
-		const timestamp = new Date().getTime()
 		const username = socket.request.user.username
 		const response = new LeaveResponse(username, roomId)
 		socket.to(roomId).emit(EVENT_TYPES.LEAVE, response.serialize())
