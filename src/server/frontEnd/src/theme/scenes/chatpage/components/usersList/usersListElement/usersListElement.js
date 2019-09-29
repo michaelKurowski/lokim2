@@ -1,4 +1,5 @@
 const React = require('react')
+const Avatar = require('theme/components/avatar/avatar')
 class UsersListElement extends React.Component {
 	constructor() {
 		super()
@@ -12,7 +13,7 @@ class UsersListElement extends React.Component {
 	render() {
 		return (
 			<li className='list-group-item' onClick={this.returnUsername}>
-				<img src={`http://robohash.org/${this.props.username}?size=50x50`}></img>
+				<Avatar username={this.props.username} size='24'/>
 				<span>{this.props.username}</span>
 			</li>
 		)

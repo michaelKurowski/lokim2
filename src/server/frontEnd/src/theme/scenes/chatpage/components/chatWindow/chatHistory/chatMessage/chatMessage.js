@@ -1,4 +1,5 @@
 const React = require('react')
+const Avatar = require('theme/components/avatar/avatar')
 
 class ChatMessage extends React.Component {
 	constructor() {
@@ -13,7 +14,7 @@ class ChatMessage extends React.Component {
 		return (
 			<li className='message list-group-item'>
 				<p>
-					<img src={`http://robohash.org/${this.props.author}?size=50x50`}></img>
+					<Avatar username={this.props.author} size='24'/>
 					<span className='font-weight-bold'>{this.props.author}</span></p>
 				<p>
 					<span>{this.props.text}</span>
