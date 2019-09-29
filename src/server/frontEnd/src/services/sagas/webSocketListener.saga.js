@@ -43,21 +43,22 @@ function* watchWebsocketConnectionRequest() {
 }
 
 function* mapWebsocketEventsToActions(event) {
+	const eventData = event.payload
 	switch (event.type) {
 		case PROTOCOL.room.eventTypes.CONNECTION:
-			yield put(webSocketActions.webSocketConnectionEstabilished(event.payload.namespace))
+			yield put(webSocketActions.webSocketConnectionEstabilished(eventData.namespace))
 			break
 		case PROTOCOL.room.eventTypes.LIST_MEMBERS:
-			yield put(roomActions.setMembers(event.payload.payload.usernames, event.payload.payload.roomId))
+			yield put(roomActions.setMembers(eventData.payload.usernames, eventData.payload.roomId))
 			break
 		case PROTOCOL.room.eventTypes.MESSAGE:
-			yield put(roomActions.addMessage(event.payload, event.payload.payload.roomId))
+			yield put(roomActions.addMessage(eventData, eventData.payload.roomId))
 			break
 		case PROTOCOL.room.eventTypes.JOIN:
-			yield* handleJoinEvent(event)
+			yield* handleJoinEvent(eventData)
 			break
 		case PROTOCOL.users.eventTypes.FIND:
-			yield put(findUserActions.usersFound(event.payload.payload.usernames))
+			yield put(findUserActions.usersFound(eventData.payload.usernames))
 			return
 		default:
 			return
@@ -66,9 +67,9 @@ function* mapWebsocketEventsToActions(event) {
 
 function* handleJoinEvent(event) {
 	const loggedUserUsername = yield select(store => store.sessionReducer.username)
-	if (loggedUserUsername === event.payload.payload.username) 
-		yield put(roomsManagementActions.selectRoom(event.payload.payload.roomId))
-	yield put(roomActions.addMember(event.payload.payload.username, event.payload.payload.roomId))
+	if (loggedUserUsername === event.payload.username) 
+		yield put(roomsManagementActions.selectRoom(event.payload.roomId))
+	yield put(roomActions.addMember(event.payload.username, event.payload.roomId))
 } 
 
 function webSocketMessageReceivedEvent(eventType, event) {
