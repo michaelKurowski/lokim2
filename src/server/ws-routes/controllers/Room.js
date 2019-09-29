@@ -6,6 +6,7 @@ const util = require('util')
 const logger = require('../../logger')
 const JoinResponse = require('../responses/JoinResponse.class')
 const MessageResponse = require('../responses/MessageResponse.class')
+const LeaveResponse = require('../responses/LeaveResponse.class')
 /**
  * /Room websocket namespace and its events
  * @namespace
@@ -75,7 +76,8 @@ class Room {
 
 		const timestamp = new Date().getTime()
 		const username = socket.request.user.username
-		socket.to(roomId).emit(EVENT_TYPES.LEAVE, {username, timestamp})
+		const response = new LeaveResponse(username, roomId)
+		socket.to(roomId).emit(EVENT_TYPES.LEAVE, response.serialize())
 		socket.leave({roomId})
 	}
 
