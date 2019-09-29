@@ -66,9 +66,9 @@ function* mapWebsocketEventsToActions(event) {
 
 function* handleJoinEvent(event) {
 	const loggedUserUsername = yield select(store => store.sessionReducer.username)
-	if (loggedUserUsername === event.payload.username) 
-		yield put(roomsManagementActions.selectRoom(event.payload.roomId))
-	yield put(roomActions.addMember(event.payload.username, event.payload.roomId))
+	if (loggedUserUsername === event.payload.payload.username) 
+		yield put(roomsManagementActions.selectRoom(event.payload.payload.roomId))
+	yield put(roomActions.addMember(event.payload.payload.username, event.payload.payload.roomId))
 } 
 
 function webSocketMessageReceivedEvent(eventType, event) {
