@@ -14,7 +14,8 @@ const ChatWindow = require('./components/chatWindow/chatWindow')
 const SidePanel = require('theme/components/sidePanel/sidePanel')
 const RoomMembersList = require('./components/roomMembersList/roomMembersList')
 const UserFinder = require('./components/userFinder/userFinder')
-const MiniProfile = require('./components/miniProfile/miniProfile')
+const Avatar = require('theme/components/avatar/avatar')
+const AVATAR_SIZES = require('theme/components/avatar/avatarSizes')
 const RoomsDialer = require('./components/roomsDialer/roomsDialer')
 const RoomJoiner = require('./components/roomJoiner/roomJoiner')
 const SIDE_PANEL_DIRECTIONS = require('theme/components/sidePanel/sidePanelDirections')
@@ -114,7 +115,7 @@ class ChatPage extends React.Component {
 			<div id='chatpage' className='h-full'>
 				<div className='flex flex-row h-full'>
 					<SidePanel direction={SIDE_PANEL_DIRECTIONS.LEFT} color='dark'>
-						<MiniProfile username={this.props.username} />
+						<Avatar size={AVATAR_SIZES.BIG} username={this.props.username} />
 						<RoomJoiner joinRoom={this.joinToRoom} />
 						<RoomsDialer rooms={this.props.joinedRooms} selectRoom={this.changeSelectedRoom} />
 					</SidePanel>
