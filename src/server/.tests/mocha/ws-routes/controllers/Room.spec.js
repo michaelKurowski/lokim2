@@ -3,7 +3,7 @@ const _ = require('lodash')
 const sinon = require('sinon')
 const socketClient = require('socket.io-client')
 const io = require('socket.io')
-const mockRequire = require('mock-require');
+const mockRequire = require('mock-require')
 
 
 let MessageModelMock = function () {
@@ -48,11 +48,24 @@ describe('Room websocket namespace', () => {
 		suite.server.use(suite.middlewareMock)
 		suite.client = {}
 		suite.roomInstance = new RoomProvider(RoomProvider)
+
+		let MessageModelMock = function () {
+			this.save = () => Promise.resolve()
+		}
+		MessageModelMock.find = () => Promise.resolve({
+			text: 'dummy text',
+			author: 'dummy author',
+			date: 32132321321132,
+			roomId: 'DUMMY_ROOM'
+		})
+		
+		mockRequire('../../../../models/message', MessageModelMock)
 	})
 
 	afterEach(done => {
 		suite.server.close(done)
 		if (_.isFunction(suite.client.disconnect)) suite.client.disconnect()
+		mockRequire.reRequire('../../../../models/message')
 	})
 
 	describe('#connection', () => {
