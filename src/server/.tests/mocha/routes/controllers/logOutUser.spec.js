@@ -1,3 +1,16 @@
+
+const mockRequire = require('mock-require')
+let MessageModelMock = function () {
+	this.save = () => Promise.resolve()
+}
+MessageModelMock.find = () => Promise.resolve({
+	text: 'dummy text',
+	author: 'dummy author',
+	date: 32132321321132,
+	roomId: 'DUMMY_ROOM'
+})
+mockRequire('../../../../models/message', MessageModelMock)
+
 const logOutUser = require('../../../../routes/controllers/logOutUser')()
 const sinon = require('sinon')
 const httpMocks = require('node-mocks-http')
@@ -5,12 +18,29 @@ const assert = require('chai').assert
 const EventEmitter = require('events').EventEmitter
 let suite = {}
 
+
+
+
 describe('logOutUser', () => {
 	beforeEach(() => {
 		suite = {}
 		suite.responseMock = httpMocks.createResponse({
 			eventEmitter: EventEmitter
 		})
+		let MessageModelMock = function () {
+			this.save = () => Promise.resolve()
+		}
+		MessageModelMock.find = () => Promise.resolve({
+			text: 'dummy text',
+			author: 'dummy author',
+			date: 32132321321132,
+			roomId: 'DUMMY_ROOM'
+		})
+		mockRequire('../../../../models/message', MessageModelMock)
+	})
+
+	afterEach(() => {
+		mockRequire.reRequire('../../../../models/message')
 	})
 
 	it('should respond with unauthorized, when user has no session', () => {
