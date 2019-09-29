@@ -11,10 +11,10 @@ class ChatHistory extends React.Component {
 		if (!this.props.messages) return
 		return this.props.messages.map(message => 
 			(<ChatMessage
-				key={message.message+message.timestamp+message.username}
-				text={message.message}
-				date={message.timestamp}
-				author={message.username}
+				key={message.payload.text+message.date+message.payload.author}
+				text={message.payload.text}
+				date={message.date}
+				author={message.payload.author}
 				data-test='chat-message'
 			/>))
 	}

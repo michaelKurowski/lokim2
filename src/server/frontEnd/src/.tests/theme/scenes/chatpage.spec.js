@@ -161,12 +161,14 @@ describe('<ChatPage />', () => {
 		describe('Receiving message', () => {
 			it('updates messages history when received message belongs to currently selected room', () => {
 				//given
-
 				const DUMMY_MESSAGE = {
-					message: 'DUMMY_MESSAGE',
-					timestamp: 121243454623453462346,
-					username: 'author',
-					roomId: ALREADY_JOINED_ROOM
+					action: 'message',
+					date: 2121332142422,
+					payload: {
+						author: 'author',
+						text: 'DUMMY_MESSAGE',
+						roomId: ALREADY_JOINED_ROOM
+					}
 				}
 
 				//when
@@ -177,17 +179,20 @@ describe('<ChatPage />', () => {
 				const messagesHistory = suite.renderedTree.find('[data-test="chat-message"]').first()
 
 				//then
-				expect(messagesHistory.props().text).toBe(DUMMY_MESSAGE.message) 
+				expect(messagesHistory.props().text).toBe(DUMMY_MESSAGE.payload.text) 
 			})
 
 			it('doesn\'t update messages history when received message is from nonselected room', () => {
 				//given
 				const DUMMY_ROOM = 'lala2'
 				const DUMMY_MESSAGE = {
-					message: 'DUMMY_MESSAGE',
-					timestamp: 121243454623453462346,
-					username: 'author',
-					roomId: DUMMY_ROOM
+					action: 'message',
+					date: 2121332142422,
+					payload: {
+						author: 'author',
+						text: 'DUMMY_MESSAGE',
+						roomId: DUMMY_ROOM
+					}
 				}
 
 				//when

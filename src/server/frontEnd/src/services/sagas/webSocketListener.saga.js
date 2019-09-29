@@ -43,21 +43,22 @@ function* watchWebsocketConnectionRequest() {
 }
 
 function* mapWebsocketEventsToActions(event) {
+	const eventData = event.payload
 	switch (event.type) {
 		case PROTOCOL.room.eventTypes.CONNECTION:
-			yield put(webSocketActions.webSocketConnectionEstabilished(event.payload.namespace))
+			yield put(webSocketActions.webSocketConnectionEstabilished(eventData.namespace))
 			break
 		case PROTOCOL.room.eventTypes.LIST_MEMBERS:
-			yield put(roomActions.setMembers(event.payload.usernames, event.payload.roomId))
+			yield put(roomActions.setMembers(eventData.payload.usernames, eventData.payload.roomId))
 			break
 		case PROTOCOL.room.eventTypes.MESSAGE:
-			yield put(roomActions.addMessage(event.payload, event.payload.roomId))
+			yield put(roomActions.addMessage(eventData, eventData.payload.roomId))
 			break
 		case PROTOCOL.room.eventTypes.JOIN:
-			yield* handleJoinEvent(event)
+			yield* handleJoinEvent(eventData)
 			break
 		case PROTOCOL.users.eventTypes.FIND:
-			yield put(findUserActions.usersFound(event.payload.foundUsernames))
+			yield put(findUserActions.usersFound(eventData.payload.usernames))
 			return
 		default:
 			return
