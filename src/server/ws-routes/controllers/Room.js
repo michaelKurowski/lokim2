@@ -9,7 +9,6 @@ const MessageResponse = require('../responses/MessageResponse.class')
 const LeaveResponse = require('../responses/LeaveResponse.class')
 const ListMembersResponse = require('../responses/ListMembersResponse.class')
 const MessageModel = require('../../models/message')
-const mongoose = require('mongoose')
 /**
  * /Room websocket namespace and its events
  * @namespace
@@ -38,7 +37,7 @@ class Room {
 		socket.join(roomId, () => {
 			const response = new JoinResponse(username, roomId)
 			MessageModel.find({ roomId }, 'author text date', (err, messages) => {
-				if (err) return logger.error(err);
+				if (err) return logger.error(err)
 				messages.forEach(message => {
 					const response = new MessageResponse(message.author, roomId, message.text, message.date)
 					socket.emit(EVENT_TYPES.MESSAGE, response.serialize())
