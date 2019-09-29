@@ -157,7 +157,7 @@ describe('Room websocket namespace', () => {
 			}
 		})
 
-		it('should attach number type timestamp property to "join" events sent from server', done => {
+		it('should attach number type date property to "join" events sent from server', done => {
 			//given
 			const requestMock = {
 				roomId: 'random room id'
@@ -178,7 +178,7 @@ describe('Room websocket namespace', () => {
 			suite.client.on(CLIENT_EVENTS.JOIN, then)
 			function then(data) {
 				
-				assert.isNumber(data.timestamp)
+				assert.isNumber(data.date)
 				done()
 			}
 		})
@@ -242,7 +242,7 @@ describe('Room websocket namespace', () => {
 			}
 		})
 
-		it('should emit message event type wth numerical timestamp attached to it', done => {
+		it('should emit message event type wth numerical date attached to it', done => {
 			//given
 			const requestMock = {
 				roomId: 'random room id',
@@ -266,7 +266,7 @@ describe('Room websocket namespace', () => {
 			function then() {
 
 				const expectedData = {
-					timestamp: sinon.match.number
+					date: sinon.match.number
 				}
 				sinon.assert.calledWithMatch(suite.emitSpy.firstCall, CLIENT_EVENTS.MESSAGE, expectedData)
 				done()
@@ -327,7 +327,9 @@ describe('Room websocket namespace', () => {
 			//then
 			function then() {
 				const expectedEventMessage = {
-					username: suite.USERNAME_MOCK
+					payload: {
+						username: suite.USERNAME_MOCK
+					}
 				}
 				sinon.assert.calledWith(suite.toSpy.firstCall, ROOM_ID)
 				sinon.assert.calledWithMatch(suite.emitSpy.firstCall, CLIENT_EVENTS.LEAVE, expectedEventMessage)
@@ -360,7 +362,7 @@ describe('Room websocket namespace', () => {
 			//then
 			function then() {
 				const expectedEventMessage = {
-					timestamp: sinon.match.number
+					date: sinon.match.number
 				}
 				sinon.assert.calledWith(suite.toSpy.firstCall, ROOM_ID)
 				sinon.assert.calledWithMatch(suite.emitSpy.firstCall, CLIENT_EVENTS.LEAVE, expectedEventMessage)
@@ -392,7 +394,12 @@ describe('Room websocket namespace', () => {
 
 			//then
 			function then() {
-				sinon.assert.calledWith(suite.emitSpy.firstCall, CLIENT_EVENTS.JOIN, sinon.match({username: suite.USERNAME_MOCK}))
+				const shouldMatch = {
+					payload: {
+						username: suite.USERNAME_MOCK
+					}
+				}
+				sinon.assert.calledWith(suite.emitSpy.firstCall, CLIENT_EVENTS.JOIN, sinon.match(shouldMatch))
 				done()
 			}
 		})
@@ -558,7 +565,7 @@ describe('Room websocket namespace', () => {
 
 			function then(data) {
 				const EXPECTED_USERNAMES = [USER_A_USERNAME, USER_B_USERNAME]
-				assert.deepEqual(data.usernames, EXPECTED_USERNAMES)
+				assert.deepEqual(data.payload.usernames, EXPECTED_USERNAMES)
 				done()
 			}
 		})

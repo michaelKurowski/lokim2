@@ -51,7 +51,9 @@ describe('Users websocket namespace', () => {
 			]
 
 			const EXPECTED_DATA_TO_BE_SEND_TO_USER = {
-				foundUsernames: [FOUND_USERNAME1, FOUND_USERNAME2]
+				payload: {
+					usernames: [FOUND_USERNAME1, FOUND_USERNAME2]
+				}
 			}
 
 			const socketMock = {emit: sinon.spy()}
@@ -62,7 +64,7 @@ describe('Users websocket namespace', () => {
 			return suite.usersInstance.find({queryPhrase: QUERY_PHRASE}, socketMock)
 				.then(() => {
 					//then
-					sinon.assert.calledWith(socketMock.emit, EVENT_TYPES.FIND, EXPECTED_DATA_TO_BE_SEND_TO_USER)
+					sinon.assert.calledWithMatch(socketMock.emit, EVENT_TYPES.FIND, EXPECTED_DATA_TO_BE_SEND_TO_USER)
 				})
 		})
 	})
