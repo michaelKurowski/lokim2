@@ -1,4 +1,7 @@
 const React = require('react')
+const Avatar = require('theme/components/avatar/avatar')
+const AVATAR_SIZES = require('theme/components/avatar/avatarSizes')
+
 class UsersListElement extends React.Component {
 	constructor() {
 		super()
@@ -12,7 +15,7 @@ class UsersListElement extends React.Component {
 	render() {
 		return (
 			<li className='list-group-item' onClick={this.returnUsername}>
-				<img src={`http://robohash.org/${this.props.username}?size=50x50`}></img>
+				<Avatar username={this.props.username} size={AVATAR_SIZES.MEDIUM}/>
 				<span>{this.props.username}</span>
 			</li>
 		)
