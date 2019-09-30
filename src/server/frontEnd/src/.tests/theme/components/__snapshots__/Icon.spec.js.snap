@@ -22,7 +22,7 @@ ShallowWrapper {
     "nodeType": "host",
     "props": Object {
       "children": <img
-        src="assets/logo.svg"
+        src="theme/assets/undefined.svg"
       />,
       "className": "w-48 h-48",
     },
@@ -32,7 +32,7 @@ ShallowWrapper {
       "key": undefined,
       "nodeType": "host",
       "props": Object {
-        "src": "assets/logo.svg",
+        "src": "theme/assets/undefined.svg",
       },
       "ref": null,
       "rendered": null,
@@ -47,7 +47,7 @@ ShallowWrapper {
       "nodeType": "host",
       "props": Object {
         "children": <img
-          src="assets/logo.svg"
+          src="theme/assets/undefined.svg"
         />,
         "className": "w-48 h-48",
       },
@@ -57,7 +57,7 @@ ShallowWrapper {
         "key": undefined,
         "nodeType": "host",
         "props": Object {
-          "src": "assets/logo.svg",
+          "src": "theme/assets/undefined.svg",
         },
         "ref": null,
         "rendered": null,
