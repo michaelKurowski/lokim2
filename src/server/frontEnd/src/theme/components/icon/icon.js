@@ -5,7 +5,7 @@ class Icon extends React.Component {
 		super(props)
 		this.state = {
 			size: this.props.size,
-			path: `theme/assets/${this.props.icon}.svg`
+			path: `theme/assets/${this.props.name}.svg`
 		}
 	}
 
