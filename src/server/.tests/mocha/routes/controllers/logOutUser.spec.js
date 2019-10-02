@@ -1,7 +1,7 @@
 
 const mockRequire = require('mock-require')
 mockRequire.stopAll()
-mockMessageModel()
+mockModels()
 
 const logOutUser = require('../../../../routes/controllers/logOutUser')()
 const sinon = require('sinon')
@@ -19,7 +19,7 @@ describe('logOutUser', () => {
 		suite.responseMock = httpMocks.createResponse({
 			eventEmitter: EventEmitter
 		})
-		mockMessageModel()
+		mockModels()
 	})
 
 	afterEach(() => {
@@ -103,8 +103,11 @@ function createRequestMock(destroySessionFailure) {
 	}
 }
 
-function mockMessageModel() {
+function mockModels() {
 	let MessageModelMock = function () {
+		this.save = () => Promise.resolve()
+	}
+	let RoomModelMock = function () {
 		this.save = () => Promise.resolve()
 	}
 	MessageModelMock.find = (query, fields, cb) => {
@@ -115,6 +118,13 @@ function mockMessageModel() {
 			roomId: 'DUMMY_ROOM'
 		}])
 	}
+	RoomModelMock.find = (query, fields, cb) => {
+		cb(null, [{
+			id: 'dummy room',
+			members: ['user1', 'user2']
+		}])
+	}
 	
 	mockRequire('../../../../models/message', MessageModelMock)
+	mockRequire('../../../../models/room', MessageModelMock)
 }
