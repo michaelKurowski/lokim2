@@ -136,12 +136,9 @@ class Room {
 
 	[EVENT_TYPES.LIST_MEMBERS](data, socket) {
 		const roomId = data.roomId
-		const room = socket.nsp.in(roomId)
-		getRoomClients(room)
-			.then(clients => {
-				const usernames = _.map(clients, socketId => 
-					getUsername(room.connected[socketId]))
-				const response = new ListMembersResponse(usernames, roomId)
+		RoomModel.findOne({id: roomId}, 'members')
+			.then(room => {
+				const response = new ListMembersResponse(room.members, roomId)
 				socket.emit(EVENT_TYPES.LIST_MEMBERS, response.serialize())
 			})
 			.catch(err => logger.error(err))
