@@ -29,17 +29,30 @@ class Room {
 	 * @property {module:dataTypes.timestamp} timestamp Timestamp of when server acknowledged that user joined the room (only for server-sourced emits)
 	 */
 
-	[EVENT_TYPES.JOIN](data, socket) {
+	[EVENT_TYPES.JOIN](data, socket, connections) {
 		const {roomId} = data
 		if (_.isEmpty(roomId)) return
 		const username = socket.request.user.username
+		RoomModel.findOne({id: roomId}, 'id members')
+			.then(room => {
+				if (room !== null) {
+					socket.join(roomId, () => {
+						const response = new JoinResponse(username, roomId)
+						socket.emit(EVENT_TYPES.JOIN, response.serialize())
+						socket.to(roomId).emit(EVENT_TYPES.JOIN, response.serialize())
+						this.listMembers(data, socket)
+						if (room.members.indexOf(username) === -1) {
+							room.members = [...room.members, username]
+							room.save().catch(err => logger.error(err))
+						}
+					})
+					return
+				}
+				this.create({invitedUsersIndexes: [], roomId}, socket, connections)
+			})
+			.catch(err => logger.error(err))
 		
-		socket.join(roomId, () => {
-			const response = new JoinResponse(username, roomId)
-			socket.emit(EVENT_TYPES.JOIN, response.serialize())
-			socket.to(roomId).emit(EVENT_TYPES.JOIN, response.serialize())
-			this.listMembers(data, socket)
-		})
+
 		
 	}
 
@@ -90,10 +103,9 @@ class Room {
 	 */
 
 	[EVENT_TYPES.CREATE](data, socket, connections) {
-		const {invitedUsersIndexes} = data
-		const roomId = uuidv4()
+		const {invitedUsersIndexes, roomId} = data
 		const roomInstance = new RoomModel({
-			id: roomId,
+			id: roomId || uuidv4(),
 			members: [...invitedUsersIndexes, getUsername(socket)]
 		})
 		roomInstance.save()
