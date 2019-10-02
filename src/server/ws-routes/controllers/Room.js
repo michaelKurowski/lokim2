@@ -2,12 +2,12 @@ const uuidv4 = require('uuid/v4')
 const _ = require('lodash')
 const namespaceInfo =  require('../../protocol/protocol.json').room
 const EVENT_TYPES = namespaceInfo.eventTypes
-const util = require('util')
 const logger = require('../../logger')
 const JoinResponse = require('../responses/JoinResponse.class')
 const MessageResponse = require('../responses/MessageResponse.class')
 const LeaveResponse = require('../responses/LeaveResponse.class')
 const ListMembersResponse = require('../responses/ListMembersResponse.class')
+const RoomModel = require('../../models/room')
 const MessageModel = require('../../models/message')
 /**
  * /Room websocket namespace and its events
@@ -17,6 +17,11 @@ class Room {
 	[EVENT_TYPES.CONNECTION](socket, connections) {
 		const username = socket.request.user.username
 		connections.usersToConnectionsMap.set(username, socket)
+		return RoomModel.find({members: username}, 'id').exec()
+			.then(rooms =>
+				rooms.forEach(room => this.join({roomId: room.id}, socket, connections))
+			)
+			.catch(err => logger.error(err))
 	}
 
 	[EVENT_TYPES.DISCONNECT](socket, connections) {
@@ -33,25 +38,30 @@ class Room {
 	 * @property {module:dataTypes.timestamp} timestamp Timestamp of when server acknowledged that user joined the room (only for server-sourced emits)
 	 */
 
-	[EVENT_TYPES.JOIN](data, socket) {
+	[EVENT_TYPES.JOIN](data, socket, connections) {
+		const username = socket.request.user.username
 		const {roomId} = data
 		if (_.isEmpty(roomId)) return
-		const username = socket.request.user.username
-		
-		socket.join(roomId, () => {
-			const response = new JoinResponse(username, roomId)
-			MessageModel.find({ roomId }, 'author text date', (err, messages) => {
-				if (err) return logger.error(err)
+		RoomModel.findOne({id: roomId}, 'id members').exec()
+			.then(room => {
+				if (room !== null) 
+					return joinWebsocketConnectionToRoom(socket, room)
+						.then(broadcastInformationAboutNewMember.bind(null, socket, room.id))
+						.then(updateRoomMembersListInMongo.bind(null, room, username))
+				this.create({invitedUsersIndexes: [], roomId}, socket, connections)
+			})
+			.then(() => {
+				if (!data.roomId) return
+				return this.listMembers(data, socket)
+			})
+			.then(() => MessageModel.find({ roomId }, 'author text date').exec())
+			.then(messages => {
 				messages.forEach(message => {
 					const response = new MessageResponse(message.author, roomId, message.text, message.date)
 					socket.emit(EVENT_TYPES.MESSAGE, response.serialize())
 				})
 			})
-			socket.emit(EVENT_TYPES.JOIN, response.serialize())
-			socket.to(roomId).emit(EVENT_TYPES.JOIN, response.serialize())
-			this.listMembers(data, socket)
-		})
-		
+			.catch(err => logger.error(err))	
 	}
 
 	/**
@@ -112,11 +122,21 @@ class Room {
 	 */
 
 	[EVENT_TYPES.CREATE](data, socket, connections) {
-		const {invitedUsersIndexes} = data
-		const roomId = uuidv4()
+		const {invitedUsersIndexes, roomId} = data
+		const roomDocument = {
+			id: roomId || uuidv4(),
+			members: [...invitedUsersIndexes, getUsername(socket)]
+		}
+		const roomInstance = new RoomModel(roomDocument)
+		roomInstance.save()
+			.then(() => {
+				this.join({roomId: roomDocument.id}, socket, connections)
+				joinUsersToRoom(invitedUsersIndexes, roomDocument.id, connections, this)
+			})
+			.catch(err => {
+				logger.error(err)
+			})
 
-		this.join({roomId}, socket, connections)
-		joinUsersToRoom(invitedUsersIndexes, roomId, connections, this)
 	}
 
 	/**
@@ -131,21 +151,14 @@ class Room {
 
 	[EVENT_TYPES.LIST_MEMBERS](data, socket) {
 		const roomId = data.roomId
-		const room = socket.nsp.in(roomId)
-		getRoomClients(room)
-			.then(clients => {
-				const usernames = _.map(clients, socketId => 
-					getUsername(room.connected[socketId]))
-				const response = new ListMembersResponse(usernames, roomId)
+		return RoomModel.findOne({id: roomId}, 'members').exec()
+			.then(room => {
+				if (room === null) return
+				const response = new ListMembersResponse(room.members, roomId)
 				socket.emit(EVENT_TYPES.LIST_MEMBERS, response.serialize())
 			})
 			.catch(err => logger.error(err))
 	}
-}
-
-async function getRoomClients(room) {
-	const getClients = room.clients.bind(room)
-	return await util.promisify(getClients)()
 }
 
 function getUsername(socket) {
@@ -156,6 +169,26 @@ function joinUsersToRoom(invitedUsersIndexes, roomId, connections, controller) {
 	_.forEach(invitedUsersIndexes, username => {
 		const invitedUserSocket = connections.usersToConnectionsMap.get(username)
 		if (invitedUserSocket) controller.join({roomId}, invitedUserSocket, connections)
+	})
+}
+
+function updateRoomMembersListInMongo(room, username) {
+	if (room.members.indexOf(username) === -1) {
+		room.members = [...room.members, username]
+		return room.save().catch(err => logger.error(err))
+	}
+}
+
+function broadcastInformationAboutNewMember(socket, roomId) {
+	const username = socket.request.user.username
+	const response = new JoinResponse(username, roomId)
+	socket.emit(EVENT_TYPES.JOIN, response.serialize())
+	socket.to(roomId).emit(EVENT_TYPES.JOIN, response.serialize())
+}
+
+function joinWebsocketConnectionToRoom(socket, roomId) {
+	return new Promise(resolve => {
+		socket.join(roomId, resolve)
 	})
 }
 

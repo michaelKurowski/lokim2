@@ -1,7 +1,7 @@
 
 const mockRequire = require('mock-require')
 mockRequire.stopAll()
-mockMessageModel()
+mockModels()
 
 const logOutUser = require('../../../../routes/controllers/logOutUser')()
 const sinon = require('sinon')
@@ -19,7 +19,7 @@ describe('logOutUser', () => {
 		suite.responseMock = httpMocks.createResponse({
 			eventEmitter: EventEmitter
 		})
-		mockMessageModel()
+		mockModels()
 	})
 
 	afterEach(() => {
@@ -103,18 +103,41 @@ function createRequestMock(destroySessionFailure) {
 	}
 }
 
-function mockMessageModel() {
+function mockModels() {
 	let MessageModelMock = function () {
 		this.save = () => Promise.resolve()
 	}
-	MessageModelMock.find = (query, fields, cb) => {
-		cb(null, [{
-			text: 'dummy text',
-			author: 'dummy author',
-			date: 32132321321132,
-			roomId: 'DUMMY_ROOM'
-		}])
+	let RoomModelMock = function () {
+		this.save = () => Promise.resolve()
 	}
+
+	MessageModelMock.find = () => ({
+		exec(query, fields, cb) {
+			return Promise.resolve([{
+				text: 'dummy text',
+				author: 'dummy author',
+				date: 32132321321132,
+				roomId: 'DUMMY_ROOM'
+			}])
+		}
+	})
+
+	RoomModelMock.find = () => ({
+		exec(query, fields, cb) {
+			return Promise.resolve([])
+		}
+	})
+
+	RoomModelMock.findOne = () => ({
+		exec(query, fields, cb) {
+			return Promise.resolve({
+				id: 'DUMMY_ROOM',
+				members: ['userA', 'userB'],
+				save: () => Promise.resolve()
+			})
+		}
+	})
 	
 	mockRequire('../../../../models/message', MessageModelMock)
+	mockRequire('../../../../models/room', RoomModelMock)
 }
