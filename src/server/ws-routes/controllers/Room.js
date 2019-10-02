@@ -17,7 +17,7 @@ class Room {
 	[EVENT_TYPES.CONNECTION](socket, connections) {
 		const username = socket.request.user.username
 		connections.usersToConnectionsMap.set(username, socket)
-		return RoomModel.find({members: username}, 'id')
+		return RoomModel.find({members: username}, 'id').exec()
 			.then(rooms =>
 				rooms.forEach(room => this.join({roomId: room.id}, socket, connections))
 			)
@@ -42,7 +42,7 @@ class Room {
 		const username = socket.request.user.username
 		const {roomId} = data
 		if (_.isEmpty(roomId)) return
-		RoomModel.findOne({id: roomId}, 'id members')
+		RoomModel.findOne({id: roomId}, 'id members').exec()
 			.then(room => {
 				if (room !== null) 
 					return joinWebsocketConnectionToRoom(socket, room)
@@ -54,7 +54,7 @@ class Room {
 				if (!data.roomId) return
 				return this.listMembers(data, socket)
 			})
-			.then(() => MessageModel.find({ roomId }, 'author text date'))
+			.then(() => MessageModel.find({ roomId }, 'author text date').exec())
 			.then(messages => {
 				messages.forEach(message => {
 					const response = new MessageResponse(message.author, roomId, message.text, message.date)
@@ -151,7 +151,7 @@ class Room {
 
 	[EVENT_TYPES.LIST_MEMBERS](data, socket) {
 		const roomId = data.roomId
-		return RoomModel.findOne({id: roomId}, 'members')
+		return RoomModel.findOne({id: roomId}, 'members').exec()
 			.then(room => {
 				const response = new ListMembersResponse(room.members, roomId)
 				socket.emit(EVENT_TYPES.LIST_MEMBERS, response.serialize())

@@ -529,7 +529,6 @@ describe('Room websocket namespace', () => {
 
 			//then
 			function then() {
-				console.log('then')
 				suite.clientA.disconnect()
 				suite.clientB.disconnect()
 
@@ -666,25 +665,33 @@ function mockModels() {
 	let RoomModelMock = function () {
 		this.save = () => Promise.resolve()
 	}
-	MessageModelMock.find = (query, fields, cb) => {
-		return Promise.resolve([{
-			text: 'dummy text',
-			author: 'dummy author',
-			date: 32132321321132,
-			roomId: 'DUMMY_ROOM'
-		}])
-	}
-	RoomModelMock.find = (query, fields, cb) => {
-		return Promise.resolve([])
-	}
 
-	RoomModelMock.findOne = (query, fields, cb) => {
-		return Promise.resolve({
-			id: 'DUMMY_ROOM',
-			members: ['userA', 'userB'],
-			save: () => Promise.resolve()
-		})
-	}
+	MessageModelMock.find = () => ({
+		exec(query, fields, cb) {
+			return Promise.resolve([{
+				text: 'dummy text',
+				author: 'dummy author',
+				date: 32132321321132,
+				roomId: 'DUMMY_ROOM'
+			}])
+		}
+	})
+
+	RoomModelMock.find = () => ({
+		exec(query, fields, cb) {
+			return Promise.resolve([])
+		}
+	})
+
+	RoomModelMock.findOne = () => ({
+		exec(query, fields, cb) {
+			return Promise.resolve({
+				id: 'DUMMY_ROOM',
+				members: ['userA', 'userB'],
+				save: () => Promise.resolve()
+			})
+		}
+	})
 	
 	mockRequire('../../../../models/message', MessageModelMock)
 	mockRequire('../../../../models/room', RoomModelMock)
