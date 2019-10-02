@@ -57,7 +57,7 @@ class Room {
 			})
 			.then(() => {
 				if (!data.roomId) return
-				this.listMembers(data, socket)
+				return this.listMembers(data, socket)
 			})
 			.then(() => MessageModel.find({ roomId }, 'author text date'))
 			.then(messages => {
@@ -156,7 +156,7 @@ class Room {
 
 	[EVENT_TYPES.LIST_MEMBERS](data, socket) {
 		const roomId = data.roomId
-		RoomModel.findOne({id: roomId}, 'members')
+		return RoomModel.findOne({id: roomId}, 'members')
 			.then(room => {
 				const response = new ListMembersResponse(room.members, roomId)
 				socket.emit(EVENT_TYPES.LIST_MEMBERS, response.serialize())

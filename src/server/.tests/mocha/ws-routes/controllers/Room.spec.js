@@ -431,7 +431,7 @@ describe('Room websocket namespace', () => {
 						username: suite.USERNAME_MOCK
 					}
 				}
-				sinon.assert.calledWith(suite.emitSpy.secondCall, CLIENT_EVENTS.JOIN, sinon.match(shouldMatch))
+				sinon.assert.calledWith(suite.emitSpy.thirdCall, CLIENT_EVENTS.JOIN, sinon.match(shouldMatch))
 				done()
 			}
 		})
