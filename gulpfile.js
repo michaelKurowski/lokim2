@@ -10,6 +10,8 @@ const PATHS = {
     FRONTEND: path.resolve(__dirname, 'src', 'server', 'frontEnd'),
     JEST_CONFIG: path.resolve(__dirname, 'src', 'server', 'frontEnd', 'package.json'),
     WEBPACK_GENERATED_BUNDLE: path.resolve(__dirname, 'src', 'server', 'frontEnd', 'src', 'theme', 'index.html'),
+    FRONTEND_ASSETS: path.resolve(__dirname, 'src', 'server', 'frontEnd', 'src', 'theme', 'assets','*'),
+    HTTP_SERVER_PUBLIC_ASSETS_DIRECTORY: path.resolve(__dirname, 'src', 'server', 'public','theme','assets'),
     HTTP_SERVER_PUBLIC_DIRECTORY: path.resolve(__dirname, 'src', 'server', 'public'),
     ESLINT: path.resolve(__dirname, 'src', 'server', 'node_modules', 'eslint', 'bin', 'eslint.js'),
     ESLINT_IGNORE: path.resolve(__dirname, 'src', 'server', '.eslintignore'),
@@ -79,6 +81,12 @@ function publishFrontEndBundle(cb) {
     cb();
 }
 
+function publishFrontEndAssets(cb){
+    src(PATHS.FRONTEND_ASSETS)
+        .pipe(dest(PATHS.HTTP_SERVER_PUBLIC_ASSETS_DIRECTORY))
+    cb();
+}
+
 function serverEslint(cb) {
     return run(`node ${PATHS.ESLINT}`, PATHS.SERVER, ['--ignore-path', PATHS.ESLINT_IGNORE, PATHS.SERVER])
 }
@@ -123,8 +131,8 @@ function serverTest(cb) {
     return run('node ./node_modules/mocha/bin/mocha "./.tests/mocha/**/*.spec.js"', PATHS.SERVER, ['--no-timeouts'])
 }
 
-const build = series(bundle, publishFrontEndBundle)
-const buildDev = series(bundleDev, publishFrontEndBundle)
+const build = series(bundle, publishFrontEndBundle, publishFrontEndAssets)
+const buildDev = series(bundleDev, publishFrontEndBundle, publishFrontEndAssets)
 const prepare = series(installServerDependencies, installFrontEndDependencies, build, generateConfig, preparationMessege)
 const prepareDev = series(installServerDependencies, installFrontEndDependencies, buildDev, generateConfig, preparationMessege)
 const eslint = series(serverEslint, frontEndEslint)
