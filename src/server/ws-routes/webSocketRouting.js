@@ -1,7 +1,6 @@
 const connectionsRepository = require('./ConnectionsRepositoryProvider')
 const Utilities = require('../utilities')
 const logger = require('../logger')
-
 const RoomController = require('./controllers/Room')
 const UsersController = require('./controllers/Users')
 

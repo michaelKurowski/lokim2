@@ -3,6 +3,10 @@ const _ = require('lodash')
 const sinon = require('sinon')
 const socketClient = require('socket.io-client')
 const io = require('socket.io')
+const mockRequire = require('mock-require')
+mockRequire.stopAll()
+mockMessageModel()
+
 const RoomProvider = require('../../../../ws-routes/controllers/Room')
 const config = require('../../../../config.json')
 const namespaceInfo = require('../../../../protocol/protocol.json').room
@@ -33,11 +37,14 @@ describe('Room websocket namespace', () => {
 		suite.server.use(suite.middlewareMock)
 		suite.client = {}
 		suite.roomInstance = new RoomProvider(RoomProvider)
+
+		mockMessageModel()
 	})
 
 	afterEach(done => {
 		suite.server.close(done)
 		if (_.isFunction(suite.client.disconnect)) suite.client.disconnect()
+		mockRequire.stopAll()
 	})
 
 	describe('#connection', () => {
@@ -153,6 +160,30 @@ describe('Room websocket namespace', () => {
 
 			//then
 			suite.client.on(CLIENT_EVENTS.JOIN, then)
+			function then() {
+				done()
+			}
+		})
+
+		it('should send "message" event width message history when receiving "join" request', done => {
+			//given
+			const requestMock = {
+				roomId: 'random room id'
+			}
+			
+			suite.server.on(CLIENT_EVENTS.CONNECTION, connection => 
+				connection.on(CLIENT_EVENTS.JOIN, data => 
+					suite.roomInstance.join(data, connection, suite.connectionsMock)
+				)
+			)
+			
+			suite.client = socketClient.connect(SOCKET_URL, SOCKET_OPTIONS)
+
+			//when
+			suite.client.emit(CLIENT_EVENTS.JOIN, requestMock)
+
+			//then
+			suite.client.on(CLIENT_EVENTS.MESSAGE, then)
 			function then() {
 				done()
 			}
@@ -454,7 +485,7 @@ describe('Room websocket namespace', () => {
 						username: suite.USERNAME_MOCK
 					}
 				}
-				sinon.assert.calledWith(suite.emitSpy.firstCall, CLIENT_EVENTS.JOIN, sinon.match(shouldMatch))
+				sinon.assert.calledWith(suite.emitSpy.secondCall, CLIENT_EVENTS.JOIN, sinon.match(shouldMatch))
 				done()
 			}
 		})
@@ -626,3 +657,19 @@ describe('Room websocket namespace', () => {
 		})
 	})
 })
+
+function mockMessageModel() {
+	let MessageModelMock = function () {
+		this.save = () => Promise.resolve()
+	}
+	MessageModelMock.find = (query, fields, cb) => {
+		cb(null, [{
+			text: 'dummy text',
+			author: 'dummy author',
+			date: 32132321321132,
+			roomId: 'DUMMY_ROOM'
+		}])
+	}
+	
+	mockRequire('../../../../models/message', MessageModelMock)
+}
