@@ -39,24 +39,15 @@ class Room {
 	 */
 
 	[EVENT_TYPES.JOIN](data, socket, connections) {
-		
+		const username = socket.request.user.username
 		const {roomId} = data
 		if (_.isEmpty(roomId)) return
-		const username = socket.request.user.username
 		RoomModel.findOne({id: roomId}, 'id members')
 			.then(room => {
-				if (room !== null) {
-					socket.join(roomId, () => {
-						const response = new JoinResponse(username, roomId)
-						socket.emit(EVENT_TYPES.JOIN, response.serialize())
-						socket.to(roomId).emit(EVENT_TYPES.JOIN, response.serialize())
-						if (room.members.indexOf(username) === -1) {
-							room.members = [...room.members, username]
-							return room.save().catch(err => logger.error(err))
-						}
-					})
-					return
-				}
+				if (room !== null) 
+					return joinWebsocketConnectionToRoom(socket, room)
+						.then(broadcastInformationAboutNewMember.bind(null, socket, room.id))
+						.then(updateRoomMembersListInMongo.bind(null, room, username))
 				this.create({invitedUsersIndexes: [], roomId}, socket, connections)
 			})
 			.then(() => {
@@ -177,6 +168,26 @@ function joinUsersToRoom(invitedUsersIndexes, roomId, connections, controller) {
 	_.forEach(invitedUsersIndexes, username => {
 		const invitedUserSocket = connections.usersToConnectionsMap.get(username)
 		if (invitedUserSocket) controller.join({roomId}, invitedUserSocket, connections)
+	})
+}
+
+function updateRoomMembersListInMongo(room, username) {
+	if (room.members.indexOf(username) === -1) {
+		room.members = [...room.members, username]
+		return room.save().catch(err => logger.error(err))
+	}
+}
+
+function broadcastInformationAboutNewMember(socket, roomId) {
+	const username = socket.request.user.username
+	const response = new JoinResponse(username, roomId)
+	socket.emit(EVENT_TYPES.JOIN, response.serialize())
+	socket.to(roomId).emit(EVENT_TYPES.JOIN, response.serialize())
+}
+
+function joinWebsocketConnectionToRoom(socket, roomId) {
+	return new Promise(resolve => {
+		socket.join(roomId, resolve)
 	})
 }
 
