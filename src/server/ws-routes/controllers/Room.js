@@ -163,11 +163,6 @@ class Room {
 	}
 }
 
-async function getRoomClients(room) {
-	const getClients = room.clients.bind(room)
-	return await util.promisify(getClients)()
-}
-
 function getUsername(socket) {
 	return socket.request.user.username
 }
