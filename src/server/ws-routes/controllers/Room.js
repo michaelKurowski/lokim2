@@ -18,7 +18,7 @@ class Room {
 	[EVENT_TYPES.CONNECTION](socket, connections) {
 		const username = socket.request.user.username
 		connections.usersToConnectionsMap.set(username, socket)
-		RoomModel.find({members: username}, 'id')
+		return RoomModel.find({members: username}, 'id')
 			.then(rooms =>
 				rooms.forEach(room => this.join({roomId: room.id}, socket, connections))
 			)
@@ -36,6 +36,7 @@ class Room {
 	 */
 
 	[EVENT_TYPES.JOIN](data, socket, connections) {
+		
 		const {roomId} = data
 		if (_.isEmpty(roomId)) return
 		const username = socket.request.user.username
@@ -56,16 +57,14 @@ class Room {
 				}
 				this.create({invitedUsersIndexes: [], roomId}, socket, connections)
 			})
-			.catch(err => logger.error(err))
-			.then(() => {
-				MessageModel.find({ roomId }, 'author text date', (err, messages) => {
-					if (err) return logger.error(err)
-					messages.forEach(message => {
-						const response = new MessageResponse(message.author, roomId, message.text, message.date)
-						socket.emit(EVENT_TYPES.MESSAGE, response.serialize())
-					})
+			.then(() => MessageModel.find({ roomId }, 'author text date'))
+			.then(messages => {
+				messages.forEach(message => {
+					const response = new MessageResponse(message.author, roomId, message.text, message.date)
+					socket.emit(EVENT_TYPES.MESSAGE, response.serialize())
 				})
-			})	
+			})
+			.catch(err => logger.error(err))	
 	}
 
 	/**
@@ -127,14 +126,15 @@ class Room {
 
 	[EVENT_TYPES.CREATE](data, socket, connections) {
 		const {invitedUsersIndexes, roomId} = data
-		const roomInstance = new RoomModel({
+		const roomDocument = {
 			id: roomId || uuidv4(),
 			members: [...invitedUsersIndexes, getUsername(socket)]
-		})
+		}
+		const roomInstance = new RoomModel(roomDocument)
 		roomInstance.save()
 			.then(() => {
-				this.join({roomId}, socket, connections)
-				joinUsersToRoom(invitedUsersIndexes, roomId, connections, this)
+				this.join({roomId: roomDocument.id}, socket, connections)
+				joinUsersToRoom(invitedUsersIndexes, roomDocument.id, connections, this)
 			})
 			.catch(err => {
 				logger.error(err)

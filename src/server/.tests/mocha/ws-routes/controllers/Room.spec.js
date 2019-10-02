@@ -5,7 +5,7 @@ const socketClient = require('socket.io-client')
 const io = require('socket.io')
 const mockRequire = require('mock-require')
 mockRequire.stopAll()
-mockMessageModel()
+mockModels()
 
 const RoomProvider = require('../../../../ws-routes/controllers/Room')
 const config = require('../../../../config.json')
@@ -38,7 +38,7 @@ describe('Room websocket namespace', () => {
 		suite.client = {}
 		suite.roomInstance = new RoomProvider(RoomProvider)
 
-		mockMessageModel()
+		mockModels()
 	})
 
 	afterEach(done => {
@@ -52,7 +52,8 @@ describe('Room websocket namespace', () => {
 			//given
 			suite.server.on(CLIENT_EVENTS.CONNECTION, socket => {
 				suite.roomInstance.connection(socket, suite.connectionsMock)
-				then()
+					.then(then)
+				//then()
 			})
 
 			//when
@@ -461,7 +462,6 @@ describe('Room websocket namespace', () => {
 						new Promise(resolve => suite.clientA.on(CLIENT_EVENTS.JOIN, resolve)),
 						new Promise(resolve => suite.clientB.on(CLIENT_EVENTS.JOIN, resolve))
 					]).then(then)
-
 					suite.roomInstance.create(data, connection, suite.connectionsMock)
 				})
 			})
@@ -474,6 +474,7 @@ describe('Room websocket namespace', () => {
 
 			//then
 			function then() {
+				console.log('then')
 				suite.clientA.disconnect()
 				suite.clientB.disconnect()
 
@@ -603,18 +604,33 @@ describe('Room websocket namespace', () => {
 	})
 })
 
-function mockMessageModel() {
+function mockModels() {
 	let MessageModelMock = function () {
 		this.save = () => Promise.resolve()
 	}
+	let RoomModelMock = function () {
+		this.save = () => Promise.resolve()
+	}
 	MessageModelMock.find = (query, fields, cb) => {
-		cb(null, [{
+		return Promise.resolve([{
 			text: 'dummy text',
 			author: 'dummy author',
 			date: 32132321321132,
 			roomId: 'DUMMY_ROOM'
 		}])
 	}
+	RoomModelMock.find = (query, fields, cb) => {
+		return Promise.resolve([])
+	}
+
+	RoomModelMock.findOne = (query, fields, cb) => {
+		return Promise.resolve({
+			id: 'DUMMY_ROOM',
+			members: ['userA', 'userB'],
+			save: () => Promise.resolve()
+		})
+	}
 	
 	mockRequire('../../../../models/message', MessageModelMock)
+	mockRequire('../../../../models/room', RoomModelMock)
 }

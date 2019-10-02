@@ -111,7 +111,7 @@ function mockModels() {
 		this.save = () => Promise.resolve()
 	}
 	MessageModelMock.find = (query, fields, cb) => {
-		cb(null, [{
+		return Promise.resolve([{
 			text: 'dummy text',
 			author: 'dummy author',
 			date: 32132321321132,
@@ -119,12 +119,17 @@ function mockModels() {
 		}])
 	}
 	RoomModelMock.find = (query, fields, cb) => {
-		cb(null, [{
-			id: 'dummy room',
-			members: ['user1', 'user2']
-		}])
+		return Promise.resolve([])
+	}
+
+	RoomModelMock.findOne = (query, fields, cb) => {
+		return Promise.resolve({
+			id: 'DUMMY_ROOM',
+			members: ['userA', 'userB'],
+			save: () => Promise.resolve()
+		})
 	}
 	
 	mockRequire('../../../../models/message', MessageModelMock)
-	mockRequire('../../../../models/room', MessageModelMock)
+	mockRequire('../../../../models/room', RoomModelMock)
 }
