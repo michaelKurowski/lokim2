@@ -46,15 +46,18 @@ class Room {
 						const response = new JoinResponse(username, roomId)
 						socket.emit(EVENT_TYPES.JOIN, response.serialize())
 						socket.to(roomId).emit(EVENT_TYPES.JOIN, response.serialize())
-						this.listMembers(data, socket)
 						if (room.members.indexOf(username) === -1) {
 							room.members = [...room.members, username]
-							room.save().catch(err => logger.error(err))
+							return room.save().catch(err => logger.error(err))
 						}
 					})
 					return
 				}
 				this.create({invitedUsersIndexes: [], roomId}, socket, connections)
+			})
+			.then(() => {
+				if (!data.roomId) return
+				this.listMembers(data, socket)
 			})
 			.then(() => MessageModel.find({ roomId }, 'author text date'))
 			.then(messages => {
