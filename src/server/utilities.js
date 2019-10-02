@@ -15,13 +15,7 @@ class Utilities {
 		const hash = crypto.createHash('sha256')
 		return  hash.update(passpharse + salt).digest('hex')	
 	}
-
-	static createMessage(textMessage) {
-		return {
-			description: textMessage
-		}
-	}
-
+	
 	static disconnectWebSockets(res, username, connectionRepository) {
 		const userSocket = connectionRepository.usersToConnectionsMap.get(username)
 		if(userSocket) {

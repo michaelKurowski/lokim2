@@ -10,7 +10,7 @@ const loginStrategy = (UserModel = require('../models/user'), strategyUtils = re
 			.then(finish)
 			.catch(() => {
 				const userToSerialize = null
-				done(responseManager.MESSAGES.errors.UNAUTHORIZED, userToSerialize)
+				done(responseManager.MESSAGES.ERRORS.UNAUTHORIZED, userToSerialize)
 			})
 
 		function finish(validation) {

@@ -1,33 +1,33 @@
 
 const MESSAGES = {
-	successes : {
+	SUCCESSES : {
 		OK : {
-			code: 200, 
-			description: 'OK'
+			CODE: 200, 
+			DESCRIPTION: 'OK'
 		}
 	},
-	errors : {
+	ERRORS : {
 		BAD_REQUEST : {
-			code: 400, 
-			description: 'BAD_REQUEST'
+			CODE: 400, 
+			DESCRIPTION: 'BAD_REQUEST'
 		},
 		UNAUTHORIZED : {
-			code: 401, 
-			description: 'UNAUTHORIZED'
+			CODE: 401, 
+			DESCRIPTION: 'UNAUTHORIZED'
 		},
 		INTERNAL_ERROR : {
-			code: 500, 
-			description: 'INTERNAL SERVER ERROR'}
+			CODE: 500, 
+			DESCRIPTION: 'INTERNAL SERVER ERROR'}
 	}
 }
 
 function sendResponse(res, message, extraPayload) {
 	const payload = {
-		description: message.description,
+		DESCRIPTION: message.DESCRIPTION,
 		extraPayload
 	}
 
-	return res.status(message.code).json(payload)
+	return res.status(message.CODE).json(payload)
 }
 
 module.exports = {

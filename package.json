@@ -1,6 +1,16 @@
 {
     "scripts": {
-        "postinstall": "npm install --prefix ./src/server && npm install --prefix ./src/server/frontEnd && npm run --prefix ./src/server generate-client-files",
-        "start": "npm start --prefix ./src/server"
+        "heroku-postbuild": "npx gulp prepare"
+    },
+    "dependencies": {
+        "gulp": "^4.0.0",
+        "gulp-path": "^4.0.0"
+    },
+    "nyc": {
+        "all": false,
+        "lines": 60,
+        "statements": 0,
+        "functions": 0,
+        "branches": 0
     }
 }

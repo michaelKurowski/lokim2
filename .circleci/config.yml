@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:8.9.4
+      - image: circleci/node:10.13-stretch
         environment:
           DB_USERNAME: mongousradmin
           DB_PASSWORD: mongopassadmin
@@ -11,57 +11,86 @@ jobs:
           MONGO_INITDB_ROOT_USERNAME: mongousradmin
           MONGO_INITDB_ROOT_PASSWORD: mongopassadmin
           MONGO_INITDB_DATABASE: container
+      - image: cypress/base:8
     steps:
       - checkout
       - restore_cache:
           name: Restore cache (backend)
           keys:
-          - v1-dependencies-{{ checksum "src/server/package.json" }}
+          - v4-dependencies-{{ checksum "src/server/package.json" }}
           # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+          - v4-dependencies-
 
       - restore_cache:
           name: Restore cache (frontEnd)
           keys:
-          - v1-dependencies-{{ checksum "src/server/frontEnd/package.json" }}
+          - v4-dependencies-{{ checksum "src/server/frontEnd/package.json" }}
           # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+          - v4-dependencies-
+
+      - run:
+          name: Cypress Dependencies
+          command: sudo apt-get update && sudo apt-get install xvfb libgtk2.0-0 libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 --fix-missing
+
+      - run:
+          name: Installing root dependencies
+          command: npm ci && sudo npm link gulp && sudo npm i -g codecov
 
       - run: 
-          name: Deployment (backend)
-          command: cd src/server && npm install
-
-      - run: 
-          name: Deployment (frontEnd)
-          command: cd src/server/frontEnd && npm install
-
+          name: Building project
+          command: npx gulp prepare
+         
       - save_cache:
           name: Saving cache (backend)
           paths:
             - src/server/node_modules
-          key: v1-dependencies-{{ checksum "src/server/package.json" }}
+            - /home/circleci/.cache # Cypress is stored here
+            - /home/circleci/.npm
+          key: v4-dependencies-{{ checksum "src/server/package.json" }}
 
       - save_cache:
           name: Saving cache (frontEnd)
           paths:
             - src/server/frontEnd/node_modules
-          key: v1-dependencies-{{ checksum "src/server/frontEnd/package.json" }}
+          key: v4-dependencies-{{ checksum "src/server/frontEnd/package.json" }}
 
       - run:
           name: Static Analysis (backend & frontEnd)
-          command: cd src/server && npm run eslint
-
-      - run:
-          name: Generate config file (backend)
-          command: cd src/server && npm run generate-config
+          command: gulp eslint
 
       - run:
           name: Mocha tests (backend)
-          command: cd src/server/ && npm run test-coverage
+          command: gulp serverTest
 
       - run:
           name: Jest tests (frontEnd)
-          command: cd src/server/frontEnd/ && npm run test-coverage
+          command: gulp frontEndTest
+
+      - run:
+          name: Coverage (backend)
+          command: gulp serverTestCoverage
+
+      - run:
+          name: Coverage (frontEnd)
+          command: gulp frontEndTestCoverage
+
+      - run:
+          name: Push coverage to Codecov
+          command: codecov
+          
+      - run:
+          name: Start NodeJS
+          command: gulp start
+          background: true
+
+      - run:
+          name: E2E tests
+          command: gulp testCypress
+
+      - store_artifacts:
+          path: /home/circleci/project/src/server/.tests/cypress/videos
+      - store_artifacts:
+          path: /home/circleci/project/src/server/.tests/cypress/screenshots
 
       - run:
           name: Print the Current Time

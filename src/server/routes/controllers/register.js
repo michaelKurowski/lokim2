@@ -1,5 +1,4 @@
-const responseMessages = require('./utilities/responseMessages')
-const statusCodes = require('./utilities/statusCodes')
+const responseManager = require('./utilities/responseManager')
 const Utilities = require('../../utilities')
 const logger = require('../../logger')
 const SALT_SIZE = 70
@@ -18,17 +17,10 @@ function createPostRegisterController(UserModel = require('../../models/user')) 
 
 		const userInstance = new UserModel(userData)
 		userInstance.save()
-			.then(() => {
-				res.status(statusCodes.OK)
-				const responseMessage = Utilities.createMessage(responseMessages.successes.USER_HAS_BEEN_CREATED)
-				res.json(responseMessage)
-			})
+			.then(() => responseManager.sendResponse(res, responseManager.MESSAGES.SUCCESSES.OK))
 			.catch(err => {
 				logger.info(`Register contoller error: ${err}`)
-				const responseMessage = Utilities.createMessage(responseMessages.errors.FAILED_TO_CREATE_USER)
-				res.status(statusCodes.BAD_REQUEST)
-				res.json(responseMessage)
-				return 
+				responseManager.sendResponse(res, responseManager.MESSAGES.ERRORS.BAD_REQUEST)
 			})
 	}
 }

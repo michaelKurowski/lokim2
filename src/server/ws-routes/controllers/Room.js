@@ -4,6 +4,10 @@ const namespaceInfo =  require('../../protocol/protocol.json').room
 const EVENT_TYPES = namespaceInfo.eventTypes
 const util = require('util')
 const logger = require('../../logger')
+const JoinResponse = require('../responses/JoinResponse.class')
+const MessageResponse = require('../responses/MessageResponse.class')
+const LeaveResponse = require('../responses/LeaveResponse.class')
+const ListMembersResponse = require('../responses/ListMembersResponse.class')
 /**
  * /Room websocket namespace and its events
  * @namespace
@@ -30,12 +34,13 @@ class Room {
 
 	[EVENT_TYPES.JOIN](data, socket) {
 		const {roomId} = data
+		if (_.isEmpty(roomId)) return
 		const username = socket.request.user.username
-		const timestamp = new Date().getTime()
 		
 		socket.join(roomId, () => {
-			socket.emit(EVENT_TYPES.JOIN, {username, roomId, timestamp})
-			socket.to(roomId).emit(EVENT_TYPES.JOIN, {username, roomId, timestamp})
+			const response = new JoinResponse(username, roomId)
+			socket.emit(EVENT_TYPES.JOIN, response.serialize())
+			socket.to(roomId).emit(EVENT_TYPES.JOIN, response.serialize())
 			this.listMembers(data, socket)
 		})
 		
@@ -55,9 +60,9 @@ class Room {
 	[EVENT_TYPES.MESSAGE](data, socket) {
 		const {roomId, message} = data
 		const username = socket.request.user.username
-		const timestamp = new Date().getTime()
-
-		socket.to(roomId).emit(EVENT_TYPES.MESSAGE, {message, username, timestamp, roomId})
+		const response = new MessageResponse(username, roomId, message)
+		socket.emit(EVENT_TYPES.MESSAGE, response.serialize())
+		socket.to(roomId).emit(EVENT_TYPES.MESSAGE, response.serialize())
 	}
 
 	/**
@@ -73,9 +78,9 @@ class Room {
 	[EVENT_TYPES.LEAVE](data, socket) {
 		const {roomId} = data
 
-		const timestamp = new Date().getTime()
 		const username = socket.request.user.username
-		socket.to(roomId).emit(EVENT_TYPES.LEAVE, {username, timestamp})
+		const response = new LeaveResponse(username, roomId)
+		socket.to(roomId).emit(EVENT_TYPES.LEAVE, response.serialize())
 		socket.leave({roomId})
 	}
 
@@ -106,15 +111,14 @@ class Room {
 	*/
 
 	[EVENT_TYPES.LIST_MEMBERS](data, socket) {
-		const timestamp = new Date().getTime()
 		const roomId = data.roomId
 		const room = socket.nsp.in(roomId)
 		getRoomClients(room)
 			.then(clients => {
 				const usernames = _.map(clients, socketId => 
 					getUsername(room.connected[socketId]))
-				socket.emit(EVENT_TYPES.LIST_MEMBERS,
-					{roomId, timestamp, usernames})
+				const response = new ListMembersResponse(usernames, roomId)
+				socket.emit(EVENT_TYPES.LIST_MEMBERS, response.serialize())
 			})
 			.catch(err => logger.error(err))
 	}
