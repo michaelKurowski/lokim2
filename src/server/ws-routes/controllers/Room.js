@@ -8,6 +8,7 @@ const JoinResponse = require('../responses/JoinResponse.class')
 const MessageResponse = require('../responses/MessageResponse.class')
 const LeaveResponse = require('../responses/LeaveResponse.class')
 const ListMembersResponse = require('../responses/ListMembersResponse.class')
+const RoomModel = require('../../models/room')
 /**
  * /Room websocket namespace and its events
  * @namespace
@@ -91,9 +92,19 @@ class Room {
 	[EVENT_TYPES.CREATE](data, socket, connections) {
 		const {invitedUsersIndexes} = data
 		const roomId = uuidv4()
+		const roomInstance = new RoomModel({
+			id: roomId,
+			members: [...invitedUsersIndexes, getUsername(socket)]
+		})
+		roomInstance.save()
+			.then(() => {
+				this.join({roomId}, socket, connections)
+				joinUsersToRoom(invitedUsersIndexes, roomId, connections, this)
+			})
+			.catch(err => {
+				logger.error(err)
+			})
 
-		this.join({roomId}, socket, connections)
-		joinUsersToRoom(invitedUsersIndexes, roomId, connections, this)
 	}
 
 	/**
