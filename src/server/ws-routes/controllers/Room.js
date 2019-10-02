@@ -17,6 +17,11 @@ class Room {
 	[EVENT_TYPES.CONNECTION](socket, connections) {
 		const username = socket.request.user.username
 		connections.usersToConnectionsMap.set(username, socket)
+		RoomModel.find({members: username}, 'id')
+			.then(rooms =>
+				rooms.forEach(room => this.join({roomId: room.id}, socket, connections))
+			)
+			.catch(err => logger.error(err))
 	}
 
 	/**
