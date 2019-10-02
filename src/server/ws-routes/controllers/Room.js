@@ -153,6 +153,7 @@ class Room {
 		const roomId = data.roomId
 		return RoomModel.findOne({id: roomId}, 'members').exec()
 			.then(room => {
+				if (room === null) return
 				const response = new ListMembersResponse(room.members, roomId)
 				socket.emit(EVENT_TYPES.LIST_MEMBERS, response.serialize())
 			})
