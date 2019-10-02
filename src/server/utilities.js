@@ -59,6 +59,9 @@ function setEventListener(socket, controller, connectionsRepository, namespaceIn
 		if (!controller[eventType]) throw new Error(`Can't find event "${eventType}" in controller of namespace "${namespaceInfo.name}"`)
 		if (eventType === 'connection')
 			return runConnectionEventHandler(socket, controller, connectionsRepository)
+		if (eventType === 'disconnect')
+			return socket.on(eventType, () => controller[eventType](socket, connectionsRepository))
+			
 		socket.on(eventType, data => controller[eventType](data, socket, connectionsRepository))
 	}
 }
