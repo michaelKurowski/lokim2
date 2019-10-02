@@ -24,6 +24,10 @@ class Room {
 			.catch(err => logger.error(err))
 	}
 
+	[EVENT_TYPES.DISCONNECT](socket, connections) {
+		const username = socket.request.user.username
+		connections.usersToConnectionsMap.delete(username)
+	}
 	/**
 	 * User joins a room
 	 * @name join

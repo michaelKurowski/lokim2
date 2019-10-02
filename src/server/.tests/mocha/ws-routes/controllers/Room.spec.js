@@ -86,6 +86,61 @@ describe('Room websocket namespace', () => {
 		})
 	})
 
+	describe('#disconnect', () => {
+
+		it('should remove username-socket entry from connection repository when client is logged out', done => {
+			//given
+			suite.server.on(CLIENT_EVENTS.CONNECTION, socket => {
+				suite.roomInstance.connection(socket, suite.connectionsMock)
+				socket.on(CLIENT_EVENTS.DISCONNECT, () => {
+					suite.roomInstance.disconnect(socket, suite.connectionsMock)
+					then()
+				})
+				logoutMock()
+				
+			})
+
+			//when
+			suite.client = socketClient.connect(SOCKET_URL, SOCKET_OPTIONS)
+			function logoutMock() {
+				const userSocket = suite.connectionsMock.usersToConnectionsMap.get(suite.USERNAME_MOCK)
+				userSocket.disconnect(true)
+			}
+			
+			
+			//then
+			function then() {
+				assert.isTrue(suite.connectionsMock.usersToConnectionsMap.size === 0)
+				done()
+			}
+		})
+
+		it('should remove username-socket entry from connection repository when client is disconnected', done => {
+			//given
+			suite.server.on(CLIENT_EVENTS.CONNECTION, socket => {
+				suite.roomInstance.connection(socket, suite.connectionsMock)
+				when()
+				socket.on(CLIENT_EVENTS.DISCONNECT, () => {
+					suite.roomInstance.disconnect(socket, suite.connectionsMock)
+					then()
+				})
+			})
+
+			//when
+			suite.client = socketClient.connect(SOCKET_URL, SOCKET_OPTIONS)
+			function when() {
+				suite.client.disconnect()
+			}
+			
+			
+			//then
+			function then() {
+				assert.isTrue(suite.connectionsMock.usersToConnectionsMap.size === 0)
+				done()
+			}
+		})
+	})
+
 	describe('#join', () => {
 		it('should send "join" event when receiving "join" request', done => {
 			//given
