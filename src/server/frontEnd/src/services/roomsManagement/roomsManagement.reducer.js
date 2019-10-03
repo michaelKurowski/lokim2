@@ -1,3 +1,5 @@
+const _ = require('lodash')
+
 const ACTION_CODES = Object.assign(
 	{},
 	require('./room.actions').CODES,
@@ -52,7 +54,7 @@ function addMessage(state, payload) {
 	const currentRoom = currentRooms[payload.roomId] || roomSchema
 	const currentMessages = currentRoom.messages
 
-	const newMessages = [...currentMessages, newMessage]
+	const newMessages = _.uniqWith([...currentMessages, newMessage], _.isEqual)
 	const newRoom = Object.assign({}, currentRoom, {messages: newMessages})
 	const newRooms = Object.assign({}, currentRooms, {[payload.roomId]: newRoom})
 
