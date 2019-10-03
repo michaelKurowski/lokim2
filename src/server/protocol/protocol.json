@@ -6,6 +6,7 @@
 			"JOIN": "join",
 			"LEAVE": "leave",
 			"CREATE": "create",
+			"DISCONNECT": "disconnect",
 			"CONNECTION": "connection",
 			"LIST_MEMBERS": "listMembers"
 		}
