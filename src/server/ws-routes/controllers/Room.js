@@ -93,9 +93,7 @@ class Room {
 				}
 				const messageModelInstance = new MessageModel(messageDataToSaveInDb)
 				messageModelInstance.save()
-					.catch(err => {
-						logger.error(err)
-					})
+					.catch(err => logger.error(err))
 		
 				socket.emit(EVENT_TYPES.MESSAGE, response.serialize())
 				socket.to(roomId).emit(EVENT_TYPES.MESSAGE, response.serialize())
