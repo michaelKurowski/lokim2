@@ -5,7 +5,7 @@ const socketClient = require('socket.io-client')
 const io = require('socket.io')
 const mockRequire = require('mock-require')
 mockRequire.stopAll()
-mockMessageModel()
+mockModels()
 
 const RoomProvider = require('../../../../ws-routes/controllers/Room')
 const config = require('../../../../config.json')
@@ -38,7 +38,7 @@ describe('Room websocket namespace', () => {
 		suite.client = {}
 		suite.roomInstance = new RoomProvider(RoomProvider)
 
-		mockMessageModel()
+		mockModels()
 	})
 
 	afterEach(done => {
@@ -52,7 +52,8 @@ describe('Room websocket namespace', () => {
 			//given
 			suite.server.on(CLIENT_EVENTS.CONNECTION, socket => {
 				suite.roomInstance.connection(socket, suite.connectionsMock)
-				then()
+					.then(then)
+				//then()
 			})
 
 			//when
@@ -80,6 +81,61 @@ describe('Room websocket namespace', () => {
 			function then() {
 				const storedSession = suite.connectionsMock.usersToConnectionsMap.get(suite.USERNAME_MOCK)
 				assert.strictEqual(storedSession, suite.newSocket)
+				done()
+			}
+		})
+	})
+
+	describe('#disconnect', () => {
+
+		it('should remove username-socket entry from connection repository when client is logged out', done => {
+			//given
+			suite.server.on(CLIENT_EVENTS.CONNECTION, socket => {
+				suite.roomInstance.connection(socket, suite.connectionsMock)
+				socket.on(CLIENT_EVENTS.DISCONNECT, () => {
+					suite.roomInstance.disconnect(socket, suite.connectionsMock)
+					then()
+				})
+				logoutMock()
+				
+			})
+
+			//when
+			suite.client = socketClient.connect(SOCKET_URL, SOCKET_OPTIONS)
+			function logoutMock() {
+				const userSocket = suite.connectionsMock.usersToConnectionsMap.get(suite.USERNAME_MOCK)
+				userSocket.disconnect(true)
+			}
+			
+			
+			//then
+			function then() {
+				assert.isTrue(suite.connectionsMock.usersToConnectionsMap.size === 0)
+				done()
+			}
+		})
+
+		it('should remove username-socket entry from connection repository when client is disconnected', done => {
+			//given
+			suite.server.on(CLIENT_EVENTS.CONNECTION, socket => {
+				suite.roomInstance.connection(socket, suite.connectionsMock)
+				when()
+				socket.on(CLIENT_EVENTS.DISCONNECT, () => {
+					suite.roomInstance.disconnect(socket, suite.connectionsMock)
+					then()
+				})
+			})
+
+			//when
+			suite.client = socketClient.connect(SOCKET_URL, SOCKET_OPTIONS)
+			function when() {
+				suite.client.disconnect()
+			}
+			
+			
+			//then
+			function then() {
+				assert.isTrue(suite.connectionsMock.usersToConnectionsMap.size === 0)
 				done()
 			}
 		})
@@ -461,7 +517,6 @@ describe('Room websocket namespace', () => {
 						new Promise(resolve => suite.clientA.on(CLIENT_EVENTS.JOIN, resolve)),
 						new Promise(resolve => suite.clientB.on(CLIENT_EVENTS.JOIN, resolve))
 					]).then(then)
-
 					suite.roomInstance.create(data, connection, suite.connectionsMock)
 				})
 			})
@@ -603,18 +658,41 @@ describe('Room websocket namespace', () => {
 	})
 })
 
-function mockMessageModel() {
+function mockModels() {
 	let MessageModelMock = function () {
 		this.save = () => Promise.resolve()
 	}
-	MessageModelMock.find = (query, fields, cb) => {
-		cb(null, [{
-			text: 'dummy text',
-			author: 'dummy author',
-			date: 32132321321132,
-			roomId: 'DUMMY_ROOM'
-		}])
+	let RoomModelMock = function () {
+		this.save = () => Promise.resolve()
 	}
+
+	MessageModelMock.find = () => ({
+		exec(query, fields, cb) {
+			return Promise.resolve([{
+				text: 'dummy text',
+				author: 'dummy author',
+				date: 32132321321132,
+				roomId: 'DUMMY_ROOM'
+			}])
+		}
+	})
+
+	RoomModelMock.find = () => ({
+		exec(query, fields, cb) {
+			return Promise.resolve([])
+		}
+	})
+
+	RoomModelMock.findOne = () => ({
+		exec(query, fields, cb) {
+			return Promise.resolve({
+				id: 'DUMMY_ROOM',
+				members: ['userA', 'userB'],
+				save: () => Promise.resolve()
+			})
+		}
+	})
 	
 	mockRequire('../../../../models/message', MessageModelMock)
+	mockRequire('../../../../models/room', RoomModelMock)
 }

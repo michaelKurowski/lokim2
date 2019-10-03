@@ -65,7 +65,6 @@ function addMember(state, payload) {
 function setMembers(state, payload) {
 	const currentRooms = state.rooms
 	const currentRoom = currentRooms[payload.roomId] || roomSchema
-
 	const newMembers = payload.members
 	const newRoom = Object.assign({}, currentRoom, {members: newMembers})
 	const newRooms = Object.assign({}, currentRooms, {[payload.roomId]: newRoom})

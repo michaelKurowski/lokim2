@@ -12,7 +12,7 @@ class RoomsDialer extends React.Component {
 			(room, roomIndex) => 
 				<RoomsListElement 
 					key={roomIndex}
-					name={`Room #${room}`}
+					name={`Room ${room}`}
 					ID={room}
 					onClick={() => this.props.selectRoom({roomId: room})}
 				/>
