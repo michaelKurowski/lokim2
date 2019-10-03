@@ -67,7 +67,6 @@ class ChatPage extends React.Component {
 		this.joinToRoom = this.joinToRoom.bind(this)
 		this.createRoom = this.createRoom.bind(this)
 		this.changeSelectedRoom = this.changeSelectedRoom.bind(this)
-		// this.leaveRoom = this.leaveRoom.bind(this)
 	}
 
 	getSelectedRoom() {
