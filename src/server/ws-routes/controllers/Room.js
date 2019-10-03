@@ -201,8 +201,4 @@ function joinWebsocketConnectionToRoom(socket, roomId) {
 	return new Promise(resolve => socket.join(roomId, resolve))
 }
 
-
-
-
-
 module.exports = Room

@@ -44,6 +44,10 @@ class Utilities {
 	}
 }
 
+function getUsername(socket) {
+	return socket.request.user.username
+}
+
 function bindEventListenersToSocket(namespaceInfo, ControllerClass, connectionsRepository) {
 	return socket => {
 		const eventTypes = _.values(namespaceInfo.eventTypes)
