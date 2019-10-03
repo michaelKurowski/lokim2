@@ -5,17 +5,23 @@ const CODES = {
 	ADD_MEMBER: 'ADD_MEMBER',
 	SEND_MESSAGE: 'SEND_MESSAGE',
 	SET_MEMBERS: 'SET_MEMBERS',
-	INCORRECT_MESSAGE: 'INCORRECT_MESSAGE'
+	INCORRECT_MESSAGE: 'INCORRECT_MESSAGE',
+	REMOVE_MEMBER: 'REMOVE_MEMBER'
 }
 const actions = {
 	addMessage,
 	setMembers,
 	addMember,
-	sendMessage 
+	sendMessage,
+	removeMember
 }
 
 function addMember(username, roomId) {
 	return {type: CODES.ADD_MEMBER, payload: {username, roomId}}
+}
+
+function removeMember(username, roomId) {
+	return {type: CODES.REMOVE_MEMBER, payload: {username, roomId}}
 }
 
 function setMembers(members, roomId) {

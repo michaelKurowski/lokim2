@@ -25,6 +25,10 @@ const handleActions = (state = initialState, action = {}) => {
 			return addMessage(state, action.payload)
 		case ACTION_CODES.SET_MEMBERS:
 			return setMembers(state, action.payload)
+		case ACTION_CODES.REMOVE_ROOM:
+			return removeRoom(state, action.payload)
+		case ACTION_CODES.REMOVE_MEMBER:
+			return removeMember(state, action.payload)
 		default:
 			return state
 	}
@@ -32,6 +36,13 @@ const handleActions = (state = initialState, action = {}) => {
 
 function selectRoom(state, payload) {
 	return Object.assign({}, state, {selectedRoom: payload.roomId})
+}
+
+function removeRoom(state, payload) {
+	const currentRooms = state.rooms
+	const newRooms = Object.assign({}, currentRooms)
+	delete newRooms[payload.roomId]
+	return Object.assign({}, state, {rooms: newRooms})
 }
 
 function addMessage(state, payload) {
@@ -56,6 +67,20 @@ function addMember(state, payload) {
 	const currentMembers = currentRoom.members
 
 	const newMembers = [...currentMembers, newMember]
+	const newRoom = Object.assign({}, currentRoom, {members: newMembers})
+	const newRooms = Object.assign({}, currentRooms, {[payload.roomId]: newRoom})
+
+	return Object.assign({}, state, {rooms: newRooms})
+}
+
+function removeMember(state, payload) {
+	const memberToRemove = payload.username
+
+	const currentRooms = state.rooms
+	const currentRoom = currentRooms[payload.roomId] || roomSchema
+	const currentMembers = currentRoom.members
+
+	const newMembers = currentMembers.filter(username => username !== memberToRemove)
 	const newRoom = Object.assign({}, currentRoom, {members: newMembers})
 	const newRooms = Object.assign({}, currentRooms, {[payload.roomId]: newRoom})
 
