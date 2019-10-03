@@ -67,7 +67,8 @@ function addMember(state, payload) {
 	const currentMembers = currentRoom.members
 
 	const newMembers = [...currentMembers, newMember]
-	const newRoom = Object.assign({}, currentRoom, {members: newMembers})
+	const membersWithoutDuplicates = Array.from(new Set(newMembers))
+	const newRoom = Object.assign({}, currentRoom, {members: membersWithoutDuplicates})
 	const newRooms = Object.assign({}, currentRooms, {[payload.roomId]: newRoom})
 
 	return Object.assign({}, state, {rooms: newRooms})
