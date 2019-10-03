@@ -70,9 +70,9 @@ function* mapWebsocketEventsToActions(event) {
 
 function* handleLeaveEvent(event) {
 	const loggedUserUsername = yield select(store => store.sessionReducer.username)
-	if (loggedUserUsername === event.payload.username)
+	if (loggedUserUsername === event.payload.username) 
 		yield put(roomsManagementActions.removeRoom(event.payload.roomId))
-		yield put(roomActions.removeMember(event.payload.username, event.payload.roomId))
+	else yield put(roomActions.removeMember(event.payload.username, event.payload.roomId))
 }
 
 function* handleJoinEvent(event) {
