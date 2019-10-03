@@ -11,9 +11,13 @@ class RoomsListElement extends React.Component {
 	}
 	render() {
 		return(
-			<div className='border m-2 p-2' data-test='list-dialer-element' key={this.state.ID} onClick={this.props.onClick}>
-				<li>{this.state.name}</li>
+			<div className='border m-2 p-2' >
+				<div data-test='list-dialer-element' key={this.state.ID} onClick={this.props.onClick}>
+					<li>{this.state.name}</li>
+				</div>
+				<div onClick={this.props.onLeave}>Leave</div>
 			</div>
+
 		)
 	}
 }

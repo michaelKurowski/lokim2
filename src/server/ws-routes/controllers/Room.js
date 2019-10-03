@@ -106,11 +106,16 @@ class Room {
 
 	[EVENT_TYPES.LEAVE](data, socket) {
 		const {roomId} = data
-
 		const username = socket.request.user.username
 		const response = new LeaveResponse(username, roomId)
+		socket.emit(EVENT_TYPES.LEAVE, response.serialize())
 		socket.to(roomId).emit(EVENT_TYPES.LEAVE, response.serialize())
 		socket.leave({roomId})
+		RoomModel.findOne({id: roomId}, 'members').exec()
+			.then(room => {
+				room.members = room.members.filter(member => member !== username)
+				return room.save()
+			})
 	}
 
 	/**
@@ -188,6 +193,7 @@ function broadcastInformationAboutNewMember(socket, roomId) {
 
 function joinWebsocketConnectionToRoom(socket, roomId) {
 	return new Promise(resolve => {
+		console.debug('join', roomId)
 		socket.join(roomId, resolve)
 	})
 }

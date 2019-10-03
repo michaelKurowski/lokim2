@@ -15,6 +15,7 @@ function* watchSendMessage() {
 	yield takeEvery(ROOM_ACTION_CODES.SEND_MESSAGE, sendMessage)
 	yield takeEvery(ROOM_MANAGEMENT_CODES.JOIN_ROOM, joinRoom)
 	yield takeEvery(ROOM_MANAGEMENT_CODES.CREATE_ROOM, createRoom)
+	yield takeEvery(ROOM_MANAGEMENT_CODES.LEAVE_ROOM, leaveRoom)
 	yield takeEvery(SESSION_ACTION_CODES.LOG_OUT, logOut)
 	yield takeEvery(FIND_USERS_ACTION_CODES.FIND_USER, findUsersByUsername)
 }
@@ -39,6 +40,11 @@ function* joinRoom(action) {
 	yield call(emitJoinRoom, socket, action.payload)
 }
 
+function* leaveRoom(action) {
+	const socket = webSocketProvider.get()
+	yield call(emitLeaveRoom, socket, action.payload)
+}
+
 function* sendMessage(action) {
 	const socket = webSocketProvider.get()
 	yield call(emitMessage, socket, action.payload.messageObject)
@@ -58,6 +64,10 @@ function emitFindUsersByUsername(socket, username) {
 
 function emitMessage(socket, eventObject) {
 	socket.room.emit(protocols.MESSAGE, eventObject)
+}
+
+function emitLeaveRoom(socket, eventObject) {
+	socket.room.emit(protocols.LEAVE, eventObject)
 }
 
 function closeSocket(socket) {
