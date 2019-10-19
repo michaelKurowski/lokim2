@@ -46,7 +46,8 @@ function mapDispatchToProps(dispatch) {
 		joinRoom: roomId => dispatch(roomsManagementActions.actions.joinRoom(roomId)),
 		createRoom: invitedUsers => dispatch(roomsManagementActions.actions.createRoom(invitedUsers)),
 		logOut: () => dispatch(sessionActions.actions.logOut()),
-		findUsersByUsername: username => dispatch(findUsersActions.actions.findUser(username))
+		findUsersByUsername: username => dispatch(findUsersActions.actions.findUser(username)),
+		leaveRoom: roomId => dispatch(roomsManagementActions.actions.leaveRoom(roomId))
 	}
 }
 
@@ -117,7 +118,7 @@ class ChatPage extends React.Component {
 					<SidePanel direction={SIDE_PANEL_DIRECTIONS.LEFT} color='dark'>
 						<Avatar size={AVATAR_SIZES.BIG} username={this.props.username} />
 						<RoomJoiner joinRoom={this.joinToRoom} />
-						<RoomsDialer rooms={this.props.joinedRooms} selectRoom={this.changeSelectedRoom} />
+						<RoomsDialer rooms={this.props.joinedRooms} selectRoom={this.changeSelectedRoom} leaveRoom={this.props.leaveRoom}/>
 					</SidePanel>
 					{
 						this.getSelectedRoom() ?

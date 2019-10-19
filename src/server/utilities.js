@@ -1,6 +1,7 @@
 const crypto = require('crypto')
 const _ = require('lodash')
 const WEBSOCKET_COOKIE_NAME = 'io'
+const util = require('util')
 class Utilities {
 
 	static generateSalt (size) {
@@ -31,6 +32,20 @@ class Utilities {
 		io.of(namespaceInfo.name)
 			.on('connection', bindEventListenersToSocket(namespaceInfo, ControllerClass, connectionsRepository))
 	}
+
+	// This is an utility for debugging websocket room members
+	static getUsersInWebsocketRoom(socket, roomId) {
+		const room = socket.nsp.in(roomId)
+		return getRoomClients(room)
+			.then(clients => {
+				return _.map(clients, socketId => 
+					getUsername(room.connected[socketId]))
+			})
+	}
+}
+
+function getUsername(socket) {
+	return socket.request.user.username
 }
 
 function bindEventListenersToSocket(namespaceInfo, ControllerClass, connectionsRepository) {
@@ -48,6 +63,11 @@ function bindEventListenersToSocket(namespaceInfo, ControllerClass, connectionsR
 		const controller = new ControllerClass()
 		_.forEach(eventTypes, setEventListener(socket, controller, connectionsRepository, namespaceInfo))
 	}
+}
+
+async function getRoomClients(room) {
+	const getClients = room.clients.bind(room)
+	return await util.promisify(getClients)()
 }
 
 function runConnectionEventHandler(socketToPass, controller, connectionsRepository) {

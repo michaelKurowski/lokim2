@@ -45,7 +45,7 @@ class Room {
 		RoomModel.findOne({id: roomId}, 'id members').exec()
 			.then(room => {
 				if (room !== null) 
-					return joinWebsocketConnectionToRoom(socket, room)
+					return joinWebsocketConnectionToRoom(socket, room.id)
 						.then(broadcastInformationAboutNewMember.bind(null, socket, room.id))
 						.then(updateRoomMembersListInMongo.bind(null, room, username))
 				this.create({invitedUsersIndexes: [], roomId}, socket, connections)
@@ -78,20 +78,23 @@ class Room {
 	[EVENT_TYPES.MESSAGE](data, socket) {
 		const {roomId, message} = data
 		const username = socket.request.user.username
-		const response = new MessageResponse(username, roomId, message)
-		const messageDataToSaveInDb = {
-			author: username,
-			text: message,
-			roomId,
-			date: response.date
-		}
-		const messageModelInstance = new MessageModel(messageDataToSaveInDb)
-		messageModelInstance.save()
-			.catch(err => {
-				logger.error(err)
+		return RoomModel.findOne({id: roomId}, 'members').exec()
+			.then(room => {
+				const isMemberOfRoom = room.members.indexOf(username) !== -1
+				if (!isMemberOfRoom) return
+				const response = new MessageResponse(username, roomId, message)
+				const messageDataToSaveInDb = {
+					author: username,
+					text: message,
+					roomId,
+					date: response.date
+				}
+				const messageModelInstance = new MessageModel(messageDataToSaveInDb)
+				messageModelInstance.save()
+					.catch(err => logger.error(err))
+				socket.emit(EVENT_TYPES.MESSAGE, response.serialize())
+				socket.to(roomId).emit(EVENT_TYPES.MESSAGE, response.serialize())
 			})
-		socket.emit(EVENT_TYPES.MESSAGE, response.serialize())
-		socket.to(roomId).emit(EVENT_TYPES.MESSAGE, response.serialize())
 	}
 
 	/**
@@ -106,11 +109,16 @@ class Room {
 
 	[EVENT_TYPES.LEAVE](data, socket) {
 		const {roomId} = data
-
 		const username = socket.request.user.username
 		const response = new LeaveResponse(username, roomId)
+		socket.emit(EVENT_TYPES.LEAVE, response.serialize())
 		socket.to(roomId).emit(EVENT_TYPES.LEAVE, response.serialize())
-		socket.leave({roomId})
+		socket.leave(roomId)
+		return RoomModel.findOne({id: roomId}, 'members').exec()
+			.then(room => {
+				room.members = room.members.filter(member => member !== username)
+				return room.save()
+			})
 	}
 
 	/**
@@ -187,9 +195,7 @@ function broadcastInformationAboutNewMember(socket, roomId) {
 }
 
 function joinWebsocketConnectionToRoom(socket, roomId) {
-	return new Promise(resolve => {
-		socket.join(roomId, resolve)
-	})
+	return new Promise(resolve => socket.join(roomId, resolve))
 }
 
 module.exports = Room

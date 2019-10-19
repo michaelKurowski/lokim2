@@ -132,7 +132,7 @@ function mockModels() {
 		exec(query, fields, cb) {
 			return Promise.resolve({
 				id: 'DUMMY_ROOM',
-				members: ['userA', 'userB'],
+				members: ['userA', 'userB', 'DUMMY_USERNAME'],
 				save: () => Promise.resolve()
 			})
 		}

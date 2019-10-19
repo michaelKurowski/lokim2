@@ -15,6 +15,7 @@ class RoomsDialer extends React.Component {
 					name={`Room ${room}`}
 					ID={room}
 					onClick={() => this.props.selectRoom({roomId: room})}
+					onLeave={() => this.props.leaveRoom(room)}
 				/>
 		)
 	}

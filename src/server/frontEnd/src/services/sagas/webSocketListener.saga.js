@@ -57,12 +57,22 @@ function* mapWebsocketEventsToActions(event) {
 		case PROTOCOL.room.eventTypes.JOIN:
 			yield* handleJoinEvent(eventData)
 			break
+		case PROTOCOL.room.eventTypes.LEAVE:
+			yield* handleLeaveEvent(eventData)
+			break
 		case PROTOCOL.users.eventTypes.FIND:
 			yield put(findUserActions.usersFound(eventData.payload.usernames))
 			return
 		default:
 			return
 	}
+}
+
+function* handleLeaveEvent(event) {
+	const loggedUserUsername = yield select(store => store.sessionReducer.username)
+	if (loggedUserUsername === event.payload.username) 
+		yield put(roomsManagementActions.removeRoom(event.payload.roomId))
+	else yield put(roomActions.removeMember(event.payload.username, event.payload.roomId))
 }
 
 function* handleJoinEvent(event) {
