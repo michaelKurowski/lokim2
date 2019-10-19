@@ -114,7 +114,7 @@ class Room {
 		socket.emit(EVENT_TYPES.LEAVE, response.serialize())
 		socket.to(roomId).emit(EVENT_TYPES.LEAVE, response.serialize())
 		socket.leave(roomId)
-		RoomModel.findOne({id: roomId}, 'members').exec()
+		return RoomModel.findOne({id: roomId}, 'members').exec()
 			.then(room => {
 				room.members = room.members.filter(member => member !== username)
 				return room.save()

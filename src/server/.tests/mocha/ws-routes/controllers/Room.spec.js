@@ -272,7 +272,7 @@ describe('Room websocket namespace', () => {
 	})
 
 	describe('#message', () => {
-		it.only('should emit message event type on socket when receiving a message event from client', done => {
+		it('should emit message event type on socket when receiving a message event from client', done => {
 			//given
 			const requestMock = {
 				roomId: 'random room id',
@@ -312,7 +312,7 @@ describe('Room websocket namespace', () => {
 				suite.toSpy = sinon.spy(connection, 'to')
 				connection.on(CLIENT_EVENTS.MESSAGE, data => {
 					suite.roomInstance.message(data, connection, suite.connectionsMock)
-					then()
+						.then(then)
 				})
 			})
 			
@@ -340,7 +340,7 @@ describe('Room websocket namespace', () => {
 				suite.emitSpy = sinon.spy(connection, 'emit')
 				connection.on(CLIENT_EVENTS.MESSAGE, data => {
 					suite.roomInstance.message(data, connection, suite.connectionsMock)
-					then()
+						.then(then)
 				})
 			})
 			
@@ -373,7 +373,7 @@ describe('Room websocket namespace', () => {
 				suite.leaveSpy = sinon.spy(connection, 'leave')
 				connection.on(CLIENT_EVENTS.MESSAGE, data => {
 					suite.roomInstance.leave(data, connection, suite.connectionsMock)
-					then()
+						.then(then)
 				})
 			})
 			
@@ -384,8 +384,7 @@ describe('Room websocket namespace', () => {
 
 			//then
 			function then() {
-				const expectedEventData = {roomId: ROOM_ID}
-				sinon.assert.calledWith(suite.leaveSpy.firstCall, expectedEventData)
+				sinon.assert.calledWith(suite.leaveSpy.firstCall, ROOM_ID)
 				done()
 			}
 		})
@@ -650,7 +649,8 @@ describe('Room websocket namespace', () => {
 				})
 
 			function then(data) {
-				const EXPECTED_USERNAMES = [USER_A_USERNAME, USER_B_USERNAME]
+				const DUMMY_USERNAME = 'DUMMY_USERNAME'
+				const EXPECTED_USERNAMES = [USER_A_USERNAME, USER_B_USERNAME, DUMMY_USERNAME]
 				assert.deepEqual(data.payload.usernames, EXPECTED_USERNAMES)
 				done()
 			}
