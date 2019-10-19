@@ -272,7 +272,7 @@ describe('Room websocket namespace', () => {
 	})
 
 	describe('#message', () => {
-		it('should emit message event type on socket when receiving a message event from client', done => {
+		it.only('should emit message event type on socket when receiving a message event from client', done => {
 			//given
 			const requestMock = {
 				roomId: 'random room id',
@@ -283,7 +283,7 @@ describe('Room websocket namespace', () => {
 				suite.emitSpy = sinon.spy(connection, 'emit')
 				connection.on(CLIENT_EVENTS.MESSAGE, data => {
 					suite.roomInstance.message(data, connection, suite.connectionsMock)
-					then()
+						.then(then)
 				})
 			})
 			
@@ -687,7 +687,7 @@ function mockModels() {
 		exec(query, fields, cb) {
 			return Promise.resolve({
 				id: 'DUMMY_ROOM',
-				members: ['userA', 'userB'],
+				members: ['userA', 'userB', 'DUMMY_USERNAME'],
 				save: () => Promise.resolve()
 			})
 		}

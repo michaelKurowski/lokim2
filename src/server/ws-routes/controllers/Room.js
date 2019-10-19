@@ -78,12 +78,10 @@ class Room {
 	[EVENT_TYPES.MESSAGE](data, socket) {
 		const {roomId, message} = data
 		const username = socket.request.user.username
-
-		RoomModel.findOne({id: roomId}, 'members').exec()
+		return RoomModel.findOne({id: roomId}, 'members').exec()
 			.then(room => {
 				const isMemberOfRoom = room.members.indexOf(username) !== -1
 				if (!isMemberOfRoom) return
-
 				const response = new MessageResponse(username, roomId, message)
 				const messageDataToSaveInDb = {
 					author: username,
@@ -94,7 +92,6 @@ class Room {
 				const messageModelInstance = new MessageModel(messageDataToSaveInDb)
 				messageModelInstance.save()
 					.catch(err => logger.error(err))
-		
 				socket.emit(EVENT_TYPES.MESSAGE, response.serialize())
 				socket.to(roomId).emit(EVENT_TYPES.MESSAGE, response.serialize())
 			})
