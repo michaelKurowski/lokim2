@@ -2,7 +2,8 @@
     "paths": {
         "REGISTER": "/register",
         "CHAT": "/chat",
-        "HOME": "/"
+        "HOME": "/",
+        "VERIFY_EMAIL": "/verify-email"
     },
     "urls": {
         "LOGIN": "/login",

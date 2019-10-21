@@ -7,7 +7,7 @@ let suite
 describe('passport strategies', () => {
 	beforeEach(() => {
 		suite = {}
-		suite.FAKE_FIND_BY_ID_RESULT = 'fakeUser'
+		suite.FAKE_FIND_BY_ID_RESULT = {username: 'fakeUser', active: true}
 		suite.userModelMock = {
 			findById: sinon.stub().returns(suite.FAKE_FIND_BY_ID_RESULT)
 		}
@@ -52,6 +52,34 @@ describe('passport strategies', () => {
 					exec: sinon.stub().returns(Promise.resolve(suite.FAKE_FIND_BY_ID_RESULT))
 				}
 				suite.userModelMock = {findOne: sinon.stub().returns(mongooseQuery)}
+
+				suite.strategiesUtilsMock = {
+					validateUserPassword: sinon.stub().throws()
+				}
+				suite.loginStrategy =
+					strategiesProvider.loginStrategy(suite.userModelMock, suite.strategiesUtilsMock)
+
+				//when
+				return suite.loginStrategy.validateUser(USERNAME, PASSWORD, doneCallback)
+					.then(() => {
+						//then
+						sinon.assert.calledWith(doneCallback, PASSWORD_VALIDATION_RESULT, EXPECTED_FOUND_USER)
+					})
+			})
+			it('should fail authorization if the active field is false. ie. User is not verified.', () => {
+				//given
+				const USERNAME = 'dummyUsername'
+				const PASSWORD = 'dummyPassword'
+				const doneCallback = sinon.spy()
+				const PASSWORD_VALIDATION_RESULT = responseManager.MESSAGES.ERRORS.UNAUTHORIZED
+				const EXPECTED_FOUND_USER = null
+				suite.FAKE_FIND_BY_ID_RESULT.active = false
+				
+				const mongooseQuery = {
+					exec: sinon.stub().returns(Promise.resolve(suite.FAKE_FIND_BY_ID_RESULT))
+				}
+				suite.userModelMock = {findOne: sinon.stub().returns(mongooseQuery)}
+
 
 				suite.strategiesUtilsMock = {
 					validateUserPassword: sinon.stub().throws()

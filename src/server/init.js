@@ -1,3 +1,4 @@
+const logger = require('./logger')
 const express = require('express')
 const app = express()
 const httpServer = require('http').Server(app)
@@ -33,6 +34,14 @@ async function init({
 
 	const httpPort = process.env.PORT || injectedHttpPort || config.httpServer.port
 	const httpServerListening = initializationProcedures.initializeHttpServer(httpServer, httpPort)
+
+	const {prepareTransporter} = require('./routes/controllers/email')
+	
+	const transporter = prepareTransporter()
+	transporter.verify((err) => {
+		if(err) throw Error(`Transporter Verification Error: ${err}`)
+		logger.info('Email server is ready to take our messages')
+	})
 
 	return {
 		httpServerListening,

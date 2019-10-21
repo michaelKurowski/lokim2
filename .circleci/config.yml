@@ -6,12 +6,18 @@ jobs:
         environment:
           DB_USERNAME: mongousradmin
           DB_PASSWORD: mongopassadmin
+          SMTP_HOSTNAME: localhost
+          SMTP_USERNAME: dummy@em.com
+          SMTP_PORT: 1025
+          SMTP_PASSWORD: dommuPass
+          PORT: 5000
       - image: circleci/mongo:3.4
         environment:
           MONGO_INITDB_ROOT_USERNAME: mongousradmin
           MONGO_INITDB_ROOT_PASSWORD: mongopassadmin
           MONGO_INITDB_DATABASE: container
       - image: cypress/base:8
+      - image: schickling/mailcatcher
     steps:
       - checkout
       - restore_cache:
@@ -91,6 +97,10 @@ jobs:
           path: /home/circleci/project/src/server/.tests/cypress/videos
       - store_artifacts:
           path: /home/circleci/project/src/server/.tests/cypress/screenshots
+      - store_artifacts:
+          path: /home/circleci/project/src/server/logs
+      - store_artifacts:
+          path: /home/circleci/project/src/server/config.json
 
       - run:
           name: Print the Current Time

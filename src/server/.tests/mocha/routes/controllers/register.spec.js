@@ -1,6 +1,7 @@
 const registerController = require('../../../../routes/controllers/register')
 const assert = require('chai').assert
 const httpMocks = require('node-mocks-http')
+const sinon = require('sinon')
 const responseManager = require('../../../../routes/controllers/utilities/responseManager')
 
 const EventEmitter = require('events').EventEmitter
@@ -13,6 +14,9 @@ describe('register controller', () => {
 		suite.responseMock = httpMocks.createResponse({
 			eventEmitter: EventEmitter
 		})
+		suite.DUMMY_TRANSPORT = {
+            sendMail: sinon.spy()
+        }
 	})
 
 	describe('POST', () => {
@@ -24,8 +28,11 @@ describe('register controller', () => {
 		})
 		describe('mongoose creation handling', () => {
 			beforeEach(() => {
-				suite.registerPostFailingController = registerController.post(createMongooseModelMock(true))
-				suite.registerPostSuccessfulController = registerController.post(createMongooseModelMock(false))
+				suite.registerPostFailingController = 
+					registerController.post(createMongooseModelMock(true), createVerifyModelMock(true), suite.DUMMY_TRANSPORT)
+
+				suite.registerPostSuccessfulController =
+					registerController.post(createMongooseModelMock(false), createVerifyModelMock(false), suite.DUMMY_TRANSPORT)
 			})
 
 			it('should respond with user creation failure when all required data is provided and model validation fails', done => {
@@ -34,7 +41,7 @@ describe('register controller', () => {
 				const requestMock = httpMocks.createRequest({
 					method: suite.METHOD,
 					url: suite.URL,
-					params: {
+					body: {
 						username: suite.DUMMY_USERNAME,
 						email: suite.DUMMY_EMAIL,
 						password: suite.DUMMY_PASSWORD
@@ -62,7 +69,7 @@ describe('register controller', () => {
 				const requestMock = httpMocks.createRequest({
 					method: suite.METHOD,
 					url: suite.URL,
-					params: {
+					body: {
 						username: suite.DUMMY_USERNAME,
 						email: suite.DUMMY_EMAIL,
 						password: suite.DUMMY_PASSWORD
@@ -88,12 +95,21 @@ describe('register controller', () => {
 	})
 })
 
-function createMongooseModelMock(isValidationFailuring) {
+function createMongooseModelMock(isValidationFailing) {
 	return function() {
 		this.save = () => 
 			new Promise((resolve, reject) => 
-				isValidationFailuring ? reject('mocked reject') : resolve('mocked success')	
+				isValidationFailing ? reject('mocked reject') : resolve('mocked success')	
 			)
 	}
 
+}
+
+function createVerifyModelMock(isValidationFailing){
+	return function(){
+		this.save = () =>
+			new Promise((resolve,reject) =>
+				isValidationFailing ? reject('mocked reject') : resolve('mocked success')
+			)
+	}
 }

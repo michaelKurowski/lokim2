@@ -1,5 +1,7 @@
 /// <reference types="Cypress" />
+const http = require('http')
 let suite
+let inbox
 context('Login', () => {
 	beforeEach(() => {
 		suite = {
@@ -27,7 +29,22 @@ context('Login', () => {
 		cy.get('[name="password"]').type(suite.CORRECT_PASSWORD)
 		cy.get('[name="email"]').type(suite.EMAIL)
 		cy.get('.register-button').click()
-		cy.url().should('include', '/')
+		cy.wait(2500)
+		return cy.request({
+			method: 'GET',
+			url: 'http://localhost:1080/messages/1.plain',
+			failOnStatusCode: false
+		}).then(reponse => {
+			cy.url().should('include', '/')
+			const hash = reponse.body.split('/verify/')[1].split(' ')[0]
+			cy.visit(`http://localhost:5000/verify/${hash}`)
+			cy.get('#email-correct')
+		})
+	})
+
+	it('receives an incorrect email page when entering wrong email activation link', () => {
+		cy.visit(`http://localhost:5000/verify/incorrecthash`)
+		cy.get('#email-incorrect')
 	})
 
 	it('can login', () => {

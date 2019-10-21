@@ -30,6 +30,8 @@ module.exports = function ({
 			validateDatabaseConfig(config.database)
 			validateHttpServerConfig(config.httpServer)
 			validateLoggingConfig(config.logging)
+			validateEmailConfig(config.email)
+			validateHostConfig(config.host)
 			validateSessionConfig(config.session)
 			validateDevPropetiesConfig(config.devPropeties)
 		},
@@ -39,7 +41,12 @@ module.exports = function ({
 				const configTemplate = require('./miscellaneous/templateConfig.json')
 				configTemplate.database.username = process.env.DB_USERNAME || ''
 				configTemplate.database.password = process.env.DB_PASSWORD || ''
-
+				configTemplate.email.email = process.env.SMTP_USERNAME || ''
+				configTemplate.email.password = process.env.SMTP_PASSWORD || ''
+				configTemplate.email.hostname = process.env.SMTP_HOSTNAME || ''
+				const DEFAULT_SMTP_PORT = 587
+				configTemplate.email.port = parseInt(process.env.SMTP_PORT) || DEFAULT_SMTP_PORT
+				
 				const configToGenerate = JSON.stringify(configTemplate, null, '\t')
 				fs.writeFile(pathToConfig, configToGenerate, fileWriteError => {
 					if (fileWriteError) return reject(fileWriteError)
@@ -63,6 +70,18 @@ function validateDatabaseConfig(database) {
 
 function validateHttpServerConfig(httpServer) {
 	assert.isNumber(httpServer.port, ERROR_MESSAGES.HTTP_SERVER.WRONG_PORT)
+}
+
+function validateHostConfig(host) {
+	assert.isNotEmpty(host, ERROR_MESSAGES.EMPTY_HOSTNAME)
+}
+
+function validateEmailConfig(email) {
+	assert.isNotEmpty(email.email, ERROR_MESSAGES.EMAIL.EMPTY_EMAIL)
+	assert.isNotEmpty(email.password, ERROR_MESSAGES.EMAIL.EMPTY_PASSWORD)
+	assert.isNotEmpty(email.hostname, ERROR_MESSAGES.EMAIL.EMPTY_HOST)
+	assert.isNumber(email.port, ERROR_MESSAGES.EMAIL.INVALID_PORT)
+
 }
 
 function validateSessionConfig(session) {
