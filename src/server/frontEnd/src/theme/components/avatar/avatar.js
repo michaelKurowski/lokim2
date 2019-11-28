@@ -1,4 +1,5 @@
 const React = require('react')
+const SIZES = require('./avatarSizes')
 
 class Avatar extends React.Component {
 	constructor(props) {
@@ -11,7 +12,7 @@ class Avatar extends React.Component {
 	
 	render() {
 		return(
-			<div className={`w-${this.state.size} `+ `h-${this.state.size}`}>
+			<div className={`w-${SIZES[this.state.size]} h-${SIZES[this.state.size]}`}>
 				<img src={`http://robohash.org/${this.state.username}`}/>
 			</div>
 		)

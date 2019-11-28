@@ -5,6 +5,7 @@ const {paths} = require('routing-config')
 const {connect} = require('react-redux')
 const {actions} = require('services/session/session.actions')
 const SESSION_STATES = require('services/session/sessionStates')
+const Message = require('../../components/message/message')
 const webSocketProvider = require('services/webSocket/webSocketProvider')
 const webSocketActions = require('services/webSocket/webSocket.actions').actions
 const CHAT_PATH = paths.CHAT
@@ -73,6 +74,7 @@ class HomePage extends React.Component {
 			return <Redirect to={{pathname: CHAT_PATH, state: {username: this.state.username}}}/>
 		return (
 			<div className="App" id='homepage'>
+				<Message text="wiadomosc" username="user" />
 				{this.didLoggingFailed() ? this.renderLoginFailed() : <div></div>}
 				<div className="App-header">
 					<img src={logo} className="App-logo" alt="logo" />
