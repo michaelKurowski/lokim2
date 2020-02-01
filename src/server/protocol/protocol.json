@@ -16,5 +16,12 @@
 		"eventTypes": {
 			"FIND": "find"
 		}
+	},
+
+	"friends": {
+		"INVITE":"invite",
+		"CONFIRM":"confirm",
+		"LIST":"list",
+		"DELETE":"delete"
 	}
 }
