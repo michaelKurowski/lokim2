@@ -23,7 +23,8 @@ const userSchema = new Schema({
 	}, 
 	salt:{
 		type: String
-	}
+	},
+	friends: [String]
 })
 
 userSchema.plugin(uniqueValidator, { message: DUPLICATE_KEY_ERROR_DESC })
