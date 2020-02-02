@@ -13,6 +13,6 @@ const pendingInvitationsSchema = new Schema({
     }
 })
 
-const pendingInvitationsModel = dbConnection.model('pendingInvitations', pendingInvitationsSchema)
+const PendingInvitationsModel = dbConnection.model('pendingInvitations', pendingInvitationsSchema)
 
-module.exports = pendingInvitationsModel
+module.exports = PendingInvitationsModel
