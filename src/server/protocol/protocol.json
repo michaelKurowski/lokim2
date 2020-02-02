@@ -19,6 +19,8 @@
 	},
 
 	"friends": {
+		"DISCONNECT": "disconnect",
+		"CONNECTION": "connection",
 		"INVITE":"invite",
 		"CONFIRM":"confirm",
 		"LIST":"list",
