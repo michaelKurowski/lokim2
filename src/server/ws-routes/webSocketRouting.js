@@ -3,10 +3,12 @@ const Utilities = require('../utilities')
 const logger = require('../logger')
 const RoomController = require('./controllers/Room')
 const UsersController = require('./controllers/Users')
+const FriendsController = require('./controllers/Friends')
 
 function initializeWebSocketRouting(io, protocol = require('../protocol/protocol.json')) {
 	Utilities.createWebsocketRoute(io, protocol.room, RoomController, connectionsRepository)
 	Utilities.createWebsocketRoute(io, protocol.users, UsersController, connectionsRepository)
+	Utilities.createWebsocketRoute(io, protocol.friends, FriendsController, connectionsRepository)
 
 	logger.info(`Websocket routing initialized`)
 }
