@@ -20,6 +20,8 @@ const NO_PENDING = Symbol('there are no pending inviations')
 const DELETE_INVITATION = Symbol('Delete invitation')
 const INVITATION_ACCEPTED = Symbol('User accepted your invitation')
 
+const WRONG_LIST_TYPE = Symbol('Wrong list type')
+
 class Friends {
 	[EVENT_TYPES.CONNECTION](socket, connections) {
 		const username = socket.request.user.username
@@ -48,7 +50,9 @@ class Friends {
 				if(user.friends.includes(invitedUsername))
 					return Promise.reject(FRIENDS_ALREADY)
 
-				return getPendingInvitations(username, 'to')
+				const queryField = 'from'
+				const searchField = 'to'
+				return getPendingInvitations(username, queryField, searchField)
 			})
 			.then(pendingInvitations => {
 				if(pendingInvitations.includes(invitedUsername))
@@ -82,7 +86,9 @@ class Friends {
 		const {confirm} = data
 		const invitingUsername = data.username
 
-		getPendingInvitations(invitingUsername, 'to')
+		const queryField = 'from'
+		const searchField = 'to'
+		getPendingInvitations(invitingUsername, queryField, searchField)
 			.then(pendingInvitations => {
 				if(pendingInvitations.includes(username))
 					return Promise.resolve()
@@ -118,14 +124,36 @@ class Friends {
 
 		const PENDING_TYPE = Symbol('pending')
 		const ACCEPTED_TYPE = Symbol('accepted')
-		const friends_TYPE = Symbol('friends')
+		const FRIENDS_TYPE = Symbol('friends')
 
-		getPendingInvitations()
+		const queryField = 'to'
+		const searchField = 'from'
+		
+		switch(type) {
 
-		new Promise(resolve => resolve())
-			.then(() => {
-				
-			})
+			case PENDING_TYPE.description:
+			case ACCEPTED_TYPE.description:
+				getPendingInvitations(username, queryField, searchField)
+					.then(pendingInvitations => {
+
+						return sendResponse(socket, EVENT_TYPES.LIST, pendingInvitations)
+					})	
+					.catch(err => {
+						logger.error(err)
+						return sendResponse(socket, EVENT_TYPES.LIST, PLEASE_TRY_AGAIN.description)
+					})
+				break
+
+			case FRIENDS_TYPE.description:
+				getUserObject(username)
+					.then(user => sendResponse(socket, EVENT_TYPES.LIST, user.frineds))
+					.catch(err => {
+						logger.error(err)
+						return sendResponse(socket, EVENT_TYPES.LIST, PLEASE_TRY_AGAIN.description)
+					})
+				break
+			default: return sendResponse(socket, EVENT_TYPES.LIST, WRONG_LIST_TYPE.description)
+		}
 	}
 
 }
