@@ -16,6 +16,9 @@ const FRIENDS_ALREADY = Symbol('You are already friends')
 const ALREADY_SENT_INVITATION = Symbol('You have already sent invitation to this user')
 
 const PLEASE_TRY_AGAIN = Symbol('Please try again')
+const NO_PENDING = Symbol('there are no pending inviations')
+const DELETE_INVITATION = Symbol('Delete invitation')
+const INVITATION_ACCEPTED = Symbol('User accepted your invitation')
 
 class Friends {
 	[EVENT_TYPES.CONNECTION](socket, connections) {
@@ -37,7 +40,6 @@ class Friends {
 
 	[EVENT_TYPES.INVITE](data, socket, connections) {
 		const username = socket.request.user.username
-		const userSocket = connections.usersToConnectionsMap.get(username)
 
 		const invitedUsername = data.username
         
@@ -48,29 +50,98 @@ class Friends {
 
 				return isInPendingInvitations(username, invitedUsername)
 			})
-			.then(() => PendingInvitationsModel.create({form:username, to:invitedUsername}))
+			.then(pendingInvitations => {
+				if(pendingInvitations.includes(invitedUsername))
+					return Promise.reject(ALREADY_SENT_INVITATION)
+
+				return PendingInvitationsModel.create({form:username, to:invitedUsername})
+			})
 			.then(() => { 
-				sendToUser(username, invitedUsername, connections, EVENT_TYPES.INVITE, NEW_INVITATION)
-				sendResponse(userSocket, EVENT_TYPES.INVITE, INVITATION_SENT)
+				sendToUser(socket, invitedUsername, connections, EVENT_TYPES.INVITE, NEW_INVITATION)
+				sendResponse(socket, EVENT_TYPES.INVITE, INVITATION_SENT)
 			})
 			.catch(err => {
 				if(err === FRIENDS_ALREADY || err === ALREADY_SENT_INVITATION)
-					return sendResponse(userSocket, EVENT_TYPES.INVITE, err)
+					return sendResponse(socket, EVENT_TYPES.INVITE, err)
 
 				logger.error(err)
-				return sendResponse(userSocket, EVENT_TYPES.INVITE, PLEASE_TRY_AGAIN)
+				return sendResponse(socket, EVENT_TYPES.INVITE, PLEASE_TRY_AGAIN)
 			})
 
 	}
+	/**
+	 * @name confirm
+	 * @memberof Friends
+	 * @member
+	 * @property {string} username Username of user who invited requesting user
+	 * @property {bool} confirm Accept or decline invitation
+	 */
+
+	[EVENT_TYPES.CONFIRM](data, socket, connections) {
+		const username = socket.request.user.username
+		const {confirm} = data
+		const invitingUsername = data.username
+
+		isInPendingInvitations(invitingUsername)
+			.then(pendingInvitations => {
+				if(pendingInvitations.includes(username))
+					return Promise.resolve()
+				return sendResponse(socket, EVENT_TYPES.CONFIRM, NO_PENDING.description)
+			})
+			.then(() => {
+				if(confirm) {
+					return addToFriendsList(invitingUsername, username)
+				}
+				return Promise.reject(DELETE_INVITATION)
+			})
+			.then(() => {
+				const payload = username+' '+INVITATION_ACCEPTED.description
+				const isSent = sendToUser(socket, invitingUsername, connections, EVENT_TYPES.CONFIRM, payload)
+				if(isSent)
+					return deletePendingInvitation(invitingUsername, username)
+			})
+			.catch(err => {
+				if(err === DELETE_INVITATION)
+					return deletePendingInvitation(invitingUsername, username)
+				return Promise.reject(err)
+			})
+			.then(() => sendResponse(socket, EVENT_TYPES.CONFIRM, 'OK'))
+			.catch(err => {
+				logger.error(err)
+				return sendResponse(socket, EVENT_TYPES.INVITE, PLEASE_TRY_AGAIN)
+			})
+		
+	}
+	
+}
+//TODO Add confirmation invitation field in pending invitations schema
+
+async function addToFriendsList(fromUsername, toUsername) {
+	const fromUserPromise = getUserObject(fromUsername)
+	const toUserPromise = getUserObject(toUsername)
+
+	const formUserObject = await fromUserPromise
+	const toUserObject = await toUserPromise
+
+	formUserObject.friends.push(toUsername)
+	toUserObject.friends.push(fromUsername)
+
+	return Promise.all([formUserObject.save(), toUserObject.save()])
 }
 
-function sendToUser(fromUsername, toUsername, connections, eventType, payload) {
-	const userSocket = connections.usersToConnectionsMap.get(fromUsername)
+function sendToUser(socket, toUsername, connections, eventType, payload) {
 	const receivingUserSocketId = connections.usersToConnectionsMap.get(toUsername).id
 	if(receivingUserSocketId !== null) {
 		const response = new Response(eventType, payload)
-		userSocket.to(receivingUserSocketId).emit(eventType, response.serialize())
+		socket.to(receivingUserSocketId).emit(eventType, response.serialize())
+		return true
 	}
+	return false
+}
+
+async function deletePendingInvitation(fromUsername, toUsername) {
+	const deletedInitation = PendingInvitationsModel.deleteOne({from: fromUsername, to:toUsername}).exec()
+	return await deletedInitation
 }
 
 function sendResponse(socketUser, eventType, payload) {
@@ -83,15 +154,9 @@ async function getUserObject(username) {
 	return await user
 }
 
-async function isInPendingInvitations(username, invitedUsername) {
-	const pendingInvitations = await PendingInvitationsModel.find({from:username}, 'to').exec()
-
-	if(pendingInvitations.length === 0)
-		return Promise.reject('emptyPendingInvitationArray')
-
-	if(pendingInvitations.includes(invitedUsername))
-		return Promise.reject(ALREADY_SENT_INVITATION)	
-	return Promise.resolve() 
+async function isInPendingInvitations(username) {
+	const pendingInvitations = PendingInvitationsModel.find({from:username}, 'to').exec()
+	return await pendingInvitations
 }
 
 module.exports = Friends
