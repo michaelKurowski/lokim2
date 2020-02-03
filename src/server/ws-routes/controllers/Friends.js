@@ -58,14 +58,14 @@ class Friends {
 			})
 			.then(() => { 
 				sendToUser(socket, invitedUsername, connections, EVENT_TYPES.INVITE, NEW_INVITATION)
-				sendResponse(socket, EVENT_TYPES.INVITE, INVITATION_SENT)
+				sendResponse(socket, EVENT_TYPES.INVITE, INVITATION_SENT.description)
 			})
 			.catch(err => {
 				if(err === FRIENDS_ALREADY || err === ALREADY_SENT_INVITATION)
-					return sendResponse(socket, EVENT_TYPES.INVITE, err)
+					return sendResponse(socket, EVENT_TYPES.INVITE, err.description)
 
 				logger.error(err)
-				return sendResponse(socket, EVENT_TYPES.INVITE, PLEASE_TRY_AGAIN)
+				return sendResponse(socket, EVENT_TYPES.INVITE, PLEASE_TRY_AGAIN.description)
 			})
 
 	}
@@ -109,8 +109,7 @@ class Friends {
 			.catch(err => {
 				logger.error(err)
 				return sendResponse(socket, EVENT_TYPES.INVITE, PLEASE_TRY_AGAIN)
-			})
-		
+			})	
 	}
 	
 }
