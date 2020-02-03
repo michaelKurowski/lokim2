@@ -48,7 +48,7 @@ class Friends {
 				if(user.friends.includes(invitedUsername))
 					return Promise.reject(FRIENDS_ALREADY)
 
-				return isInPendingInvitations(username, invitedUsername)
+				return getPendingInvitations(username, 'to')
 			})
 			.then(pendingInvitations => {
 				if(pendingInvitations.includes(invitedUsername))
@@ -82,7 +82,7 @@ class Friends {
 		const {confirm} = data
 		const invitingUsername = data.username
 
-		isInPendingInvitations(invitingUsername)
+		getPendingInvitations(invitingUsername, 'to')
 			.then(pendingInvitations => {
 				if(pendingInvitations.includes(username))
 					return Promise.resolve()
@@ -112,6 +112,22 @@ class Friends {
 			})	
 	}
 	
+	[EVENT_TYPES.LIST](data, socket, connections) {
+		const username = socket.request.user.username
+		const {type} = data
+
+		const PENDING_TYPE = Symbol('pending')
+		const ACCEPTED_TYPE = Symbol('accepted')
+		const friends_TYPE = Symbol('friends')
+
+		getPendingInvitations()
+
+		new Promise(resolve => resolve())
+			.then(() => {
+				
+			})
+	}
+
 }
 //TODO Add confirmation invitation field in pending invitations schema
 
@@ -153,8 +169,8 @@ async function getUserObject(username) {
 	return await user
 }
 
-async function isInPendingInvitations(username) {
-	const pendingInvitations = PendingInvitationsModel.find({from:username}, 'to').exec()
+async function getPendingInvitations(username, queryField, searchField) {
+	const pendingInvitations = PendingInvitationsModel.find({[queryField]:username}, searchField).exec()
 	return await pendingInvitations
 }
 
