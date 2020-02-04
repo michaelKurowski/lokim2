@@ -24,6 +24,6 @@
 		"INVITE":"invite",
 		"CONFIRM":"confirm",
 		"LIST":"list",
-		"DELETE":"delete"
+		"DELETE_FRIEND":"deleteFriend"
 	}
 }

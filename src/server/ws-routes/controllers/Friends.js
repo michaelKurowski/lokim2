@@ -1,3 +1,5 @@
+const _ = require('lodash')
+
 const EVENT_TYPES = require('../../protocol/protocol.json').frineds
 const UserModel = require('../../models/user')
 const PendingInvitationsModel = require('../../models/pendingInvitations')
@@ -96,7 +98,8 @@ class Friends {
 			})
 			.then(() => {
 				if(confirm) {
-					return addToFriendsList(invitingUsername, username)
+					const addMode = true
+					return manageFriendsList(invitingUsername, username, addMode)
 				}
 				return Promise.reject(DELETE_INVITATION)
 			})
@@ -117,8 +120,17 @@ class Friends {
 				return sendResponse(socket, EVENT_TYPES.INVITE, PLEASE_TRY_AGAIN)
 			})	
 	}
-	
-	[EVENT_TYPES.LIST](data, socket, connections) {
+
+	/**
+	 * @name list
+	 * @memberof Friends
+	 * @member
+	 * @property {string} type What type do you want to receive. You can choose between: 
+	 * accepted - accepted invitations, 
+	 * pending - pending invitations, 
+	 * friends - your friends list
+	 */
+	[EVENT_TYPES.LIST](data, socket) {
 		const username = socket.request.user.username
 		const {type} = data
 
@@ -155,19 +167,42 @@ class Friends {
 			default: return sendResponse(socket, EVENT_TYPES.LIST, WRONG_LIST_TYPE.description)
 		}
 	}
+	
+	/**
+	 * @name deleteFriend
+	 * @memberof Friends
+	 * @member
+	 * @property {string} username Username of user you want to remove from your friends list
+	 */
+	[EVENT_TYPES.DELETE_FRIEND](data, socket) {
+		const username = socket.request.user.username
+		const friendUsername = data.username
 
+		const addMode = false
+		manageFriendsList(username,friendUsername, addMode)
+			.then(() => sendResponse(socket, EVENT_TYPES.DELETE_FRIEND, 'OK'))
+			.catch(err => {
+				logger.error(err)
+				return sendResponse(socket, EVENT_TYPES.DELETE_FRIEND, PLEASE_TRY_AGAIN.description)
+			})
+
+	}
 }
 //TODO Add confirmation invitation field in pending invitations schema
 
-async function addToFriendsList(fromUsername, toUsername) {
+async function manageFriendsList(fromUsername, toUsername, addMode) {
 	const fromUserPromise = getUserObject(fromUsername)
 	const toUserPromise = getUserObject(toUsername)
 
 	const formUserObject = await fromUserPromise
 	const toUserObject = await toUserPromise
-
-	formUserObject.friends.push(toUsername)
-	toUserObject.friends.push(fromUsername)
+	if(addMode) {
+		formUserObject.friends.push(toUsername)
+		toUserObject.friends.push(fromUsername)
+	} else {
+		_.pull(formUserObject.friends, toUsername)
+		_.pull(toUserObject, fromUsername)
+	}
 
 	return Promise.all([formUserObject.save(), toUserObject.save()])
 }
