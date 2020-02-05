@@ -1,6 +1,6 @@
 const _ = require('lodash')
 
-const EVENT_TYPES = require('../../protocol/protocol.json').frineds
+const EVENT_TYPES = require('../../protocol/protocol.json').friends.eventTypes
 const UserModel = require('../../models/user')
 const PendingInvitationsModel = require('../../models/pendingInvitations')
 const Response = require('../responses/Response.class')
@@ -60,10 +60,14 @@ class Friends {
 				if(pendingInvitations.includes(invitedUsername))
 					return Promise.reject(ALREADY_SENT_INVITATION)
 
-				return PendingInvitationsModel.create({form:username, to:invitedUsername})
+				return PendingInvitationsModel.create({from:username, to:invitedUsername})
 			})
 			.then(() => { 
-				sendToUser(socket, invitedUsername, connections, EVENT_TYPES.INVITE, NEW_INVITATION)
+				const payload = {
+					msg: NEW_INVITATION.description,
+					username
+				}
+				sendToUser(socket, invitedUsername, connections, EVENT_TYPES.INVITE, payload)
 				sendResponse(socket, EVENT_TYPES.INVITE, INVITATION_SENT.description)
 			})
 			.catch(err => {
@@ -179,7 +183,7 @@ class Friends {
 		const friendUsername = data.username
 
 		const addMode = false
-		manageFriendsList(username,friendUsername, addMode)
+		manageFriendsList(username, friendUsername, addMode)
 			.then(() => sendResponse(socket, EVENT_TYPES.DELETE_FRIEND, 'OK'))
 			.catch(err => {
 				logger.error(err)
@@ -208,13 +212,14 @@ async function manageFriendsList(fromUsername, toUsername, addMode) {
 }
 
 function sendToUser(socket, toUsername, connections, eventType, payload) {
+	if(!connections.usersToConnectionsMap.has(toUsername))
+		return false
+
 	const receivingUserSocketId = connections.usersToConnectionsMap.get(toUsername).id
-	if(receivingUserSocketId !== null) {
-		const response = new Response(eventType, payload)
-		socket.to(receivingUserSocketId).emit(eventType, response.serialize())
-		return true
-	}
-	return false
+	const response = new Response(eventType, payload)
+	socket.to(receivingUserSocketId).emit(eventType, response.serialize())
+	return true
+	
 }
 
 async function deletePendingInvitation(fromUsername, toUsername) {

@@ -17,13 +17,15 @@
 			"FIND": "find"
 		}
 	},
-
 	"friends": {
-		"DISCONNECT": "disconnect",
-		"CONNECTION": "connection",
-		"INVITE":"invite",
-		"CONFIRM":"confirm",
-		"LIST":"list",
-		"DELETE_FRIEND":"deleteFriend"
+		"name": "friends",
+		"eventTypes" : {
+			"DISCONNECT": "disconnect",
+			"CONNECTION": "connection",
+			"INVITE":"invite",
+			"CONFIRM":"confirm",
+			"LIST":"list",
+			"DELETE_FRIEND":"deleteFriend"
+		}
 	}
 }
