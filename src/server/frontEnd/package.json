@@ -19,7 +19,7 @@
     "redux-saga": "^0.16.0",
     "redux-thunk": "^2.3.0",
     "socket.io-client": "^2.1.1",
-    "svg-inline-loader": "^0.8.0",
+    "svg-inline-loader": "^0.8.2",
     "redux-devtools-extension": "^2.13.5",
     "webpack": "^4.14.0"
   },
